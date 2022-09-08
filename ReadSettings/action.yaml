@@ -1,0 +1,67 @@
+name: PowerShell script
+author: Oleksandr Nikolaiev (rework microsoft AL-Go)
+inputs:
+  actor:
+    description: The GitHub actor running the action
+    required: false
+    default: ${{ github.actor }}
+  token:
+    description: The GitHub token running the action
+    required: false
+    default: ${{ github.token }}
+  parentTelemetryScopeJson:
+    description: Specifies the parent telemetry scope for the telemetry signal
+    required: false
+    default: '{}'
+  project:
+    description: Project folder
+    required: false
+    default: '.'
+  getprojects:
+    description: Indicates whether you want to retrieve the list of project list as well
+    required: false
+    default: 'N'
+  getenvironments:
+    description: Specifies the pattern of the environments you want to retreive (or empty for no environments)
+    required: false
+    default: ''
+  includeProduction:
+    description: Specifies whether you want to include production environments
+    required: false
+    default: 'N'
+  release:
+    description: Indicates whether this is called from a release pipeline
+    required: false
+    default: 'N'
+  get:
+    description: Specifies which properties to get from the settings file, default is all
+    required: false
+    default: ''
+outputs:
+  SettingsJson:
+    description: Settings in compressed Json format
+    value: ${{ steps.readsettings.outputs.SettingsJson }}
+  GitHubRunnerJson:
+    description: GitHubRunner in compressed Json format
+    value: ${{ steps.readsettings.outputs.GitHubRunnerJson }}
+  ProjectsJson:
+    description: Projects in compressed Json format
+    value: ${{ steps.readsettings.outputs.ProjectsJson }}
+  ProjectCount:
+    description: Number of projects in array
+    value: ${{ steps.readsettings.outputs.ProjectCount }}
+  EnvironmentsJson:
+    description: Environments in compressed Json format
+    value: ${{ steps.readsettings.outputs.EnvironmentsJson }}
+  EnvironmentCount:
+    description: Number of environments in array
+    value: ${{ steps.readsettings.outputs.EnvironmentCount }}
+runs:
+  using: composite
+  steps:
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -parentTelemetryScopeJson '${{ inputs.parentTelemetryScopeJson }}' -project '${{ inputs.project }}' -getprojects ('${{ inputs.getprojects }}' -eq 'Y') -getenvironments '${{ inputs.getenvironments }}' -includeProduction ('${{ inputs.includeProduction }}' -eq 'Y') -release ('${{ inputs.release }}' -eq 'Y') -get '${{ inputs.get }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+      id: readsettings
+      shell: PowerShell
+branding:
+  icon: terminal
+  color: blue
