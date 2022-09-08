@@ -270,8 +270,7 @@ function ReadSettings {
         "templateUrl"                            = ""
         "templateBranch"                         = ""
         "githubRunner"                           = "windows-latest"
-        "cacheImageName"                         = "my"
-        "cacheKeepDays"                          = 3
+        "BuildVersions"                         = ""
         "alwaysBuildAllProjects"                 = $false
         "Environments"                           = @()
     }

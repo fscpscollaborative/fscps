@@ -89,44 +89,11 @@ try {
     Write-Host "set-output name=GitHubRunnerJson::$githubRunner"
 
     if ($getprojects) {
-        $projects = @(Get-ChildItem -Path $ENV:GITHUB_WORKSPACE -Directory | Where-Object { Test-Path (Join-Path $_.FullName ".FnSCM-Go") -PathType Container } | ForEach-Object { $_.Name })
-        if ($projects) {
-            if (($ENV:GITHUB_EVENT_NAME -eq "pull_request" -or $ENV:GITHUB_EVENT_NAME -eq "push") -and !$settings.alwaysBuildAllProjects) {
-                $headers = @{             
-                    "Authorization" = "token $token"
-                    "Accept" = "application/vnd.github.baptiste-preview+json"
-                }
-                $ghEvent = Get-Content $ENV:GITHUB_EVENT_PATH -encoding UTF8 | ConvertFrom-Json
-                if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
-                    $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/compare/$($ghEvent.pull_request.base.sha)...$($ENV:GITHUB_SHA)"
-                }
-                else {
-                    $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/compare/$($ghEvent.before)...$($ghEvent.after)"
-                }
-                $response = Invoke-WebRequest -Headers $headers -UseBasicParsing -Method GET -Uri $url | ConvertFrom-Json
-                $filesChanged = @($response.files | ForEach-Object { $_.filename })
-                if ($filesChanged.Count -lt 250) {
-                    $foldersChanged = @($filesChanged | ForEach-Object { $_.Split('/')[0] } | Select-Object -Unique)
-                    $projects = @($projects | Where-Object { $foldersChanged -contains $_ })
-                    Write-Host "Modified projects: $($projects -join ', ')"
-                }
-            }
-        }
-        if (Test-Path ".FnSCM-Go" -PathType Container) {
-            $projects += @(".")
-        }
-        Write-Host "All Projects: $($projects -join ', ')"
-        if ($projects.Count -eq 1) {
-            $projectsJSon = "[$($projects | ConvertTo-Json -compress)]"
-        }
-        else {
-            $projectsJSon = $projects | ConvertTo-Json -compress
-        }
-        Write-Host "::set-output name=ProjectsJson::$projectsJson"
-        Write-Host "set-output name=ProjectsJson::$projectsJson"
-        Write-Host "::set-output name=ProjectCount::$($projects.Count)"
-        Write-Host "set-output name=ProjectCount::$($projects.Count)"
-        Add-Content -Path $env:GITHUB_ENV -Value "Projects=$projectsJson"
+
+        $versionsJSon = $setting.BuildVersions | ConvertTo-Json -compress
+        Write-Host "::set-output name=VersionsJson::$versionsJSon"
+        Write-Host "set-output name=VersionsJson::$versionsJSon"
+        Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
 
     if ($getenvironments) {
