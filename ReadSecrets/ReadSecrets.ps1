@@ -2,7 +2,7 @@ Param(
 
     [Parameter(HelpMessage = "Settings from template repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '{"keyVaultName": ""}',
-    [Parameter(HelpMessage = "Comma separated list of Secrets to get", Mandatory = $true)]
+    [Parameter(HelpMessage = "Comma separated list of Secrets to get", Mandatory = $false)]
     [string] $secrets = ""
 )
 
