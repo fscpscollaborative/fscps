@@ -3,10 +3,6 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
-    [Parameter(HelpMessage = "Project folder", Mandatory = $false)]
-    [string] $project = ".",
-    [Parameter(HelpMessage = "Indicates whether you want to retrieve the list of project list as well", Mandatory = $false)]
-    [bool] $getprojects,
     [Parameter(HelpMessage = "Specifies the pattern of the environments you want to retreive (or empty for no environments)", Mandatory = $false)]
     [string] $getenvironments = "",
     [Parameter(HelpMessage = "Specifies whether you want to include production environments", Mandatory = $false)]
@@ -25,7 +21,7 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
-    if ($project  -eq ".") { $project = "" }
+    $project = "" 
 
     $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
    
@@ -88,12 +84,10 @@ try {
     Write-Host "::set-output name=GitHubRunnerJson::$githubRunner"
     Write-Host "set-output name=GitHubRunnerJson::$githubRunner"
 
-    if ($getprojects) {
-        $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
-        Write-Host "::set-output name=VersionsJson::$versionsJSon"
-        Write-Host "set-output name=VersionsJson::$versionsJSon"
-        Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
-    }
+    $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
+    Write-Host "::set-output name=VersionsJson::$versionsJSon"
+    Write-Host "set-output name=VersionsJson::$versionsJSon"
+    Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
 
     if ($getenvironments) {
         $environments = @()
