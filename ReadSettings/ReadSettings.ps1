@@ -89,7 +89,7 @@ try {
     Write-Host "set-output name=GitHubRunnerJson::$githubRunner"
 
     if ($getprojects) {
-        $versionsJSon = $setting.buildVersions.Split(',') | ConvertTo-Json -compress
+        $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
         Write-Host "::set-output name=VersionsJson::$versionsJSon"
         Write-Host "set-output name=VersionsJson::$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
