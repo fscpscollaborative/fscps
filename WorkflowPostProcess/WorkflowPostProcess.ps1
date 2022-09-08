@@ -14,17 +14,10 @@ $bcContainerHelperPath = $null
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
-    import-module (Join-Path -path $PSScriptRoot -ChildPath "..\TelemetryHelper.psm1" -Resolve)
 
-    if ($telemetryScopeJson -and $telemetryScopeJson -ne "{}") {
-        $telemetryScope = RegisterTelemetryScope $telemetryScopeJson
-    }
-
-    TrackTrace -telemetryScope $telemetryScope
 }
 catch {
     OutputError -message $_.Exception.Message
-    TrackException -telemetryScope $telemetryScope -errorRecord $_
 }
 finally {
 }

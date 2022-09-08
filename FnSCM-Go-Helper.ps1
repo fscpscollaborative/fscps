@@ -15,7 +15,6 @@ $FnSCMSettingsFile = ".FnSCM-Go\settings.json"
 $RepoSettingsFile = ".github\FnSCM-Go-Settings.json"
 $runningLocal = $local.IsPresent
 
-$MicrosoftTelemetryConnectionString = "InstrumentationKey=84bd9223-67d4-4378-8590-9e4a46023be2;IngestionEndpoint=https://westeurope-1.in.applicationinsights.azure.com/"
 
 function invoke-git {
     Param(

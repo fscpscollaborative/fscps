@@ -3,23 +3,16 @@ Param(
     [Parameter(HelpMessage = "Settings from template repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '{"keyVaultName": ""}',
     [Parameter(HelpMessage = "Comma separated list of Secrets to get", Mandatory = $true)]
-    [string] $secrets = "",
-    [Parameter(HelpMessage = "Specifies the parent telemetry scope for the telemetry signal", Mandatory = $false)]
-    [string] $parentTelemetryScopeJson = '{}'
+    [string] $secrets = ""
 )
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0
-$telemetryScope = $null
-$bcContainerHelperPath = $null
 
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
-
-    import-module (Join-Path -path $PSScriptRoot -ChildPath "..\TelemetryHelper.psm1" -Resolve)
-    $telemetryScope = CreateScope -eventId 'DO0078' -parentTelemetryScopeJson $parentTelemetryScopeJson
 
     Import-Module (Join-Path $PSScriptRoot ".\ReadSecretsHelper.psm1")
 
@@ -90,11 +83,9 @@ try {
     $outSettingsJson = $outSettings | ConvertTo-Json -Compress
     Add-Content -Path $env:GITHUB_ENV -Value "Settings=$OutSettingsJson"
 
-    TrackTrace -telemetryScope $telemetryScope
 }
 catch {
     OutputError -message $_.Exception.Message
-    TrackException -telemetryScope $telemetryScope -errorRecord $_
     exit
 }
 finally {
