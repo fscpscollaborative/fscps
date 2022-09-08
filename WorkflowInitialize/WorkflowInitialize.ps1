@@ -1,7 +1,4 @@
-Param(
-    [Parameter(HelpMessage = "The event id of the initiating workflow", Mandatory = $true)]
-    [string] $eventId 
-)
+Param()
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0

@@ -1,9 +1,5 @@
 name: PowerShell script
 author: Oleksandr Nikolaiev (rework microsoft AL-Go)
-inputs:
-  eventId:
-    description: The event id of the initiating workflow
-    required: true
 outputs:
   correlationId:
     description: A correlation Id for the workflow
@@ -11,7 +7,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/WorkflowInitialize.ps1 -eventId '${{ inputs.eventId }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/WorkflowInitialize.ps1 } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: workflowinitialize
       shell: PowerShell
 branding:
