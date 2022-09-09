@@ -58,7 +58,7 @@ try {
 
     Write-Host "========Copy solution folder"
     #Copy solution folder
-    Copy-Item NewBuild -Destination $settings.buildPath
+    Copy-Item NewBuild -Destination $settings.buildPath -Recurse -Force
 
     Write-Host "========Cleanup NuGet"
     #Cleanup NuGet
