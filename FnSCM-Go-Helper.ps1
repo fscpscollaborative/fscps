@@ -952,7 +952,7 @@ function GenerateSolution {
     $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
     $NewSolutionName = Join-Path  $SolutionFolderPath 'Build.sln'
     New-Item -ItemType Directory -Path $SolutionFolderPath -ErrorAction SilentlyContinue
-    
+    Copy-Item build.props -Destination $SolutionFolderPath -force
     $ProjectPattern = 'Project("{FC65038C-1B2F-41E1-A629-BED71D161FFF}") = "ModelNameBuild (ISV) [ModelName]", "ModelName.rnrproj", "{62C69717-A1B6-43B5-9E86-24806782FEC2}"'
     $ActiveCFGPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU'
     $BuildPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU'
