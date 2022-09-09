@@ -43,10 +43,27 @@ try {
         Set-Variable -Name $_ -Value $value
     }
 
-    
+    #Generate solution folder
     GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
 
-    dir $PSScriptRoot
+
+    #Cleanup Build folder
+    Remove-Item ${{ env.build_path }} -Recurse -Force
+
+    #Copy branch files
+    New-Item -ItemType Directory -Force -Path $settings.buildPath; Copy-Item ${{ github.workspace }}\* -Destination $settings.buildPath -Recurse -Force
+
+    #Copy solution folder
+    Copy-Item ..\NewBuild -Destination $settings.buildPath
+
+    #Cleanup NuGet
+    nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
+
+    #Nuget add source
+    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $AF_CONNECTORS_CICD_USER -password $AF_CONNECTORS_CICD_PASS
+   
+    #Nuget install packages
+    nuget restore $settings.buildPath\NewBuild\${{ env.fno_version }}\packages.config -PackagesDirectory $settings.buildPath\NuGets
 
 
 
