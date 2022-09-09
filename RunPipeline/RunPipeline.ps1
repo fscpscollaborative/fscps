@@ -133,8 +133,9 @@ try {
     $msReferencePath = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
     $msOutputDirectory = "$($buildPath)\bin".Trim()
 
-    $tempFile = (Get-Content $PackagesConfigFileName).Replace('ReferenceFolders', $msReferenceFolder)
-    Set-Content $NewPackagesFile $tempFile
+    $buidPropsFile = Join-Path $buildPath NewBuild\Build\build.props
+    $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
+    Set-Content $buidPropsFile $tempFile
 
     msbuild NewBuild\Build\Build.sln  `
          /p:BuildTasksDirectory=$msBuildTasksDirectory `
