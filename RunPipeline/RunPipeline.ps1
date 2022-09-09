@@ -66,7 +66,7 @@ try {
 
     Write-Host "========Nuget add source"
     #Nuget add source
-    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $secrets.AF_CONNECTORS_CICD_USER -password $secrets.AF_CONNECTORS_CICD_PASS
+    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
    
 
     $packagesFilePath = Join-Path $settings.buildPath NewBuild\packages.config
