@@ -33,7 +33,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $appBuild = $settings.appBuild
     $appRevision = $settings.appRevision
-    $secrets | ForEach-Object {
+     | ForEach-Object {
         if ($secrets.ContainsKey($_)) {
             $value = $secrets."$_"
         }
@@ -61,7 +61,7 @@ try {
     nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
 
     #Nuget add source
-    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $AF_CONNECTORS_CICD_USER -password $AF_CONNECTORS_CICD_PASS
+    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $secrets.AF_CONNECTORS_CICD_USER -password $secrets.AF_CONNECTORS_CICD_PASS
    
     #Nuget install packages
     nuget restore $settings.buildPath\NewBuild\packages.config -PackagesDirectory $settings.buildPath\NuGets
