@@ -144,6 +144,109 @@ try {
          /p:ReferencePath=$msReferencePath `
          /p:OutputDirectory=$msOutputDirectory 
 
+
+
+    #GeneratePackages
+    if($settings.generatePackages)
+    {
+        Write-Host "======================================== Generate packages"
+
+        $packageName = ($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", Get-Date -Format "yyyyMMdd").Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+
+        $xppToolsPath = $msFrameworkDirectory
+        $xppBinariesPath = (Join-Path $($buildPath) bin)
+        $xppBinariesSearch = Join-Path (Join-Path $($buildPath) bin) $settings.modelsIntoPackagePattern
+        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) $packageName
+
+
+        if ($xppBinariesSearch.Contains(";"))
+        {
+            [string[]]$xppBinariesSearch = $xppBinariesSearch -split ";"
+        }
+
+        $potentialPackages = Find-Match -DefaultRoot $xppBinariesPath -Pattern $xppBinariesSearch | Where-Object { (Test-Path -LiteralPath $_ -PathType Container) }
+        $packages = @()
+        if ($potentialPackages.Length -gt 0)
+        {
+            Write-Host "Found $($potentialPackages.Length) potential folders to include:"
+            foreach($package in $potentialPackages)
+            {
+                $packageBinPath = Join-Path -Path $package -ChildPath "bin"
+                # If there is a bin folder and it contains *.MD files, assume it's a valid X++ binary
+                if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
+                {
+                    Write-Host "  - $package"
+                    $packages += $package
+                }
+                else
+                {
+                    Write-Warning "  - $package (not an X++ binary folder, skipped)"
+                }
+            }
+
+            $artifactDirectory = [System.IO.Path]::GetDirectoryName($deployablePackagePath)
+            if (!(Test-Path -Path $artifactDirectory))
+            {
+                # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
+                # whereas New-Item would only create the top level directory
+                [System.IO.Directory]::CreateDirectory($artifactDirectory)
+            }
+
+            Import-Module (Join-Path -Path $xppToolsPath -ChildPath "CreatePackage.psm1")
+            $outputDir = Join-Path -Path $artifactDirectory -ChildPath ((New-Guid).ToString())
+            $tempCombinedPackage = Join-Path -Path $artifactDirectory -ChildPath "$((New-Guid).ToString()).zip"
+            try
+            {
+                New-Item -Path $outputDir -ItemType Directory > $null
+
+                Write-Host "Creating binary packages"
+                foreach($packagePath in $packages)
+                {
+                    $packageName = (Get-Item $packagePath).Name
+                    Write-Host "  - '$packageName'"
+
+                    $version = ""
+                    $packageDll = Join-Path -Path $packagePath -ChildPath "bin\Dynamics.AX.$packageName.dll"
+                    if (Test-Path $packageDll)
+                    {
+                        $version = (Get-Item $packageDll).VersionInfo.FileVersion
+                    }
+
+                    if (!$version)
+                    {
+                        $version = "1.0.0.0"
+                    }
+
+                    New-XppRuntimePackage -packageName $packageName -packageDrop $packagePath -outputDir $outputDir -metadataDir $xppBinariesPath -packageVersion $version -binDir $xppToolsPath -enforceVersionCheck $True
+                }
+
+                Write-Host "Creating deployable package"
+                Add-Type -Path "$xppToolsPath\Microsoft.Dynamics.AXCreateDeployablePackageBase.dll"
+                Write-Host "  - Creating combined metadata package"
+                [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::CreateMetadataPackage($outputDir, $tempCombinedPackage)
+                Write-Host "  - Creating merged deployable package"
+                [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::MergePackage("$xppToolsPath\BaseMetadataDeployablePackage.zip", $tempCombinedPackage, $deployablePackagePath, $true, [String]::Empty)
+
+                Write-Host "Deployable package '$deployablePackagePath' successfully created."
+            }
+            finally
+            {
+                if (Test-Path -Path $outputDir)
+                {
+                    Remove-Item -Path $outputDir -Recurse -Force
+                }
+                if (Test-Path -Path $tempCombinedPackage)
+                {
+                    Remove-Item -Path $tempCombinedPackage -Force
+                }
+            }
+        }
+        else
+        {
+            throw "No X++ binary package(s) found"
+        }
+
+    }
 }
 catch {
     OutputError -message $_.Exception.Message
