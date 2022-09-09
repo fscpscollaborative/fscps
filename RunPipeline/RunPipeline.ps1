@@ -115,6 +115,10 @@ try {
     
     #Copy dll`s to build folder
     Write-Host "======================================== Copy dll`s to build folder"
+    Write-Host "Source path: " $($settings.buildPath)\$($settings.metadataPath)
+    Write-Host "Destination path: " $($settings.buildPath)\bin
+
+
     Copy-Filtered -Source $($settings.buildPath)\$($settings.metadataPath) -Target $($settings.buildPath)\bin -Filter *.dll
 
     #Build solution
