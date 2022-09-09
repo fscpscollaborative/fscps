@@ -71,22 +71,22 @@ try {
     }
 
     
-    $settings.buildPath = $($settings.buildPath).Trim()
+    $buildPath = Join-Path "C:\Temp" $settings.buildPath
     #Generate solution folder
     Write-Host "======================================== Generate solution folder"
     GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
 
     Write-Host "======================================== Cleanup Build folder"
     #Cleanup Build folder
-    Remove-Item $settings.buildPath -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
 
     Write-Host "======================================== Copy branch files"
     #Copy branch files
-    New-Item -ItemType Directory -Force -Path $settings.buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $settings.buildPath -Recurse -Force
+    New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
     Write-Host "======================================== Copy solution folder"
     #Copy solution folder
-    Copy-Item NewBuild -Destination $settings.buildPath -Recurse -Force
+    Copy-Item NewBuild -Destination $buildPath -Recurse -Force
 
     Write-Host "======================================== Cleanup NuGet"
     #Cleanup NuGet
@@ -96,7 +96,7 @@ try {
     #Nuget add source
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
    
-    $packagesFilePath = Join-Path $settings.buildPath NewBuild\packages.config
+    $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
     
     Write-Host "======================================== Nuget install packages"
 
@@ -108,7 +108,7 @@ try {
     {
         Write-Host "Not Found packages.config file at path:" $packagesFilePath
     }
-    cd $settings.buildPath
+    cd $buildPath
     cd NewBuild
     #Nuget install packages
     nuget restore -PackagesDirectory ..\NuGets
@@ -116,24 +116,24 @@ try {
     
     #Copy dll`s to build folder
     Write-Host "======================================== Copy dll`s to build folder"
-    Write-Host "Source path: " $($settings.buildPath)\$($settings.metadataPath)
-    Write-Host "Destination path: " $($settings.buildPath)\bin
+    Write-Host "Source path: " $($buildPath)\$($settings.metadataPath)
+    Write-Host "Destination path: " $($buildPath)\bin
 
 
-    Copy-Filtered -Source $($settings.buildPath)\$($settings.metadataPath) -Target $($settings.buildPath)\bin -Filter *.dll
+    Copy-Filtered -Source $($buildPath)\$($settings.metadataPath) -Target $($buildPath)\bin -Filter *.dll
 
     #Build solution
     Write-Host "======================================== Build solution"
-    cd $settings.buildPath
+    cd $buildPath
 
 
-    $msBuilsReferences = "$($settings.buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($settings.buildPath)\$($settings.metadataPath)%3B$($settings.buildPath)\bin"
+    $msBuilsReferences = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($buildPath)\$($settings.metadataPath)%3B$($buildPath)\bin"
     msbuild NewBuild\Build\Build.sln  `
-         /p:BuildTasksDirectory="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm" `
-         /p:MetadataDirectory="$($settings.buildPath)\$($settings.metadataPath)" `
-         /p:FrameworkDirectory="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
-         /p:ReferencePath="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
-         /p:OutputDirectory="$($settings.buildPath)\bin" `
+         /p:BuildTasksDirectory="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm" `
+         /p:MetadataDirectory="$($buildPath)\$($settings.metadataPath)" `
+         /p:FrameworkDirectory="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
+         /p:ReferencePath="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
+         /p:OutputDirectory="$($buildPath)\bin" `
          /p:ReferenceFolder="$msBuilsReferences"
 
 
