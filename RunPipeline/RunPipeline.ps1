@@ -3,7 +3,7 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
-    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
+    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $true)]
     [string] $DynamicsVersion,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '{"AppBuild":"", "AppRevision":""}',
@@ -151,7 +151,7 @@ try {
     {
         Write-Host "======================================== Generate packages"
 
-        $packageName = ($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+        $packageName = ($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)

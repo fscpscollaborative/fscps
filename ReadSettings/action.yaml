@@ -21,6 +21,10 @@ inputs:
     description: Indicates whether this is called from a release pipeline
     required: false
     default: 'N'
+  version:
+    description: The Dynamics Application Version
+    required: true
+    default: '10.0.27'
   get:
     description: Specifies which properties to get from the settings file, default is all
     required: false
@@ -44,7 +48,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -getenvironments '${{ inputs.getenvironments }}' -includeProduction ('${{ inputs.includeProduction }}' -eq 'Y') -release ('${{ inputs.release }}' -eq 'Y') -get '${{ inputs.get }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -getenvironments '${{ inputs.getenvironments }}' -includeProduction ('${{ inputs.includeProduction }}' -eq 'Y') -release ('${{ inputs.release }}' -eq 'Y') -get '${{ inputs.get }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: readsettings
       shell: PowerShell
 branding:

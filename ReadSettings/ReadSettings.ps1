@@ -3,6 +3,8 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
+    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
+    [string] $DynamicsVersion = "",
     [Parameter(HelpMessage = "Specifies the pattern of the environments you want to retreive (or empty for no environments)", Mandatory = $false)]
     [string] $getenvironments = "",
     [Parameter(HelpMessage = "Specifies whether you want to include production environments", Mandatory = $false)]
@@ -33,6 +35,11 @@ try {
         $getSettings = @($settings.Keys)
     }
 
+    if($DynamicsVersion -ne "")
+    {
+        $settings.buildVersions = $DynamicsVersion
+    }
+        
     if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
         $settings.doNotSignApps = $true
     }
@@ -67,6 +74,8 @@ try {
             }
         }
     }
+
+
 
     $outSettings = @{}
     $getSettings | ForEach-Object {

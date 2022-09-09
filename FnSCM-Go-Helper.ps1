@@ -235,7 +235,7 @@ function ReadSettings {
 
     $repoName = $repoName.SubString("$repoName".LastIndexOf('/') + 1)
     $branchName = "$env:GITHUB_REF"
-    $branchName = $branchName.SubString("$branchName".LastIndexOf('/') + 1)
+    $branchName = [regex]::Replace($branchName.Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() }) 
 
     # Read Settings file
     $settings = [ordered]@{
@@ -277,7 +277,7 @@ function ReadSettings {
         "deployablePackagePath"                  = "artifacts"
         "generatePackages"                       = $true
         "modelsIntoPackagePattern"               = "*"
-        "packageNamePattern"                     = "BRANCHNAME_PACKAGENAME_DATE_RUNNUMBER"
+        "packageNamePattern"                     = "BRANCHNAME-PACKAGENAME-FNSCMVERSION_DATE.RUNNUMBER"
         "packageName"                            = ""
         "Environments"                           = @()
     }
