@@ -35,7 +35,7 @@ try {
         $getSettings = @($settings.Keys)
     }
 
-    if($DynamicsVersion -ne "")
+    if($DynamicsVersion -ne "*")
     {
         $settings.buildVersions = $DynamicsVersion
     }
