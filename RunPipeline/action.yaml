@@ -9,6 +9,10 @@ inputs:
     description: The GitHub token running the action
     required: false
     default: ${{ github.token }}
+  version:
+    description: The Dynamics Application Version
+    required: true
+    default: '10.0.27'
   settingsJson:
     description: Settings from repository in compressed Json format
     required: false
@@ -20,7 +24,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}'  -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal

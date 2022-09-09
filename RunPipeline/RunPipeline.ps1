@@ -3,6 +3,8 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
+    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
+    [string] $DynamicsVersion,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '{"AppBuild":"", "AppRevision":""}',
     [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
@@ -220,7 +222,9 @@ try {
 
 
     
-GenerateSolution -ModelName "Vertex,VertexTestEssentials" -NugetFeedName "Artifactory" -NugetSourcePath "https://binrepo.vtxdev.net/artifactory/api/nuget/connector-nuget-local" -DynamicsVersion "10.0.27"
+GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
+
+dir $PSScriptRoot
 
 
 
