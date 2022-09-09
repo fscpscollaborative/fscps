@@ -953,7 +953,7 @@ function GenerateSolution {
     $NewSolutionName = Join-Path  $SolutionFolderPath 'Build.sln'
     New-Item -ItemType Directory -Path $SolutionFolderPath -ErrorAction SilentlyContinue
     
-    $ProjectPattern = 'Project("{FC65038C-1B2F-41E1-A629-BED71D161FFF}") = "ModelNameBuild (ISV) [ModelName]", "ModelName.rnrproj", "{62C69717-A1B6-43B5-9E86-24806782FEC2}" EndProject'
+    $ProjectPattern = 'Project("{FC65038C-1B2F-41E1-A629-BED71D161FFF}") = "ModelNameBuild (ISV) [ModelName]", "ModelName.rnrproj", "{62C69717-A1B6-43B5-9E86-24806782FEC2}"'
     $ActiveCFGPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU'
     $BuildPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU'
 
@@ -980,7 +980,8 @@ function GenerateSolution {
                 $newLine = $newLine -replace 'Build.rnrproj', ($model+'.rnrproj')
                 $newLine = $newLine -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
                 #Add Lines after the selected pattern 
-                $SolutionFileData += $newLine
+                $SolutionFileData += $newLine                
+                $SolutionFileData += "EndProject"
         
             } 
             if ($Line -eq $ActiveCFGPattern) 
