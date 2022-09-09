@@ -104,7 +104,7 @@ try {
     }
     else
     {
-        $versionsJSon = "[$($settings.buildVersions)]"
+        $versionsJSon = '["'+$($settings.buildVersions).ToString()+'"]'
         Write-Host "::set-output name=VersionsJson::$versionsJSon"
         Write-Host "set-output name=VersionsJson::$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
