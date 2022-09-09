@@ -117,18 +117,19 @@ try {
     #Build solution
     Write-Host "======================================== Build solution"
 
+    #Copy dll`s to build folder
+    Write-Host "======================================== Copy dll`s to build folder"
 
+    Copy-Filtered -Source $settings.buildPath\$settings.metadataPath -Target $settings.buildPath\bin -Filter *.dll
 
-
-
+    $msBuilsReferences = "$($settings.buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($settings.buildPath)\$($settings.metadataPath)%3B$($settings.buildPath)\bin"
     msbuild NewBuild\Build\Build.sln  `
          /p:BuildTasksDirectory="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm" `
          /p:MetadataDirectory="$($settings.buildPath)\$($settings.metadataPath)" `
          /p:FrameworkDirectory="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
          /p:ReferencePath="$($settings.buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
          /p:OutputDirectory="$($settings.buildPath)\bin" `
-       --%  /p:ReferenceFolder="$($settings.buildPath)\$($settings.nugetPackagesPath)\$app_package\ref\net40;$($settings.buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($settings.buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($settings.buildPath)\$($settings.metadataPath);$($settings.buildPath)\bin"
-
+         /p:ReferenceFolder="$msBuilsReferences"
 
 
 }
