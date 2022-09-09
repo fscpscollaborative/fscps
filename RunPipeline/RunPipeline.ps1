@@ -54,7 +54,7 @@ try {
     New-Item -ItemType Directory -Force -Path $settings.buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $settings.buildPath -Recurse -Force
 
     #Copy solution folder
-    Copy-Item ..\NewBuild -Destination $settings.buildPath
+    Copy-Item .\NewBuild -Destination $settings.buildPath
 
     #Cleanup NuGet
     nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
