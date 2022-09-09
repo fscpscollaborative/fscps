@@ -915,3 +915,127 @@ function CheckAndCreateProjectFolder {
         }
     }
 }
+
+function GenerateProjectFile {
+    [CmdletBinding()]
+    param (
+        [string]$ModelName,
+        [string]$ProjectGuid
+    )
+
+    $ProjectFileName =  'Build.rnrproj'
+    $ModelProjectFileName = $ModelName + '.rnrproj'
+    $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
+    $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
+    $ModelProjectFile = Join-Path $SolutionFolderPath $ModelProjectFileName
+
+    #generate project file
+
+    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+     
+    Set-Content $ModelProjectFile $ProjectFileData
+}
+
+function GenerateSolution {
+    [CmdletBinding()]
+    param (
+        [string]$ModelName,
+        [string]$NugetFeedName,
+        [string]$NugetSourcePath,
+        [string]$DynamicsVersion
+    )
+
+    cd $PSScriptRoot\Build\Build
+
+    $SolutionFileName =  'Build.sln'
+    $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
+    $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
+    $NewSolutionName = Join-Path  $SolutionFolderPath 'Build.sln'
+    New-Item -ItemType Directory -Path $SolutionFolderPath -ErrorAction SilentlyContinue
+    
+    $ProjectPattern = 'Project("{FC65038C-1B2F-41E1-A629-BED71D161FFF}") = "ModelNameBuild (ISV) [ModelName]", "ModelName.rnrproj", "{62C69717-A1B6-43B5-9E86-24806782FEC2}" EndProject'
+    $ActiveCFGPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU'
+    $BuildPattern = '		{62C69717-A1B6-43B5-9E86-24806782FEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU'
+
+    [String[]] $SolutionFileData = @() 
+
+    $projectGuids = @{};
+    Foreach($model in $ModelName.Split(','))
+    {
+        $projectGuids.Add($model, ([string][guid]::NewGuid()).ToUpper())
+    }
+
+    #generate project files file
+    $FileOriginal = Get-Content $SolutionFileName
+        
+    Foreach ($Line in $FileOriginal)
+    {   
+        $SolutionFileData += $Line
+        Foreach($model in $ModelName.Split(','))
+        {
+            $projectGuid = $projectGuids.Item($model)
+            if ($Line -eq $ProjectPattern) 
+            {
+                $newLine = $ProjectPattern -replace 'ModelName', $model
+                $newLine = $newLine -replace 'Build.rnrproj', ($model+'.rnrproj')
+                $newLine = $newLine -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
+                #Add Lines after the selected pattern 
+                $SolutionFileData += $newLine
+        
+            } 
+            if ($Line -eq $ActiveCFGPattern) 
+            { 
+                $newLine = $ActiveCFGPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
+                $SolutionFileData += $newLine
+            } 
+            if ($Line -eq $BuildPattern) 
+            {
+            
+                $newLine = $BuildPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
+                $SolutionFileData += $newLine
+            } 
+        }
+    }
+    
+    #save solution file
+    Set-Content $NewSolutionName $SolutionFileData;
+    #cleanup solution file
+    $tempFile = Get-Content $NewSolutionName
+    $tempFile | Where-Object {$_ -ne $ProjectPattern} | Where-Object {$_ -ne $ActiveCFGPattern} | Where-Object {$_ -ne $BuildPattern} | Set-Content -Path $NewSolutionName 
+
+    #generate project files
+    Foreach($project in $projectGuids.GetEnumerator())
+    {
+        GenerateProjectFile -ModelName $project.Name -ProjectGuid $project.Value
+    }
+
+    cd $PSScriptRoot\Build
+    #generate nuget.config
+    $NugetConfigFileName = 'nuget.config'
+    $NewNugetFile = Join-Path $NugetFolderPath $NugetConfigFileName
+    $tempFile = (Get-Content $NugetConfigFileName).Replace('NugetFeedName', $NugetFeedName).Replace('NugetSourcePath', $NugetSourcePath)
+    Set-Content $NewNugetFile $tempFile
+
+
+    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
+
+
+    $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
+
+    Foreach($version in $versions)
+    {
+        if($version.version -eq $DynamicsVersion)
+        {
+            $PlatformVersion = $version.data.PlatformVersion
+            $ApplicationVersion = $version.data.AppVersion
+        }
+    }
+
+    #generate packages.config
+    $PackagesConfigFileName = 'packages.config'
+    $NewPackagesFile = Join-Path $NugetFolderPath $PackagesConfigFileName
+    $tempFile = (Get-Content $PackagesConfigFileName).Replace('PlatformVersion', $PlatformVersion).Replace('ApplicationVersion', $ApplicationVersion)
+    Set-Content $NewPackagesFile $tempFile
+
+    cd $PSScriptRoot
+}
