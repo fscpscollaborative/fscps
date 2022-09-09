@@ -126,8 +126,7 @@ try {
     Write-Host "======================================== Build solution"
     cd $buildPath
 
-
-    $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($buildPath)\$($settings.metadataPath)%3B$($buildPath)\bin"
+    $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40`;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40`;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40`;$($buildPath)\$($settings.metadataPath)`;$($buildPath)\bin"
     $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
     $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
     $msFrameworkDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
@@ -140,7 +139,7 @@ try {
          /p:FrameworkDirectory=$msFrameworkDirectory `
          /p:ReferencePath=$msReferencePath `
          /p:OutputDirectory=$msOutputDirectory `
-         /p:ReferenceFolder=$msReferenceFolder
+         --% /p:ReferenceFolder=$msReferenceFolder
 
 
 }
