@@ -116,25 +116,31 @@ try {
     
     #Copy dll`s to build folder
     Write-Host "======================================== Copy dll`s to build folder"
-    Write-Host "Source path: " $($buildPath)\$($settings.metadataPath)
-    Write-Host "Destination path: " $($buildPath)\bin
+    Write-Host "Source path: " (Join-Path $($buildPath) $($settings.metadataPath))
+    Write-Host "Destination path: " (Join-Path $($buildPath) bin)
 
 
-    Copy-Filtered -Source $($buildPath)\$($settings.metadataPath) -Target $($buildPath)\bin -Filter *.dll
+    Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
 
     #Build solution
     Write-Host "======================================== Build solution"
     cd $buildPath
 
 
-    $msBuilsReferences = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($buildPath)\$($settings.metadataPath)%3B$($buildPath)\bin"
+    $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($buildPath)\$($settings.metadataPath)%3B$($buildPath)\bin"
+    $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
+    $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
+    $msFrameworkDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
+    $msReferencePath = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
+    $msOutputDirectory = "$($buildPath)\bin".Trim()
+
     msbuild NewBuild\Build\Build.sln  `
-         /p:BuildTasksDirectory="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm" `
-         /p:MetadataDirectory="$($buildPath)\$($settings.metadataPath)" `
-         /p:FrameworkDirectory="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
-         /p:ReferencePath="$($buildPath)\$($settings.nugetPackagesPath)\$tools_package" `
-         /p:OutputDirectory="$($buildPath)\bin" `
-         /p:ReferenceFolder="$msBuilsReferences"
+         /p:BuildTasksDirectory=$msBuildTasksDirectory `
+         /p:MetadataDirectory=$msMetadataDirectory `
+         /p:FrameworkDirectory=$msFrameworkDirectory `
+         /p:ReferencePath=$msReferencePath `
+         /p:OutputDirectory=$msOutputDirectory `
+         /p:ReferenceFolder=$msReferenceFolder
 
 
 }
