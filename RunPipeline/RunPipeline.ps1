@@ -69,11 +69,13 @@ try {
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $secrets.AF_CONNECTORS_CICD_USER -password $secrets.AF_CONNECTORS_CICD_PASS
    
 
-
-    Write-Host "Found packages.config file" $settings.buildPath\NewBuild\packages.config
+    $packagesFilePath = Join-Path $settings.buildPath NewBuild\packages.config
+    Write-Host "Found packages.config file" $packagesFilePath
     Write-Host "========Nuget install packages"
+
+
     #Nuget install packages
-    nuget restore $settings.buildPath\NewBuild\packages.config -PackagesDirectory $settings.buildPath\NuGets
+    nuget restore $packagesFilePath -PackagesDirectory $settings.buildPath\NuGets
 
 
 
