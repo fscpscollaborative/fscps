@@ -70,10 +70,17 @@ try {
    
 
     $packagesFilePath = Join-Path $settings.buildPath NewBuild\packages.config
-    Write-Host "Found packages.config file" $packagesFilePath
+    
     Write-Host "========Nuget install packages"
 
-
+    if(Test-Path $packagesFilePath)
+    {
+        Write-Host "Found packages.config file at path: " $packagesFilePath
+    }
+    else
+    {
+        Write-Host "Not Found packages.config file at path:" $packagesFilePath
+    }
     #Nuget install packages
     nuget restore $packagesFilePath -PackagesDirectory $settings.buildPath\NuGets
 
