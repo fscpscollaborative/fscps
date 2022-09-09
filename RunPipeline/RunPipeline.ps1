@@ -48,10 +48,10 @@ try {
 
 
     #Cleanup Build folder
-    Remove-Item ${{ env.build_path }} -Recurse -Force
+    Remove-Item $settings.buildPath -Recurse -Force -ErrorAction SilentlyContinue
 
     #Copy branch files
-    New-Item -ItemType Directory -Force -Path $settings.buildPath; Copy-Item ${{ github.workspace }}\* -Destination $settings.buildPath -Recurse -Force
+    New-Item -ItemType Directory -Force -Path $settings.buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $settings.buildPath -Recurse -Force
 
     #Copy solution folder
     Copy-Item ..\NewBuild -Destination $settings.buildPath
@@ -63,7 +63,7 @@ try {
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $AF_CONNECTORS_CICD_USER -password $AF_CONNECTORS_CICD_PASS
    
     #Nuget install packages
-    nuget restore $settings.buildPath\NewBuild\${{ env.fno_version }}\packages.config -PackagesDirectory $settings.buildPath\NuGets
+    nuget restore $settings.buildPath\NewBuild\packages.config -PackagesDirectory $settings.buildPath\NuGets
 
 
 
