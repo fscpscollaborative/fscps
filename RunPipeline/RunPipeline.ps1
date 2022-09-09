@@ -81,10 +81,12 @@ try {
     {
         Write-Host "Not Found packages.config file at path:" $packagesFilePath
     }
+    cd $settings.buildPath
+    cd NewBuild
     #Nuget install packages
-    nuget restore $packagesFilePath -PackagesDirectory $settings.buildPath\NuGets
+    nuget restore -PackagesDirectory ..\NuGets
 
-
+    cd $settings.buildPath
 
 
 
