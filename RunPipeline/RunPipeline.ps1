@@ -112,15 +112,15 @@ try {
     #Nuget install packages
     nuget restore -PackagesDirectory ..\NuGets
 
-    cd $settings.buildPath
+    
+    #Copy dll`s to build folder
+    Write-Host "======================================== Copy dll`s to build folder"
+    Copy-Filtered -Source $($settings.buildPath)\$($settings.metadataPath) -Target $($settings.buildPath)\bin -Filter *.dll
 
     #Build solution
     Write-Host "======================================== Build solution"
+    cd $settings.buildPath
 
-    #Copy dll`s to build folder
-    Write-Host "======================================== Copy dll`s to build folder"
-
-    Copy-Filtered -Source $settings.buildPath\$settings.metadataPath -Target $settings.buildPath\bin -Filter *.dll
 
     $msBuilsReferences = "$($settings.buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40%3B$($settings.buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40%3B$($settings.buildPath)\$($settings.metadataPath)%3B$($settings.buildPath)\bin"
     msbuild NewBuild\Build\Build.sln  `
