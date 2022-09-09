@@ -33,14 +33,18 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $appBuild = $settings.appBuild
     $appRevision = $settings.appRevision
-    $settings.secrets | ForEach-Object {
-        if ($secrets.ContainsKey($_)) {
-            $value = $secrets."$_"
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName' | ForEach-Object {
+        $setValue = ""
+        if($settings.ContainsKey($_))
+        {
+            $setValue = $settings."$_"
+        }
+        if ($secrets.ContainsKey($setValue)) {
+            $value = $secrets."$setValue"
         }
         else {
-            $value = ""
+            $value = "test"
         }
-        Write-Host "Create local Secret variable: " $_
         Set-Variable -Name $_ -Value $value
     }
 
