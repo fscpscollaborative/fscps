@@ -40,6 +40,7 @@ try {
         else {
             $value = ""
         }
+        Write-Host "Create local Secret variable: " $_
         Set-Variable -Name $_ -Value $value
     }
 
