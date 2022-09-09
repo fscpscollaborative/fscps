@@ -140,7 +140,6 @@ try {
          /p:ReferencePath=$msReferencePath `
          /p:OutputDirectory=$msOutputDirectory 
 
-
 }
 catch {
     OutputError -message $_.Exception.Message
