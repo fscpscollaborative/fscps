@@ -18,7 +18,6 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
-    
 
     $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
 
@@ -49,9 +48,6 @@ try {
     }
     $workflowName = $env:GITHUB_WORKFLOW
 
-
-    $settings.buildPath = $($settings.buildPath).Trim()
-
     #Use settings and secrets
     Write-Host "======================================== Use settings and secrets"
 
@@ -74,6 +70,8 @@ try {
         Set-Variable -Name $_ -Value $value
     }
 
+    
+    $settings.buildPath = $($settings.buildPath).Trim()
     #Generate solution folder
     Write-Host "======================================== Generate solution folder"
     GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
