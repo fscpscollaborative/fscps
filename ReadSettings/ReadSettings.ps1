@@ -93,10 +93,22 @@ try {
     Write-Host "::set-output name=GitHubRunnerJson::$githubRunner"
     Write-Host "set-output name=GitHubRunnerJson::$githubRunner"
 
-    $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
-    Write-Host "::set-output name=VersionsJson::$versionsJSon"
-    Write-Host "set-output name=VersionsJson::$versionsJSon"
-    Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
+
+
+    if($settings.buildVersions.Contains(','))
+    {
+        $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
+        Write-Host "::set-output name=VersionsJson::$versionsJSon"
+        Write-Host "set-output name=VersionsJson::$versionsJSon"
+        Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
+    }
+    else
+    {
+        $versionsJSon = $settings.buildVersions | ConvertTo-Json -compress
+        Write-Host "::set-output name=VersionsJson::$versionsJSon"
+        Write-Host "set-output name=VersionsJson::$versionsJSon"
+        Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
+    }
 
     if ($getenvironments) {
         $environments = @()
