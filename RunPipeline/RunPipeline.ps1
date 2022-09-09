@@ -151,12 +151,12 @@ try {
     {
         Write-Host "======================================== Generate packages"
 
-        $packageName = ($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
         $xppBinariesSearch = Join-Path (Join-Path $($buildPath) bin) $settings.modelsIntoPackagePattern
-        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) $packageName
+        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($packageName)
 
 
         if ($xppBinariesSearch.Contains(";"))
