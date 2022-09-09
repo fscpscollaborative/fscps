@@ -139,7 +139,7 @@ try {
          /p:FrameworkDirectory=$msFrameworkDirectory `
          /p:ReferencePath=$msReferencePath `
          /p:OutputDirectory=$msOutputDirectory `
-          /p:ReferenceFolder='$($msReferenceFolder)'
+          /p:ReferenceFolder=\"$($msReferenceFolder)\"
 
 
 }
