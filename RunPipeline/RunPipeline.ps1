@@ -133,7 +133,13 @@ try {
     $msReferencePath = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
     $msOutputDirectory = "$($buildPath)\bin".Trim()
 
-    msbuild NewBuild\Build\Build.sln /p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory /p:ReferenceFolder=$msReferenceFolder
+    msbuild NewBuild\Build\Build.sln  `
+         /p:BuildTasksDirectory=$msBuildTasksDirectory `
+         /p:MetadataDirectory=$msMetadataDirectory `
+         /p:FrameworkDirectory=$msFrameworkDirectory `
+         /p:ReferencePath=$msReferencePath `
+         /p:OutputDirectory=$msOutputDirectory 
+
 
 }
 catch {
