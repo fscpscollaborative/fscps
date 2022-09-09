@@ -235,6 +235,8 @@ function ReadSettings {
 
     $repoName = $repoName.SubString("$repoName".LastIndexOf('/') + 1)
     $branchName = "$env:GITHUB_REF"
+    $branchName = $branchName.SubString("$branchName".LastIndexOf('/') + 1)
+
     # Read Settings file
     $settings = [ordered]@{
         "artifact"                               = ""
