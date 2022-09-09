@@ -27,7 +27,6 @@ try {
         $sharedFolder = $ENV:GITHUB_WORKSPACE
     }
     $workflowName = $env:GITHUB_WORKFLOW
-    $containerName = GetContainerName($project)
 
     Write-Host "use settings and secrets"
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
