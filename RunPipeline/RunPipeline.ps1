@@ -249,8 +249,8 @@ try {
                     Write-Host "LCSClientId: " $settings.lcsClientId
                     Write-Host "LCSProject: " $settings.lcsProjectId
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username $lcsUserNameSecretName -Password $lcsPasswordSecretName -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-                    Invoke-D365LcsUpload -FilePath $deployablePackagePath -FileType "SoftwareDeployablePackage" -FileName $pname -Verbose
+                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUserNameSecretName" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                    Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -FileName "$pname" -Verbose
                 }
             }
             finally
