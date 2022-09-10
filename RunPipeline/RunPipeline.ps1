@@ -229,9 +229,13 @@ try {
 
                 Write-Host "Deployable package '$deployablePackagePath' successfully created."
 
-                Write-Host "::set-output name=PACKAGE_NAME::$packageName"
-                Write-Host "set-output name=PACKAGE_NAME::$packageName"
-                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
+
+
+                $pname = $deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('/') + 1)
+
+                Write-Host "::set-output name=PACKAGE_NAME::$pname"
+                Write-Host "set-output name=PACKAGE_NAME::$pname"
+                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
 
                 Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
@@ -253,6 +257,11 @@ try {
         {
             throw "No X++ binary package(s) found"
         }
+
+
+        #Upload to LCS
+        #TODO
+
 
     }
 }
