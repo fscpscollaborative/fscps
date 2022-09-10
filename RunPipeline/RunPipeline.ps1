@@ -244,7 +244,7 @@ try {
                 #Upload to LCS
                 if($settings.uploadPackageToLCS)
                 {
-                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username $lcsUserNameSecretName -Password lcsPasswordSecretName -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username $lcsUserNameSecretName -Password $lcsPasswordSecretName -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     Invoke-D365LcsUpload -FilePath $deployablePackagePath -FileType "SoftwareDeployablePackage" -FileName $pname -Verbose
                 }
             }
