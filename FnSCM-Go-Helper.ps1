@@ -261,7 +261,7 @@ function ReadSettings {
         "templateBranch"                         = ""
         "githubRunner"                           = "windows-latest"
         "buildVersions"                          = ""
-        "UploadPackageToLCS"                     = $false
+        "uploadPackageToLCS"                     = $false
         "nugetFeedName"                          = ""
         "nugetFeedUserSecretName"                = ""
         "nugetFeedPasswordSecretName"            = ""
@@ -273,6 +273,8 @@ function ReadSettings {
         "metadataPath"                           = "PackagesLocalDirectory"
         "lcsProjectId"                           = 123456
         "lcsClientId"                            = ""
+        "lcsUserNameSecretName"                  = ""
+        "lcsPasswordSecretName"                  = ""
         "alwaysBuildAllProjects"                 = $false
         "deployablePackagePath"                  = "artifacts"
         "generatePackages"                       = $true

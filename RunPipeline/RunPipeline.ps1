@@ -55,7 +55,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $appBuild = $settings.appBuild
     $appRevision = $settings.appRevision
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName' | ForEach-Object {
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName', 'lcsUserNameSecretName', 'lcsPasswordSecretName' | ForEach-Object {
         $setValue = ""
         if($settings.ContainsKey($_))
         {
@@ -240,6 +240,13 @@ try {
                 Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
+
+                #Upload to LCS
+                if($settings.uploadPackageToLCS)
+                {
+                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username $lcsUserNameSecretName -Password lcsPasswordSecretName -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                    Invoke-D365LcsUpload -FilePath $deployablePackagePath -FileType "SoftwareDeployablePackage" -FileName $pname -Verbose
+                }
             }
             finally
             {
@@ -258,12 +265,8 @@ try {
             throw "No X++ binary package(s) found"
         }
 
-
-        #Upload to LCS
-        #TODO
-
-
     }
+
 }
 catch {
     OutputError -message $_.Exception.Message
