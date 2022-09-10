@@ -228,6 +228,14 @@ try {
                 [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::MergePackage("$xppToolsPath\BaseMetadataDeployablePackage.zip", $tempCombinedPackage, $deployablePackagePath, $true, [String]::Empty)
 
                 Write-Host "Deployable package '$deployablePackagePath' successfully created."
+
+                Write-Host "::set-output name=PACKAGE_NAME::$packageName"
+                Write-Host "set-output name=PACKAGE_NAME::$packageName"
+                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
+
+                Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
+                Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
+                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
             }
             finally
             {
