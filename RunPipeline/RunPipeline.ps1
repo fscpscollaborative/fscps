@@ -231,7 +231,7 @@ try {
 
 
 
-                $pname = $deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('/') + 1)
+                $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
 
                 Write-Host "::set-output name=PACKAGE_NAME::$pname"
                 Write-Host "set-output name=PACKAGE_NAME::$pname"
