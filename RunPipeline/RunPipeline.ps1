@@ -55,7 +55,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $appBuild = $settings.appBuild
     $appRevision = $settings.appRevision
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName', 'lcsUserNameSecretName', 'lcsPasswordSecretName' | ForEach-Object {
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUserNameSecretName','lcsPasswordSecretName' | ForEach-Object {
         $setValue = ""
         if($settings.ContainsKey($_))
         {
@@ -244,6 +244,11 @@ try {
                 #Upload to LCS
                 if($settings.uploadPackageToLCS)
                 {
+                    Write-Host "LCSUsername: " $lcsUserNameSecretName
+                    Write-Host "LCSPassword: " $lcsPasswordSecretName
+                    Write-Host "LCSClientId: " $settings.lcsClientId
+                    Write-Host "LCSProject: " $settings.lcsProjectId
+
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username $lcsUserNameSecretName -Password $lcsPasswordSecretName -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     Invoke-D365LcsUpload -FilePath $deployablePackagePath -FileType "SoftwareDeployablePackage" -FileName $pname -Verbose
                 }
