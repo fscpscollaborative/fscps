@@ -11,8 +11,8 @@ inputs:
     default: ${{ github.token }}
   version:
     description: The Dynamics Application Version
-    required: true
-    default: '10.0.27'
+    required: false
+    default: ''
   settingsJson:
     description: Settings from repository in compressed Json format
     required: false

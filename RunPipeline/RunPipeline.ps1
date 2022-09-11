@@ -3,7 +3,7 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
-    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $true)]
+    [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
     [string] $DynamicsVersion,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '{"AppBuild":"", "AppRevision":""}',
@@ -18,11 +18,37 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
+    #Use settings and secrets
+    Write-Host "======================================== Use settings and secrets"
+
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
+    $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
+    $appBuild = $settings.appBuild
+    $appRevision = $settings.appRevision
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUserNameSecretName','lcsPasswordSecretName' | ForEach-Object {
+        $setValue = ""
+        if($settings.ContainsKey($_))
+        {
+            $setValue = $settings."$_"
+        }
+        if ($secrets.ContainsKey($setValue)) {
+            $value = $secrets."$setValue"
+        }
+        else {
+            $value = "test"
+        }
+        Set-Variable -Name $_ -Value $value
+    }
 
     $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
 
     $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
 
+
+    if($DynamicsVersion -eq "")
+    {
+        $DynamicsVersion = $settings.buildVersions
+    }
     Foreach($version in $versions)
     {
         if($version.version -eq $DynamicsVersion)
@@ -47,28 +73,6 @@ try {
         $sharedFolder = $ENV:GITHUB_WORKSPACE
     }
     $workflowName = $env:GITHUB_WORKFLOW
-
-    #Use settings and secrets
-    Write-Host "======================================== Use settings and secrets"
-
-    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
-    $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
-    $appBuild = $settings.appBuild
-    $appRevision = $settings.appRevision
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUserNameSecretName','lcsPasswordSecretName' | ForEach-Object {
-        $setValue = ""
-        if($settings.ContainsKey($_))
-        {
-            $setValue = $settings."$_"
-        }
-        if ($secrets.ContainsKey($setValue)) {
-            $value = $secrets."$setValue"
-        }
-        else {
-            $value = "test"
-        }
-        Set-Variable -Name $_ -Value $value
-    }
 
     
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
