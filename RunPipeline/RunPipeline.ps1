@@ -242,6 +242,7 @@ try {
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
                 #Upload to LCS
+                $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
                     Write-Host "LCSUsername: " $lcsUserNameSecretName
@@ -250,8 +251,16 @@ try {
                     Write-Host "LCSProject: " $settings.lcsProjectId
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUserNameSecretName" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-                    Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -FileName "$pname" -Verbose
+                    $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
+
+                    #Deploy to LCS Environment
+                    if($settings.deploy)
+                    {
+
+                    }
+
                 }
+
             }
             finally
             {
