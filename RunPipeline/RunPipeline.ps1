@@ -50,10 +50,9 @@ try {
         if($settingsHash.Contains($_))
         {
             $setValue = $settingsHash."$_"
-            Write-Host "Found " $($_) "variable in the settings file with value:"($setValue)
         }
         if ($secrets.ContainsKey($setValue)) {
-            Write-Host "Found " $($_) "variable in the settings file"
+            Write-Host "Found " $($_) "variable in the settings file with value:"($setValue)
             $value = $secrets."$setValue"
         }
         else {
@@ -270,10 +269,6 @@ try {
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
-                    Write-Host "LCSUsername: " $lcsUsernameSecretname
-                    Write-Host "LCSPassword: " $lcsPasswordSecretName
-                    Write-Host "LCSClientId: " $settings.lcsClientId
-                    Write-Host "LCSProject: " $settings.lcsProjectId
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
@@ -284,13 +279,22 @@ try {
                         #Deploy asset to the LCS Environment
                         Write-Host "======================================== Deploy asset to the LCS Environment"
 
+                        $PSFObject = Invoke-D365LcsDeployment -AssetId $assetId -EnvironmentId $settings.lcsEnvironmentId -UpdateName "$pname"
 
+                        do {
+                            Start-Sleep -Seconds 10
+                            $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
 
-
+                            if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
+                                $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
+                                $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
+                                Write-Error $errorMessagePayload
+                            }
+                            Write-Host $deploymentStatus.OperationStatus, $deploymentStatus.CompletionDate
+                        }
+                        while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                     }
-
                 }
-
             }
             finally
             {
