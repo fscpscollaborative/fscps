@@ -44,10 +44,10 @@ try {
     #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
-    $settingsHash = $settings | ConvertTo-HashTable
+    $settingsHash = $settings #| ConvertTo-HashTable
     'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
         $setValue = ""
-        if($settingsHash.ContainsKey($_))
+        if($settingsHash.Contains($_))
         {
             $setValue = $settingsHash."$_"
         }
