@@ -29,15 +29,15 @@ try {
 
     Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
     #merge environment settings into current Settings
-    if($EnvironmentName -ne "")
+    if($EnvironmentName)
     {
-        $environments | ForEach-Object
-        {
-            if($_.name -eq $EnvironmentName)
+            ForEach($env in $envsFile)
             {
-                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $_.settings
+                if($env.name -eq $EnvironmentName)
+                {
+                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+                }
             }
-        }
     }
 
     Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId

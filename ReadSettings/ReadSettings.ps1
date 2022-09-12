@@ -76,13 +76,13 @@ try {
 
         Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
         #merge environment settings into current Settings
-        if($dynamicsEnvironment )
+        if($dynamicsEnvironment)
         {
-            $envsFile | ForEach-Object
+            ForEach($env in $envsFile)
             {
-                if($_.name -eq $EnvironmentName)
+                if($env.name -eq $dynamicsEnvironment)
                 {
-                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $_.settings
+                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
                 }
             }
         }
