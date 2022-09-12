@@ -23,11 +23,9 @@ try {
     #Use settings and secrets
     Write-Host "======================================== Use settings and secrets"
 
-
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
     $environments = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
-
-    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
     #merge environment settings into current Settings

@@ -7,6 +7,8 @@ Param(
     [string] $dynamicsVersion = "",
     [Parameter(HelpMessage = "Specifies which properties to get from the settings file, default is all", Mandatory = $false)]
     [string] $get = ""
+    [Parameter(HelpMessage = "Merge settings from specific environment", Mandatory = $false)]
+    [string] $dynamicsEnvironment = "",
 )
 
 $ErrorActionPreference = "Stop"
@@ -37,6 +39,11 @@ try {
     if ($settings.appBuild -eq [int32]::MaxValue) {
         $settings.versioningStrategy = 15
     }
+
+
+
+
+
 
     if ($settings.versioningstrategy -ne -1) {
         if ($getSettings -contains 'appBuild' -or $getSettings -contains 'appRevision') {
@@ -100,36 +107,30 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
 
-        if ($getenvironments) {
-        $environments = @()
-        try { 
-            $headers = @{ 
-                "Authorization" = "token $token"
-                "Accept"        = "application/vnd.github.v3+json"
+    if ($dynamicsEnvironment -ne "") {
+
+        $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
+        $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
+
+        Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
+        #merge environment settings into current Settings
+        if($dynamicsEnvironment )
+        {
+            $envsFile | ForEach-Object
+            {
+                if($_.name -eq $EnvironmentName)
+                {
+                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $_.settings
+                }
             }
-            $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
-            $environments = @((Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json).environments | ForEach-Object { $_.Name })
         }
-        catch {
-        }
-        $environments = @($environments+@($settings.Environments) | Where-Object { 
-            if ($includeProduction) {
-                $_ -like $getEnvironments -or $_ -like "$getEnvironments (PROD)" -or $_ -like "$getEnvironments (Production)" -or $_ -like "$getEnvironments (FAT)" -or $_ -like "$getEnvironments (Final Acceptance Test)"
-            }
-            else {
-                $_ -like $getEnvironments -and $_ -notlike '* (PROD)' -and $_ -notlike '* (Production)' -and $_ -notlike '* (FAT)' -and $_ -notlike '* (Final Acceptance Test)'
-            }
-        })
-        if ($environments.Count -eq 1) {
-            $environmentsJSon = "[$($environments | ConvertTo-Json -compress)]"
-        }
-        else {
-            $environmentsJSon = $environments | ConvertTo-Json -compress
-        }
+
+        Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
+
+        $environments = @($envsFile | ForEach-Object { $_.Name })
+        $environmentsJSon = $environments | ConvertTo-Json -compress
         Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
         Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
-        Write-Host "::set-output name=EnvironmentCount::$($environments.Count)"
-        Write-Host "set-output name=EnvironmentCount::$($environments.Count)"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
 }

@@ -17,6 +17,10 @@ inputs:
     description: Specifies which properties to get from the settings file, default is all
     required: false
     default: ''
+  environment:
+    description: Merge settings from specific environment
+    required: false
+    default: ''
 outputs:
   SettingsJson:
     description: Settings in compressed Json format
@@ -36,7 +40,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsEnvironment '${{ inputs.environment }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: readsettings
       shell: PowerShell
 branding:
