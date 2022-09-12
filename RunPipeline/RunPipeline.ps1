@@ -59,7 +59,7 @@ try {
         }
         Set-Variable -Name $_ -Value $value
     }
-
+    $settings
     $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
 
     $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
@@ -179,7 +179,7 @@ try {
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
-        $xppBinariesSearch = Join-Path (Join-Path $($buildPath) bin) $settings.modelsIntoPackagePattern
+        $xppBinariesSearch = W$settings.modelsIntoPackagePattern
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($packageName)
 
 
@@ -268,12 +268,12 @@ try {
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
-                    Write-Host "LCSUsername: " $lcsUserNameSecretName
+                    Write-Host "LCSUsername: " $lcsUsernameSecretname
                     Write-Host "LCSPassword: " $lcsPasswordSecretName
                     Write-Host "LCSClientId: " $settings.lcsClientId
                     Write-Host "LCSProject: " $settings.lcsProjectId
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUserNameSecretName" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
 
                     #Deploy asset to the LCS Environment
