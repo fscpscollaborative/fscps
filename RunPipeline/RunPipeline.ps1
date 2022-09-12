@@ -35,7 +35,7 @@ try {
         {
             if($env.name -eq $EnvironmentName)
             {
-                MergeCustomObjectIntoOrderedDictionary -dst $settingsTemp -src $env.settings
+                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
             }
         }
     }
