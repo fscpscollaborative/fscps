@@ -179,7 +179,7 @@ try {
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
-        $xppBinariesSearch = W$settings.modelsIntoPackagePattern
+        $xppBinariesSearch = $settings.modelsIntoPackagePattern
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($packageName)
 
 
