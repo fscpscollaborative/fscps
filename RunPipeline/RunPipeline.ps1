@@ -39,14 +39,15 @@ try {
             }
         }
     }
-    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
+    $settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
+    $settingsHash = $settings | ConvertTo-HashTable
     'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
         $setValue = ""
-        if($settings.ContainsKey($_))
+        if($settingsHash.ContainsKey($_))
         {
-            $setValue = $settings."$_"
+            $setValue = $settingsHash."$_"
         }
         if ($secrets.ContainsKey($setValue)) {
             $value = $secrets."$setValue"
