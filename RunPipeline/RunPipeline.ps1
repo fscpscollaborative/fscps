@@ -27,7 +27,7 @@ try {
     $environmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
     $environments = (Get-Content $environmentsFile) | ConvertFrom-Json
 
-    $settingsTemp = $settingsJson | ConvertFrom-Json
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     #merge environment settings into current Settings
     if($EnvironmentName)
     {
@@ -39,7 +39,7 @@ try {
             }
         }
     }
-    $settings = $settingsTemp | ConvertTo-HashTable
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
