@@ -1,7 +1,7 @@
 Param(
 
     [Parameter(HelpMessage = "Settings from template repository in compressed Json format", Mandatory = $false)]
-    [string] $settingsJson = '{"keyVaultName": ""}',
+    [string] $settingsJson = '',
     [Parameter(HelpMessage = "Comma separated list of Secrets to get", Mandatory = $false)]
     [string] $secrets = ""
 )
@@ -19,14 +19,6 @@ try {
     $outSecrets = [ordered]@{}
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $outSettings = $settings
-    $keyVaultName = $settings.KeyVaultName
-    if ([string]::IsNullOrEmpty($keyVaultName) -and (IsKeyVaultSet)) {
-        $credentialsJson = Get-KeyVaultCredentials | ConvertTo-HashTable
-        $credentialsJson.Keys | ForEach-Object { MaskValueInLog -value $credentialsJson."$_" }
-        if ($credentialsJson.ContainsKey("KeyVaultName")) {
-            $keyVaultName = $credentialsJson.KeyVaultName
-        }
-    }
 
     if($secrets -eq "")
     {
@@ -52,7 +44,7 @@ try {
         }
 
         if ($secret) {
-            $value = GetSecret -secret $secret -keyVaultName $keyVaultName
+            $value = GetSecret -secret $secret 
             if ($value) {
                 Add-Content -Path $env:GITHUB_ENV -Value "$envVar=$value"
                 $outSecrets += @{ "$envVar" = $value }
