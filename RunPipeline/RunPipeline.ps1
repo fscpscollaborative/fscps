@@ -50,8 +50,10 @@ try {
         if($settingsHash.Contains($_))
         {
             $setValue = $settingsHash."$_"
+            Write-Host "Found " $($_) "variable in the settings file with value:"($setValue)
         }
         if ($secrets.ContainsKey($setValue)) {
+            Write-Host "Found " $($_) "variable in the settings file"
             $value = $secrets."$setValue"
         }
         else {
