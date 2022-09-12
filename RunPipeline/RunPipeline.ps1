@@ -316,7 +316,7 @@ try {
 
 
                     #Startup environment
-                    if($PowerState != "running")
+                    if($PowerState -ne "running")
                     {
                         Write-Host "======================================== Start $($EnvironmentName)"
                         Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
@@ -345,7 +345,7 @@ try {
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                     }
 
-                    if($PowerState != "running")
+                    if($PowerState -ne "running")
                     {
                         Write-Host "======================================== Stop $($EnvironmentName)"
                         Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
