@@ -23,12 +23,13 @@ try {
     #Use settings and secrets
     Write-Host "======================================== Use settings and secrets"
 
-    
+
     $environmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
     $environments = (Get-Content $environmentsFile) | ConvertFrom-Json
 
-    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-OrderedDictionary
     #merge environment settings into current Settings
+    Write-Host "Merge environment settings into current Settings"
     if($EnvironmentName)
     {
         ForEach($env in $environments)
@@ -39,6 +40,7 @@ try {
             }
         }
     }
+
     $settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
