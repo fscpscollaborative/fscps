@@ -37,6 +37,9 @@ outputs:
   EnvironmentCount:
     description: Number of environments in array
     value: ${{ steps.readsettings.outputs.EnvironmentCount }}
+  source_branch:
+    description: Source branch
+    value: ${{ steps.readsettings.outputs.SOURCE_BRANCH }}
 runs:
   using: composite
   steps:

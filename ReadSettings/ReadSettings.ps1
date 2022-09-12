@@ -86,6 +86,17 @@ try {
                 }
             }
         }
+        if($settings.branch){
+            $sourceBranch = $settings.branch;
+        }
+        else
+        {
+            $sourceBranch = $settings.currentBranch;
+        }
+
+        Write-Host "::set-output name=SOURCE_BRANCH::$sourceBranch"
+        Write-Host "set-output name=SOURCE_BRANCH::$sourceBranch"
+        Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
 
         $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
         Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
