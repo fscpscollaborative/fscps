@@ -6,9 +6,9 @@ Param(
     [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
     [string] $dynamicsVersion = "",
     [Parameter(HelpMessage = "Specifies which properties to get from the settings file, default is all", Mandatory = $false)]
-    [string] $get = ""
+    [string] $get = "",
     [Parameter(HelpMessage = "Merge settings from specific environment", Mandatory = $false)]
-    [string] $dynamicsEnvironment = "",
+    [string] $dynamicsEnvironment = ""
 )
 
 $ErrorActionPreference = "Stop"
