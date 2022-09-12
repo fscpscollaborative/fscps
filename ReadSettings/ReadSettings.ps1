@@ -69,12 +69,12 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
 
-    if ($dynamicsEnvironment -ne "") {
+    $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
+    $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
-        $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
-        $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
-        Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
+    if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
+    {
         #merge environment settings into current Settings
         if($dynamicsEnvironment)
         {
@@ -87,14 +87,20 @@ try {
             }
         }
 
-        Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
-
+        $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+        Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
+        Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
+        Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
+    }
+    else    
+    {
         $environments = @($envsFile | ForEach-Object { $_.Name })
         $environmentsJSon = $environments | ConvertTo-Json -compress
         Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
         Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
+
 }
 catch {
     OutputError -message $_.Exception.Message
