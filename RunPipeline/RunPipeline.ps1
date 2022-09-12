@@ -23,21 +23,22 @@ try {
     #Use settings and secrets
     Write-Host "======================================== Use settings and secrets"
 
-    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
+    
     $environmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
     $environments = (Get-Content $environmentsFile) | ConvertFrom-Json
 
     #merge environment settings into current Settings
     if($EnvironmentName)
     {
-            ForEach($env in $environments)
+        ForEach($env in $environments)
+        {
+            if($env.name -eq $EnvironmentName)
             {
-                if($env.name -eq $EnvironmentName)
-                {
-                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
-                }
+                MergeCustomObjectIntoOrderedDictionary -dst $settingsJson -src $env.settings
             }
+        }
     }
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
