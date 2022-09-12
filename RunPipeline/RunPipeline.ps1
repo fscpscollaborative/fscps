@@ -174,6 +174,19 @@ try {
     #GeneratePackages
     if($settings.generatePackages)
     {
+        #check nuget instalation
+        $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
+        $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
+
+        if([string]::IsNullOrEmpty($Az))
+        {
+            Install-Module -Name AZ -AllowClobber -Scope CurrentUser -Force -Confirm:$False -SkipPublisherCheck
+        }
+        if([string]::IsNullOrEmpty($DfoTools))
+        {
+            Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
+        }
+
         Write-Host "======================================== Generate packages"
 
         $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
@@ -273,6 +286,43 @@ try {
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
 
+                    #Check environment status
+                    Write-Host "======================================== Check $($EnvironmentName) status"
+
+                    $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
+                    $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
+
+
+                    Write-Host "Check az cli installation..."
+                    if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
+                    {
+                        Write-Host "az cli installing.."
+                        $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                        Write-Host "az cli installed.."
+                    }
+
+                    Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+                    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p $azClientsecretSecretname --tenant $settings.azTenantId
+
+                    $PowerState = ""
+                    if ($AzureRMAccount) { 
+                        #Do Logic
+                        Write-Host "== Logged in == $($settings.azTenantId) "
+
+                        Write-Host "Getting Azure VM State $($settings.azVmname)"
+                        $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
+                        Write-Host "....state is" $PowerState
+                    }
+
+
+                    #Startup environment
+                    if($PowerState != "running")
+                    {
+                        Write-Host "======================================== Start $($EnvironmentName)"
+                        Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
+                    }
+
+
                     #Deploy asset to the LCS Environment
                     if($settings.deploy)
                     {
@@ -293,6 +343,12 @@ try {
                             Write-Host $deploymentStatus.OperationStatus, $deploymentStatus.CompletionDate
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
+                    }
+
+                    if($PowerState != "running")
+                    {
+                        Write-Host "======================================== Stop $($EnvironmentName)"
+                        Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                     }
                 }
             }
