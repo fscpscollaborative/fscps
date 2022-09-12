@@ -330,7 +330,7 @@ try {
                         #Deploy asset to the LCS Environment
                         Write-Host "======================================== Deploy asset to the LCS Environment"
 
-                        $PSFObject = Invoke-D365LcsDeployment -AssetId $assetId -EnvironmentId $settings.lcsEnvironmentId -UpdateName "$pname"
+                        $PSFObject = Invoke-D365LcsDeployment -AssetId "$assetId.AssetId" -EnvironmentId "$settings.lcsEnvironmentId" -UpdateName "$pname"
 
                         do {
                             Start-Sleep -Seconds 10
