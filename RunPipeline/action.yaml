@@ -20,7 +20,7 @@ inputs:
   settingsJson:
     description: Settings from repository in compressed Json format
     required: false
-    default: '{"AppBuild":0,"AppRevision":0}'
+    default: ''
   secretsJson:
     description: Secrets from repository in compressed Json format
     required: false
