@@ -45,7 +45,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname' | ForEach-Object {
         $setValue = ""
         if($settingsHash.Contains($_))
         {
@@ -271,11 +271,11 @@ try {
                 if($settings.uploadPackageToLCS)
                 {
                     Write-Host "LCSUsername: " $lcsUsernameSecretname
-                    Write-Host "LCSPassword: " $lcsPasswordSecretName
+                    Write-Host "LCSPassword: " $lcsPasswordSecretname
                     Write-Host "LCSClientId: " $settings.lcsClientId
                     Write-Host "LCSProject: " $settings.lcsProjectId
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretname" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
 
                     #Deploy asset to the LCS Environment
