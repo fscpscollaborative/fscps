@@ -260,6 +260,7 @@ function ReadSettings {
         "nugetPackagesPath"                      = "NuGets"
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
+        "lcsEnvironmentId"                       = ""
         "lcsProjectId"                           = 123456
         "lcsClientId"                            = ""
         "lcsUsernameSecretname"                  = ""
