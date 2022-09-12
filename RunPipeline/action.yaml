@@ -13,6 +13,10 @@ inputs:
     description: The Dynamics Application Version
     required: false
     default: ''
+  environment_name:
+    description: The Dynamics Application Version
+    required: false
+    default: ''
   settingsJson:
     description: Settings from repository in compressed Json format
     required: false
@@ -31,7 +35,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}'  -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}' -EnvironmentName '${{ inputs.environment_name }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: runpipeline
       shell: PowerShell
 branding:

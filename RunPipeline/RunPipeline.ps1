@@ -5,10 +5,12 @@ Param(
     [string] $token,
     [Parameter(HelpMessage = "DynamicsVersion", Mandatory = $false)]
     [string] $DynamicsVersion,
+    [Parameter(HelpMessage = "Environment name o deploy", Mandatory = $false)]
+    [string] $EnvironmentName,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
-    [string] $settingsJson = '{"AppBuild":"", "AppRevision":""}',
+    [string] $settingsJson = '',
     [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
-    [string] $secretsJson = '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePassword":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePassword":"","KeyVaultClientId":"","StorageContext":"","ApplicationInsightsConnectionString":""}'
+    [string] $secretsJson = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -21,11 +23,29 @@ try {
     #Use settings and secrets
     Write-Host "======================================== Use settings and secrets"
 
+
+    $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
+    $environments = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
+
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
+
+    Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
+    #merge environment settings into current Settings
+    if($EnvironmentName -ne "")
+    {
+        $environments | ForEach-Object
+        {
+            if($_.name -eq $EnvironmentName)
+            {
+                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $_.settings
+            }
+        }
+    }
+
+    Write-Host "lcsEnvironmentId: "$settings.lcsEnvironmentId
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
-    $appBuild = $settings.appBuild
-    $appRevision = $settings.appRevision
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUserNameSecretName','lcsPasswordSecretName' | ForEach-Object {
+
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretName','azClientsecretSecretname' | ForEach-Object {
         $setValue = ""
         if($settings.ContainsKey($_))
         {
@@ -233,8 +253,6 @@ try {
 
                 Write-Host "Deployable package '$deployablePackagePath' successfully created."
 
-
-
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
 
                 Write-Host "::set-output name=PACKAGE_NAME::$pname"
@@ -246,6 +264,7 @@ try {
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
                 #Upload to LCS
+                Write-Host "======================================== Upload artifact to the LCS"
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
@@ -257,9 +276,14 @@ try {
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUserNameSecretName" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
 
-                    #Deploy to LCS Environment
+                    #Deploy asset to the LCS Environment
                     if($settings.deploy)
                     {
+                        #Deploy asset to the LCS Environment
+                        Write-Host "======================================== Deploy asset to the LCS Environment"
+
+
+
 
                     }
 

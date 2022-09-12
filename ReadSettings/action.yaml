@@ -9,18 +9,6 @@ inputs:
     description: The GitHub token running the action
     required: false
     default: ${{ github.token }}
-  getenvironments:
-    description: Specifies the pattern of the environments you want to retreive (or empty for no environments)
-    required: false
-    default: ''
-  includeProduction:
-    description: Specifies whether you want to include production environments
-    required: false
-    default: 'N'
-  release:
-    description: Indicates whether this is called from a release pipeline
-    required: false
-    default: 'N'
   version:
     description: The Dynamics Application Version
     required: true
@@ -48,7 +36,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -getenvironments '${{ inputs.getenvironments }}' -includeProduction ('${{ inputs.includeProduction }}' -eq 'Y') -release ('${{ inputs.release }}' -eq 'Y') -get '${{ inputs.get }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: readsettings
       shell: PowerShell
 branding:
