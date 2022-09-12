@@ -302,7 +302,7 @@ try {
                     }
 
                     Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-                    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p $azClientsecretSecretname --tenant $settings.azTenantId
+                    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
 
                     $PowerState = ""
                     if ($AzureRMAccount) { 
@@ -320,6 +320,7 @@ try {
                     {
                         Write-Host "======================================== Start $($EnvironmentName)"
                         Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
+                        Start-Sleep -Seconds 60
                     }
 
 
