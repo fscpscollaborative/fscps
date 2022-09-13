@@ -68,8 +68,14 @@ try {
 
     if($DynamicsVersion -eq "")
     {
-        $DynamicsVersion = $settings.buildVersions
+        $DynamicsVersion = $settings.buildVersion
     }
+
+    if($settings.sourceBranch -eq "")
+    {
+        $settings.sourceBranch = $settings.currentBranch
+    }
+    
     Foreach($version in $versions)
     {
         if($version.version -eq $DynamicsVersion)
@@ -189,7 +195,7 @@ try {
 
         Write-Host "======================================== Generate packages"
 
-        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $settings.currentBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
+        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $settings.sourceBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)

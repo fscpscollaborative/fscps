@@ -242,14 +242,14 @@ function ReadSettings {
         "artifact"                               = ""
         "companyName"                            = ""
         "currentBranch"                          = $branchName
-        "repoVersion"                            = "1.0"
+        "sourceBranch"                           = ""
         "repoName"                               = $repoName
         "versioningStrategy"                     = 0
         "failOn"                                 = "error"
         "templateUrl"                            = ""
         "templateBranch"                         = ""
         "githubRunner"                           = "windows-latest"
-        "buildVersions"                          = ""
+        "buildVersion"                           = ""
         "uploadPackageToLCS"                     = $false
         "nugetFeedName"                          = ""
         "nugetFeedUserSecretName"                = ""
@@ -268,8 +268,8 @@ function ReadSettings {
         "azTenantId"                             = ""
         "azClientId"                             = ""
         "azClientsecretSecretname"               = ""
-        "azVmname"                              = ""
-        "azVmrg"                                = ""
+        "azVmname"                               = ""
+        "azVmrg"                                 = ""
         "alwaysBuildAllProjects"                 = $false
         "deployablePackagePath"                  = "artifacts"
         "generatePackages"                       = $true

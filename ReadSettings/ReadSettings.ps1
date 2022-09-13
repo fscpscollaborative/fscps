@@ -29,7 +29,7 @@ try {
 
     if($DynamicsVersion -ne "*")
     {
-        $settings.buildVersions = $DynamicsVersion
+        $settings.buildVersion = $DynamicsVersion
     }
         
     if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
@@ -54,16 +54,16 @@ try {
 
 
 
-    if($settings.buildVersions.Contains(','))
+    if($settings.buildVersion.Contains(','))
     {
-        $versionsJSon = $settings.buildVersions.Split(',') | ConvertTo-Json -compress
+        $versionsJSon = $settings.buildVersion.Split(',') | ConvertTo-Json -compress
         Write-Host "::set-output name=VersionsJson::$versionsJSon"
         Write-Host "set-output name=VersionsJson::$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
     else
     {
-        $versionsJSon = '["'+$($settings.buildVersions).ToString()+'"]'
+        $versionsJSon = '["'+$($settings.buildVersion).ToString()+'"]'
         Write-Host "::set-output name=VersionsJson::$versionsJSon"
         Write-Host "set-output name=VersionsJson::$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
