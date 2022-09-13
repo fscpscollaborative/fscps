@@ -183,7 +183,7 @@ try {
             /p:OutputDirectory=$msOutputDirectory 
     
     if (($lastexitcode -ne 0) -and $ErrorAction -eq "Stop") {
-        exit $lastexitcode
+        throw $lastexitcode
     }
     Write-Output "::endgroup::"
 
