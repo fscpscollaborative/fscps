@@ -19,6 +19,17 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
+
+    $fgColors = '30','31','32','33','34','35','36','37'
+$bgColors = '40','41','42','43','44','45','46','47'
+
+foreach ($fgColor in $fgColors)
+{
+    $bgColor = $bgColors | Get-Random
+    Write-Output "`e[$($fgColor)m#PS7`e[0m`e[30;$($bgColor)m Now `e[0m`e[7;$($fgColor);$($bgColor)m >_ `e[0m"
+}
+
+
     $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $env:GITHUB_WORKFLOW
     if ($get) {
         $getSettings = $get.Split(',').Trim()
