@@ -182,7 +182,9 @@ try {
             /p:ReferencePath=$msReferencePath `
             /p:OutputDirectory=$msOutputDirectory 
     
-    Write-Host "ExitCode  $LastExitCode"
+    if (($lastexitcode -ne 0) -and $ErrorAction -eq "Stop") {
+        exit $lastexitcode
+    }
     Write-Output "::endgroup::"
 
     #GeneratePackages
