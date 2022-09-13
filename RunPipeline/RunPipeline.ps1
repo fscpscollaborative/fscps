@@ -51,9 +51,9 @@ try {
         {
             $setValue = $settingsHash."$_"
         }
-        if ($secrets.ContainsKey($setValue)) {
-            $message = "Found " $($_) "variable in the settings file with value:"($setValue)
-            OutputInfo $message
+        if ($secrets.ContainsKey($setValue)) 
+        {
+            OutputInfo "Found $($_) variable in the settings file with value: ($setValue)"
             $value = $secrets."$setValue"
         }
         else {
@@ -135,11 +135,11 @@ try {
 
     if(Test-Path $packagesFilePath)
     {
-        OutputInfo "Found packages.config file at path: " $packagesFilePath
+        OutputInfo "Found packages.config file at path:  $packagesFilePath "
     }
     else
     {
-        OutputInfo "Not Found packages.config file at path:" $packagesFilePath
+        OutputInfo "Not Found packages.config file at path: $packagesFilePath "
     }
     cd $buildPath
     cd NewBuild
@@ -149,8 +149,8 @@ try {
     
     #Copy dll`s to build folder
     OutputInfo "======================================== Copy dll`s to build folder"
-    OutputInfo "Source path: " (Join-Path $($buildPath) $($settings.metadataPath))
-    OutputInfo "Destination path: " (Join-Path $($buildPath) bin)
+    OutputInfo "Source path: (Join-Path $($buildPath) $($settings.metadataPath))"
+    OutputInfo "Destination path: (Join-Path $($buildPath) bin)"
 
 
     Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
@@ -367,7 +367,7 @@ try {
                                 $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                                 Write-Error $errorMessagePayload
                             }
-                            OutputInfo $deploymentStatus.OperationStatus, $deploymentStatus.CompletionDate
+                            OutputInfo "$($deploymentStatus.OperationStatus), $($deploymentStatus.CompletionDate)"
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                     
