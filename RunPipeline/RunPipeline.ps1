@@ -174,13 +174,14 @@ Set-StrictMode -Version 2.0
     Set-Content $buidPropsFile $tempFile
 
 
-    & msbuild NewBuild\Build\Build.sln  `
+    $msbuildOutput =  msbuild NewBuild\Build\Build.sln  `
             /p:BuildTasksDirectory=$msBuildTasksDirectory `
             /p:MetadataDirectory=$msMetadataDirectory `
             /p:FrameworkDirectory=$msFrameworkDirectory `
             /p:ReferencePath=$msReferencePath `
             /p:OutputDirectory=$msOutputDirectory 
     
+    Write-Host $msbuildOutput
     Write-Output "::endgroup::"
 
     #GeneratePackages
