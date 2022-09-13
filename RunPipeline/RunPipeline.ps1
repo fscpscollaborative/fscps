@@ -52,7 +52,7 @@ try {
             $setValue = $settingsHash."$_"
         }
         if ($secrets.ContainsKey($setValue)) {
-            OutputInfo "Found " $($_) "variable in the settings file with value:"($setValue)
+            OutputInfo $("Found " $($_) "variable in the settings file with value:"($setValue))
             $value = $secrets."$setValue"
         }
         else {
