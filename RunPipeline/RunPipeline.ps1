@@ -174,18 +174,13 @@ try {
     $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
     Set-Content $buidPropsFile $tempFile
 
-    try{
-        msbuild NewBuild\Build\Build.sln  `
-             /p:BuildTasksDirectory=$msBuildTasksDirectory `
-             /p:MetadataDirectory=$msMetadataDirectory `
-             /p:FrameworkDirectory=$msFrameworkDirectory `
-             /p:ReferencePath=$msReferencePath `
-             /p:OutputDirectory=$msOutputDirectory 
-    }
-    catch
-    {
-        Write-Host $_
-    }
+
+    dotnet msbuild NewBuild\Build\Build.sln  `
+            /p:BuildTasksDirectory=$msBuildTasksDirectory `
+            /p:MetadataDirectory=$msMetadataDirectory `
+            /p:FrameworkDirectory=$msFrameworkDirectory `
+            /p:ReferencePath=$msReferencePath `
+            /p:OutputDirectory=$msOutputDirectory 
 
     Write-Output "::endgroup::"
 
