@@ -24,23 +24,8 @@ try {
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
-
-    $environmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
-    $environments = (Get-Content $environmentsFile) | ConvertFrom-Json
-
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-    #merge environment settings into current Settings
-    OutputInfo "Merge environment settings into current Settings"
-    if($EnvironmentName)
-    {
-        ForEach($env in $environments)
-        {
-            if($env.name -eq $EnvironmentName)
-            {
-                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
-            }
-        }
-    }
+
 
     #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
