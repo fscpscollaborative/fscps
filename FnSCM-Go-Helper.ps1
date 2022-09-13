@@ -95,7 +95,7 @@ function OutputInfo {
     param (
         [string]$Message
     )
-        filter timestamp {"$(Get-Date -Format o): $_"}
+        filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:MM:ss)]: $_"}
         Write-Host -ForegroundColor Green ($Message | timestamp)
 }
 function OutputDebug {

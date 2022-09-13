@@ -295,12 +295,12 @@ try {
 
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
 
-                OutputInfo "::set-output name=PACKAGE_NAME::$pname"
-                OutputInfo "set-output name=PACKAGE_NAME::$pname"
+                Write-Host "::set-output name=PACKAGE_NAME::$pname"
+                Write-Host "set-output name=PACKAGE_NAME::$pname"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
 
-                OutputInfo "::set-output name=PACKAGE_PATH::$deployablePackagePath"
-                OutputInfo "set-output name=PACKAGE_PATH::$deployablePackagePath"
+                Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
+                Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
                 #Upload to LCS
