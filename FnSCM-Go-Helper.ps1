@@ -96,8 +96,9 @@ function OutputInfo {
         [string]$Message
     )
         filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:MM:ss)]: $_"}
-        Write-FormattedOutput -ForegroundColor Green  ($Message | timestamp)
+        Write-InfoInColor  ($Message | timestamp)
 }
+
 function OutputDebug {
     Param(
         [string] $message
@@ -111,36 +112,54 @@ function OutputDebug {
     }
 }
 
-function Write-FormattedOutput
+function Write-InfoInColor
 {
     [CmdletBinding()]
-    Param(
-         [Parameter(Mandatory=$True,Position=1,ValueFromPipeline=$True,ValueFromPipelinebyPropertyName=$True)][Object] $Object,
-         [Parameter(Mandatory=$False)][ConsoleColor] $BackgroundColor,
-         [Parameter(Mandatory=$False)][ConsoleColor] $ForegroundColor
-    )    
-
-    # save the current color
-    $bc = $host.UI.RawUI.BackgroundColor
-    $fc = $host.UI.RawUI.ForegroundColor
-
-    # set the new color
-    if($BackgroundColor -ne $null)
-    { 
-       $host.UI.RawUI.BackgroundColor = $BackgroundColor
-    }
-
-    if($ForegroundColor -ne $null)
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]$Message,
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [System.ConsoleColor[]]$Background = $Host.UI.RawUI.BackgroundColor,
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [System.ConsoleColor[]]$Foreground = $Host.UI.RawUI.ForegroundColor,
+        [Switch]$NoNewline
+    )
+    BEGIN
+    {}
+    PROCESS
     {
-        $host.UI.RawUI.ForegroundColor = $ForegroundColor
-    }
+        try
+        {
+            if($Foreground -eq -1)
+            {
+                $Foreground = [System.ConsoleColor]::White
+            }
+            if($Background -eq -1)
+            {
+                $Background = [System.ConsoleColor]::DarkGreen
+            }
 
-    Write-Output $Object
-  
-    # restore the original color
-    $host.UI.RawUI.BackgroundColor = $bc
-    $host.UI.RawUI.ForegroundColor = $fc
-}
+            [System.Management.Automation.HostInformationMessage]$outMessage = @{
+                Message                    = $Message
+                ForegroundColor            = $Foreground
+                BackgroundColor            = $Background
+                NoNewline                = $NoNewline
+            }
+            Write-Information $outMessage -InformationAction Continue
+        }
+        catch
+        {
+            Throw $("ERROR OCCURRED WHILE EXECUTING: " + $_.Exception.Message)
+        }
+    }
+    END
+    {}
+} 
+
 
 
 function GetUniqueFolderName {

@@ -357,17 +357,25 @@ try {
                         OutputInfo "======================================== Deploy asset to the LCS Environment"
                         $WaitForCompletion = $true
                         $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
-
+                        $errorCnt = 0
                         do {
                             Start-Sleep -Seconds 10
                             $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
 
-                            if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
-                                $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
-                                $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                                Write-Error $errorMessagePayload
+                            if (($deploymentStatus.ErrorMessage))
+                            {
+                                $errorCnt++
                             }
-                            OutputInfo "$($deploymentStatus.OperationStatus), $($deploymentStatus.CompletionDate)"
+                            if($errorCnt -eq 3)
+                            {
+                                if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
+                                    $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
+                                    $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
+                                    Write-Error $errorMessagePayload
+                                }
+                            }
+                            
+                            Write-Host $($deploymentStatus.OperationStatus), $($deploymentStatus.CompletionDate)
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                     
