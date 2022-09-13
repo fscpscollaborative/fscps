@@ -16,7 +16,7 @@ Param(
 Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
-try {
+#try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
     $LastExitCode = 0
     #Use settings and secrets
@@ -415,8 +415,8 @@ try {
             throw "No X++ binary package(s) found"
         }
     }
-}
-catch {
-    OutputError -message $_.Exception.Message
-}
+#}
+#catch {
+#    OutputError -message $_.Exception.Message
+#}
 
