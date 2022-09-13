@@ -21,6 +21,7 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
     #Use settings and secrets
+    Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
 
@@ -105,32 +106,46 @@ try {
 
     
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
+    Write-Output "::endgroup::"
     #Generate solution folder
+    Write-Output "::group::Generate solution folder"
     OutputInfo "======================================== Generate solution folder"
     GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Cleanup Build folder"
     OutputInfo "======================================== Cleanup Build folder"
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Copy branch files"
     OutputInfo "======================================== Copy branch files"
     #Copy branch files
     New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Copy solution folder"
     OutputInfo "======================================== Copy solution folder"
     #Copy solution folder
     Copy-Item NewBuild -Destination $buildPath -Recurse -Force
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Cleanup NuGet"
     OutputInfo "======================================== Cleanup NuGet"
     #Cleanup NuGet
     nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Nuget add source"
     OutputInfo "======================================== Nuget add source"
     #Nuget add source
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
    
     $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
-    
+    Write-Output "::endgroup::"
+
+    Write-Output "::group::Nuget install packages"
     OutputInfo "======================================== Nuget install packages"
 
     if(Test-Path $packagesFilePath)
@@ -145,8 +160,10 @@ try {
     cd NewBuild
     #Nuget install packages
     nuget restore -PackagesDirectory ..\NuGets
+    Write-Output "::endgroup::"
 
-    
+
+    Write-Output "::group::Copy dll`s to build folder"
     #Copy dll`s to build folder
     OutputInfo "======================================== Copy dll`s to build folder"
     OutputInfo "Source path: (Join-Path $($buildPath) $($settings.metadataPath))"
@@ -154,7 +171,9 @@ try {
 
 
     Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
+    Write-Output "::endgroup::"
 
+    Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
     cd $buildPath
@@ -178,10 +197,14 @@ try {
          /p:OutputDirectory=$msOutputDirectory 
 
 
+    Write-Output "::endgroup::"
+
 
     #GeneratePackages
     if($settings.generatePackages)
     {
+        Write-Output "::group::Generate packages"
+        OutputInfo "======================================== Generate packages"
         #check nuget instalation
         $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
         $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
@@ -195,7 +218,6 @@ try {
             Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
         }
 
-        OutputInfo "======================================== Generate packages"
 
 
         $packageNamePattern = $settings.packageNamePattern;
@@ -303,18 +325,24 @@ try {
                 Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
+                Write-Output "::endgroup::"
+
+
                 #Upload to LCS
-                OutputInfo "======================================== Upload artifact to the LCS"
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
+                    Write-Output "::group::Upload artifact to the LCS"
+                    OutputInfo "======================================== Upload artifact to the LCS"
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-                    
+                    Write-Output "::endgroup::"
+
                     #Deploy asset to the LCS Environment
                     if($settings.deploy)
                     {
+                        Write-Output "::group::Deploy asset to the LCS Environment"
                         OutputInfo "======================================== Deploy asset to the LCS Environment"
                         #Check environment status
                         OutputInfo "======================================== Check $($EnvironmentName) status"
@@ -371,19 +399,19 @@ try {
                                 if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
                                     $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
                                     $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                                    Write-Error $errorMessagePayload
+                                    OutputError -message $errorMessagePayload
                                 }
                             }
-                            
-                            Write-Host $($deploymentStatus.OperationStatus), $($deploymentStatus.CompletionDate)
+                            OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                    
+                        
                         if($PowerState -ne "running")
                         {
                             OutputInfo "======================================== Stop $($EnvironmentName)"
                             Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                         }
+                        Write-Output "::endgroup::"
                     }
                 }
             }

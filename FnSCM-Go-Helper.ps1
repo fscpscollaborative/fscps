@@ -96,7 +96,7 @@ function OutputInfo {
         [string]$Message
     )
         filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:MM:ss)]: $_"}
-        Write-InfoInColor  ($Message | timestamp)
+        Write-Output ($Message | timestamp)
 }
 
 function OutputDebug {

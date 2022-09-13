@@ -36,8 +36,6 @@ try {
         $settings.doNotSignApps = $true
     }
 
-    
-
     $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
