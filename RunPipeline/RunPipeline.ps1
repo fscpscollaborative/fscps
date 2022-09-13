@@ -174,14 +174,13 @@ Param(
     Set-Content $buidPropsFile $tempFile
 
 
-    $msbuildOutput =  msbuild NewBuild\Build\Build.sln  `
+    msbuild NewBuild\Build\Build.sln  `
             /p:BuildTasksDirectory=$msBuildTasksDirectory `
             /p:MetadataDirectory=$msMetadataDirectory `
             /p:FrameworkDirectory=$msFrameworkDirectory `
             /p:ReferencePath=$msReferencePath `
             /p:OutputDirectory=$msOutputDirectory 
     
-    Write-Host $msbuildOutput
     Write-Output "::endgroup::"
 
     #GeneratePackages
