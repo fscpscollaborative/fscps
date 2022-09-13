@@ -1921,3 +1921,47 @@ function ConvertTo-OrderedDictionary
 ################################################################################
 # End - Private functions.
 ################################################################################
+
+
+
+function log([System.String] $text){write-host $text;}
+
+function logException{
+    log "Logging current exception.";
+    log $Error[0].Exception;
+}
+
+
+function trycatch ([System.Management.Automation.ScriptBlock] $try,
+                    [System.Management.Automation.ScriptBlock] $catch,
+                    [System.Management.Automation.ScriptBlock]  $finally = $({})){
+
+    
+
+# Make all errors terminating exceptions.
+    $ErrorActionPreference = "Stop";
+    
+    # Set the trap
+    trap [System.Exception]{
+        # Log the exception.
+        logException;
+        
+        # Execute the catch statement
+        & $catch;
+        
+        # Execute the finally statement
+        & $finally
+        
+        # There was an exception, return false
+        return $false;
+    }
+    
+    # Execute the scriptblock
+    & $try;
+    
+    # Execute the finally statement
+    & $finally
+    
+    # The following statement was hit.. so there were no errors with the scriptblock
+    return $true;
+}
