@@ -19,7 +19,7 @@ Set-StrictMode -Version 2.0
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
-    $LastExitCode = 0
+
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
@@ -174,14 +174,19 @@ try {
     $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
     Set-Content $buidPropsFile $tempFile
 
-    msbuild NewBuild\Build\Build.sln  `
-         /p:BuildTasksDirectory=$msBuildTasksDirectory `
-         /p:MetadataDirectory=$msMetadataDirectory `
-         /p:FrameworkDirectory=$msFrameworkDirectory `
-         /p:ReferencePath=$msReferencePath `
-         /p:OutputDirectory=$msOutputDirectory 
+    try{
+        msbuild NewBuild\Build\Build.sln  `
+             /p:BuildTasksDirectory=$msBuildTasksDirectory `
+             /p:MetadataDirectory=$msMetadataDirectory `
+             /p:FrameworkDirectory=$msFrameworkDirectory `
+             /p:ReferencePath=$msReferencePath `
+             /p:OutputDirectory=$msOutputDirectory 
+    }
+    catch
+    {
+        Write-Host $_
+    }
 
-    Write-Host "EXIT CODE = $LastExitCode"
     Write-Output "::endgroup::"
 
     #GeneratePackages
