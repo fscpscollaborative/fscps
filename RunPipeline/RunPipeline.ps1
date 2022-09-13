@@ -341,7 +341,7 @@ try {
 
                             OutputInfo "Getting Azure VM State $($settings.azVmname)"
                             $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
-                            OutputInfo "....state is" $PowerState
+                            OutputInfo "....state is $($PowerState)"
                         }
 
 
