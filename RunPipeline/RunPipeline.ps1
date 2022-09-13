@@ -75,6 +75,9 @@ try {
     {
         $settings.sourceBranch = $settings.currentBranch
     }
+
+    #SourceBranchToPascakCase
+    $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
     
     Foreach($version in $versions)
     {
@@ -84,7 +87,6 @@ try {
             $ApplicationVersion = $version.data.AppVersion
         }
     }
-
 
     $tools_package =  'Microsoft.Dynamics.AX.Platform.CompilerPackage.' + $PlatformVersion
     $plat_package =  'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.' + $PlatformVersion
@@ -195,7 +197,25 @@ try {
 
         Write-Host "======================================== Generate packages"
 
-        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $($settings.sourceBranch).Replace("/", "_")).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
+
+        $packageNamePattern = $settings.packageNamePattern;
+
+        $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
+        if($settings.deploy)
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $EnvironmentName)
+        }
+        else
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $settings.packageName)
+        }
+        $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
+        $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
+        $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+        $packageName = $packageNamePattern + ".zip"
+
+
+        #$packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $($settings.sourceBranch).Replace("/", "_")).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
