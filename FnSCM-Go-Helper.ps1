@@ -90,6 +90,14 @@ function MaskValueInLog {
     }
 }
 
+function OutputInfo {
+    [CmdletBinding()]
+    param (
+        [string]$Message
+    )
+        filter timestamp {"$(Get-Date -Format o): $_"}
+        Write-Host -ForegroundColor Green ($Message | timestamp)
+}
 function OutputDebug {
     Param(
         [string] $message

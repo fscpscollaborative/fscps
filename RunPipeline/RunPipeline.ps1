@@ -21,7 +21,7 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
 
     #Use settings and secrets
-    Write-Host "======================================== Use settings and secrets"
+    OutputInfo "======================================== Use settings and secrets"
 
 
     $environmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
@@ -29,7 +29,7 @@ try {
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
     #merge environment settings into current Settings
-    Write-Host "Merge environment settings into current Settings"
+    OutputInfo "Merge environment settings into current Settings"
     if($EnvironmentName)
     {
         ForEach($env in $environments)
@@ -52,7 +52,7 @@ try {
             $setValue = $settingsHash."$_"
         }
         if ($secrets.ContainsKey($setValue)) {
-            Write-Host "Found " $($_) "variable in the settings file with value:"($setValue)
+            OutputInfo "Found " $($_) "variable in the settings file with value:"($setValue)
             $value = $secrets."$setValue"
         }
         else {
@@ -105,40 +105,40 @@ try {
     
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     #Generate solution folder
-    Write-Host "======================================== Generate solution folder"
+    OutputInfo "======================================== Generate solution folder"
     GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
 
-    Write-Host "======================================== Cleanup Build folder"
+    OutputInfo "======================================== Cleanup Build folder"
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
 
-    Write-Host "======================================== Copy branch files"
+    OutputInfo "======================================== Copy branch files"
     #Copy branch files
     New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
-    Write-Host "======================================== Copy solution folder"
+    OutputInfo "======================================== Copy solution folder"
     #Copy solution folder
     Copy-Item NewBuild -Destination $buildPath -Recurse -Force
 
-    Write-Host "======================================== Cleanup NuGet"
+    OutputInfo "======================================== Cleanup NuGet"
     #Cleanup NuGet
     nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
 
-    Write-Host "======================================== Nuget add source"
+    OutputInfo "======================================== Nuget add source"
     #Nuget add source
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
    
     $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
     
-    Write-Host "======================================== Nuget install packages"
+    OutputInfo "======================================== Nuget install packages"
 
     if(Test-Path $packagesFilePath)
     {
-        Write-Host "Found packages.config file at path: " $packagesFilePath
+        OutputInfo "Found packages.config file at path: " $packagesFilePath
     }
     else
     {
-        Write-Host "Not Found packages.config file at path:" $packagesFilePath
+        OutputInfo "Not Found packages.config file at path:" $packagesFilePath
     }
     cd $buildPath
     cd NewBuild
@@ -147,15 +147,15 @@ try {
 
     
     #Copy dll`s to build folder
-    Write-Host "======================================== Copy dll`s to build folder"
-    Write-Host "Source path: " (Join-Path $($buildPath) $($settings.metadataPath))
-    Write-Host "Destination path: " (Join-Path $($buildPath) bin)
+    OutputInfo "======================================== Copy dll`s to build folder"
+    OutputInfo "Source path: " (Join-Path $($buildPath) $($settings.metadataPath))
+    OutputInfo "Destination path: " (Join-Path $($buildPath) bin)
 
 
     Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
 
     #Build solution
-    Write-Host "======================================== Build solution"
+    OutputInfo "======================================== Build solution"
     cd $buildPath
 
     $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($buildPath)\$($settings.metadataPath);$($buildPath)\bin"
@@ -194,7 +194,7 @@ try {
             Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
         }
 
-        Write-Host "======================================== Generate packages"
+        OutputInfo "======================================== Generate packages"
 
 
         $packageNamePattern = $settings.packageNamePattern;
@@ -231,14 +231,14 @@ try {
         $packages = @()
         if ($potentialPackages.Length -gt 0)
         {
-            Write-Host "Found $($potentialPackages.Length) potential folders to include:"
+            OutputInfo "Found $($potentialPackages.Length) potential folders to include:"
             foreach($package in $potentialPackages)
             {
                 $packageBinPath = Join-Path -Path $package -ChildPath "bin"
                 # If there is a bin folder and it contains *.MD files, assume it's a valid X++ binary
                 if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
                 {
-                    Write-Host "  - $package"
+                    OutputInfo "  - $package"
                     $packages += $package
                 }
                 else
@@ -262,11 +262,11 @@ try {
             {
                 New-Item -Path $outputDir -ItemType Directory > $null
 
-                Write-Host "Creating binary packages"
+                OutputInfo "Creating binary packages"
                 foreach($packagePath in $packages)
                 {
                     $packageName = (Get-Item $packagePath).Name
-                    Write-Host "  - '$packageName'"
+                    OutputInfo "  - '$packageName'"
 
                     $version = ""
                     $packageDll = Join-Path -Path $packagePath -ChildPath "bin\Dynamics.AX.$packageName.dll"
@@ -283,77 +283,77 @@ try {
                     New-XppRuntimePackage -packageName $packageName -packageDrop $packagePath -outputDir $outputDir -metadataDir $xppBinariesPath -packageVersion $version -binDir $xppToolsPath -enforceVersionCheck $True
                 }
 
-                Write-Host "Creating deployable package"
+                OutputInfo "Creating deployable package"
                 Add-Type -Path "$xppToolsPath\Microsoft.Dynamics.AXCreateDeployablePackageBase.dll"
-                Write-Host "  - Creating combined metadata package"
+                OutputInfo "  - Creating combined metadata package"
                 [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::CreateMetadataPackage($outputDir, $tempCombinedPackage)
-                Write-Host "  - Creating merged deployable package"
+                OutputInfo "  - Creating merged deployable package"
                 [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::MergePackage("$xppToolsPath\BaseMetadataDeployablePackage.zip", $tempCombinedPackage, $deployablePackagePath, $true, [String]::Empty)
 
-                Write-Host "Deployable package '$deployablePackagePath' successfully created."
+                OutputInfo "Deployable package '$deployablePackagePath' successfully created."
 
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
 
-                Write-Host "::set-output name=PACKAGE_NAME::$pname"
-                Write-Host "set-output name=PACKAGE_NAME::$pname"
+                OutputInfo "::set-output name=PACKAGE_NAME::$pname"
+                OutputInfo "set-output name=PACKAGE_NAME::$pname"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
 
-                Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
-                Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
+                OutputInfo "::set-output name=PACKAGE_PATH::$deployablePackagePath"
+                OutputInfo "set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
                 #Upload to LCS
-                Write-Host "======================================== Upload artifact to the LCS"
+                OutputInfo "======================================== Upload artifact to the LCS"
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
                 {
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                     Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                     $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-
-                    #Check environment status
-                    Write-Host "======================================== Check $($EnvironmentName) status"
-
-                    $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
-                    $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
-
-                    Write-Host "Check az cli installation..."
-                    if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
-                    {
-                        Write-Host "az cli installing.."
-                        $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
-                        Write-Host "az cli installed.."
-                    }
-
-                    Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-                    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
-
-                    $PowerState = ""
-                    if ($AzureRMAccount) { 
-                        #Do Logic
-                        Write-Host "== Logged in == $($settings.azTenantId) "
-
-                        Write-Host "Getting Azure VM State $($settings.azVmname)"
-                        $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
-                        Write-Host "....state is" $PowerState
-                    }
-
-
-                    #Startup environment
-                    if($PowerState -ne "running")
-                    {
-                        Write-Host "======================================== Start $($EnvironmentName)"
-                        Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
-                        Start-Sleep -Seconds 60
-                    }
-
-
+                    
                     #Deploy asset to the LCS Environment
                     if($settings.deploy)
                     {
+                        OutputInfo "======================================== Deploy asset to the LCS Environment"
+                        #Check environment status
+                        OutputInfo "======================================== Check $($EnvironmentName) status"
+
+                        $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
+                        $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
+
+
+                        OutputInfo "Check az cli installation..."
+                        if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
+                        {
+                            OutputInfo "az cli installing.."
+                            $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                            OutputInfo "az cli installed.."
+                        }
+
+                        Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+                        $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
+
+                        $PowerState = ""
+                        if ($AzureRMAccount) { 
+                            #Do Logic
+                            OutputInfo "== Logged in == $($settings.azTenantId) "
+
+                            OutputInfo "Getting Azure VM State $($settings.azVmname)"
+                            $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
+                            OutputInfo "....state is" $PowerState
+                        }
+
+
+                        #Startup environment
+                        if($PowerState -ne "running")
+                        {
+                            OutputInfo "======================================== Start $($EnvironmentName)"
+                            Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
+                            Start-Sleep -Seconds 60
+                        }
+
                         #Deploy asset to the LCS Environment
-                        Write-Host "======================================== Deploy asset to the LCS Environment"
+                        OutputInfo "======================================== Deploy asset to the LCS Environment"
                         $WaitForCompletion = $true
                         $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
 
@@ -366,15 +366,15 @@ try {
                                 $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                                 Write-Error $errorMessagePayload
                             }
-                            Write-Host $deploymentStatus.OperationStatus, $deploymentStatus.CompletionDate
+                            OutputInfo $deploymentStatus.OperationStatus, $deploymentStatus.CompletionDate
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                    }
-
-                    if($PowerState -ne "running")
-                    {
-                        Write-Host "======================================== Stop $($EnvironmentName)"
-                        Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
+                    
+                        if($PowerState -ne "running")
+                        {
+                            OutputInfo "======================================== Stop $($EnvironmentName)"
+                            Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
+                        }
                     }
                 }
             }
