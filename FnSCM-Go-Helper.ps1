@@ -7,8 +7,8 @@ if (Test-Path $gitHubHelperPath) {
     Import-Module $gitHubHelperPath
 }
 
-$ErrorActionPreference = "stop"
-Set-StrictMode -Version 2.0
+#$ErrorActionPreference = "stop"
+#Set-StrictMode -Version 2.0
 
 $FnSCMFolder = ".FnSCM-Go\"
 $FnSCMSettingsFile = ".FnSCM-Go\settings.json"

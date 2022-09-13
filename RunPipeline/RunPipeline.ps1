@@ -13,7 +13,7 @@ Param(
     [string] $secretsJson = ''
 )
 
-Set-StrictMode -Version 2.0
+#Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 #try {
