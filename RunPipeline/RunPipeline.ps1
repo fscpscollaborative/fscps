@@ -174,16 +174,13 @@ try {
     Set-Content $buidPropsFile $tempFile
 
 
-    & dotnet msbuild NewBuild\Build\Build.sln  `
+    & msbuild NewBuild\Build\Build.sln  `
             /p:BuildTasksDirectory=$msBuildTasksDirectory `
             /p:MetadataDirectory=$msMetadataDirectory `
             /p:FrameworkDirectory=$msFrameworkDirectory `
             /p:ReferencePath=$msReferencePath `
             /p:OutputDirectory=$msOutputDirectory 
     
-    if (($lastexitcode -ne 0) -and $ErrorAction -eq "Stop") {
-        throw $lastexitcode
-    }
     Write-Output "::endgroup::"
 
     #GeneratePackages
