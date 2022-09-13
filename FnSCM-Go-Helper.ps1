@@ -96,7 +96,7 @@ function OutputInfo {
         [string]$Message
     )
         filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:MM:ss)]: $_"}
-        Write-Host -ForegroundColor Green ($Message | timestamp)
+        Write-PSFHostColor -DefaultColor Green  ($Message | timestamp)
 }
 function OutputDebug {
     Param(
