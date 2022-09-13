@@ -86,8 +86,9 @@ try {
                 }
             }
         }
-        if($settings.branch){
-            $sourceBranch = $settings.branch;
+
+        if($settings.sourceBranch){
+            $sourceBranch = $settings.sourceBranch;
         }
         else
         {
