@@ -181,9 +181,8 @@ try {
          /p:ReferencePath=$msReferencePath `
          /p:OutputDirectory=$msOutputDirectory 
 
-
+    Write-Host "EXIT CODE = $LASTTEXITCODE"
     Write-Output "::endgroup::"
-
 
     #GeneratePackages
     if($settings.generatePackages)
@@ -416,9 +415,7 @@ try {
         {
             throw "No X++ binary package(s) found"
         }
-
     }
-
 }
 catch {
     OutputError -message $_.Exception.Message
