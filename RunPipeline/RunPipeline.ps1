@@ -195,7 +195,7 @@ try {
 
         Write-Host "======================================== Generate packages"
 
-        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $settings.sourceBranch).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
+        $packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $($settings.sourceBranch).Replace("/", "_")).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
