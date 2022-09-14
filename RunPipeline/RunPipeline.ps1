@@ -366,12 +366,12 @@ try {
 
 
                         #Startup environment
-                        if($PowerState -ne "running")
-                        {
+                        #if($PowerState -ne "running")
+                        #{
                             OutputInfo "======================================== Start $($EnvironmentName)"
                             Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
                             Start-Sleep -Seconds 60
-                        }
+                        #}
 
                         #Deploy asset to the LCS Environment
                         OutputInfo "======================================== Deploy asset to the LCS Environment"
