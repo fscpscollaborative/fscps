@@ -175,7 +175,7 @@ try {
 
     Install-Module -Name Invoke-MsBuild
 
-    $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" 
+    $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" -ShowBuildOutputInCurrentWindow
 
 
     if ($msbuildresult.BuildSucceeded -eq $true)
@@ -184,7 +184,7 @@ try {
     }
     elseif ($msbuildresult.BuildSucceeded -eq $false)
     {
-      Write-Output ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
+      Write-Error ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
     }
     elseif ($null -eq $msbuildresult.BuildSucceeded)
     {
