@@ -16,7 +16,7 @@ $ErrorActionPreference = "Stop"
 #Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
-#try {
+try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
     $LastExitCode = 0
     #Use settings and secrets
@@ -175,7 +175,22 @@ $ErrorActionPreference = "Stop"
 
     Install-Module -Name Invoke-MsBuild
 
-    Invoke-MsBuild -Path "C:\Database\Database.dbproj" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" 
+    $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" 
+
+
+    if ($msbuildresult.BuildSucceeded -eq $true)
+    {
+      Write-Output ("Build completed successfully in {0:N1} seconds." -f $msbuildresult.BuildDuration.TotalSeconds)
+    }
+    elseif ($msbuildresult.BuildSucceeded -eq $false)
+    {
+      Write-Output ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
+    }
+    elseif ($null -eq $msbuildresult.BuildSucceeded)
+    {
+      Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
+    }
+
 
     #msbuild NewBuild\Build\Build.sln  `
     #        /p:BuildTasksDirectory=$msBuildTasksDirectory `
@@ -418,8 +433,8 @@ $ErrorActionPreference = "Stop"
             throw "No X++ binary package(s) found"
         }
     }
-#}
-#catch {
-#    OutputError -message $_.Exception.Message
-#}
+}
+catch {
+    OutputError -message $_.Exception.Message
+}
 
