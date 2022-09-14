@@ -25,7 +25,6 @@ $ErrorActionPreference = "Stop"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
 
-    Write-Error "TestError"
     #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
