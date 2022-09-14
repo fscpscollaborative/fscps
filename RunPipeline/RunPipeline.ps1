@@ -174,12 +174,16 @@ $ErrorActionPreference = "Stop"
     Set-Content $buidPropsFile $tempFile
 
 
-    msbuild NewBuild\Build\Build.sln  `
-            /p:BuildTasksDirectory=$msBuildTasksDirectory `
-            /p:MetadataDirectory=$msMetadataDirectory `
-            /p:FrameworkDirectory=$msFrameworkDirectory `
-            /p:ReferencePath=$msReferencePath `
-            /p:OutputDirectory=$msOutputDirectory 
+    Install-Module -Name Invoke-MsBuild
+
+    Invoke-MsBuild -Path "C:\Database\Database.dbproj" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" 
+
+    #msbuild NewBuild\Build\Build.sln  `
+    #        /p:BuildTasksDirectory=$msBuildTasksDirectory `
+    #        /p:MetadataDirectory=$msMetadataDirectory `
+    #        /p:FrameworkDirectory=$msFrameworkDirectory `
+    #        /p:ReferencePath=$msReferencePath `
+    #        /p:OutputDirectory=$msOutputDirectory 
     
     Write-Output "::endgroup::"
 
