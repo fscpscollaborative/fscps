@@ -35,7 +35,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}' -EnvironmentName '${{ inputs.environment_name }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}'
+    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}' -EnvironmentName '${{ inputs.environment_name }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: runpipeline
       shell: PowerShell
 branding:

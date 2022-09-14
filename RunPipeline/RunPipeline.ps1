@@ -13,7 +13,7 @@ Param(
     [string] $secretsJson = ''
 )
 $ErrorActionPreference = "Stop"
-#Set-StrictMode -Version 2.0
+Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
@@ -177,7 +177,6 @@ try {
 
     $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" -ShowBuildOutputInCurrentWindow
 
-
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
       Write-Output ("Build completed successfully in {0:N1} seconds." -f $msbuildresult.BuildDuration.TotalSeconds)
@@ -191,14 +190,6 @@ try {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
 
-
-    #msbuild NewBuild\Build\Build.sln  `
-    #        /p:BuildTasksDirectory=$msBuildTasksDirectory `
-    #        /p:MetadataDirectory=$msMetadataDirectory `
-    #        /p:FrameworkDirectory=$msFrameworkDirectory `
-    #        /p:ReferencePath=$msReferencePath `
-    #        /p:OutputDirectory=$msOutputDirectory 
-    
     Write-Output "::endgroup::"
 
     #GeneratePackages
