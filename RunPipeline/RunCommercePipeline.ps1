@@ -123,7 +123,7 @@ try {
     cd $buildPath
 
     #Nuget install packages
-    nuget restore -PackagesDirectory $settings.nugetPackagesPath
+    nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
     Write-Output "::endgroup::"
 
 
