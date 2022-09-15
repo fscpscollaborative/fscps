@@ -47,7 +47,7 @@ try {
     }
     
     OutputInfo "Get-Versions"
-    $versions = Get-Versions | ConvertFrom-Json
+    $versions = Get-Versions
 
     if($DynamicsVersion -eq "")
     {

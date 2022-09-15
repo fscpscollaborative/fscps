@@ -1190,7 +1190,7 @@ function Get-Versions
             }
         }
 
-        Write-Output ($versionsDefault | ConvertTo-Json)
+        Write-Output ($versionsDefault)
     }
 }
 function Copy-Filtered {
