@@ -111,7 +111,7 @@ try {
     Write-Output "::group::Nuget add source"
     OutputInfo "======================================== Nuget add source"
     #Nuget add source
-    $nugetUserName = if($nugetFeedUserName){$settings.nugetFeedUserName}else{$nugetFeedUserSecretName}
+    $nugetUserName = if($settings.nugetFeedUserName){$settings.nugetFeedUserName}else{$nugetFeedUserSecretName}
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
    
     $packagesFilePath = Join-Path $buildPath NewBuild\packages.config

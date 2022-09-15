@@ -1102,6 +1102,7 @@ function GenerateSolution {
     cd $PSScriptRoot
 }
 
+
 function Update-RetailSDK
 {
     [CmdletBinding()]
@@ -1115,8 +1116,16 @@ function Update-RetailSDK
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $version = Get-VersionData -sdkVersion $sdkVersion
         $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
-        Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
 
+        if(!(Test-Path -Path $sdkPath))
+        {
+            New-Item -ItemType Directory -Force -Path $sdkPath
+        }
+
+        if(!(Test-Path -Path $path))
+        {
+            Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+        }
         Write-Output $path
     }
 }
