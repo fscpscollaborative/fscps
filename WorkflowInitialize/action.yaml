@@ -1,5 +1,5 @@
 name: PowerShell script
-author: Oleksandr Nikolaiev (rework microsoft AL-Go)
+author: Oleksandr Nikolaiev 
 outputs:
   correlationId:
     description: A correlation Id for the workflow

@@ -1,5 +1,5 @@
 name: PowerShell script
-author: Freddy Kristiansen
+author: Oleksandr Nikolaiev
 inputs:
   actor:
     description: The GitHub actor running the action
@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ''
   environment_name:
-    description: The Dynamics Application Version
+    description: The Dynamics Environment Name
     required: false
     default: ''
   settingsJson:
@@ -25,6 +25,10 @@ inputs:
     description: Secrets from repository in compressed Json format
     required: false
     default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}'
+  type:
+    description: The application type. FSCM or Commerce
+    required: false
+    default: 'FSCM'
 outputs:
   package_name:
     description: Package name
@@ -35,7 +39,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/runpipeline.ps1 -actor '${{ inputs.actor }}' -EnvironmentName '${{ inputs.environment_name }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/RunPipeline.ps1 -actor '${{ inputs.actor }}' -EnvironmentName '${{ inputs.environment_name }}' -DynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: runpipeline
       shell: PowerShell
 branding:

@@ -335,6 +335,7 @@ function ReadSettings {
         "modelsIntoPackagePattern"               = "*"
         "packageNamePattern"                     = "BRANCHNAME-PACKAGENAME-FNSCMVERSION_DATE.RUNNUMBER"
         "packageName"                            = ""
+        "retailSDKVersion"                       = ""
         "Environments"                           = @()
     }
 
