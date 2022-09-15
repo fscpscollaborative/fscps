@@ -1148,7 +1148,7 @@ function Get-Versions
     {
         $versionsDefaultFile = Join-Path "$PSScriptRoot" "versions.default.json"
         $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
-        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
+        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
         $versions = (Get-Content $versionsFile) | ConvertFrom-Json
 
         ForEach($version in $versions)
