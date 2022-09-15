@@ -137,7 +137,7 @@ try {
     if($msbuildpath -ne "")
     {
         dir $msbuildpath
-        $msbuildexepath = Join-Path $msbuildpath "MSBuild.exe"
+        $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
         $msbuildresult = Invoke-MsBuild -MsBuildFilePath "$msbuildexepath" -Path dirs.proj -ShowBuildOutputInCurrentWindow 
     }
     else
