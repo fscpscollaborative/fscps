@@ -133,7 +133,10 @@ try {
 
     Install-Module -Name Invoke-MsBuild
 
-    $msbuildresult = Invoke-MsBuild -Path dirs.proj -ShowBuildOutputInCurrentWindow
+    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
+
+    $msbuildexepath = Join-Path $msbuildpath "MSBuild.exe"
+    $msbuildresult = Invoke-MsBuild -MsBuildFilePath $msbuildexepath -Path dirs.proj -ShowBuildOutputInCurrentWindow 
 
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
