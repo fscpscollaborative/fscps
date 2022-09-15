@@ -90,8 +90,8 @@ try {
     Write-Output "::endgroup::"
 
     Write-Output "::group::Expand RetailSDK"
-    OutputInfo "======================================== Cleanup folders"
-    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath
+    OutputInfo "======================================== Expand RetailSDK"
+    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath $settings.retailSDKZipPath
     Expand-7zipArchive -Path $sdkzipPath -DestinationPath $buildPath
 
     Remove-Item $buildPath\SampleExtensions -Recurse -Force -ErrorAction SilentlyContinue
