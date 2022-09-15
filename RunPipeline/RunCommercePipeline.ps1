@@ -114,7 +114,6 @@ try {
     $nugetUserName = if($settings.nugetFeedUserName){$settings.nugetFeedUserName}else{$nugetFeedUserSecretName}
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
    
-    $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
     Write-Output "::endgroup::"
 
     Write-Output "::group::Nuget install packages"
