@@ -10,7 +10,7 @@ Param(
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '',
     [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
-    [string] $secretsJson = ''
+    [string] $secretsJson = '',
     [Parameter(HelpMessage = "The environment type FSCM/Commerce", Mandatory = $false)]
     [string] $type = 'FSCM'
 )
