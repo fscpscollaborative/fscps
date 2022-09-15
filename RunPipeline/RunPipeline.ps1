@@ -17,6 +17,6 @@ Param(
 
 switch($type)
 {
-    'FSCM' { ./RunFSCMPipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
-    'Commerce'  { ./RunCommercePipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
+    'FSCM' { $PSScriptRoot/RunFSCMPipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
+    'Commerce'  { $PSScriptRoot/RunCommercePipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
 }
