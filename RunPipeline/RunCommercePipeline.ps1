@@ -46,7 +46,7 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-
+    OutputInfo "Get-Versions"
     $versions = Get-Versions | ConvertFrom-Json
 
     if($DynamicsVersion -eq "")
