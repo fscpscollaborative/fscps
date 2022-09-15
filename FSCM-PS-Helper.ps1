@@ -160,8 +160,6 @@ function Write-InfoInColor
     {}
 } 
 
-
-
 function GetUniqueFolderName {
     Param(
         [string] $baseFolder,
@@ -311,6 +309,7 @@ function ReadSettings {
         "buildVersion"                           = ""
         "uploadPackageToLCS"                     = $false
         "nugetFeedName"                          = ""
+        "nugetFeedUserName"                      = ""
         "nugetFeedUserSecretName"                = ""
         "nugetFeedPasswordSecretName"            = ""
         "models"                                 = ""
@@ -336,6 +335,9 @@ function ReadSettings {
         "packageNamePattern"                     = "BRANCHNAME-PACKAGENAME-FNSCMVERSION_DATE.RUNNUMBER"
         "packageName"                            = ""
         "retailSDKVersion"                       = ""
+        "retailSDKZipPath"                       = "C:\RSDK"
+        "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
+        "retailSDKURL"                           = ""
         "Environments"                           = @()
     }
 
@@ -1082,12 +1084,7 @@ function GenerateSolution {
     Set-Content $NewNugetFile $tempFile
 
 
-    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
-
-
-    $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
-
-    Foreach($version in $versions)
+    Foreach($version in Get-Versions)
     {
         if($version.version -eq $DynamicsVersion)
         {
@@ -1105,6 +1102,97 @@ function GenerateSolution {
     cd $PSScriptRoot
 }
 
+function Update-RetailSDK
+{
+    [CmdletBinding()]
+    param (
+        [string]$sdkVersion,
+        [string]$sdkPath
+    )
+
+    process
+    {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $version = Get-VersionData -sdkVersion $sdkVersion
+        $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
+        Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+
+        Write-Output $path
+    }
+}
+function Get-VersionData
+{
+    [CmdletBinding()]
+    param (
+        [string]$sdkVersion
+    )
+    process
+    {
+        $data = Get-Versions
+        foreach($d in $data)
+        {
+            if($d.version -eq $sdkVersion)
+            {
+                Write-Output $d.data
+            }
+        }
+    }
+}
+function Get-Versions
+{
+    [CmdletBinding()]
+    param (
+    )
+
+    process
+    {
+        $versionsDefaultFile = Join-Path "$PSScriptRoot" "versions.default.json"
+        $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
+        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
+        $versions = (Get-Content $versionsFile) | ConvertFrom-Json
+
+        ForEach($version in $versions)
+        { 
+            ForEach($versionDefault in $versionsDefault)
+            {
+                if($version.version -eq $versionDefault.version)
+                {
+        
+                    if($version.data.PSobject.Properties.name -match "AppVersion")
+                    {
+                        if($version.data.AppVersion -ne "")
+                        {
+                            $versionDefault.data.AppVersion = $version.data.AppVersion
+                        }
+                    }
+                    if($version.data.PSobject.Properties.name -match "PlatformVersion")
+                    {
+                        if($version.data.PlatformVersion -ne "")
+                        {
+                            $versionDefault.data.PlatformVersion = $version.data.PlatformVersion
+                        }
+                    }
+                    if($version.data.PSobject.Properties.name -match "retailSDKURL")
+                    {
+                        if($version.data.retailSDKURL -ne "")
+                        {
+                            $versionDefault.data.retailSDKURL = $version.data.retailSDKURL
+                        }
+                    }
+                    if($version.data.PSobject.Properties.name -match "retailSDKVersion")
+                    {
+                        if($version.data.retailSDKVersion -ne "")
+                        {
+                            $versionDefault.data.AppVersion = $version.data.retailSDKVersion
+                        }
+                    }
+                }
+            }
+        }
+
+        Write-Output $versionsDefault
+    }
+}
 function Copy-Filtered {
     param (
         [string] $Source,

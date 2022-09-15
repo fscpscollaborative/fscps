@@ -78,7 +78,6 @@ try {
     $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
 
 
-    $runAlPipelineParams = @{}
     $project = "" 
     $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
     $sharedFolder = ""

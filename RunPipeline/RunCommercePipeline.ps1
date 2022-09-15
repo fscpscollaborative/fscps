@@ -41,14 +41,13 @@ try {
             $value = $secrets."$setValue"
         }
         else {
-            $value = "test"
+            $value = ""
         }
         Set-Variable -Name $_ -Value $value
     }
     
-    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
 
-    $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
+    $versions = Get-Versions | ConvertFrom-Json
 
     if($DynamicsVersion -eq "")
     {
@@ -72,13 +71,6 @@ try {
         }
     }
 
-    $tools_package =  'Microsoft.Dynamics.AX.Platform.CompilerPackage.' + $PlatformVersion
-    $plat_package =  'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.' + $PlatformVersion
-    $app_package =  'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.' + $ApplicationVersion
-    $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
-
-
-    $runAlPipelineParams = @{}
     $project = "" 
     $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
     $sharedFolder = ""
@@ -88,18 +80,21 @@ try {
     $workflowName = $env:GITHUB_WORKFLOW
 
     
-    $buildPath = Join-Path "C:\Temp" $settings.buildPath
-    Write-Output "::endgroup::"
-    #Generate solution folder
-    Write-Output "::group::Generate solution folder"
-    OutputInfo "======================================== Generate solution folder"
-    GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
+    $buildPath = $settings.retailSDKBuildPath
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Cleanup Build folder"
-    OutputInfo "======================================== Cleanup Build folder"
+    Write-Output "::group::Cleanup folder"
+    OutputInfo "======================================== Cleanup folders"
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Output "::endgroup::"
+
+    Write-Output "::group::Expand RetailSDK"
+    OutputInfo "======================================== Cleanup folders"
+    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath
+    Expand-7zipArchive -Path $sdkzipPath -DestinationPath $buildPath
+
+    Remove-Item $buildPath\SampleExtensions -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
 
     Write-Output "::group::Copy branch files"
@@ -123,7 +118,8 @@ try {
     Write-Output "::group::Nuget add source"
     OutputInfo "======================================== Nuget add source"
     #Nuget add source
-    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
+    $nugetUserName = if($nugetFeedUserName){$settings.nugetFeedUserName}else{$nugetFeedUserSecretName}
+    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
    
     $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
     Write-Output "::endgroup::"
@@ -131,50 +127,21 @@ try {
     Write-Output "::group::Nuget install packages"
     OutputInfo "======================================== Nuget install packages"
 
-    if(Test-Path $packagesFilePath)
-    {
-        OutputInfo "Found packages.config file at path:  $packagesFilePath "
-    }
-    else
-    {
-        OutputInfo "Not Found packages.config file at path: $packagesFilePath "
-    }
     cd $buildPath
-    cd NewBuild
+
     #Nuget install packages
-    nuget restore -PackagesDirectory ..\NuGets
+    nuget restore -PackagesDirectory $settings.nugetPackagesPath
     Write-Output "::endgroup::"
 
-
-    Write-Output "::group::Copy dll`s to build folder"
-    #Copy dll`s to build folder
-    OutputInfo "======================================== Copy dll`s to build folder"
-    OutputInfo "Source path: (Join-Path $($buildPath) $($settings.metadataPath))"
-    OutputInfo "Destination path: (Join-Path $($buildPath) bin)"
-
-
-    Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
-    Write-Output "::endgroup::"
 
     Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
-    $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($buildPath)\$($settings.metadataPath);$($buildPath)\bin"
-    $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
-    $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
-    $msFrameworkDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
-    $msReferencePath = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package".Trim()
-    $msOutputDirectory = "$($buildPath)\bin".Trim()
-
-    $buidPropsFile = Join-Path $buildPath NewBuild\Build\build.props
-    $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
-    Set-Content $buidPropsFile $tempFile
-
     Install-Module -Name Invoke-MsBuild
 
-    $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" -ShowBuildOutputInCurrentWindow
+    $msbuildresult = Invoke-MsBuild -Path dirs.proj -ShowBuildOutputInCurrentWindow
 
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
@@ -191,238 +158,7 @@ try {
 
     Write-Output "::endgroup::"
 
-    #GeneratePackages
-    if($settings.generatePackages)
-    {
-        Write-Output "::group::Generate packages"
-        OutputInfo "======================================== Generate packages"
-        #check nuget instalation
-        $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
-        $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
 
-        if([string]::IsNullOrEmpty($Az))
-        {
-            Install-Module -Name AZ -AllowClobber -Scope CurrentUser -Force -Confirm:$False -SkipPublisherCheck
-        }
-        if([string]::IsNullOrEmpty($DfoTools))
-        {
-            Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
-        }
-
-
-
-        $packageNamePattern = $settings.packageNamePattern;
-
-        $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
-        if($settings.deploy)
-        {
-            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $EnvironmentName)
-        }
-        else
-        {
-            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $settings.packageName)
-        }
-        $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
-        $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
-        $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
-        $packageName = $packageNamePattern + ".zip"
-
-
-        #$packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $($settings.sourceBranch).Replace("/", "_")).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
-
-        $xppToolsPath = $msFrameworkDirectory
-        $xppBinariesPath = (Join-Path $($buildPath) bin)
-        $xppBinariesSearch = $settings.modelsIntoPackagePattern
-        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($packageName)
-
-
-        if ($xppBinariesSearch.Contains(";"))
-        {
-            [string[]]$xppBinariesSearch = $xppBinariesSearch -split ";"
-        }
-
-        $potentialPackages = Find-Match -DefaultRoot $xppBinariesPath -Pattern $xppBinariesSearch | Where-Object { (Test-Path -LiteralPath $_ -PathType Container) }
-        $packages = @()
-        if ($potentialPackages.Length -gt 0)
-        {
-            OutputInfo "Found $($potentialPackages.Length) potential folders to include:"
-            foreach($package in $potentialPackages)
-            {
-                $packageBinPath = Join-Path -Path $package -ChildPath "bin"
-                # If there is a bin folder and it contains *.MD files, assume it's a valid X++ binary
-                if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
-                {
-                    OutputInfo "  - $package"
-                    $packages += $package
-                }
-                else
-                {
-                    Write-Warning "  - $package (not an X++ binary folder, skipped)"
-                }
-            }
-
-            $artifactDirectory = [System.IO.Path]::GetDirectoryName($deployablePackagePath)
-            if (!(Test-Path -Path $artifactDirectory))
-            {
-                # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
-                # whereas New-Item would only create the top level directory
-                [System.IO.Directory]::CreateDirectory($artifactDirectory)
-            }
-
-            Import-Module (Join-Path -Path $xppToolsPath -ChildPath "CreatePackage.psm1")
-            $outputDir = Join-Path -Path $artifactDirectory -ChildPath ((New-Guid).ToString())
-            $tempCombinedPackage = Join-Path -Path $artifactDirectory -ChildPath "$((New-Guid).ToString()).zip"
-            try
-            {
-                New-Item -Path $outputDir -ItemType Directory > $null
-
-                OutputInfo "Creating binary packages"
-                foreach($packagePath in $packages)
-                {
-                    $packageName = (Get-Item $packagePath).Name
-                    OutputInfo "  - '$packageName'"
-
-                    $version = ""
-                    $packageDll = Join-Path -Path $packagePath -ChildPath "bin\Dynamics.AX.$packageName.dll"
-                    if (Test-Path $packageDll)
-                    {
-                        $version = (Get-Item $packageDll).VersionInfo.FileVersion
-                    }
-
-                    if (!$version)
-                    {
-                        $version = "1.0.0.0"
-                    }
-
-                    New-XppRuntimePackage -packageName $packageName -packageDrop $packagePath -outputDir $outputDir -metadataDir $xppBinariesPath -packageVersion $version -binDir $xppToolsPath -enforceVersionCheck $True
-                }
-
-                OutputInfo "Creating deployable package"
-                Add-Type -Path "$xppToolsPath\Microsoft.Dynamics.AXCreateDeployablePackageBase.dll"
-                OutputInfo "  - Creating combined metadata package"
-                [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::CreateMetadataPackage($outputDir, $tempCombinedPackage)
-                OutputInfo "  - Creating merged deployable package"
-                [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::MergePackage("$xppToolsPath\BaseMetadataDeployablePackage.zip", $tempCombinedPackage, $deployablePackagePath, $true, [String]::Empty)
-
-                OutputInfo "Deployable package '$deployablePackagePath' successfully created."
-
-                $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
-
-                Write-Host "::set-output name=PACKAGE_NAME::$pname"
-                Write-Host "set-output name=PACKAGE_NAME::$pname"
-                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
-
-                Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
-                Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
-                Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
-
-                Write-Output "::endgroup::"
-
-
-                #Upload to LCS
-                $assetId = ""
-                if($settings.uploadPackageToLCS)
-                {
-                    Write-Output "::group::Upload artifact to the LCS"
-                    OutputInfo "======================================== Upload artifact to the LCS"
-                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-                    $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-                    Write-Output "::endgroup::"
-
-                    #Deploy asset to the LCS Environment
-                    if($settings.deploy)
-                    {
-                        Write-Output "::group::Deploy asset to the LCS Environment"
-                        OutputInfo "======================================== Deploy asset to the LCS Environment"
-                        #Check environment status
-                        OutputInfo "======================================== Check $($EnvironmentName) status"
-
-                        $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
-                        $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
-
-                        OutputInfo "Check az cli installation..."
-                        if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
-                        {
-                            OutputInfo "az cli installing.."
-                            $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
-                            OutputInfo "az cli installed.."
-                        }
-
-                        Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-                        $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
-
-                        $PowerState = ""
-                        if ($AzureRMAccount) { 
-                            #Do Logic
-                            OutputInfo "== Logged in == $($settings.azTenantId) "
-
-                            OutputInfo "Getting Azure VM State $($settings.azVmname)"
-                            $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
-                            OutputInfo "....state is $($PowerState)"
-                        }
-
-
-                        #Startup environment
-                        #if($PowerState -ne "running")
-                        #{
-                            OutputInfo "======================================== Start $($EnvironmentName)"
-                            Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
-                            Start-Sleep -Seconds 60
-                        #}
-
-                        #Deploy asset to the LCS Environment
-                        OutputInfo "======================================== Deploy asset to the LCS Environment"
-                        $WaitForCompletion = $true
-                        $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
-                        $errorCnt = 0
-                        do {
-                            Start-Sleep -Seconds 10
-                            $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
-
-                            if (($deploymentStatus.ErrorMessage))
-                            {
-                                $errorCnt++
-                            }
-                            if($errorCnt -eq 3)
-                            {
-                                if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
-                                    $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
-                                    $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                                    OutputError -message $errorMessagePayload
-                                }
-                            }
-                            OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
-                        }
-                        while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                        
-                        if($PowerState -ne "running")
-                        {
-                            OutputInfo "======================================== Stop $($EnvironmentName)"
-                            Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
-                        }
-                        Write-Output "::endgroup::"
-                    }
-                }
-            }
-            finally
-            {
-                if (Test-Path -Path $outputDir)
-                {
-                    Remove-Item -Path $outputDir -Recurse -Force
-                }
-                if (Test-Path -Path $tempCombinedPackage)
-                {
-                    Remove-Item -Path $tempCombinedPackage -Force
-                }
-            }
-        }
-        else
-        {
-            throw "No X++ binary package(s) found"
-        }
-    }
 }
 catch {
     OutputError -message $_.Exception.Message
