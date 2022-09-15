@@ -131,31 +131,30 @@ try {
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
-    #Install-Module -Name Invoke-MsBuild
-    & msbuild
-    #$msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
-    #if($msbuildpath -ne "")
-    #{
-    #    dir $msbuildpath
-    #    $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
-    #    $msbuildresult = Invoke-MsBuild -MsBuildFilePath "$msbuildexepath" -Path dirs.proj -ShowBuildOutputInCurrentWindow 
-    #}
-    #else
-    #{
-    #    $msbuildresult = Invoke-MsBuild  -Path dirs.proj -ShowBuildOutputInCurrentWindow 
-    #}
-    #if ($msbuildresult.BuildSucceeded -eq $true)
-    #{
-    #  Write-Output ("Build completed successfully in {0:N1} seconds." -f $msbuildresult.BuildDuration.TotalSeconds)
-    #}
-    #elseif ($msbuildresult.BuildSucceeded -eq $false)
-    #{
-    #  Write-Error ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
-    #}
-    #elseif ($null -eq $msbuildresult.BuildSucceeded)
-    #{
-    #  Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
-    #}
+    Install-Module -Name Invoke-MsBuild
+    #& msbuild
+    $ msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
+    if($msbuildpath -ne "")
+    {
+        $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
+        $msbuildresult = Invoke-MsBuild -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow 
+    }
+    else
+    {
+        $msbuildresult = Invoke-MsBuild  -Path dirs.proj -ShowBuildOutputInCurrentWindow 
+    }
+    if ($msbuildresult.BuildSucceeded -eq $true)
+    {
+      Write-Output ("Build completed successfully in {0:N1} seconds." -f $msbuildresult.BuildDuration.TotalSeconds)
+    }
+    elseif ($msbuildresult.BuildSucceeded -eq $false)
+    {
+      Write-Error ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
+    }
+    elseif ($null -eq $msbuildresult.BuildSucceeded)
+    {
+      Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
+    }
 
     Write-Output "::endgroup::"
 
