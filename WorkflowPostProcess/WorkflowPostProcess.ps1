@@ -13,7 +13,7 @@ $bcContainerHelperPath = $null
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
+    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
 
 }
 catch {

@@ -36,10 +36,10 @@ function Test-Json {
 
     $settingsFile = $jsonFile.Substring($baseFolder.Length)
     if ($repo) {
-        Write-Host "Checking FnSCM-Go Repo Settings file $settingsFile"
+        Write-Host "Checking FSCM-PS Repo Settings file $settingsFile"
     }
     else {
-        Write-Host "Checking FnSCM-Go Settings file $settingsFile"
+        Write-Host "Checking FSCM-PS Settings file $settingsFile"
     }
 
     try {
@@ -66,11 +66,11 @@ function Test-FnSCMRepository {
     
     # Test .json files are formatted correctly
     Get-ChildItem -Path $baseFolder -Filter '*.json' -Recurse | ForEach-Object {
-        if ($_.FullName -like '*\.FnSCM-Go\Settings.json') {
+        if ($_.FullName -like '*\.FSCM-PS\Settings.json') {
             Test-Json -jsonFile $_.FullName -baseFolder $baseFolder
         }
         elseif ($_.FullName -like '*\.github\*Settings.json') {
-            Test-Json -jsonFile $_.FullName -baseFolder $baseFolder -repo:($_.BaseName -eq "FnSCM-Go-Settings")
+            Test-Json -jsonFile $_.FullName -baseFolder $baseFolder -repo:($_.BaseName -eq "FSCM-PS-Settings")
         }
     }
 }

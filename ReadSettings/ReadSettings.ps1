@@ -17,7 +17,7 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
+    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
 
     $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $env:GITHUB_WORKFLOW
     if ($get) {
@@ -36,7 +36,7 @@ try {
         $settings.doNotSignApps = $true
     }
 
-    $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\environments.json'
+    $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\environments.json'
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
 

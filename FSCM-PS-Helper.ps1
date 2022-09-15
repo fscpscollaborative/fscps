@@ -10,9 +10,9 @@ if (Test-Path $gitHubHelperPath) {
 #$ErrorActionPreference = "stop"
 #Set-StrictMode -Version 2.0
 
-$FnSCMFolder = ".FnSCM-Go\"
-$FnSCMSettingsFile = ".FnSCM-Go\settings.json"
-$RepoSettingsFile = ".github\FnSCM-Go-Settings.json"
+$FnSCMFolder = ".FSCM-PS\"
+$FnSCMSettingsFile = ".FSCM-PS\settings.json"
+$RepoSettingsFile = ".github\FSCM-PS-Settings.json"
 $runningLocal = $false #$local.IsPresent
 
 
@@ -958,7 +958,7 @@ function CheckAndCreateProjectFolder {
                 Set-Location $project
             }
             else {
-                throw "Repository is setup for a single project, cannot add a project. Move all appFolders, testFolders and the .FnSCM-Go folder to a subdirectory in order to convert to a multi-project repository."
+                throw "Repository is setup for a single project, cannot add a project. Move all appFolders, testFolders and the .FSCM-PS folder to a subdirectory in order to convert to a multi-project repository."
             }
         }
         else {
@@ -1081,7 +1081,7 @@ function GenerateSolution {
     Set-Content $NewNugetFile $tempFile
 
 
-    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
+    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
 
 
     $versions = (Get-Content $VersionsFile) | ConvertFrom-Json

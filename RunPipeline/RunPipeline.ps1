@@ -17,7 +17,7 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FnSCM-Go-Helper.ps1" -Resolve)
+    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
     $LastExitCode = 0
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
@@ -46,7 +46,7 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FnSCM-Go\versions.json'
+    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
 
     $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
 

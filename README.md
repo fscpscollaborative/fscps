@@ -1,1 +1,1 @@
-# FnSCM-Go-Actions
+# FSCM-PS-Actions
