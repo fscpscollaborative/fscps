@@ -31,7 +31,8 @@ try {
     {
         $settings.buildVersion = $DynamicsVersion
     }
-        
+    $ver = Get-VersionData -sdkVersion $settings.buildVersion
+    $settings.retailSDKVersion = $ver.retailSDKVersion
     if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
         $settings.doNotSignApps = $true
     }

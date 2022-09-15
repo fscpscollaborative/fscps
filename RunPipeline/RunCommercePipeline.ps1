@@ -45,8 +45,7 @@ try {
         }
         Set-Variable -Name $_ -Value $value
     }
-    
-    OutputInfo "Get-Versions"
+
     $versions = Get-Versions
 
     if($DynamicsVersion -eq "")
@@ -101,12 +100,6 @@ try {
     OutputInfo "======================================== Copy branch files"
     #Copy branch files
     New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
-    Write-Output "::endgroup::"
-
-    Write-Output "::group::Copy solution folder"
-    OutputInfo "======================================== Copy solution folder"
-    #Copy solution folder
-    Copy-Item NewBuild -Destination $buildPath -Recurse -Force
     Write-Output "::endgroup::"
 
     Write-Output "::group::Cleanup NuGet"
