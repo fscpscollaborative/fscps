@@ -155,7 +155,7 @@ try {
     #elseif ($null -eq $msbuildresult.BuildSucceeded)
     #{
     #  Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
-    $}
+    #}
 
     Write-Output "::endgroup::"
 
