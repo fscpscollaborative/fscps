@@ -137,7 +137,7 @@ try {
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path dirs.proj -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path dirs.proj -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
