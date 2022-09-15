@@ -116,14 +116,14 @@ try {
    
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Nuget install packages"
-    OutputInfo "======================================== Nuget install packages"
+    #Write-Output "::group::Nuget install packages"
+    #OutputInfo "======================================== Nuget install packages"
 
-    cd $buildPath
+    #cd $buildPath
 
     #Nuget install packages
-    nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
-    Write-Output "::endgroup::"
+    #nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
+    #Write-Output "::endgroup::"
 
 
     Write-Output "::group::Build solution"
@@ -131,7 +131,7 @@ try {
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
-    Install-Module -Name Invoke-MsBuild
+    #Install-Module -Name Invoke-MsBuild
     & msbuild
     #$msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
     #if($msbuildpath -ne "")
