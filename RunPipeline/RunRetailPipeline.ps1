@@ -196,7 +196,7 @@ try {
         $packageName = $packageNamePattern + ".zip"
 
         $packagePath = Join-Path $buildPath "\Packages\RetailDeployablePackage\"
-        Rename-Item -Path Join-Path $packagePath "RetailDeployablePackage.zip"  -NewName $packageName
+        Rename-Item -Path (Join-Path $packagePath "RetailDeployablePackage.zip") -NewName $packageName
 
         $packagePath = Join-Path $packagePath $packageName
 
