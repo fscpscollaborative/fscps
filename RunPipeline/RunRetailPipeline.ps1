@@ -219,7 +219,7 @@ try {
             OutputInfo "======================================== Upload artifact to the LCS"
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-            $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$packageName" -Verbose
+            $assetId = Invoke-D365LcsUpload -FilePath "$packagePath" -FileType "SoftwareDeployablePackage" -Name "$packageName" -Verbose
             Write-Output "::endgroup::"
 
             #Deploy asset to the LCS Environment
