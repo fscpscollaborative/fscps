@@ -95,7 +95,7 @@ function OutputInfo {
     param (
         [string]$Message
     )
-        filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:MM:ss)]: $_"}
+        filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:mm:ss)]: $_"}
         Write-Output ($Message | timestamp)
 }
 
@@ -111,54 +111,6 @@ function OutputDebug {
         Write-Host "::Debug::$message"
     }
 }
-
-function Write-InfoInColor
-{
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Message,
-        [Parameter(Mandatory = $false)]
-        [ValidateNotNullOrEmpty()]
-        [System.ConsoleColor[]]$Background = $Host.UI.RawUI.BackgroundColor,
-        [Parameter(Mandatory = $false)]
-        [ValidateNotNullOrEmpty()]
-        [System.ConsoleColor[]]$Foreground = $Host.UI.RawUI.ForegroundColor,
-        [Switch]$NoNewline
-    )
-    BEGIN
-    {}
-    PROCESS
-    {
-        try
-        {
-            if($Foreground -eq -1)
-            {
-                $Foreground = [System.ConsoleColor]::White
-            }
-            if($Background -eq -1)
-            {
-                $Background = [System.ConsoleColor]::DarkGreen
-            }
-
-            [System.Management.Automation.HostInformationMessage]$outMessage = @{
-                Message                    = $Message
-                ForegroundColor            = $Foreground
-                BackgroundColor            = $Background
-                NoNewline                = $NoNewline
-            }
-            Write-Information $outMessage -InformationAction Continue
-        }
-        catch
-        {
-            Throw $("ERROR OCCURRED WHILE EXECUTING: " + $_.Exception.Message)
-        }
-    }
-    END
-    {}
-} 
 
 function GetUniqueFolderName {
     Param(
@@ -1102,7 +1054,6 @@ function GenerateSolution {
     cd $PSScriptRoot
 }
 
-
 function Update-RetailSDK
 {
     [CmdletBinding()]
@@ -1129,6 +1080,7 @@ function Update-RetailSDK
         Write-Output $path
     }
 }
+
 function Get-VersionData
 {
     [CmdletBinding()]
@@ -1147,6 +1099,7 @@ function Get-VersionData
         }
     }
 }
+
 function Get-Versions
 {
     [CmdletBinding()]
@@ -1202,6 +1155,7 @@ function Get-Versions
         Write-Output ($versionsDefault)
     }
 }
+
 function Copy-Filtered {
     param (
         [string] $Source,
