@@ -19,4 +19,5 @@ switch($type)
 {
     'FSCM' { & $PSScriptRoot\RunFSCMPipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
     'Commerce'  { & $PSScriptRoot\RunCommercePipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
+    'Retail'  { & $PSScriptRoot\RunRetailPipeline.ps1 -actor $actor -EnvironmentName $EnvironmentName -DynamicsVersion $DynamicsVersion -token $token -settingsJson $settingsJson -secretsJson $secretsJson }
 }
