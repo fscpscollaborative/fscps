@@ -267,7 +267,7 @@ try {
                 #Deploy asset to the LCS Environment
                 OutputInfo "======================================== Deploy asset to the LCS Environment"
                 $WaitForCompletion = $true
-                $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
+                $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$packageName"
                 $errorCnt = 0
                 do {
                     Start-Sleep -Seconds 10
