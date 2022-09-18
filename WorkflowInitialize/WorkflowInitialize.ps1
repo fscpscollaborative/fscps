@@ -1,6 +1,6 @@
 Param(    
     [Parameter(HelpMessage = "The GitHub actor running the action", Mandatory = $false)]
-    [string] $github
+    $github
 )
 
 $ErrorActionPreference = "Stop"
