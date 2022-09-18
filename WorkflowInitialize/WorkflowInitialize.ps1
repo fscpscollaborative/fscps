@@ -11,6 +11,8 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
 
+    Write-Host ($github | ConvertFrom-Json)
+
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
     $owner = $ap[$ap.Count-4]
