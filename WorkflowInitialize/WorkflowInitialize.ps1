@@ -9,7 +9,7 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
 
 
-    write-host "Test " ${{ github.event.ref }}
+    write-host "Test " $ENV:GITHUB_EVENT_REF
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
