@@ -40,6 +40,9 @@ try {
     $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\environments.json'
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
+    $github = (Get-ActionContext)
+
+
 
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
@@ -83,6 +86,15 @@ try {
             if($_.settings.PSobject.Properties.name -match "deploy")
             {
                 $check = $_.settings.deploy
+            }
+            
+            if($check)
+            {
+                if($github.Payload.PSObject.Properties -contains "schedule")
+                {
+                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now)
+                }
+
             }
             if($check)
             {
