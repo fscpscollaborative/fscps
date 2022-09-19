@@ -430,7 +430,7 @@ function BuildActionContextIssueMap {
 
     $context = Get-ActionContext
     (BuildActionContextRepoMap) + @{
-        Number = ($context.Payload.issue ?? $context.Payload.pull_request ?? $context.Payload).number
+        Number = ($context.Payload).number
     }
 }
 
