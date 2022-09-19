@@ -9,7 +9,7 @@ runs:
   steps:
     - run: try { ${{ github.action_path }}/WorkflowInitialize.ps1 } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: workflowinitialize
-      shell: PowerShell
+      shell: pwsh
 branding:
   icon: terminal
   color: blue
