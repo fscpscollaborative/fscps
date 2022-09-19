@@ -11,7 +11,8 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
 
-   # Write-Host ($github.event_name )
+    $github = (Get-ActionContext).Payload
+    Write-Host ($github.event_name )
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
