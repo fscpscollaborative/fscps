@@ -1,7 +1,4 @@
-Param(    
-    [Parameter(HelpMessage = "The GitHub actor running the action", Mandatory = $false)]
-    $github
-)
+Param()
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0
@@ -12,7 +9,7 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
 
     $github = (Get-ActionContext).Payload
-    Write-Host ($github.event_name )
+    Write-Host ($github.repository.name)
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
