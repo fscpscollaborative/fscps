@@ -9,7 +9,7 @@ try {
 
 
     $github = (Get-ActionContext).Payload
-    Write-Host ($github | ConvertTo-Json)
+   # Write-Host ($github | ConvertTo-Json)
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
@@ -39,12 +39,6 @@ try {
     {
         Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
     }
-
-    $correlationId = [guid]::Empty.ToString()
-
-    Write-Host "::set-output name=correlationId::$correlationId"
-    Write-Host "set-output name=correlationId::$correlationId"
-
 }
 catch {
     OutputError -message $_.Exception.Message

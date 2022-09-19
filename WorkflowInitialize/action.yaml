@@ -1,9 +1,5 @@
 name: PowerShell script
 author: Oleksandr Nikolaiev 
-outputs:
-  correlationId:
-    description: A correlation Id for the workflow
-    value: ${{ steps.workflowinitialize.outputs.correlationId }}
 runs:
   using: composite
   steps:
