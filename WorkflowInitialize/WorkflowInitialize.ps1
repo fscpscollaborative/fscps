@@ -9,7 +9,7 @@ try {
 
 
     $github = (Get-ActionContext).Payload
-    Write-Host ($github.event.name)
+    Write-Host ($github | ConvertTo-Json)
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
