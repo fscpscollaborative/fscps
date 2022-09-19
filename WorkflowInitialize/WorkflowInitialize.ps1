@@ -2,11 +2,11 @@ Param()
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0
-
+. (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
+. (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
 # IMPORTANT: No code that can fail should be outside the try/catch
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-TestRepoHelper.ps1" -Resolve)
+
 
     $github = (Get-ActionContext).Payload
     Write-Host ($github.repository.name)
