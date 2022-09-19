@@ -90,7 +90,7 @@ try {
             
             if($check)
             {
-                if($github.Payload.PSObject.Properties -contains "schedule")
+                if($github.EventName -eq "schedule")
                 {
                      $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now)
                 }
