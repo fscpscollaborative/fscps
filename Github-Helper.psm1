@@ -354,7 +354,18 @@ function Get-ActionIssue {
     }
     $issue
 }
-
+function ConvertTo-HashTable {
+    [CmdletBinding()]
+    Param(
+        [parameter(ValueFromPipeline)]
+        [PSCustomObject] $object
+    )
+    $ht = @{}
+    if ($object) {
+        $object.PSObject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+    }
+    $ht
+}
 function BuildActionContextMap {
     [CmdletBinding()]
     param()
@@ -367,7 +378,7 @@ function BuildActionContextMap {
         if (Test-Path -PathType Leaf $path) {
             ## Webhook payload object that triggered the workflow
             $payload = (Get-Content -Raw $path -Encoding utf8) |
-                ConvertFrom-Json |Convertto-hashtable
+                ConvertFrom-Json |ConvertTo-HashTable
         }
         else {
             Write-Warning "`GITHUB_EVENT_PATH` [$path] does not eixst"
