@@ -367,7 +367,7 @@ function BuildActionContextMap {
         if (Test-Path -PathType Leaf $path) {
             ## Webhook payload object that triggered the workflow
             $payload = (Get-Content -Raw $path -Encoding utf8) |
-                ConvertFrom-Json -AsHashtable
+                ConvertFrom-Json |Convertto-hashtable
         }
         else {
             Write-Warning "`GITHUB_EVENT_PATH` [$path] does not eixst"
