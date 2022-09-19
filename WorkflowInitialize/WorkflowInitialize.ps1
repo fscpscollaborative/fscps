@@ -8,6 +8,8 @@ Set-StrictMode -Version 2.0
 try {
 
 
+    $github = (Get-ActionContext).Payload
+    Write-Host ($github | ConvertTo-Json)
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
