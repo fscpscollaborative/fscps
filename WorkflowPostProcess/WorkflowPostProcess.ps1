@@ -26,14 +26,33 @@ try {
         $uriBase = "https://api.github.com"
         $baseHeader =  @{"Authorization" = "token $($token)"} 
 
-        $baseURIJob = ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionToRemove)
-        $runsDeleteParam = @{
-            Uri     = ( "{0}{1}" -f $uriBase,$baseURIJob )
-            Method  = "Delete"
+        $runsActiveParams = @{
+            Uri     = ("{0}/repos/{1}/actions/runs" -f $uriBase , $githubRepository)
+            Method  = "Get"
             Headers = $baseHeader
         }
-        Write-Host "Delete run: " $actionToRemove
-        Invoke-RestMethod @runsDeleteParam
+        $runsActive = Invoke-RestMethod @runsActiveParams
+        $actionsFailure = $runsActive.workflow_runs
+        [array]$baseURIJobs = @()
+        foreach ($actionFail in $actionsFailure) {
+
+            $timeDiff = NEW-TIMESPAN –Start $actionFail.run_started_at –End $actionFail.updated_at
+            if($timeDiff.TotalSeconds -le 45)
+            {
+                Write-Host "Found job $($actionFail.display_title)"
+                $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionFail.id)
+            }
+        }
+        foreach ($baseURIJob in $baseURIJobs) {
+            $runsDeleteParam = @{
+                Uri     = ( "{0}{1}" -f $uriBase, $baseURIJob )
+                Method  = "Delete"
+                Headers = $baseHeader
+            } 
+            Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
+            Invoke-RestMethod @runsDeleteParam
+        }
+
     }
 
 
