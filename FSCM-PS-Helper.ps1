@@ -290,6 +290,7 @@ function ReadSettings {
         "retailSDKZipPath"                       = "C:\RSDK"
         "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
         "retailSDKURL"                           = ""
+        "repoTokenSecretName"                    = ""
         "Environments"                           = @()
     }
 

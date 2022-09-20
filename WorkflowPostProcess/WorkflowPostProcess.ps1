@@ -19,9 +19,44 @@ try {
 
     $github = (Get-ActionContext)
         Write-Host ($github | ConvertTo-Json)
-    Write-Host "EventName: " $github.EventName "; WorkflowName: " $github.Workflow "Contains: " ($github.Workflow -match "DEPLOY") "; Remove: " $remove
+       #Use settings and secrets
+    Write-Output "::group::Use settings and secrets"
+    OutputInfo "======================================== Use settings and secrets"
+
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
+
+    #$settings = $settingsJson | ConvertFrom-Json 
+    $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
+
+    $settingsHash = $settings #| ConvertTo-HashTable
+    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName' | ForEach-Object {
+        $setValue = ""
+        if($settingsHash.Contains($_))
+        {
+            $setValue = $settingsHash."$_"
+        }
+        if ($secrets.ContainsKey($setValue)) 
+        {
+            OutputInfo "Found $($_) variable in the settings file with value: ($setValue)"
+            $value = $secrets."$setValue"
+        }
+        else {
+            $value = ""
+        }
+        Set-Variable -Name $_ -Value $value
+    }
+
+    $versions = Get-Versions
+
+    $settings
+    #SourceBranchToPascakCase
+    $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
 
+    Write-Output "::endgroup::"
+
+
+    #Cleanup failed/skiped workflow runs
     if($github.EventName -eq "schedule" -and $github.Workflow -match "DEPLOY" -and $remove)
     {
         #Cleanup failed/skiped workflow runs
