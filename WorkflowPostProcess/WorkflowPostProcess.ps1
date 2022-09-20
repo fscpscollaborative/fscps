@@ -27,6 +27,7 @@ try {
             Method  = "Delete"
             Headers = $baseHeader
         }
+        Write-Host "Delete run: " $actionToRemove
         Invoke-RestMethod @runsDeleteParam
     }
 
