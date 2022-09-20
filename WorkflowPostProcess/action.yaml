@@ -11,11 +11,11 @@ runs:
             try { 
                 if('${{ inputs.remove_current }}' -eq 'true')
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ github.token }}' -remove:$True
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ secrets.REPO_SCOPED_TOKEN }}' -remove:$True
                 }
                 else
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ github.token }}'
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ secrets.REPO_SCOPED_TOKEN }}'
                 }
            } catch { 
                 Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 
