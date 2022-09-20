@@ -1,6 +1,8 @@
 Param(
     [Parameter(HelpMessage = "Remove current run", Mandatory = $false)]
-    [switch] $remove
+    [switch] $remove,
+    [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
+    [string] $token
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,7 +24,7 @@ try {
         $actionToRemove= $github.RunId
         $githubRepository = $github.Repo
         $uriBase = "https://api.github.com"
-        $baseHeader =  @{"Authorization" = "token $Env:GITHUB_TOKEN"} 
+        $baseHeader =  @{"Authorization" = "token $($token)"} 
 
         $baseURIJob = ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionToRemove)
         $runsDeleteParam = @{

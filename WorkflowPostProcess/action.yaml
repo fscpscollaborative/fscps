@@ -11,11 +11,11 @@ runs:
             try { 
                 if('${{ inputs.remove_current }}' -eq 'true')
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -remove:$True
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ github.token }}' -remove:$True
                 }
                 else
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ github.token }}'
                 }
            } catch { 
                 Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 
