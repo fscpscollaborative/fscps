@@ -2,7 +2,11 @@ Param(
     [Parameter(HelpMessage = "Remove current run", Mandatory = $false)]
     [switch] $remove,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
-    [string] $token
+    [string] $token,
+    [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
+    [string] $settingsJson = '',
+    [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
+    [string] $secretsJson = ''
 )
 
 $ErrorActionPreference = "Stop"

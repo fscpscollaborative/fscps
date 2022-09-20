@@ -8,6 +8,15 @@ inputs:
   remove_current:
     description: The GitHub actor running the action
     required: false
+  settingsJson:
+    description: Settings from repository in compressed Json format
+    required: false
+    default: ''
+  secretsJson:
+    description: Secrets from repository in compressed Json format
+    required: false
+    default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}'
+
 runs:
   using: composite
   steps:
@@ -15,11 +24,11 @@ runs:
             try { 
                 if('${{ inputs.remove_current }}' -eq 'true')
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}' -remove:$True
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' -remove:$True
                 }
                 else
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}'
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}' -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}'
                 }
            } catch { 
                 Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 
