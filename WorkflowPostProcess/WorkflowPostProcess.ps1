@@ -49,9 +49,6 @@ try {
     $versions = Get-Versions
 
     $settings
-    #SourceBranchToPascakCase
-    $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
-
 
     Write-Output "::endgroup::"
 
@@ -79,7 +76,7 @@ try {
             {
                 continue;
             }
-            $timeDiff = NEW-TIMESPAN –Start $actionFail.run_started_at –End $actionFail.updated_at
+            $timeDiff = NEW-TIMESPAN â€“Start $actionFail.run_started_at â€“End $actionFail.updated_at
             if($timeDiff.TotalSeconds -le 45)
             {
                 Write-Host "Found job $($actionFail.display_title)"
