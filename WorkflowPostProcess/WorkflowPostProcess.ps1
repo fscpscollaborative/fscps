@@ -13,7 +13,7 @@ try {
 
     $github = (Get-ActionContext)
 
-    if($github.EventName -eq "schedule" -and @github.Workflow -contains "DEPLOY" -and $remove)
+    if($github.EventName -eq "schedule" -and $github.Workflow -contains "DEPLOY" -and $remove)
     {
         #Cleanup failed/skiped workflow runs
         $actionToRemove= $github.RunId
