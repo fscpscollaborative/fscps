@@ -397,7 +397,7 @@ function BuildActionContextMap {
         Job = $env:GITHUB_JOB
         RunNumber = ParseIntSafely $env:GITHUB_RUN_NUMBER
         RunId = $Env:GITHUB_RUN_ID
-
+        Repo = $Env:GITHUB_REPOSITORY
         Payload = $payload
     }
 }
