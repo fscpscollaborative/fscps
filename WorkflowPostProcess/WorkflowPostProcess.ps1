@@ -78,7 +78,7 @@ try {
             
             }
             $timeDiff = NEW-TIMESPAN -Start $actionFail.run_started_at -End $actionFail.updated_at
-            if($timeDiff.TotalSeconds -le 45)
+            if($timeDiff.TotalSeconds -le 120)
             {
                 if($actionFail.display_title -match "DEPLOY")
                 {
