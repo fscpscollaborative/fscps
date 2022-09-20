@@ -1,6 +1,10 @@
 name: PowerShell script
 author: Oleksandr Nikolaiev (rework microsoft AL-Go)
 inputs:
+  token:
+    description: The GitHub token running the action
+    required: false
+    default: ${{ github.token }}
   remove_current:
     description: The GitHub actor running the action
     required: false
@@ -11,11 +15,11 @@ runs:
             try { 
                 if('${{ inputs.remove_current }}' -eq 'true')
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ secrets.REPO_SCOPED_TOKEN }}' -remove:$True
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}' -remove:$True
                 }
                 else
                 {
-                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ secrets.REPO_SCOPED_TOKEN }}'
+                    ${{ github.action_path }}/WorkflowPostProcess.ps1 -token '${{ inputs.token }}'
                 }
            } catch { 
                 Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 
