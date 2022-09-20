@@ -62,7 +62,7 @@ try {
         #Cleanup failed/skiped workflow runs
         $githubRepository = $github.Repo
         $uriBase = "https://api.github.com"
-        $baseHeader =  @{"Authorization" = "token $($token)"} 
+        $baseHeader =  @{"Authorization" = "token $($repoTokenSecretName)"} 
 
         $runsActiveParams = @{
             Uri     = ("{0}/repos/{1}/actions/runs" -f $uriBase , $githubRepository)
