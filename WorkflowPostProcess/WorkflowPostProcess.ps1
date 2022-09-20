@@ -1,6 +1,6 @@
 Param(
     [Parameter(HelpMessage = "Remove current run", Mandatory = $false)]
-    [bool] $remove = $false
+    [switch] $remove
 )
 
 $ErrorActionPreference = "Stop"
