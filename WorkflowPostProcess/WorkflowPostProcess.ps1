@@ -16,7 +16,7 @@ try {
     Write-Host "EventName: " $github.EventName "; WorkflowName: " $github.Workflow "Contains: " ($github.Workflow -match "DEPLOY") "; Remove: " $remove
 
 
-    if($github.EventName -eq "schedule" -and $github.Workflow -contains "DEPLOY" -and $remove)
+    if($github.EventName -eq "schedule" -and $github.Workflow -match "DEPLOY" -and $remove)
     {
         #Cleanup failed/skiped workflow runs
         $actionToRemove= $github.RunId
