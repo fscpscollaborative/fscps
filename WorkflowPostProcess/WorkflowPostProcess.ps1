@@ -22,7 +22,7 @@ try {
         $actionToRemove= $github.RunId
         $githubRepository = $github.Repo
         $uriBase = "https://api.github.com"
-        $baseHeader =  @{"Authorization" = "token $("$Env:GITHUB_TOKEN")" ; "Content-Type" = "application/json" } 
+        $baseHeader =  @{"Authorization" = "token $Env:GITHUB_TOKEN" ; "Content-Type" = "application/json" } 
 
         $baseURIJob = ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionToRemove)
         $runsDeleteParam = @{
