@@ -30,6 +30,7 @@ try {
             Method  = "Get"
             Headers = $baseHeader
         }
+         Write-Host $runsActiveParams
         $runsActive = Invoke-RestMethod @runsActiveParams
         $actionsFailure = $runsActive.workflow_runs
         [array]$baseURIJobs = @()
