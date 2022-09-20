@@ -12,7 +12,7 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
 
     $github = (Get-ActionContext)
-
+        Write-Host ($github | ConvertTo-Json)
     Write-Host "EventName: " $github.EventName "; WorkflowName: " $github.Workflow "Contains: " ($github.Workflow -match "DEPLOY") "; Remove: " $remove
 
 
