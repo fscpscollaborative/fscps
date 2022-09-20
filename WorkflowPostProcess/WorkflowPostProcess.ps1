@@ -80,8 +80,11 @@ try {
             $timeDiff = NEW-TIMESPAN -Start $actionFail.run_started_at -End $actionFail.updated_at
             if($timeDiff.TotalSeconds -le 45)
             {
-                Write-Host "Found job $($actionFail.display_title)"
-                $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionFail.id)
+                if($actionFail.display_title -match "DEPLOY")
+                {
+                    Write-Host "Found job $($actionFail.display_title)"
+                    $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionFail.id)
+                }
             }
         }
         foreach ($baseURIJob in $baseURIJobs) {
