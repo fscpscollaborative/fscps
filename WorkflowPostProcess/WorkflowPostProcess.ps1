@@ -21,7 +21,6 @@ try {
     if($github.EventName -eq "schedule" -and $github.Workflow -match "DEPLOY" -and $remove)
     {
         #Cleanup failed/skiped workflow runs
-        $actionToRemove= $github.RunId
         $githubRepository = $github.Repo
         $uriBase = "https://api.github.com"
         $baseHeader =  @{"Authorization" = "token $($token)"} 
@@ -34,8 +33,12 @@ try {
         $runsActive = Invoke-RestMethod @runsActiveParams
         $actionsFailure = $runsActive.workflow_runs
         [array]$baseURIJobs = @()
-        foreach ($actionFail in $actionsFailure) {
-
+        foreach ($actionFail in $actionsFailure) 
+        {
+            if($github.RunId -eq $actionFail.id)
+            {
+                continue;
+            }
             $timeDiff = NEW-TIMESPAN –Start $actionFail.run_started_at –End $actionFail.updated_at
             if($timeDiff.TotalSeconds -le 45)
             {
