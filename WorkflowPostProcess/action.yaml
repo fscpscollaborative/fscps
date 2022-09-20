@@ -1,9 +1,13 @@
 name: PowerShell script
 author: Oleksandr Nikolaiev (rework microsoft AL-Go)
+inputs:
+  remove_current:
+    description: The GitHub actor running the action
+    required: false
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/WorkflowPostProcess.ps1 } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/WorkflowPostProcess.ps1 -remove '${{ inputs.remove_current }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal
