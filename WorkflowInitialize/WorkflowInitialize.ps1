@@ -7,7 +7,6 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 try {
 
-    Write-Host $Env:GITHUB_RUN_ID
     $github = (Get-ActionContext)
     Write-Host ($github | ConvertTo-Json)
 
