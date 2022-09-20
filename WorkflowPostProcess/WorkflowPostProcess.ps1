@@ -75,8 +75,9 @@ try {
             if($github.RunId -eq $actionFail.id)
             {
                 continue;
-            }
-            $timeDiff = NEW-TIMESPAN –Start $actionFail.run_started_at –End $actionFail.updated_at
+            
+
+            $timeDiff = NEW-TIMESPAN -Start $actionFail.run_started_at -End $actionFail.updated_at
             if($timeDiff.TotalSeconds -le 45)
             {
                 Write-Host "Found job $($actionFail.display_title)"
