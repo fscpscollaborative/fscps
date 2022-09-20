@@ -9,7 +9,7 @@ runs:
   steps:
     - run: 
             try { 
-                if(${{ inputs.remove_current }} -eq "true")
+                if('${{ inputs.remove_current }}' -eq 'true')
                 {
                     ${{ github.action_path }}/WorkflowPostProcess.ps1 -remove:$True
                 }
