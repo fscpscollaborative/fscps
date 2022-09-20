@@ -92,9 +92,8 @@ try {
             {
                 if($github.EventName -eq "schedule")
                 {
-                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now)
+                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now) -WithDelayMinutes 29
                 }
-
             }
             if($check)
             {

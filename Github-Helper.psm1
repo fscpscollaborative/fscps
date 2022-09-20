@@ -396,7 +396,7 @@ function BuildActionContextMap {
         Actor = $env:GITHUB_ACTOR
         Job = $env:GITHUB_JOB
         RunNumber = ParseIntSafely $env:GITHUB_RUN_NUMBER
-        RunId = ParseIntSafely $env:GITHUB_RUN_ID
+        RunId = ParseIntSafely $Env:GITHUB_RUN_ID
 
         Payload = $payload
     }
@@ -491,14 +491,31 @@ function Test-CronExpression
         [ValidateNotNullOrEmpty()]
         [string]
         $Expression,
+        [int]
+        $WithDelayMinutes = 0,
 
         [Parameter()]
         $DateTime = $null
     )
+
+
+
     # current time
     if ($null -eq $DateTime) {
         $DateTime = [datetime]::Now
     }
+
+    if($WithDelayMinutes)
+    {   
+        for(($digit = $WithDelayMinutes * -1);$digit -le $WithDelayMinutes; $digit++)
+        {
+            if(Test-CronExpression -Expression $Expression -DateTime ($DateTime.AddMinutes($digit)))
+            {
+                return $true
+            }
+        }
+    }
+
 
     # convert the expression
     $Atoms = ConvertFrom-CronExpression -Expression $Expression

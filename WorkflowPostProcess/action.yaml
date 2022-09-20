@@ -1,13 +1,9 @@
 name: PowerShell script
 author: Oleksandr Nikolaiev (rework microsoft AL-Go)
-inputs:
-  eventId:
-    description: The event Id of the initiating workflow
-    required: true
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/WorkflowPostProcess.ps1 -eventId '${{ inputs.eventId }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/WorkflowPostProcess.ps1 } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal
