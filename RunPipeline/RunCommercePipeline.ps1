@@ -46,29 +46,26 @@ try {
         Set-Variable -Name $_ -Value $value
     }
 
-    $versions = Get-Versions
 
     if($DynamicsVersion -eq "")
     {
         $DynamicsVersion = $settings.buildVersion
     }
 
+    $version = Get-VersionData -sdkVersion $DynamicsVersion
+
     if($settings.sourceBranch -eq "")
     {
         $settings.sourceBranch = $settings.currentBranch
     }
     $settings
+    $version
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
-    
-    Foreach($version in $versions)
-    {
-        if($version.version -eq $DynamicsVersion)
-        {
-            $PlatformVersion = $version.data.PlatformVersion
-            $ApplicationVersion = $version.data.AppVersion
-        }
-    }
+
+    $PlatformVersion = $version.PlatformVersion
+    $ApplicationVersion = $version.AppVersion
+
 
     $project = "" 
     $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project

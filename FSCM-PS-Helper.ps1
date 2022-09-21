@@ -1727,7 +1727,6 @@ function Get-LocString {
     }
 }
 
-
 function ConvertFrom-LongFormPath {
     [CmdletBinding()]
     param([string]$Path)
@@ -1744,6 +1743,7 @@ function ConvertFrom-LongFormPath {
 
     return $Path
 }
+
 function ConvertTo-LongFormPath {
     [CmdletBinding()]
     param(

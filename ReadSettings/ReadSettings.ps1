@@ -33,6 +33,7 @@ try {
     }
     $ver = Get-VersionData -sdkVersion $settings.buildVersion
     $settings.retailSDKVersion = $ver.retailSDKVersion
+
     if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
         $settings.doNotSignApps = $true
     }
@@ -41,7 +42,6 @@ try {
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
     $github = (Get-ActionContext)
-
 
 
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")

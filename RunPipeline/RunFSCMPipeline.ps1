@@ -46,31 +46,25 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-    $VersionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
-
-    $versions = (Get-Content $VersionsFile) | ConvertFrom-Json
 
     if($DynamicsVersion -eq "")
     {
         $DynamicsVersion = $settings.buildVersion
     }
 
+    $version = Get-VersionData -sdkVersion $DynamicsVersion
+
     if($settings.sourceBranch -eq "")
     {
         $settings.sourceBranch = $settings.currentBranch
     }
     $settings
+    $version
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
-    
-    Foreach($version in $versions)
-    {
-        if($version.version -eq $DynamicsVersion)
-        {
-            $PlatformVersion = $version.data.PlatformVersion
-            $ApplicationVersion = $version.data.AppVersion
-        }
-    }
+
+    $PlatformVersion = $version.PlatformVersion
+    $ApplicationVersion = $version.AppVersion
 
     $tools_package =  'Microsoft.Dynamics.AX.Platform.CompilerPackage.' + $PlatformVersion
     $plat_package =  'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.' + $PlatformVersion
