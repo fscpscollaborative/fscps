@@ -1,5 +1,5 @@
 name: PowerShell script
-author: Oleksandr Nikolaiev (rework microsoft AL-Go)
+author: Oleksandr Nikolaiev
 inputs:
   token:
     description: The GitHub token running the action

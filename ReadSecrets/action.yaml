@@ -1,5 +1,5 @@
 name: PowerShell script
-author: Oleksandr Nikolaiev (rework microsoft AL-Go)
+author: Oleksandr Nikolaiev
 inputs:
   settingsJson:
     description: Settings from template repository in compressed Json format

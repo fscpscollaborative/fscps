@@ -291,6 +291,7 @@ function ReadSettings {
         "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
         "retailSDKURL"                           = ""
         "repoTokenSecretName"                    = ""
+        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
         "Environments"                           = @()
     }
 
