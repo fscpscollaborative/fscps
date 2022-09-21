@@ -29,7 +29,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
-    $settingsJson.secretsList | ForEach-Object {
+    $settings.secretsList | ForEach-Object {
         $setValue = ""
         if($settingsHash.Contains($_))
         {
