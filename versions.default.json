@@ -34,5 +34,14 @@
       "retailSDKVersion": "10.0.1326.18",
       "retailSDKURL": "https://ciellosarchive.blob.core.windows.net/retailsdk/RetailSDK.10.0.1326.18.7z?sp=r&st=2022-09-15T09:11:23Z&se=2032-09-15T17:11:23Z&spr=https&sv=2021-06-08&sr=b&sig=VXkTRSy8X554G3KlroaN081RGBBED%2FIqjAwpyiWTaes%3D"
     }
+  },
+  {
+    "version": "10.0.30",
+    "data": {
+      "PlatformVersion": "7.0.6592.16",
+      "AppVersion": "10.0.1362.15",
+      "retailSDKVersion": "",
+      "retailSDKURL": ""
+    }
   }
 ]
