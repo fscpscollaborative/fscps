@@ -100,7 +100,16 @@ try {
                 $_.Name
             }
         })
-        $environmentsJSon = $environments | ConvertTo-Json -compress
+
+        if($environments.Count -eq 1)
+        {
+            $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+        }
+        else
+        {
+            $environmentsJSon = $environments | ConvertTo-Json -compress
+        }
+
         Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
         Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"

@@ -80,21 +80,37 @@ try {
             $timeDiff = NEW-TIMESPAN -Start $actionFail.run_started_at -End $actionFail.updated_at
             if($timeDiff.TotalSeconds -le 120)
             {
-                if($actionFail.display_title -match "DEPLOY")
+                if($actionFail.display_title -match "DEPLOY" -and ($actionFail.status -eq "completed"))
                 {
+                    #$actionFail
                     Write-Host "Found job $($actionFail.display_title)"
                     $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionFail.id)
                 }
             }
         }
         foreach ($baseURIJob in $baseURIJobs) {
+            $delete = $false
+            $getJobsParam = @{
+                Uri     = ( "{0}{1}/jobs" -f $uriBase, $baseURIJob )
+                Method  = "Get"
+                Headers = $baseHeader
+            } 
+
+            $jobs = Invoke-RestMethod @getJobsParam
+            foreach($job in $jobs.jobs){
+                if($job.conclusion -eq "skipped"){$delete = $true}
+            }
+
             $runsDeleteParam = @{
                 Uri     = ( "{0}{1}" -f $uriBase, $baseURIJob )
                 Method  = "Delete"
                 Headers = $baseHeader
             } 
-            Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
-            Invoke-RestMethod @runsDeleteParam
+            if($delete)
+            {
+                Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
+                Invoke-RestMethod @runsDeleteParam
+            }
         }
 
     }
