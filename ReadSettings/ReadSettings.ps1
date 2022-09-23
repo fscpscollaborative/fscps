@@ -44,6 +44,7 @@ try {
                     $env.settings.deploy = $true
                 }
                 MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+                $settings
             }
         }
         if($settings.sourceBranch){
@@ -99,7 +100,7 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
 
-    if($DynamicsVersion -ne "*")
+    if($DynamicsVersion -ne "*" -and $DynamicsVersion)
     {
         $settings.buildVersion = $DynamicsVersion
     }
