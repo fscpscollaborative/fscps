@@ -27,22 +27,10 @@ try {
         $getSettings = @($settings.Keys)
     }
 
-    if($DynamicsVersion -ne "*")
-    {
-        $settings.buildVersion = $DynamicsVersion
-    }
-    $ver = Get-VersionData -sdkVersion $settings.buildVersion
-    $settings.retailSDKVersion = $ver.retailSDKVersion
-
-    if ($ENV:GITHUB_EVENT_NAME -eq "pull_request") {
-        $settings.doNotSignApps = $true
-    }
-
     $EnvironmentsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\environments.json'
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
     $github = (Get-ActionContext)
-
 
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
@@ -114,6 +102,16 @@ try {
         Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
+
+    if($DynamicsVersion -ne "*")
+    {
+        $settings.buildVersion = $DynamicsVersion
+    }
+
+    $ver = Get-VersionData -sdkVersion $settings.buildVersion
+    $settings.retailSDKVersion = $ver.retailSDKVersion
+    $settings.retailSDKURL = $ver.retailSDKURL
+
 
     $outSettings = @{}
     $getSettings | ForEach-Object {
