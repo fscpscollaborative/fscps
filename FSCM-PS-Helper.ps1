@@ -1147,7 +1147,7 @@ function Get-Versions
                     {
                         if($version.data.retailSDKVersion -ne "")
                         {
-                            $versionDefault.data.AppVersion = $version.data.retailSDKVersion
+                            $versionDefault.data.retailSDKVersion = $version.data.retailSDKVersion
                         }
                     }
                 }

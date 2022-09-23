@@ -44,7 +44,6 @@ try {
                     $env.settings.deploy = $true
                 }
                 MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
-                $settings
             }
         }
         if($settings.sourceBranch){
