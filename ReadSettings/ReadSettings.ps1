@@ -35,21 +35,17 @@ try {
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
         #merge environment settings into current Settings
-        if($dynamicsEnvironment)
+        ForEach($env in $envsFile)
         {
-            ForEach($env in $envsFile)
+            if($env.name -eq $dynamicsEnvironment)
             {
-                if($env.name -eq $dynamicsEnvironment)
+                if($env.settings.PSobject.Properties.name -match "deploy")
                 {
-                    if($env.settings.PSobject.Properties.name -match "deploy")
-                    {
-                        $env.settings.deploy = $true
-                    }
-                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+                    $env.settings.deploy = $true
                 }
+                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
             }
         }
-
         if($settings.sourceBranch){
             $sourceBranch = $settings.sourceBranch;
         }
