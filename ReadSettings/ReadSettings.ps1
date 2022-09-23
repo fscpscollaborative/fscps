@@ -91,7 +91,7 @@ try {
 
         if($environments.Count -eq 1)
         {
-            $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+            $environmentsJson = '["'+$($environments[0]).ToString()+'"]'
         }
         else
         {
