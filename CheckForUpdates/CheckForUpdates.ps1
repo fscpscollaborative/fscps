@@ -118,9 +118,9 @@ try {
         $dstFolder = Join-Path $baseFolder $dstPath
         
         Write-Host "FullName before: " $_.srcPath
-        $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)")).FullName
+        $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)"))
         Write-Host "FullName after: " $srcFolder
-        Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
+        Get-ChildItem -Path $srcFolder.FullName -Filter $_.pattern | ForEach-Object {
             Write-Host "Name is: " $_
 
             if($_ -eq "") {continue}
