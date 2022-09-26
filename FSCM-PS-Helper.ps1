@@ -33,7 +33,8 @@ function invoke-gh {
         [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
     )
     #todo
-    Powershell.exe -ExecutionPolicy Bypass .\Deploy-GitHubCLI.ps1 -DeploymentType "Install" -DeployMode "NonInteractive"
+
+    install-gh -DeploymentType "Install" -DeployMode "NonInteractive"
 
     Write-Host -ForegroundColor Yellow "gh $command $remaining"
     $ErrorActionPreference = "SilentlyContinue"
