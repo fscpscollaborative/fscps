@@ -110,7 +110,7 @@ try {
         }
     }
     $updateFiles = @()
-
+    $checkfiles
     $checkfiles | ForEach-Object {
         $type = $_.type
         $srcPath = $_.srcPath
