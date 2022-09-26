@@ -180,11 +180,9 @@ try {
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
             OutputWarning -message "There are updates for your FSCM-PS system, run 'Update FSCM-PS System Files' workflow to download the latest version of FSCM-PS."
-            AddTelemetryProperty -telemetryScope $telemetryScope -key "updatesExists" -value $true
         }
         else {
             Write-Host "Your repository runs on the latest version of FSCM-PS System."
-            AddTelemetryProperty -telemetryScope $telemetryScope -key "updatesExists" -value $false
         }
     }
     else {
