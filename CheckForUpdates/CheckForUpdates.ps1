@@ -120,7 +120,7 @@ try {
         $srcFolder
         Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
             Write-Host $_
-            if($_ -eq NULL) continue
+            if($_ -eq "") continue
             $srcFile = $_.FullName
             $fileName = $_.Name
             $baseName = $_.BaseName
