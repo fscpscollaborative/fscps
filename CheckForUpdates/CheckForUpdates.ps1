@@ -212,7 +212,7 @@ try {
                 Set-Location -Path *
             
                 if (!$directcommit) {
-                    $branch = [System.IO.Path]::GetRandomFileName()
+                    $branch = "updatefscmsystemfiles"
                     invoke-git checkout -b $branch
                 }
 
@@ -277,7 +277,7 @@ try {
 
                 $status = invoke-git status --porcelain=v1
                 if ($status) {
-                    $message = "Updated FSCM-PS System Files"
+                    $message = "DevOps - Updated FSCM-PS System Files"
 
                     invoke-git commit --allow-empty -m "'$message'"
 
