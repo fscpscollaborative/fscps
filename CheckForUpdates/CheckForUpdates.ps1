@@ -120,7 +120,7 @@ try {
         Write-Host "FullName before: " $srcPath
         $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)"))
         Write-Host "FullName after: " $srcFolder
-        if($srcFolder -eq "") {continue}
+        if(!($srcFolder)) {continue}
         Get-ChildItem -Path $srcFolder.FullName -Filter $_.pattern | ForEach-Object {
             Write-Host "Name is: " $_
 
