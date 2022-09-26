@@ -119,7 +119,7 @@ try {
         $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)")).FullName
         $srcFolder
         Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
-            
+            Write-Host $_.Name
             $srcFile = $_.FullName
             $fileName = $_.Name
             $baseName = $_.BaseName
