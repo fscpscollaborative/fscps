@@ -57,8 +57,6 @@ try {
         }
     }
 
-    AddTelemetryProperty -telemetryScope $telemetryScope -key "templateUrl" -value $templateUrl
-
     $templateBranch = $templateUrl.Split('@')[1]
     $templateUrl = $templateUrl.Split('@')[0]
 
@@ -301,12 +299,9 @@ try {
         }
     }
 
-    TrackTrace -telemetryScope $telemetryScope
 }
 catch {
     OutputError -message $_.Exception.Message
-    TrackException -telemetryScope $telemetryScope -errorRecord $_
 }
 finally {
-    CleanupAfterBcContainerHelper -bcContainerHelperPath $bcContainerHelperPath
 }
