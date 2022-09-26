@@ -883,13 +883,13 @@ function install-gh
             $Transform = Get-ChildItem -Path "$dirFiles" -Include *.mst -File -Recurse -ErrorAction SilentlyContinue
             If(($MsiPath.Exists) -and ($Transform.Exists))
             {
-            Write-Log -Message "Found $($MsiPath.FullName) and $($Transform.FullName), now attempting to install $installTitle."
+            Write-Host -Message "Found $($MsiPath.FullName) and $($Transform.FullName), now attempting to install $installTitle."
             Show-InstallationProgress "Installing GitHub CLI. This may take some time. Please wait..."
             Execute-MSI -Action Install -Path "$MsiPath" -AddParameters "TRANSFORMS=$Transform"
             }
             ElseIf ($MsiPath.Exists)
             {
-            Write-Log -Message "Found $($MsiPath.FullName), now attempting to install $installTitle."
+            Write-Host -Message "Found $($MsiPath.FullName), now attempting to install $installTitle."
             Show-InstallationProgress "Installing GitHub CLI. This may take some time. Please wait..."
             Execute-MSI -Action Install -Path "$MsiPath"
             }
