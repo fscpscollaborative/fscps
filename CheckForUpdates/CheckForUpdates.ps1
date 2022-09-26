@@ -118,12 +118,13 @@ try {
         $dstFolder = Join-Path $baseFolder $dstPath
         
         Write-Host "FullName before: " $srcPath
-        $srcFolder = (Get-Item (Join-Path $tempName "$($srcPath)"))
+        $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)"))
         Write-Host "FullName after: " $srcFolder
+        if($srcFolder -eq "") {continue}
         Get-ChildItem -Path $srcFolder.FullName -Filter $_.pattern | ForEach-Object {
             Write-Host "Name is: " $_
 
-            if($_ -eq "") {continue}
+            
 
             $srcFile = $_.FullName
             $fileName = $_.Name
