@@ -118,8 +118,7 @@ try {
         $dstFolder = Join-Path $baseFolder $dstPath
         (Get-Item (Join-Path $tempName "*\$($srcPath)"))
         $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)")).FullName
-        $srcFolder
-        Get-ChildItem -Path $srcFolder -Filter $_.pattern
+        Write-Host "FullName is: " $srcFolder
         Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
             Write-Host "Name is: " $_
 
