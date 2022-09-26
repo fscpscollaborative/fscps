@@ -856,19 +856,7 @@ function install-gh
         [hashtable]$deployAppScriptParameters = $psBoundParameters
         ## Variables: Environment
         If (Test-Path -LiteralPath 'variable:HostInvocation') { $InvocationInfo = $HostInvocation } Else { $InvocationInfo = $MyInvocation }
-        [string]$scriptDirectory = Split-Path -Path $InvocationInfo.MyCommand.Definition -Parent
-        ## Dot source the required App Deploy Toolkit Functions
-        Try {
-            [string]$moduleAppDeployToolkitMain = "$scriptDirectory\AppDeployToolkit\AppDeployToolkitMain.ps1"
-            If (-not (Test-Path -LiteralPath $moduleAppDeployToolkitMain -PathType 'Leaf')) { Throw "Module does not exist at the specified location [$moduleAppDeployToolkitMain]." }
-            If ($DisableLogging) { . $moduleAppDeployToolkitMain -DisableLogging } Else { . $moduleAppDeployToolkitMain }
-        }
-        Catch {
-            If ($mainExitCode -eq 0){ [int32]$mainExitCode = 60008 }
-            Write-Error -Message "Module [$moduleAppDeployToolkitMain] failed to load: `n$($_.Exception.Message)`n `n$($_.InvocationInfo.PositionMessage)" -ErrorAction 'Continue'
-            ## Exit the script, returning the exit code to SCCM
-            If (Test-Path -LiteralPath 'variable:HostInvocation') { $script:ExitCode = $mainExitCode; Exit } Else { Exit $mainExitCode }
-        }
+
         #endregion
         ##* Do not modify section above
         ##*===============================================
@@ -960,7 +948,5 @@ function install-gh
         Show-DialogBox -Text $mainErrorMessage -Icon 'Stop'
         Exit-Script -ExitCode $mainExitCode
     }
-
-
 
 }
