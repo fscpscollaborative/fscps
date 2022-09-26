@@ -174,7 +174,7 @@ try {
         }
     }
     $removeFiles = @()
-
+    $updateFiles
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
             OutputWarning -message "There are updates for your FSCM-PS system, run 'Update FSCM-PS System Files' workflow to download the latest version of FSCM-PS."
