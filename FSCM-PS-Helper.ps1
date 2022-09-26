@@ -32,6 +32,7 @@ function invoke-gh {
         [parameter(mandatory = $true, position = 0)][string] $command,
         [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
     )
+    winget install --id github.cli --accept-package-agreements --accept-source-agreements -h
 
     Write-Host -ForegroundColor Yellow "gh $command $remaining"
     $ErrorActionPreference = "SilentlyContinue"

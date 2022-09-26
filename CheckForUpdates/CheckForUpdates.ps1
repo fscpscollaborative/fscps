@@ -23,7 +23,7 @@ try {
     $baseFolder = $ENV:GITHUB_WORKSPACE
 
     if ($update -and -not $token) {
-        throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called GhTokenWorkflow containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
+        throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called repoTokenSecretName containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
     }
 
     # Support old calling convention
