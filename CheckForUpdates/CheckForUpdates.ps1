@@ -117,9 +117,60 @@ try {
         $dstPath = $_.dstPath
         $dstFolder = Join-Path $baseFolder $dstPath
         (Get-Item (Join-Path $tempName "*\$($srcPath)"))
+        Write-Host "FullName before: " $srcFolder
         $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)")).FullName
-        Write-Host "FullName is: " $srcFolder
-        
+        Write-Host "FullName after: " $srcFolder
+        Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
+            Write-Host "Name is: " $_
+
+            if($_ -eq "") {continue}
+
+            $srcFile = $_.FullName
+            $fileName = $_.Name
+            $baseName = $_.BaseName
+            $srcContent = (Get-Content -Path $srcFile -Encoding UTF8 -Raw).Replace("`r", "").TrimEnd("`n").Replace("`n", "`r`n")
+            $name = $type
+            if ($type -eq "workflow") {
+                $srcContent.Split("`n") | Where-Object { $_ -like "name:*" } | Select-Object -First 1 | ForEach-Object {
+                    if ($_ -match '^name:([^#]*)(#.*$|$)') { $name = "workflow '$($Matches[1].Trim())'" }
+                }
+            }
+
+            $workflowScheduleKey = "$($baseName)Schedule"
+            if ($repoSettings.ContainsKey($workflowScheduleKey)) {
+                $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
+                $replacePattern = "on:`r`n  schedule:`r`n  - cron: '$($repoSettings."$workflowScheduleKey")'`r`n  workflow_dispatch:`r`n"
+                $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+            }
+            
+            if ($baseName -ne "UpdateGitHubGoSystemFiles") {
+                if ($repoSettings.ContainsKey("runs-on")) {
+                    $srcPattern = "runs-on: [ windows-latest ]`r`n"
+                    $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    if (!($repoSettings.ContainsKey("gitHubRunner"))) {
+                        $srcPattern = "runs-on: `${{ fromJson(needs.Initialization.outputs.githubRunner) }}`r`n"
+                        $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
+                }
+            }
+                
+            $dstFile = Join-Path $dstFolder $fileName
+            if (Test-Path -Path $dstFile -PathType Leaf) {
+                # file exists, compare
+                $dstContent = (Get-Content -Path $dstFile -Encoding UTF8 -Raw).Replace("`r", "").TrimEnd("`n").Replace("`n", "`r`n")
+                if ($dstContent -ne $srcContent) {
+                    Write-Host "Updated $name ($(Join-Path $dstPath $filename)) available"
+                    $updateFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
+                }
+            }
+            else {
+                # new file
+                Write-Host "New $name ($(Join-Path $dstPath $filename)) available"
+                $updateFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
+            }
+        }
     }
     $removeFiles = @()
 
