@@ -944,7 +944,7 @@ function install-gh
     Catch {
         [int32]$mainExitCode = 60001
         [string]$mainErrorMessage = "$(Resolve-Error)"
-        Write-Log -Message $mainErrorMessage -Severity 3 -Source $deployAppScriptFriendlyName
+        Write-Host -Message $mainErrorMessage -Severity 3 -Source $deployAppScriptFriendlyName
         Show-DialogBox -Text $mainErrorMessage -Icon 'Stop'
         Exit-Script -ExitCode $mainExitCode
     }
