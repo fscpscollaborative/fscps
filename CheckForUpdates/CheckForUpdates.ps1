@@ -118,6 +118,7 @@ try {
         $dstFolder = Join-Path $baseFolder $dstPath
         $srcFolder = (Get-Item (Join-Path $tempName "*\$($srcPath)")).FullName
         Get-ChildItem -Path $srcFolder -Filter $_.pattern | ForEach-Object {
+            $_
             $srcFile = $_.FullName
             $fileName = $_.Name
             $baseName = $_.BaseName
