@@ -34,7 +34,7 @@ function invoke-gh {
     )
     #todo
 
-    install-gh -DeploymentType "Install" -DeployMode "NonInteractive"
+    choco install gh
 
     Write-Host -ForegroundColor Yellow "gh $command $remaining"
     $ErrorActionPreference = "SilentlyContinue"
