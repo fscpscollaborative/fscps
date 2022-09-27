@@ -835,8 +835,6 @@ None
 None
 #>
 
-  Write-FunctionCallLogMessage -Invocation $MyInvocation -Parameters $PSBoundParameters
-
   $refreshEnv = $false
   $invocation = $MyInvocation
   if ($invocation.InvocationName -eq 'refreshenv') {
