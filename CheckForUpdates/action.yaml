@@ -25,7 +25,6 @@ inputs:
     description: Secrets from repository in compressed Json format
     required: false
     default: ''
- 
   directCommit:
     description: Direct Commit (Y/N)
     required: false
