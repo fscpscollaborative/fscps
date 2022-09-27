@@ -296,6 +296,7 @@ function ReadSettings {
         "retailSDKURL"                           = ""
         "repoTokenSecretName"                    = ""
         "ciBranches"                             = "main,release"
+        "deployScheduleCron"                     = "1 * * * *"
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
         "Environments"                           = @()
     }

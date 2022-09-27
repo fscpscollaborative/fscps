@@ -215,11 +215,15 @@ try {
                 if($fileName -eq "deploy.yml")
                 {
                     $srcPattern = '        - "*"'
-                    $replacePattern = '        - "*"'
+                    $replacePattern = '         - "*"'
                     $replacePattern += "`r`n"
                     $environments | ForEach-Object { 
-                        $replacePattern += "        - "+'"'+$($_)+'"'+"`r`n"
+                        $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
                     }
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    #schedule
+                    $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
+                    $replacePattern = "on:`r`n  schedule:`r`n   - cron: '$($settings.deployScheduleCron)'`r`n  workflow_dispatch:`r`n"
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
 
