@@ -20,14 +20,17 @@ Set-StrictMode -Version 2.0
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
-
+    $workflowName = $env:GITHUB_WORKFLOW
+    $baseFolder = $ENV:GITHUB_WORKSPACE
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
 
-    #$settings = $settingsJson | ConvertFrom-Json 
+    $EnvironmentsFile = Join-Path $baseFolder '.FSCM-PS\environments.json'
+    $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
+
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -63,8 +66,7 @@ try {
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
-    $workflowName = $env:GITHUB_WORKFLOW
-    $baseFolder = $ENV:GITHUB_WORKSPACE
+
 
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
@@ -210,6 +212,32 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
 
+                if($fileName -eq "deploy.yml")
+                {
+                    $srcPattern = '        - "*"'
+                    $replacePattern = '        - "*"'
+                    $replacePattern += "`r`n"
+                    $environments | ForEach-Object { 
+                        $replacePattern += "        - "+'"'+$($_)+'"'+"`r`n"
+                    }
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                }
+
+                if($fileName -eq "ci.yml")
+                {
+                    $srcPattern = '        - main'
+                    $replacePattern = ""
+                    if($settings.ciBranches.Split(','))
+                    {
+                        $settings.ciBranches.Split(',') | ForEach-Object { 
+                            $replacePattern += "        - "+'"'+$($_)+'"'+"`r`n"
+                        }
+                    }
+                    else {
+                        $replacePattern += "        - "+'"'+$($settings.ciBranches)+'"'+"`r`n"
+                    }
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                }
 
                 $dstFile = Join-Path $dstFolder $fileName
                 if (Test-Path -Path $dstFile -PathType Leaf) {
@@ -279,6 +307,7 @@ try {
                 else {
                     $repoSettings = [PSCustomObject]@{}
                 }
+
                 if ($repoSettings.PSObject.Properties.Name -eq "templateUrl") {
                     $repoSettings.templateUrl = $templateUrl
                 }

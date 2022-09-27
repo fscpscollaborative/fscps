@@ -275,7 +275,7 @@ function ReadSettings {
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
         "lcsEnvironmentId"                       = ""
-        "lcsProjectId"                           = 123456
+        "lcsProjectId"                           = 12345654321
         "lcsClientId"                            = ""
         "lcsUsernameSecretname"                  = ""
         "lcsPasswordSecretname"                  = ""
@@ -295,6 +295,7 @@ function ReadSettings {
         "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
         "retailSDKURL"                           = ""
         "repoTokenSecretName"                    = ""
+        "ciBranches"                             = "main,release"
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
         "Environments"                           = @()
     }
