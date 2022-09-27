@@ -259,7 +259,7 @@ function ReadSettings {
         "repoName"                               = $repoName
         "versioningStrategy"                     = 0
         "failOn"                                 = "error"
-        "templateUrl"                            = ""
+        "templateUrl"                            = "https://github.com/ciellos-dev/FSCM-PS-Template@main"
         "templateBranch"                         = ""
         "githubRunner"                           = "windows-latest"
         "buildVersion"                           = ""
