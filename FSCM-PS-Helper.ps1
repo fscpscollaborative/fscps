@@ -40,7 +40,7 @@ function invoke-gh {
     Write-Host -ForegroundColor Yellow "gh $command $remaining"
     $ErrorActionPreference = "SilentlyContinue"
     cd "C:\Program Files\GitHub CLI"
-    & .\gh.exe $command $remaining
+    .\gh.exe $command $remaining
     cd $PSScriptRoot
     $ErrorActionPreference = "Stop"
     if ($lastexitcode) { throw "gh $command error" }
