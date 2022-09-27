@@ -167,7 +167,7 @@ try {
     $updateFiles = @()
     $checkfiles
     $checkfiles | ForEach-Object {
-        $type = $_.type
+        $fileType = $_.type
         $srcPath = $_.srcPath
         $dstPath = $_.dstPath
         $dstFolder = Join-Path $baseFolder $dstPath
@@ -179,8 +179,9 @@ try {
                 $fileName = $_.Name
                 $baseName = $_.BaseName
                 $srcContent = (Get-Content -Path $srcFile -Encoding UTF8 -Raw).Replace("`r", "").TrimEnd("`n").Replace("`n", "`r`n")
-                $name = $type
-                if ($type -eq "workflow") {
+                $name = $fileType
+
+                if ($fileType -eq "workflow") {
                     $srcContent.Split("`n") | Where-Object { $_ -like "name:*" } | Select-Object -First 1 | ForEach-Object {
                         if ($_ -match '^name:([^#]*)(#.*$|$)') { $name = "workflow '$($Matches[1].Trim())'" }
                     }
