@@ -275,7 +275,7 @@ function ReadSettings {
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
         "lcsEnvironmentId"                       = ""
-        "lcsProjectId"                           = 12345654321
+        "lcsProjectId"                           = 123456
         "lcsClientId"                            = ""
         "lcsUsernameSecretname"                  = ""
         "lcsPasswordSecretname"                  = ""
