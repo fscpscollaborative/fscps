@@ -96,6 +96,7 @@ try {
     }
     else
     {
+        Write-Host $settings.templateUrl
         $templateUrl = $settings.templateUrl
     }
 
