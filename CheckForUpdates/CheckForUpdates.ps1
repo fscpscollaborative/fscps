@@ -211,7 +211,7 @@ try {
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
-
+                
                 if($fileName -eq "deploy.yml")
                 {
                     $srcPattern = '        - "*"'
@@ -239,6 +239,20 @@ try {
                     }
                     else {
                         $replacePattern += "       - "+'"'+$($settings.ciBranches)+'"'+"`r`n"
+                    }
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                }
+
+                if($fileName -eq "update_model_version.yml")
+                {
+                    $srcPattern = 'Contoso'
+                    $replacePattern = ""
+                    if($settings.models.Split(','))
+                    {
+                        $replacePattern = "$($settings.models.Split(',')[0])"
+                    }
+                    else {
+                        $replacePattern = "$($settings.models)"
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
