@@ -250,8 +250,10 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
 
+
                 if($fileName -eq "update_model_version.yml")
                 {
+                    if($type -eq "Retail"){ continue }
                     $srcPattern = 'Contoso'
                     $replacePattern = ""
                     if($settings.models.Split(','))
@@ -264,6 +266,7 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
 
+                
                 $dstFile = Join-Path $dstFolder $fileName
                 if (Test-Path -Path $dstFile -PathType Leaf) {
                     # file exists, compare
