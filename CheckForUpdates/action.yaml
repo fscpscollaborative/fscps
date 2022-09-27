@@ -16,7 +16,7 @@ inputs:
   templateUrl:
     description: URL of the template repository (default is the template repository used to create the repository)
     required: false
-    default: 'ciellos-dev/FSCM-PS-Template'
+    default: ''
   templateBranch:
     description: Branch in template repository to use for the update (default is the default branch)
     required: false
