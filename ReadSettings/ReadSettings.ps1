@@ -32,6 +32,7 @@ try {
 
     $github = (Get-ActionContext)
 
+    $repoType = $settings.type
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
         #merge environment settings into current Settings
@@ -139,6 +140,11 @@ try {
         Write-Host "set-output name=VersionsJson::$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
+
+    Write-Host "::set-output name=type::$repoType"
+    Write-Host "set-output name=type::$repoType"
+    Add-Content -Path $env:GITHUB_ENV -Value "Versions=$repoType"
+
 }
 catch {
     OutputError -message $_.Exception.Message

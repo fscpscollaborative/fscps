@@ -40,6 +40,9 @@ outputs:
   source_branch:
     description: Source branch
     value: ${{ steps.readsettings.outputs.SOURCE_BRANCH }}
+  type:
+    description: Repo type
+    value: ${{ steps.readsettings.outputs.type }}
 runs:
   using: composite
   steps:

@@ -10,7 +10,9 @@ Param(
     [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
     [string] $secretsJson = '',
     [Parameter(HelpMessage = "Direct Commit (Y/N)", Mandatory = $false)]
-    [bool] $directCommit    
+    [bool] $directCommit    ,
+    [Parameter(HelpMessage = "The environment type FSCM/Commerce", Mandatory = $false)]
+    [string] $type = 'FSCM'
 )
 
 $ErrorActionPreference = "Stop"

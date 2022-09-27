@@ -29,10 +29,14 @@ inputs:
     description: Direct Commit (Y/N)
     required: false
     default: 'N'
+  type:
+    description: Repo type
+    required: true
+    default: 'FSCM'
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -update ('${{ inputs.update }}' -eq 'Y') -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' -directCommit ('${{ inputs.directCommit }}' -eq 'Y') } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -type '${{ inputs.type }}' -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -update ('${{ inputs.update }}' -eq 'Y') -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' -directCommit ('${{ inputs.directCommit }}' -eq 'Y') } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal
