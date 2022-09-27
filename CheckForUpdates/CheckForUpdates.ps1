@@ -96,7 +96,7 @@ try {
     }
     else
     {
-        $templateUrl = $seetings.templateUrl
+        $templateUrl = $settings.templateUrl
     }
 
     $templateBranch = $templateUrl.Split('@')[1]
