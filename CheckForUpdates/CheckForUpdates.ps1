@@ -3,10 +3,6 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
-    [Parameter(HelpMessage = "URL of the template repository (default is the template repository used to create the repository)", Mandatory = $false)]
-    [string] $templateUrl = "",
-    [Parameter(HelpMessage = "Branch in template repository to use for the update (default is the default branch)", Mandatory = $false)]
-    [string] $templateBranch = "",
     [Parameter(HelpMessage = "Set this input to Y in order to update FSCM-PS System Files if needed", Mandatory = $false)]
     [bool] $update,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
@@ -80,19 +76,6 @@ try {
         throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called repoTokenSecretName containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
     }
 
-    # Support old calling convention
-    if (-not $templateUrl.Contains('@')) {
-        if ($templateBranch) {
-            $templateUrl += "@$templateBranch"
-        }
-        else {
-            $templateUrl += "@main"
-        }
-    }
-    if ($templateUrl -notlike "https://*") {
-        $templateUrl = "https://github.com/$templateUrl"
-    }
-
     $RepoSettingsFile = ".github\FSCM-PS-Settings.json"
     if (Test-Path $RepoSettingsFile) {
         $repoSettings = Get-Content $repoSettingsFile -Encoding UTF8 | ConvertFrom-Json | ConvertTo-HashTable
@@ -102,12 +85,17 @@ try {
     }
 
     $updateSettings = $true
-
+    if ($repoSettings.ContainsKey("TemplateUrl")) {
+        if ($templateUrl.StartsWith('@')) {
+            $templateUrl = "$($repoSettings.TemplateUrl.Split('@')[0])$templateUrl"
+        }
+        if ($repoSettings.TemplateUrl -eq $templateUrl) {
+            $updateSettings = $false
+        }
+    }
 
     $templateBranch = $templateUrl.Split('@')[1]
     $templateUrl = $templateUrl.Split('@')[0]
-
-
 
 
     $templateBranch
