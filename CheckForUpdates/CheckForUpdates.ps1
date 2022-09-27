@@ -101,14 +101,7 @@ try {
     $templateBranch
     $templateUrl
 
-    if (-not $templateUrl.Contains('@')) {
-        if ($templateBranch) {
-            $templateUrl += "@$templateBranch"
-        }
-        else {
-            $templateUrl += "@main"
-        }
-    }
+   
     if ($templateUrl -notlike "https://*") {
         $templateUrl = "https://github.com/$templateUrl"
     }
