@@ -9,6 +9,10 @@ Param(
     [string] $templateBranch = "",
     [Parameter(HelpMessage = "Set this input to Y in order to update FSCM-PS System Files if needed", Mandatory = $false)]
     [bool] $update,
+    [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
+    [string] $settingsJson = '',
+    [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
+    [string] $secretsJson = '',
     [Parameter(HelpMessage = "Direct Commit (Y/N)", Mandatory = $false)]
     [bool] $directCommit    
 )
@@ -20,7 +24,61 @@ Set-StrictMode -Version 2.0
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
+
+
+    #Use settings and secrets
+    Write-Output "::group::Use settings and secrets"
+    OutputInfo "======================================== Use settings and secrets"
+
+    $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
+
+    #$settings = $settingsJson | ConvertFrom-Json 
+    $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
+
+    $settingsHash = $settings #| ConvertTo-HashTable
+    $settings.secretsList | ForEach-Object {
+        $setValue = ""
+        if($settingsHash.Contains($_))
+        {
+            $setValue = $settingsHash."$_"
+        }
+        if ($secrets.ContainsKey($setValue)) 
+        {
+            OutputInfo "Found $($_) variable in the settings file with value: ($setValue)"
+            $value = $secrets."$setValue"
+        }
+        else {
+            $value = ""
+        }
+        Set-Variable -Name $_ -Value $value
+    }
+    
+    if($DynamicsVersion -eq "")
+    {
+        $DynamicsVersion = $settings.buildVersion
+    }
+
+    $version = Get-VersionData -sdkVersion $DynamicsVersion
+
+    if($settings.sourceBranch -eq "")
+    {
+        $settings.sourceBranch = $settings.currentBranch
+    }
+
+    $settings
+    $version
+
+    #SourceBranchToPascakCase
+    $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
+
+    $workflowName = $env:GITHUB_WORKFLOW
+    
+    $buildPath = Join-Path "C:\Temp" $settings.buildPath
+    Write-Output "::endgroup::"
+
     $baseFolder = $ENV:GITHUB_WORKSPACE
+
+
 
     if ($update -and -not $token) {
         throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called repoTokenSecretName containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
@@ -59,7 +117,8 @@ try {
 
     $templateBranch = $templateUrl.Split('@')[1]
     $templateUrl = $templateUrl.Split('@')[0]
-
+    $templateBranch
+    $templateUrl
     $headers = @{
         "Accept" = "application/vnd.github.baptiste-preview+json"
     }

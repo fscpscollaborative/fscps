@@ -25,6 +25,15 @@ inputs:
     description: Set this input to Y in order to update AL-Go System Files if needed
     required: false
     default: 'N'
+  settingsJson:
+    description: Settings from repository in compressed Json format
+    required: false
+    default: ''
+  secretsJson:
+    description: Secrets from repository in compressed Json format
+    required: false
+    default: ''
+ 
   directCommit:
     description: Direct Commit (Y/N)
     required: false
@@ -32,7 +41,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -templateUrl '${{ inputs.templateUrl }}' -templateBranch '${{ inputs.templateBranch }}' -update ('${{ inputs.update }}' -eq 'Y') -directCommit ('${{ inputs.directCommit }}' -eq 'Y') } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -actor '${{ inputs.actor }}' -token '${{ inputs.token }}' -templateUrl '${{ inputs.templateUrl }}' -templateBranch '${{ inputs.templateBranch }}' -update ('${{ inputs.update }}' -eq 'Y') -settingsJson '${{ inputs.settingsJson }}' -secretsJson '${{ inputs.secretsJson }}' -directCommit ('${{ inputs.directCommit }}' -eq 'Y') } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal
