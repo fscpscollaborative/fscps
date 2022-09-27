@@ -15,6 +15,9 @@ $FnSCMSettingsFile = ".FSCM-PS\settings.json"
 $RepoSettingsFile = ".github\FSCM-PS-Settings.json"
 $runningLocal = $false #$local.IsPresent
 
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+choco install gh -y --allow-unofficial --force
+refreshenv
 
 function invoke-git {
     Param(
@@ -33,9 +36,7 @@ function invoke-gh {
         [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
     )
     #todo
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-    choco install gh -y --allow-unofficial --force
-    refreshenv
+
     Write-Host -ForegroundColor Yellow "gh $command $remaining"
     $ErrorActionPreference = "SilentlyContinue"
     gh $command $remaining
