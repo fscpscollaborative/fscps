@@ -74,8 +74,6 @@ try {
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
 
-    
-
 
 
     if ($update -and -not $token) {
@@ -104,17 +102,14 @@ try {
     }
 
     $updateSettings = $true
-    if ($repoSettings.ContainsKey("TemplateUrl")) {
-        if ($templateUrl.StartsWith('@')) {
-            $templateUrl = "$($repoSettings.TemplateUrl.Split('@')[0])$templateUrl"
-        }
-        if ($repoSettings.TemplateUrl -eq $templateUrl) {
-            $updateSettings = $false
-        }
-    }
+
 
     $templateBranch = $templateUrl.Split('@')[1]
     $templateUrl = $templateUrl.Split('@')[0]
+
+
+
+
     $templateBranch
     $templateUrl
     $headers = @{
