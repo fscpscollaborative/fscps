@@ -254,7 +254,7 @@ try {
 
                 if($fileName -eq "update_model_version.yml")
                 {
-                    if($type -eq "Retail"){ continue }
+                    if($type -eq "Retail"){ return }
                     $srcPattern = 'Contoso'
                     $replacePattern = ""
                     if($settings.models.Split(','))
