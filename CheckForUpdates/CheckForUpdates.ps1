@@ -84,7 +84,7 @@ try {
     else {
         $repoSettings = @{}
     }
-
+    Write-Host $settings.templateUrl
     $updateSettings = $true
     if ($repoSettings.ContainsKey("TemplateUrl")) {
         if ($templateUrl.StartsWith('@')) {
