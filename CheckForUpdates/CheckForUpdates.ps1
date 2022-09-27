@@ -225,16 +225,16 @@ try {
 
                 if($fileName -eq "ci.yml")
                 {
-                    $srcPattern = '        - main'
+                    $srcPattern = '       - main'
                     $replacePattern = ""
                     if($settings.ciBranches.Split(','))
                     {
                         $settings.ciBranches.Split(',') | ForEach-Object { 
-                            $replacePattern += "        - "+'"'+$($_)+'"'+"`r`n"
+                            $replacePattern += "       - "+'"'+$($_)+'"'+"`r`n"
                         }
                     }
                     else {
-                        $replacePattern += "        - "+'"'+$($settings.ciBranches)+'"'+"`r`n"
+                        $replacePattern += "       - "+'"'+$($settings.ciBranches)+'"'+"`r`n"
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
