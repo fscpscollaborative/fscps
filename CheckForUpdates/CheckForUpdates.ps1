@@ -197,6 +197,20 @@ try {
                     }
                 }
                 
+                if($fileName -eq "build.yml")
+                {
+                    $srcPattern = '        - "*"'
+                    $replacePattern = '        - "*"'
+                    $replacePattern += "`r`n"
+                    Get-Versions | ForEach-Object { 
+                        $ver = $_.version
+                        $replacePattern += "        - "+'"'+$($ver)+'"'+"`r`n"
+
+                    }
+                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                }
+
+
                 $dstFile = Join-Path $dstFolder $fileName
                 if (Test-Path -Path $dstFile -PathType Leaf) {
                     # file exists, compare
