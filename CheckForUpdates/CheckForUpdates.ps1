@@ -265,7 +265,7 @@ try {
                 Set-Location -Path *
             
                 if (!$directcommit) {
-                    $branch = "updatefscmsystemfiles"
+                    $branch = [System.IO.Path]::GetRandomFileName()
                     invoke-git checkout -b $branch
                 }
 
