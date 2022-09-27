@@ -94,6 +94,10 @@ try {
             $updateSettings = $false
         }
     }
+    else
+    {
+        $templateUrl = $seetings.templateUrl
+    }
 
     $templateBranch = $templateUrl.Split('@')[1]
     $templateUrl = $templateUrl.Split('@')[0]
