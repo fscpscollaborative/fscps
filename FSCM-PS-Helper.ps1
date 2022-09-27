@@ -1154,7 +1154,6 @@ function Get-Versions
                 }
             }
         }
-
         Write-Output ($versionsDefault)
     }
 }

@@ -53,12 +53,9 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-    if($DynamicsVersion -eq "")
-    {
-        $DynamicsVersion = $settings.buildVersion
-    }
+    $DynamicsVersion = $settings.buildVersion
 
-    $version = Get-VersionData -sdkVersion $DynamicsVersion
+    $versions = Get-Versions
 
     if($settings.sourceBranch -eq "")
     {
@@ -66,17 +63,18 @@ try {
     }
 
     $settings
-    $version
+    $versions
 
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
     $workflowName = $env:GITHUB_WORKFLOW
-    
+    $baseFolder = $ENV:GITHUB_WORKSPACE
+
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
 
-    $baseFolder = $ENV:GITHUB_WORKSPACE
+    
 
 
 
