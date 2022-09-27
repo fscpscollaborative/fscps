@@ -60,7 +60,7 @@ try {
 
     $settings
     $versions
-
+    $templateUrl = $settings.templateUrl
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
