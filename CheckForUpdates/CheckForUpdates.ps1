@@ -12,7 +12,7 @@ Param(
     [Parameter(HelpMessage = "Direct Commit (Y/N)", Mandatory = $false)]
     [bool] $directCommit    ,
     [Parameter(HelpMessage = "The environment type FSCM/Commerce", Mandatory = $false)]
-    [string] $type = 'FSCM'
+    [string] $type = "FSCM"
 )
 
 $ErrorActionPreference = "Stop"
