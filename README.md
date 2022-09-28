@@ -9,7 +9,7 @@ The template repository to use as starting point are:
 The below usage scenarios takes you through how to get started and how to perform the most common tasks.
 
 Usage scenarios:
-1. [Set up CI/CD for an existing per tenant extension (BingMaps)](Scenarios/SetupCiCdForExistingPTE.md)
+1. [Set up CI/CD](Scenarios/SetupCiCdForExistingPTE.md)
 2. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
 
 
