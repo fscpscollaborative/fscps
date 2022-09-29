@@ -110,7 +110,7 @@ try {
         $templateUrl = "https://github.com/$templateUrl"
     }
 
-    if($templateBranch -eq "")
+    if(!$templateBranch)
     {
         $templateBranch = $settings.templateBranch
     }
