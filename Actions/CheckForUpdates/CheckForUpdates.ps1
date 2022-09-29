@@ -106,14 +106,14 @@ try {
     $templateUrl = $templateUrl.Split('@')[0]
 
 
-    $templateBranch
-    $templateUrl
-
-   
     if ($templateUrl -notlike "https://*") {
         $templateUrl = "https://github.com/$templateUrl"
     }
 
+    if($templateBranch -eq "")
+    {
+        $templateBranch = $settings.templateBranch
+    }
 
     $headers = @{
         "Accept" = "application/vnd.github.baptiste-preview+json"
@@ -165,7 +165,7 @@ try {
         }
     }
     $updateFiles = @()
-    $checkfiles
+
     $checkfiles | ForEach-Object {
         $fileType = $_.type
         $srcPath = $_.srcPath
@@ -286,7 +286,7 @@ try {
         }
     }
     $removeFiles = @()
-    $updateFiles
+
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
             OutputWarning -message "There are updates for your FSC-PS system, run 'Update FSC-PS System Files' workflow to download the latest version of FSC-PS."
