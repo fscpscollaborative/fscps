@@ -19,30 +19,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 choco install gh -y --allow-unofficial
 refreshenv
 
-function invoke-git {
-    Param(
-        [parameter(mandatory = $true, position = 0)][string] $command,
-        [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
-    )
-
-    Write-Host -ForegroundColor Yellow "git $command $remaining"
-    git $command $remaining
-    if ($lastexitcode) { throw "git $command error" }
-}
-
-function invoke-gh {
-    Param(
-        [parameter(mandatory = $true, position = 0)][string] $command,
-        [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
-    )
-    #todo
-
-    Write-Host -ForegroundColor Yellow "gh $command $remaining"
-    $ErrorActionPreference = "SilentlyContinue"
-    gh $command $remaining
-    $ErrorActionPreference = "Stop"
-    if ($lastexitcode) { throw "gh $command error" }
-}
 
 function ConvertTo-HashTable {
     [CmdletBinding()]
