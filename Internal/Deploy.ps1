@@ -8,7 +8,7 @@ Param(
     [switch] $directCommit
 )
 
-$gitHubHelperPath = Join-Path $PSScriptRoot "..\Actions\FSC-PS-Helper.ps1" -Resolve
+$gitHubHelperPath = Join-Path $PSScriptRoot "..\Actions\Helpers\Github-Helper.psm1" -Resolve
 Import-Module $gitHubHelperPath -DisableNameChecking
 
 $ErrorActionPreference = "stop"
