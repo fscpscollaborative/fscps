@@ -34,16 +34,16 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: ciellos-dev/FSCM-PS/WorkflowInitialize@latest
+        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.0
 
       - name: Read settings
         id: ReadSettings
-        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.0
         with:
           environment: ${{ inputs.environment }}
 
       - name: Check for updates to FSCM-PS system files
-        uses: ciellos-dev/FSCM-PS/CheckForUpdates@latest
+        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.0
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
@@ -66,7 +66,7 @@ jobs:
          
       - name: Read settings
         id: ReadSettings
-        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.0
         with:
           environment: ${{ matrix.environment }}
           
@@ -77,7 +77,7 @@ jobs:
          ref: ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
          
       - name: Read secrets
-        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.0
         env:
           secrets: ${{ toJson(secrets) }}
         with:
@@ -100,7 +100,7 @@ jobs:
           nuget-version: 5.10.x    
           
       - name: Run pipeline
-        uses: ciellos-dev/FSCM-PS/RunPipeline@latest
+        uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.0
         id: runpipeline
         with:
           type: ${{ needs.Initialization.outputs.type}}
@@ -124,10 +124,10 @@ jobs:
         
       - name: Read settings
         id: ReadSettings
-        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.0
 
       - name: Read secrets
-        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.0
         env:
           secrets: ${{ toJson(secrets) }}
         with:
@@ -136,7 +136,7 @@ jobs:
           
       - name: Finalize the workflow
         id: PostProcess
-        uses: ciellos-dev/FSCM-PS/WorkflowPostProcess@latest
+        uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.0
         with:
           remove_current: ${{ needs.Initialization.outputs.environments == '' }}
           settingsJson: ${{ env.Settings }}
