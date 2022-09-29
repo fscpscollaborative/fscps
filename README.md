@@ -1,5 +1,5 @@
 # FSC-PS for GitHub
-::rocket:: FSC-PS for GitHub is a set of GitHub templates and actions, which can be used to setup and maintain professional DevOps processes for your Dynamics 365 FSC and Commerce projects.
+:rocket: FSC-PS for GitHub is a set of GitHub templates and actions, which can be used to setup and maintain professional DevOps processes for your Dynamics 365 FSC and Commerce projects.
 
 The goal is that people who have created their GitHub repositories based on the FSC-PS templates, can maintain these repositories and stay current just by running a workflow, which updates their repositories. This includes necessary changes to scripts and workflows to cope with new features and functions.
 
