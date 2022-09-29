@@ -228,15 +228,12 @@ function ReadSettings {
 
     # Read Settings file
     $settings = [ordered]@{
-        "artifact"                               = ""
         "companyName"                            = ""
         "currentBranch"                          = $branchName
         "sourceBranch"                           = ""
         "repoName"                               = $repoName
-        "versioningStrategy"                     = 0
-        "failOn"                                 = "error"
-        "templateUrl"                            = "https://github.com/ciellos-dev/FSC-PS-Template@main"
-        "templateBranch"                         = ""
+        "templateUrl"                            = "https://github.com/ciellosinc/FSC-PS-Template"
+        "templateBranch"                         = "main"
         "githubRunner"                           = "windows-latest"
         "buildVersion"                           = ""
         "uploadPackageToLCS"                     = $false
@@ -244,10 +241,10 @@ function ReadSettings {
         "nugetFeedUserName"                      = ""
         "nugetFeedUserSecretName"                = ""
         "nugetFeedPasswordSecretName"            = ""
-        "models"                                 = ""
         "nugetSourcePath"                        = ""
-        "githubSecrets"                          = ""
         "nugetPackagesPath"                      = "NuGets"
+        "models"                                 = ""
+        "githubSecrets"                          = ""
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
         "lcsEnvironmentId"                       = ""
@@ -260,7 +257,6 @@ function ReadSettings {
         "azClientsecretSecretname"               = ""
         "azVmname"                               = ""
         "azVmrg"                                 = ""
-        "alwaysBuildAllProjects"                 = $false
         "deployablePackagePath"                  = "artifacts"
         "generatePackages"                       = $true
         "modelsIntoPackagePattern"               = "*"
@@ -274,7 +270,7 @@ function ReadSettings {
         "ciBranches"                             = "main,release"
         "deployScheduleCron"                     = "1 * * * *"
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
-        "Environments"                           = @()
+
     }
 
     $gitHubFolder = ".github"
