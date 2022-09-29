@@ -191,7 +191,7 @@ try {
                 }
                 Write-Host "$dstFile -> $srcFile"
                 $lines = ([string](Get-Content -Raw -path $dstFile)).Split("`n")
-                "templateRepo","appSourceAppRepo" | ForEach-Object {
+                "templateRepo","templateRepo" | ForEach-Object {
                     $regex = "^(.*)$($config.githubOwner)/$($config."$_")(.*)$($config.branch)(.*)$"
                     $replace = "`$1$($originalOwnerAndRepo."$_")`$2$originalBranch`$3"
                     $lines = $lines | ForEach-Object { $_ -replace $regex, $replace }
@@ -292,7 +292,7 @@ try {
                     $useBranch = $branch
                 }
                 $lines = ([string](Get-Content -Raw -path $srcFile)).Split("`n")
-                "templateRepo","appSourceAppRepo" | ForEach-Object {
+                "templateRepo","templateRepo" | ForEach-Object {
                     $regex = "^(.*)$($originalOwnerAndRepo."$_")(.*)$originalBranch(.*)$"
                     $replace = "`$1$($config.githubOwner)/$($config."$_")`$2$($useBranch)`$3"
                     $lines = $lines | ForEach-Object { $_ -replace $regex, $replace }
