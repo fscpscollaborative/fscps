@@ -36,7 +36,7 @@ try {
     $originalBranch = "main"
 
     Set-Location $PSScriptRoot
-    $baseRepoPath = invoke-git -returnValue rev-parse 
+    $baseRepoPath = invoke-git -returnValue rev-parse --show-toplevel
     Write-Host "Base repo path: $baseRepoPath"
     $user = gh api user | ConvertFrom-Json
     Write-Host "GitHub user: $($user.login)"
