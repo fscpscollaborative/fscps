@@ -3,7 +3,7 @@ Param(
     [string] $actor,
     [Parameter(HelpMessage = "The GitHub token running the action", Mandatory = $false)]
     [string] $token,
-    [Parameter(HelpMessage = "Set this input to Y in order to update FSCM-PS System Files if needed", Mandatory = $false)]
+    [Parameter(HelpMessage = "Set this input to Y in order to update FSC-PS System Files if needed", Mandatory = $false)]
     [bool] $update,
     [Parameter(HelpMessage = "Settings from repository in compressed Json format", Mandatory = $false)]
     [string] $settingsJson = '',
@@ -21,7 +21,7 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSCM-PS-Helper.ps1" -Resolve)
+    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
     $workflowName = $env:GITHUB_WORKFLOW
     $baseFolder = $ENV:GITHUB_WORKSPACE
     #Use settings and secrets
@@ -30,7 +30,7 @@ try {
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
 
-    $EnvironmentsFile = Join-Path $baseFolder '.FSCM-PS\environments.json'
+    $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
     $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
@@ -79,7 +79,7 @@ try {
         throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called repoTokenSecretName containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
     }
 
-    $RepoSettingsFile = ".github\FSCM-PS-Settings.json"
+    $RepoSettingsFile = ".github\FSC-PS-Settings.json"
     if (Test-Path $RepoSettingsFile) {
         $repoSettings = Get-Content $repoSettingsFile -Encoding UTF8 | ConvertFrom-Json | ConvertTo-HashTable
     }
@@ -133,7 +133,7 @@ try {
         Write-Host "Api url $($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)"
         $repoInfo = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)" | ConvertFrom-Json
         if (!($repoInfo.PSObject.Properties.Name -eq "template_repository")) {
-            OutputWarning -message "This repository wasn't built on a template repository, or the template repository is deleted. You must specify a template repository in the FSCM-PS settings file."
+            OutputWarning -message "This repository wasn't built on a template repository, or the template repository is deleted. You must specify a template repository in the FSC-PS settings file."
             exit
         }
 
@@ -156,12 +156,12 @@ try {
         @{ "dstPath" = ".github\workflows"; "srcPath" = ".github\workflows"; "pattern" = "*"; "type" = "workflow" },
         @{ "dstPath" = ".github"; "srcPath" = ".github"; "pattern" = "*.copy.md"; "type" = "releasenotes" }
     )
-    if (Test-Path (Join-Path $baseFolder ".FSCM-PS")) {
-        $checkfiles += @(@{ "dstPath" = ".FSCM-PS"; "srcPath" = ".FSCM-PS"; "pattern" = "*.ps1"; "type" = "script" })
+    if (Test-Path (Join-Path $baseFolder ".FSC-PS")) {
+        $checkfiles += @(@{ "dstPath" = ".FSC-PS"; "srcPath" = ".FSC-PS"; "pattern" = "*.ps1"; "type" = "script" })
     }
     else {
-        Get-ChildItem -Path $baseFolder -Directory | Where-Object { Test-Path (Join-Path $_.FullName ".FSCM-PS") -PathType Container } | ForEach-Object {
-            $checkfiles += @(@{ "dstPath" = Join-Path $_.Name ".FSCM-PS"; "srcPath" = ".FSCM-PS"; "pattern" = "*.ps1"; "type" = "script" })
+        Get-ChildItem -Path $baseFolder -Directory | Where-Object { Test-Path (Join-Path $_.FullName ".FSC-PS") -PathType Container } | ForEach-Object {
+            $checkfiles += @(@{ "dstPath" = Join-Path $_.Name ".FSC-PS"; "srcPath" = ".FSC-PS"; "pattern" = "*.ps1"; "type" = "script" })
         }
     }
     $updateFiles = @()
@@ -289,10 +289,10 @@ try {
     $updateFiles
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
-            OutputWarning -message "There are updates for your FSCM-PS system, run 'Update FSCM-PS System Files' workflow to download the latest version of FSCM-PS."
+            OutputWarning -message "There are updates for your FSC-PS system, run 'Update FSC-PS System Files' workflow to download the latest version of FSC-PS."
         }
         else {
-            Write-Host "Your repository runs on the latest version of FSCM-PS System."
+            Write-Host "Your repository runs on the latest version of FSC-PS System."
         }
     }
     else {
@@ -329,7 +329,7 @@ try {
                 invoke-git status
 
                 $templateUrl = "$templateUrl@$templateBranch"
-                $RepoSettingsFile = ".github\FSCM-PS-Settings.json"
+                $RepoSettingsFile = ".github\FSC-PS-Settings.json"
                 if (Test-Path $RepoSettingsFile) {
                     $repoSettings = Get-Content $repoSettingsFile -Encoding UTF8 | ConvertFrom-Json
                 }
@@ -388,7 +388,7 @@ try {
 
                 $status = invoke-git status --porcelain=v1
                 if ($status) {
-                    $message = "DevOps - Updated FSCM-PS System Files"
+                    $message = "DevOps - Updated FSC-PS System Files"
 
                     invoke-git commit --allow-empty -m "'$message'"
 
@@ -406,15 +406,15 @@ try {
             }
             catch {
                 if ($directCommit) {
-                    throw "Failed to update FSCM-PS System Files. Make sure that the personal access token, defined in the secret called GhTokenWorkflow, is not expired and it has permission to update workflows. (Error was $($_.Exception.Message))"
+                    throw "Failed to update FSC-PS System Files. Make sure that the personal access token, defined in the secret called GhTokenWorkflow, is not expired and it has permission to update workflows. (Error was $($_.Exception.Message))"
                 }
                 else {
-                    throw "Failed to create a pull-request to FSCM-PS System Files. Make sure that the personal access token, defined in the secret called GhTokenWorkflow, is not expired and it has permission to update workflows. (Error was $($_.Exception.Message))"
+                    throw "Failed to create a pull-request to FSC-PS System Files. Make sure that the personal access token, defined in the secret called GhTokenWorkflow, is not expired and it has permission to update workflows. (Error was $($_.Exception.Message))"
                 }
             }
         }
         else {
-            OutputWarning "Your repository runs on the latest version of FSCM-PS System."
+            OutputWarning "Your repository runs on the latest version of FSC-PS System."
         }
     }
 

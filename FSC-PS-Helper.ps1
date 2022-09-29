@@ -2,7 +2,7 @@ Param(
     [switch] $local
 )
 
-$gitHubHelperPath = Join-Path $PSScriptRoot 'Github-Helper.psm1'
+$gitHubHelperPath = Join-Path $PSScriptRoot 'Helpers\Github-Helper.psm1'
 if (Test-Path $gitHubHelperPath) {
     Import-Module $gitHubHelperPath
 }
@@ -10,9 +10,9 @@ if (Test-Path $gitHubHelperPath) {
 #$ErrorActionPreference = "stop"
 #Set-StrictMode -Version 2.0
 
-$FnSCMFolder = ".FSCM-PS\"
-$FnSCMSettingsFile = ".FSCM-PS\settings.json"
-$RepoSettingsFile = ".github\FSCM-PS-Settings.json"
+$FnSCMFolder = ".FSC-PS\"
+$FnSCMSettingsFile = ".FSC-PS\settings.json"
+$RepoSettingsFile = ".github\FSC-PS-Settings.json"
 $runningLocal = $false #$local.IsPresent
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -259,7 +259,7 @@ function ReadSettings {
         "repoName"                               = $repoName
         "versioningStrategy"                     = 0
         "failOn"                                 = "error"
-        "templateUrl"                            = "https://github.com/ciellos-dev/FSCM-PS-Template@main"
+        "templateUrl"                            = "https://github.com/ciellos-dev/FSC-PS-Template@main"
         "templateBranch"                         = ""
         "githubRunner"                           = "windows-latest"
         "buildVersion"                           = ""
@@ -921,7 +921,7 @@ function CheckAndCreateProjectFolder {
                 Set-Location $project
             }
             else {
-                throw "Repository is setup for a single project, cannot add a project. Move all appFolders, testFolders and the .FSCM-PS folder to a subdirectory in order to convert to a multi-project repository."
+                throw "Repository is setup for a single project, cannot add a project. Move all appFolders, testFolders and the .FSC-PS folder to a subdirectory in order to convert to a multi-project repository."
             }
         }
         else {
@@ -1116,9 +1116,9 @@ function Get-Versions
 
     process
     {
-        $versionsDefaultFile = Join-Path "$PSScriptRoot" "versions.default.json"
+        $versionsDefaultFile = Join-Path "$PSScriptRoot" "Helpers\versions.default.json"
         $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
-        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSCM-PS\versions.json'
+        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\versions.json'
         $versions = (Get-Content $versionsFile) | ConvertFrom-Json
 
         ForEach($version in $versions)
@@ -1213,7 +1213,7 @@ function Find-Match {
         }
 
 
-        Add-Type -LiteralPath $PSScriptRoot\Minimatch.dll
+        Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
 
         # Normalize slashes for root dir.
         $DefaultRoot = ConvertTo-NormalizedSeparators -Path $DefaultRoot
