@@ -308,13 +308,13 @@ try {
         }
     }
     $removeFiles = @()
-
+    Write-Information "Update $update"
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
             OutputWarning -message "There are updates for your FSC-PS system, run 'Update FSC-PS System Files' workflow to download the latest version of FSC-PS."
         }
         else {
-            Write-Host "Your repository runs on the latest version of FSC-PS System."
+            Write-Information "Your repository runs on the latest version of FSC-PS System."
         }
     }
     else {
