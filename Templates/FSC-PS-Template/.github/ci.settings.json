@@ -1,0 +1,5 @@
+{
+    "generatePackages" : false,
+    "uploadPackageToLCS":  false,
+    "buildVersion": "10.0.27"
+}

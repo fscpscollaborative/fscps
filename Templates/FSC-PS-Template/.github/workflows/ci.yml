@@ -1,0 +1,119 @@
+name: (CI)
+
+on:
+  workflow_dispatch:
+  pull_request:
+     branches:
+       - main
+   
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+   Initialization:
+    runs-on: [ windows ]
+    outputs:
+      settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
+      type: ${{ steps.ReadSettings.outputs.type }}
+      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
+      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
+      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
+      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize the workflow
+        id: init
+        uses: ciellos-dev/FSCM-PS/WorkflowInitialize@latest
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+
+      - name: Check for updates to FSCM-PS system files
+        uses: ciellos-dev/FSCM-PS/CheckForUpdates@latest
+        with:
+          type: ${{ steps.ReadSettings.outputs.type }}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
+
+   Build:
+    needs: [ Initialization ]
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.Initialization.outputs.versions) }}
+      fail-fast: false
+    name: Gated Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Read settings
+        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Read secrets
+        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ env.Settings }}
+          secrets: ""
+          
+      - name: Setup MSBuild
+        if: ${{ needs.Initialization.outputs.type != 'Retail'}}
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup MSBuild
+        if: ${{ needs.Initialization.outputs.type == 'Retail'}}
+        uses: microsoft/setup-msbuild@v1
+        with:
+         vs-version: '[15.9,16.11)'
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: 5.10.x    
+          
+      - name: Run pipeline
+        uses: ciellos-dev/FSCM-PS/RunPipeline@latest
+        id: runpipeline
+        with:
+          type: ${{ needs.Initialization.outputs.type}}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
+          
+   PostProcess: 
+    if: always()
+    runs-on: [ self-hosted, Windows, WinStandard ]
+    needs: [ Initialization,  Build ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+
+      - name: Read secrets
+        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ env.Settings }}
+          secrets: ""
+          
+      - name: Finalize the workflow
+        id: PostProcess
+        uses: ciellos-dev/FSCM-PS/WorkflowPostProcess@latest
+        with:
+          remove_current: ${{ needs.Initialization.outputs.environments == '' }}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}

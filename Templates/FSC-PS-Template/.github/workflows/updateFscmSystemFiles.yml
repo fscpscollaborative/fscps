@@ -1,0 +1,106 @@
+name: (UPDATE) FSCM-PS System Files
+
+on:
+  workflow_dispatch:
+    inputs:
+      templateUrl:
+        description: Template Repository URL (only if a change is needed)
+        required: false
+        default: ''
+      directCommit:
+        description: Direct COMMIT (Y/N)
+        required: false
+        default: 'N'
+        
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+    
+env:
+  FORCE_COLOR: 3
+
+jobs:
+   Initialization:
+    runs-on: [ windows ]
+    outputs:
+      settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
+      type: ${{ steps.ReadSettings.outputs.type }}
+      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
+      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
+      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
+      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize the workflow
+        id: init
+        uses: ciellos-dev/FSCM-PS/WorkflowInitialize@latest
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+
+   Update:
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellos-dev/FSCM-PS/ReadSettings@latest
+        
+      - name: Read secrets
+        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          secrets: ""
+          
+      - name: Override TemplateUrl
+        run: |
+          $templateUrl = '${{ github.event.inputs.templateUrl }}'
+          if ($templateUrl) {
+            Write-Host "Using Template Url: $templateUrl"
+            Add-Content -Path $env:GITHUB_ENV -Value "TemplateUrl=$templateUrl"
+          }
+      - name: Check for updates to FSCM-PS system files
+        uses: ciellos-dev/FSCM-PS/CheckForUpdates@latest
+        with:
+          type: ${{ needs.Initialization.outputs.type}}
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+          Update: Y
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
+          directCommit: ${{ github.event.inputs.directCommit }}
+          
+   PostProcess: 
+    if: always()
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization,  Update ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Read secrets
+        uses: ciellos-dev/FSCM-PS/ReadSecrets@latest
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          secrets: ""
+          
+      - name: Finalize the workflow
+        id: PostProcess
+        uses: ciellos-dev/FSCM-PS/WorkflowPostProcess@latest
+        with:
+          remove_current: ${{ needs.Initialization.outputs.environments == '' }}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
