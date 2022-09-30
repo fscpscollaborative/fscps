@@ -403,7 +403,8 @@ try {
                 OutputInfo "ReleaseNotes:"
                 OutputInfo $releaseNotes
 
-                $status = invoke-git status --porcelain=v1
+                $status = invoke-git status --porcelain=v2
+                OutputInfo "Git changes: $($status)"
                 if ($status) {
                     $message = "DevOps - Updated FSC-PS System Files"
 
