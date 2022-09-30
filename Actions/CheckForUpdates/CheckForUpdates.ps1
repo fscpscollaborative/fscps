@@ -403,9 +403,9 @@ try {
                 OutputInfo "ReleaseNotes:"
                 OutputInfo $releaseNotes
 
-                $status = invoke-git status --porcelain=v2
-                OutputInfo "Git changes: $($status)"
-                if ($status) {
+                #$status = invoke-git status --porcelain=v2
+                #OutputInfo "Git changes: $($status)"
+                #if ($status) {
                     $message = "DevOps - Updated FSC-PS System Files"
 
                     invoke-git commit --allow-empty -m "'$message'"
@@ -417,10 +417,10 @@ try {
                         invoke-git push -u $url $branch
                         invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes"
                     }
-                }
-                else {
-                    OutputInfo "No changes detected in files"
-                }
+                #}
+                #else {
+                #    OutputInfo "No changes detected in files"
+                #}
             }
             catch {
                 if ($directCommit) {
