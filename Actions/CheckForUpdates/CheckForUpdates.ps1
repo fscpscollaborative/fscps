@@ -144,7 +144,7 @@ try {
     if ($templateUrl -ne "") {
         try {
             $templateUrl = $templateUrl -replace "https://www.github.com/","$ENV:GITHUB_API_URL/repos/" -replace "https://github.com/","$ENV:GITHUB_API_URL/repos/"
-            Write-Host "Api url $templateUrl"
+            OutputInfo "Api url $templateUrl"
             $templateInfo = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $templateUrl | ConvertFrom-Json
         }
         catch {
@@ -152,7 +152,7 @@ try {
         }
     }
     else {
-        Write-Host "Api url $($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)"
+        OutputInfo "Api url $($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)"
         $repoInfo = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)" | ConvertFrom-Json
         if (!($repoInfo.PSObject.Properties.Name -eq "template_repository")) {
             OutputWarning -message "This repository wasn't built on a template repository, or the template repository is deleted. You must specify a template repository in the FSC-PS settings file."
@@ -163,7 +163,7 @@ try {
     }
 
     $templateUrl = $templateInfo.html_url
-    Write-Host "Using template from $templateUrl@$templateBranch"
+    OutputInfo "Using template from $templateUrl@$templateBranch"
 
     $headers = @{             
         "Accept" = "application/vnd.github.baptiste-preview+json"
@@ -295,24 +295,25 @@ try {
                     # file exists, compare
                     $dstContent = (Get-Content -Path $dstFile -Encoding UTF8 -Raw).Replace("`r", "").TrimEnd("`n").Replace("`n", "`r`n")
                     if ($dstContent -ne $srcContent) {
-                        Write-Host "Updated $name ($(Join-Path $dstPath $filename)) available"
+                        OutputInfo "Updated $name ($(Join-Path $dstPath $filename)) available"
                         $updateFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
                     }
                 }
                 else {
                     # new file
-                    Write-Host "New $name ($(Join-Path $dstPath $filename)) available"
+                    OutputInfo "New $name ($(Join-Path $dstPath $filename)) available"
                     $updateFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
                 }
             }
         }
     }
     $removeFiles = @()
-    Write-Information "Update files"
+
+    OutputInfo "Update files"
     $updateFiles
-    Write-Information "Remove files"
+    OutputInfo "Remove files"
     $removeFiles
-    Write-Information "Update Settings"
+    OutputInfo "Update Settings"
     $updateSettings
 
     Write-Information "Update $update"
@@ -321,7 +322,7 @@ try {
             OutputWarning -message "There are updates for your FSC-PS system, run 'Update FSC-PS System Files' workflow to download the latest version of FSC-PS."
         }
         else {
-            Write-Information "Your repository runs on the latest version of FSC-PS System."
+            OutputWarning "Your repository runs on the latest version of FSC-PS System."
         }
     }
     else {
@@ -399,21 +400,21 @@ try {
                             }
                         }
                     }
-                    Write-Host "Update $($_.DstFile)"
+                    OutputInfo "Update $($_.DstFile)"
                     Set-Content -Path $_.DstFile -Encoding UTF8 -Value $_.Content
                 }
                 if ($releaseNotes -eq "") {
                     $releaseNotes = "No release notes available!"
                 }
                 $removeFiles | ForEach-Object {
-                    Write-Host "Remove $_"
+                    OutputInfo "Remove $_"
                     Remove-Item (Join-Path (Get-Location).Path $_) -Force
                 }
 
                 invoke-git add *
 
-                Write-Host "ReleaseNotes:"
-                Write-Host $releaseNotes
+                OutputInfo "ReleaseNotes:"
+                OutputInfo $releaseNotes
 
                 $status = invoke-git status --porcelain=v1
                 if ($status) {
@@ -430,7 +431,7 @@ try {
                     }
                 }
                 else {
-                    Write-Host "No changes detected in files"
+                    OutputInfo "No changes detected in files"
                 }
             }
             catch {
