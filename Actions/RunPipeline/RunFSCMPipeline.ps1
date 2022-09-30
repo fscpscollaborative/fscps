@@ -315,7 +315,7 @@ try {
 
                 if($settings.exportModel)
                 {
-                    Install-Module d365fo-tools -ErrorAction SilentlyContinue
+                    Write-Output "::group::Export axmodel file"
 
                     if($settings.models.Split(','))
                     {
@@ -325,12 +325,13 @@ try {
                     {
                         $modelName = $settings.models
                     }
-                    Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory
+                    Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
                     $modelFilePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($modelName+".axmodel")
 
                     Write-Host "::set-output name=MODEL_FILE::$modelFilePath"
                     Write-Host "set-output name=MODEL_FILE::$modelFilePath"
                     Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$modelFilePath"
+                    Write-Output "::endgroup::"
                 }
 
                 #Upload to LCS
