@@ -325,12 +325,11 @@ try {
                     {
                         $modelName = $settings.models
                     }
-                    Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
-                    $modelFilePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($modelName+".axmodel")
-
-                    Write-Host "::set-output name=MODEL_FILE::$modelFilePath"
-                    Write-Host "set-output name=MODEL_FILE::$modelFilePath"
-                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$modelFilePath"
+                    $modelFilePath = Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+ 
+                    Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
+                    Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"
+                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($modelFilePath.File)"
                     Write-Output "::endgroup::"
                 }
 
