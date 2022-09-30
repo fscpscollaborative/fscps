@@ -326,7 +326,7 @@ try {
                         $modelName = $settings.models
                     }
                     Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory
-                    $modelFilePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) $modelName
+                    $modelFilePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($modelName+".axmodel")
 
                     Write-Host "::set-output name=MODEL_FILE::$modelFilePath"
                     Write-Host "set-output name=MODEL_FILE::$modelFilePath"
