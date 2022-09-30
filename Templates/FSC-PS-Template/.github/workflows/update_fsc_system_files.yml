@@ -71,15 +71,30 @@ jobs:
             Write-Host "Using Template Url: $templateUrl"
             Add-Content -Path $env:GITHUB_ENV -Value "TemplateUrl=$templateUrl"
           }
+
+      - name: Calculate DirectCommit
+        env:
+          directCommit: ${{ github.event.inputs.directCommit }}
+          eventName: ${{ github.event_name }}
+        run: |
+          $directCommit = $ENV:directCommit
+          Write-Host $ENV:eventName
+          if ($ENV:eventName -eq 'schedule') {
+            Write-Host "Running Update System Files on a schedule. Setting DirectCommit = Y"
+            $directCommit = 'Y'
+          }
+          Add-Content -Path $env:GITHUB_ENV -Value "DirectCommit=$directCommit"
+
       - name: Check for updates to FSCM-PS system files
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
         with:
           type: ${{ needs.Initialization.outputs.type}}
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
-          Update: Y
+          update: Y
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
-          directCommit: ${{ github.event.inputs.directCommit }}
+          secretsJson: ${{ env.RepoSecrets }}
+          templateUrl: ${{ env.TemplateUrl }}
+          directCommit: ${{ env.directCommit }}
           
    PostProcess: 
     if: always()

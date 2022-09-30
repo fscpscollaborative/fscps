@@ -299,12 +299,9 @@ try {
     }
     $removeFiles = @()
 
-    OutputInfo "Update files"
-    $updateFiles
-    OutputInfo "Remove files"
-    $removeFiles
-    OutputInfo "Update Settings"
-    $updateSettings
+    OutputInfo "Update files: $($updateFiles.Count -gt 0)"
+    OutputInfo "Remove files $($removeFiles.Count -gt 0)"
+    OutputInfo "Update Settings $($updateSettings)"    
 
     Write-Information "Update $update"
     if (-not $update) {
