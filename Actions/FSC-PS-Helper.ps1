@@ -236,6 +236,7 @@ function ReadSettings {
         "templateBranch"                         = "main"
         "githubRunner"                           = "windows-latest"
         "buildVersion"                           = ""
+        "exportModel"                            = $false
         "uploadPackageToLCS"                     = $false
         "nugetFeedName"                          = ""
         "nugetFeedUserName"                      = ""

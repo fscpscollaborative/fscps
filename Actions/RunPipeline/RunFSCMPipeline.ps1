@@ -312,6 +312,27 @@ try {
                 Write-Output "::endgroup::"
 
 
+
+                if($settings.exportModel)
+                {
+                    Install-Module d365fo-tools -ErrorAction SilentlyContinue
+
+                    if($settings.models.Split(','))
+                    {
+                        $modelName = $settings.models.Split(',')[0]
+                    }
+                    else
+                    {
+                        $modelName = $settings.models
+                    }
+                    Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory
+                    $modelFilePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) $modelName
+
+                    Write-Host "::set-output name=MODEL_FILE::$modelFilePath"
+                    Write-Host "set-output name=MODEL_FILE::$modelFilePath"
+                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$modelFilePath"
+                }
+
                 #Upload to LCS
                 $assetId = ""
                 if($settings.uploadPackageToLCS)

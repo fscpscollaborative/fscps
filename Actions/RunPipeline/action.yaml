@@ -36,6 +36,9 @@ outputs:
   package_path:
     description: Package path
     value: ${{ steps.runpipeline.outputs.PACKAGE_PATH }}
+  modelfile_path:
+    description: Modelfile path
+    value: ${{ steps.runpipeline.outputs.MODEL_FILE }}
 runs:
   using: composite
   steps:
