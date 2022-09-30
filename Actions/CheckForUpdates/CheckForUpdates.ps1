@@ -120,9 +120,9 @@ try {
     $updateSettings = $true
     if ($repoSettings.ContainsKey("templateUrl")) {
         if ($templateUrl.StartsWith('@')) {
-            $templateUrl = "$($repoSettings.TemplateUrl.Split('@')[0])$templateUrl"
+            $templateUrl = "$($repoSettings.templateUrl.Split('@')[0])$templateUrl"
         }
-        if ($repoSettings.TemplateUrl -eq $templateUrl) {
+        if (($repoSettings.templateUrl -eq $templateUrl) -and ($repoSettings.templateBranch -eq $templateBranch)) {
             $updateSettings = $false
         }
     }
