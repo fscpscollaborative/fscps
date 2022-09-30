@@ -345,7 +345,6 @@ try {
 
                 invoke-git status
 
-                $templateUrl = "$templateUrl@$templateBranch"
                 $RepoSettingsFile = ".github\FSC-PS-Settings.json"
                 if (Test-Path $RepoSettingsFile) {
                     $repoSettings = Get-Content $repoSettingsFile -Encoding UTF8 | ConvertFrom-Json
@@ -359,6 +358,13 @@ try {
                 }
                 else {
                     $repoSettings | Add-Member -MemberType NoteProperty -Name "templateUrl" -Value $templateUrl
+                }
+
+                if ($repoSettings.PSObject.Properties.Name -eq "templateBranch") {
+                    $repoSettings.templateBranch = $templateBranch
+                }
+                else {
+                    $repoSettings | Add-Member -MemberType NoteProperty -Name "templateBranch" -Value $templateBranch
                 }
                 $repoSettings | ConvertTo-Json -Depth 99 | Set-Content $repoSettingsFile -Encoding UTF8
 
