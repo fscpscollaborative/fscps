@@ -308,6 +308,13 @@ try {
         }
     }
     $removeFiles = @()
+    Write-Information "Update files"
+    $updateFiles
+    Write-Information "Remove files"
+    $removeFiles
+    Write-Information "Update Settings"
+    $updateSettings
+
     Write-Information "Update $update"
     if (-not $update) {
         if (($updateFiles) -or ($removeFiles)) {
