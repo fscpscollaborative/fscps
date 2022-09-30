@@ -100,7 +100,6 @@ try {
         $templateUrl = "https://github.com/$templateUrl"
     }
 
-
     $RepoSettingsFile = ".github\FSC-PS-Settings.json"
     if (Test-Path $RepoSettingsFile) {
         $repoSettings = Get-Content $repoSettingsFile -Encoding UTF8 | ConvertFrom-Json | ConvertTo-HashTable
@@ -108,33 +107,24 @@ try {
     else {
         $repoSettings = @{}
     }
-    Write-Host $settings.templateUrl
+
+    $templateBranch = $templateUrl.Split('@')[1]
+    $templateUrl = $templateUrl.Split('@')[0]
+
+
+    if(!$templateBranch)
+    {
+        $templateBranch = $settings.templateBranch
+    }
+
     $updateSettings = $true
-    if ($repoSettings.ContainsKey("TemplateUrl")) {
+    if ($repoSettings.ContainsKey("templateUrl")) {
         if ($templateUrl.StartsWith('@')) {
             $templateUrl = "$($repoSettings.TemplateUrl.Split('@')[0])$templateUrl"
         }
         if ($repoSettings.TemplateUrl -eq $templateUrl) {
             $updateSettings = $false
         }
-    }
-    else
-    {
-        Write-Host $settings.templateUrl
-        $templateUrl = $settings.templateUrl
-    }
-
-    $templateBranch = $templateUrl.Split('@')[1]
-    $templateUrl = $templateUrl.Split('@')[0]
-
-
-    if ($templateUrl -notlike "https://*") {
-        $templateUrl = "https://github.com/$templateUrl"
-    }
-
-    if(!$templateBranch)
-    {
-        $templateBranch = $settings.templateBranch
     }
 
     $headers = @{
