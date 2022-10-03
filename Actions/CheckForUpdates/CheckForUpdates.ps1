@@ -206,7 +206,7 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
             
-                if ($baseName -ne "UpdateGitHubGoSystemFiles") {
+                if ($fileName -ne "update_fsc_system_files.yml") {
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "runs-on: [ windows ]`r`n"
                         $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
