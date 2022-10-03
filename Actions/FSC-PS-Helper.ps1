@@ -258,7 +258,7 @@ function ReadSettings {
         "azClientsecretSecretname"               = ""
         "azVmname"                               = ""
         "azVmrg"                                 = ""
-        "deployablePackagePath"                  = "artifacts"
+        "artifactsPath"                          = "artifacts"
         "generatePackages"                       = $true
         "modelsIntoPackagePattern"               = "*"
         "packageNamePattern"                     = "BRANCHNAME-PACKAGENAME-FNSCMVERSION_DATE.RUNNUMBER"

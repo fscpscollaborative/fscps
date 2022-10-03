@@ -24,7 +24,7 @@ env:
 
 jobs:
    Initialization:
-    runs-on: [ windows ]
+    runs-on: [ windows-latest ]
     outputs:
       settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
       type: ${{ steps.ReadSettings.outputs.type }}

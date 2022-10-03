@@ -92,7 +92,7 @@ jobs:
           
    PostProcess: 
     if: always()
-    runs-on: [ self-hosted, Windows, WinStandard ]
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Build ]
     steps:
       - name: Checkout

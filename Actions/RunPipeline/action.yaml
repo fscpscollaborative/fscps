@@ -39,6 +39,12 @@ outputs:
   modelfile_path:
     description: Modelfile path
     value: ${{ steps.runpipeline.outputs.MODEL_FILE }}
+  artifacts_path:
+    description: Artifacts folder path
+    value: ${{ steps.runpipeline.outputs.ARTIFACTS_PATH }}
+  artifacts_list:
+    description: Artifacts folder path
+    value: ${{ steps.runpipeline.outputs.ARTIFACTS_LIST }}
 runs:
   using: composite
   steps:

@@ -157,6 +157,14 @@ try {
      #GeneratePackages
     if($settings.generatePackages)
     {
+        $artifactDirectory = [System.IO.Path]::GetDirectoryName(Join-Path $buildPath $settings.artifactsPath)
+        if (!(Test-Path -Path $artifactDirectory))
+        {
+            # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
+            # whereas New-Item would only create the top level directory
+            [System.IO.Directory]::CreateDirectory($artifactDirectory)
+        }
+
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
@@ -195,6 +203,7 @@ try {
         Rename-Item -Path (Join-Path $packagePath "RetailDeployablePackage.zip") -NewName $packageName
 
         $packagePath = Join-Path $packagePath $packageName
+        Copy-Item $packagePath -Destination $artifactDirectory -Force
 
         Write-Host "::set-output name=PACKAGE_NAME::$packageName"
         Write-Host "set-output name=PACKAGE_NAME::$packageName"
@@ -203,6 +212,29 @@ try {
         Write-Host "::set-output name=PACKAGE_PATH::$packagePath"
         Write-Host "set-output name=PACKAGE_PATH::$packagePath"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
+
+        Write-Host "::set-output name=ARTIFACTS_PATH::$artifactDirectory"
+        Write-Host "set-output name=ARTIFACTS_PATH::$artifactDirectory"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
+
+        
+        $artifacts = Get-ChildItem $artifactDirectory
+        $artifactsList = $artifacts.FullName -join ","
+
+        if($artifactsList.Contains(','))
+        {
+            $artifacts = $artifactsList.Split(',') | ConvertTo-Json -compress
+        }
+        else
+        {
+            $artifacts = '["'+$($artifactsList).ToString()+'"]'
+
+        }
+
+        Write-Host "::set-output name=ARTIFACTS_LIST::$artifacts"
+        Write-Host "set-output name=ARTIFACTS_LIST::$artifacts"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
+
 
         Write-Output "::endgroup::"
 

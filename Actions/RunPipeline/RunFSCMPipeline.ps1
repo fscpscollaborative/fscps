@@ -220,13 +220,10 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
         $packageName = $packageNamePattern + ".zip"
 
-
-        #$packageName = (($settings.packageNamePattern).Replace("BRANCHNAME", $($settings.sourceBranch).Replace("/", "_")).Replace("FNSCMVERSION", $DynamicsVersion).Replace("PACKAGENAME", $settings.packageName).Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString()).Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER) + ".zip" )
-
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
         $xppBinariesSearch = $settings.modelsIntoPackagePattern
-        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.deployablePackagePath) ($packageName)
+        $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.artifactsPath) ($packageName)
 
 
         if ($xppBinariesSearch.Contains(";"))
@@ -309,6 +306,27 @@ try {
                 Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
 
+                Write-Host "::set-output name=ARTIFACTS_PATH::$artifactDirectory"
+                Write-Host "set-output name=ARTIFACTS_PATH::$artifactDirectory"
+                Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
+
+                $artifacts = Get-ChildItem $artifactDirectory
+                $artifactsList = $artifacts.FullName -join ","
+
+                if($artifactsList.Contains(','))
+                {
+                    $artifacts = $artifactsList.Split(',') | ConvertTo-Json -compress
+                }
+                else
+                {
+                    $artifacts = '["'+$($artifactsList).ToString()+'"]'
+
+                }
+
+                Write-Host "::set-output name=ARTIFACTS_LIST::$artifacts"
+                Write-Host "set-output name=ARTIFACTS_LIST::$artifacts"
+                Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
+
                 Write-Output "::endgroup::"
 
 
@@ -330,6 +348,7 @@ try {
                     Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
                     Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"
                     Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($modelFilePath.File)"
+
                     Write-Output "::endgroup::"
                 }
 

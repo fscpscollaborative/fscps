@@ -1,0 +1,6 @@
+{
+    "generatePackages" : true,
+    "uploadPackageToLCS":  false,
+    "models":"Vertex",
+    "exportModel":true
+}

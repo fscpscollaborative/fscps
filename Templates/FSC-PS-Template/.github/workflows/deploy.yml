@@ -111,12 +111,12 @@ jobs:
       - name: Publish artifacts  
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
-          path: ${{ steps.runpipeline.outputs.PACKAGE_PATH }}
+          name: ${{ env.PACKAGE_NAME }}
+          path: ${{ env.ARTIFACTS_PATH }}
           
    PostProcess: 
     if: always()
-    runs-on: [ self-hosted, Windows, WinStandard ]
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Deploy ]
     steps:
       - name: Checkout

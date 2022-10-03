@@ -1,0 +1,304 @@
+name: (RELEASE)
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionNumber:
+        description: Extension version to promote to release (default is 1.0.0.0)
+        required: true
+        default: '1.0.0.0'
+      name:
+        description: Name of this release (Default is generated package name)
+        required: true
+        default: ''
+      prerelease:
+        description: Prerelease (Y/N)
+        required: false
+        default: 'N'
+      draft:
+        description: Draft (Y/N)
+        required: false
+        default: 'N'
+      createReleaseBranch:
+        description: Create Release Branch (Y/N)
+        required: false
+        default: 'N'
+      updateVersionNumber:
+        description: Update Version Number in main branch.
+        required: false
+        default: 'Y'
+      directCommit:
+        description: Direct COMMIT (Y/N)
+        required: false
+        default: 'N'
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency: release
+
+defaults:
+  run:
+    shell: PowerShell
+
+jobs:
+  Initialization:
+    runs-on: [ windows-latest ]
+    outputs:
+      settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
+      type: ${{ steps.ReadSettings.outputs.type }}
+      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
+      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
+      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
+      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize the workflow
+        id: init
+        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.1
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+        with:
+          version: ${{ inputs.version }}
+          
+      - name: Check for updates to FSCM-PS system files
+        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
+        with:
+          type: ${{ steps.ReadSettings.outputs.type }}
+          settingsJson: ${{ env.Settings }}
+          secretsJson: ${{ env.RepoSecrets }}
+                   
+  CreateRelease:
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization ]
+    outputs:
+      artifact_name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Read settings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+          
+      - name: Read secrets
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ env.Settings }}
+          secrets: ""
+          
+      - name: Setup MSBuild
+        if: ${{ needs.Initialization.outputs.type != 'Retail'}}
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup MSBuild
+        if: ${{ needs.Initialization.outputs.type == 'Retail'}}
+        uses: microsoft/setup-msbuild@v1
+        with:
+         vs-version: '[15.9,16.11)'
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: 5.10.x    
+      
+      - name: Get Env Vars
+        run: |
+          $settingsJson = '${{ env.Settings }}'
+          $settings = $settingsJson | ConvertFrom-Json
+          if ($settings) {
+            if($settings.type -eq 'FSCM')
+            {
+              if($settings.models.Split(','))
+              {
+                $modelName = $settings.models.Split(',')[0]
+              }
+              else
+              {
+                $modelName = $settings.models
+              }
+              Write-Host "Model name is: $modelName"
+              Add-Content -Path $env:GITHUB_ENV -Value "Model=$modelName"
+              Write-Host "Metadata path is: $($settings.metadataPath)"
+              Add-Content -Path $env:GITHUB_ENV -Value "metadata_path=$($settings.metadataPath)"
+            }
+            
+            Write-Host "Repo type is: $($settings.type)"
+            Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
+          }
+          
+      - uses: ciellosinc/d365fo-update-model-version@v0.1.3
+        if: ${{env.type == 'FSCM'}}
+        with:
+         xppSourcePath: '${{ github.workspace }}\${{ env.metadata_path }}'
+         xppDescriptorSearch: '${{ env.Model }}\Descriptor\*.xml'
+         xppLayer: "ISV" 
+         versionNumber: '${{ github.event.inputs.versionNumber }}'   
+      
+      - name: Run pipeline
+        uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.1
+        id: runpipeline
+        with:
+          type: ${{ needs.Initialization.outputs.type}}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
+          
+      - name: Update settings
+        run: |
+          $settingsJson = '${{ env.Settings }}'
+          $settings = $settingsJson | ConvertFrom-Json
+          if ($settings) {
+              Write-Host "Repo type is: $($settings.type)"
+              Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
+              
+              $tag = "v"+"${{ github.event.inputs.versionNumber }}"+"_"+"$($settings.currentBranch)"
+              Write-Host "Tag is: $tag"
+              Add-Content -Path $env:GITHUB_ENV -Value "tag=$tag"
+              
+          }      
+
+      - name: Publish artifacts  
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
+          path: '${{ env.ARTIFACTS_PATH }}'
+
+
+      - name: Upload release artifacts
+        run: |
+          $release = @{
+            AccessToken = "${{ github.token }}"
+            TagName = "${{ env.tag }}"
+            Name = "${{ env.packageName }}"
+            ReleaseText = "First version of my cool thing"
+            Draft = ${{ github.event.inputs.draft=='Y' }}
+            PreRelease = ${{ github.event.inputs.prerelease=='Y' }}
+            RepositoryName = "MyGithubRepository"
+          }
+          Publish-GithubRelease @release -Artifact '${{ env.ARTIFACTS_PATH }}'
+
+
+  UpdateVersion:
+    if: ${{ github.event.inputs.updateVersionNumber=='Y' }}
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization, CreateRelease ]
+    steps:
+
+      - name: Cleanup folder
+        if: always()
+        continue-on-error: true
+        shell: powershell
+        run:  Remove-Item ${{ github.workspace }}\* -Recurse -Force
+         
+      - uses: actions/checkout@v3
+      
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+        
+      - name: Get Env Vars
+        run: |
+          $settingsJson = '${{ env.Settings }}'
+          $settings = $settingsJson | ConvertFrom-Json
+          $settings
+          if ($settings) {
+            if($settings.type -eq 'FSCM')
+            {
+              if($settings.models.Split(','))
+              {
+                $modelName = $settings.models.Split(',')[0]
+              }
+              else
+              {
+                $modelName = $settings.models
+              }
+              Write-Host "Model name is: $modelName"
+              Add-Content -Path $env:GITHUB_ENV -Value "Model=$modelName"
+              Write-Host "Metadata path is: $($settings.metadataPath)"
+              Add-Content -Path $env:GITHUB_ENV -Value "metadata_path=$($settings.metadataPath)"
+            }
+            
+            Write-Host "Repo type is: $($settings.type)"
+            Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
+          }
+          
+      - uses: ciellos-dev/d365fo-update-model-version@v0.1.3
+        if: ${{env.type == 'FSCM'}}
+        with:
+         xppSourcePath: '${{ github.workspace }}\${{ env.metadata_path }}'
+         xppDescriptorSearch: '${{ env.Model }}\Descriptor\*.xml'
+         xppLayer: "ISV" 
+         versionNumber: '${{ github.event.inputs.versionNumber }}'
+           
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4.0.4
+        with: 
+          branch: gitmvu
+          delete-branch: true
+          commit-message: "Update Model to ${{ github.event.inputs.versionNumber }}"
+          title: 'Pushing Version Update ${{ github.event.inputs.versionNumber }} into ${{ github.ref }}'
+          labels: automated pr    
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+
+      - name: auto-pull-request-merge
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        uses: KeisukeYamashita/auto-pull-request-merge@v1.0.6
+        with:
+            checkStatus: false
+            pullRequestNumber: ${{ steps.cpr.outputs.pull-request-number }}
+            timeoutSeconds: 500
+            token: ${{ secrets.REPO_SCOPED_TOKEN }}
+            sha: ${{ steps.cpr.outputs.pull-request-head-sha }}
+       
+      - name: Delete temp branch
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+           git push origin gitmvu --delete
+           
+  CreateReleaseBranch:
+    if: ${{ github.event.inputs.createReleaseBranch=='Y' }}
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization, UpdateVersion, CreateRelease ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Release Branch
+        run: |
+          git checkout -b release/${{ github.event.inputs.versionNumber }}
+          git config user.name ${{ github.actor}}
+          git config user.email ${{ github.actor}}@users.noreply.github.com
+          git commit --allow-empty -m "Release branch ${{ github.event.inputs.versionNumber }}"
+          git push origin release/${{ github.event.inputs.versionNumber }}
+          
+  PostProcess:
+    if: always()
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization, UpdateVersion, CreateRelease, CreateReleaseBranch ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Read secrets
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          secrets: ""
+          
+      - name: Finalize the workflow
+        id: PostProcess
+        uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.1
+        with:
+          remove_current: ${{ needs.Initialization.outputs.environments == '' }}
+          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
