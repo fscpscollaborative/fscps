@@ -606,13 +606,15 @@ function Publish-GithubRelease
             foreach ($file in (Get-ChildItem $Artifact))
             {
                 $body = [System.IO.File]::ReadAllBytes($file.FullName)
-                if($Name)
+                if(!$Name)
                 {
                     $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($file.Name)"
                 }
                 else
                 {
+                    $Name = $Name -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
                     $fileName = (($Name)+($file.Extension))
+
                     $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
                 }
                                 

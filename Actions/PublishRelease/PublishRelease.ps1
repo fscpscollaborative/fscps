@@ -7,6 +7,8 @@ Param(
     [string] $settingsJson = '',
     [Parameter(HelpMessage = "Secrets from repository in compressed Json format", Mandatory = $false)]
     [string] $secretsJson = '',
+    [Parameter(HelpMessage = "artifactsPath", Mandatory = $false)]
+    [string] $artifactsPath = '',
     [Parameter(HelpMessage = "The environment type FSCM/Commerce", Mandatory = $false)]
     [string] $type = "FSCM"
 )
@@ -63,9 +65,6 @@ try {
         $settings.sourceBranch = $settings.currentBranch
     }
 
-    
-
-
 
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
@@ -73,7 +72,21 @@ try {
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
 
+      
+    $tag = "v"+"$($github.Payload.inputs.versionNumber)"+"_"+"$($settings.currentBranch)"
 
+    $github.Payload.inputs
+    $release = @{
+        AccessToken = "$token"
+        TagName = "$tag"
+        Name = "$($github.Payload.inputs.name)"
+        ReleaseText = "$($github.Payload.inputs.name)"
+        Draft = "$($github.Payload.inputs.draft)" -eq "Y"
+        PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
+        RepositoryName = "$($github.Payload.repository.name)"
+    }
+
+    Publish-GithubRelease @release -Artifact
 
 }
 catch {
