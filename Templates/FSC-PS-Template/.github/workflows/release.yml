@@ -179,8 +179,8 @@ jobs:
             TagName = "${{ env.tag }}"
             Name = "${{ env.packageName }}"
             ReleaseText = "First version of my cool thing"
-            Draft = ${{ github.event.inputs.draft }} -eq 'Y'
-            PreRelease = ${{ github.event.inputs.prerelease }} -eq 'Y'
+            Draft = '${{ github.event.inputs.draft }}' -eq 'Y'
+            PreRelease = '${{ github.event.inputs.prerelease }}' -eq 'Y'
             RepositoryName = "MyGithubRepository"
           }
 
