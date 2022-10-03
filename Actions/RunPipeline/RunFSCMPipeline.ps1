@@ -260,8 +260,8 @@ try {
             }
 
             Import-Module (Join-Path -Path $xppToolsPath -ChildPath "CreatePackage.psm1")
-            $outputDir = Join-Path -Path $artifactDirectory -ChildPath ((New-Guid).ToString())
-            $tempCombinedPackage = Join-Path -Path $artifactDirectory -ChildPath "$((New-Guid).ToString()).zip"
+            $outputDir = Join-Path -Path $buildPath -ChildPath ((New-Guid).ToString())
+            $tempCombinedPackage = Join-Path -Path $buildPath -ChildPath "$((New-Guid).ToString()).zip"
             try
             {
                 New-Item -Path $outputDir -ItemType Directory > $null
@@ -343,7 +343,7 @@ try {
                     {
                         $modelName = $settings.models
                     }
-                    $modelFilePath = Export-D365Model -Path (Join-Path $buildPath $settings.deployablePackagePath) -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+                    $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
  
                     Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
                     Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"

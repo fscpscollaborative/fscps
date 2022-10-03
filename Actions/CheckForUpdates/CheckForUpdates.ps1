@@ -208,7 +208,7 @@ try {
             
                 if ($baseName -ne "UpdateGitHubGoSystemFiles") {
                     if ($repoSettings.ContainsKey("runs-on")) {
-                        $srcPattern = "runs-on: [ windows-latest ]`r`n"
+                        $srcPattern = "runs-on: [ windows ]`r`n"
                         $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                         if (!($repoSettings.ContainsKey("gitHubRunner"))) {
