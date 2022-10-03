@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   Deploy:
-    runs-on: [ self-hosted, Windows ]
+    runs-on: [ windows-latest ]
     steps:
       - uses: actions/checkout@v2
 
