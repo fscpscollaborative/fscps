@@ -605,6 +605,7 @@ function Publish-GithubRelease
         {
             foreach ($file in (Get-ChildItem $Artifact))
             {
+                $file
                 $body = [System.IO.File]::ReadAllBytes($file.FullName)
                 if(!$Name)
                 {
