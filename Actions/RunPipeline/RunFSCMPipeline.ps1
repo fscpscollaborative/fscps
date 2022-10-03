@@ -313,10 +313,15 @@ try {
                         $modelName = $settings.models
                     }
                     $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
- 
-                    Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
-                    Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"
-                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($modelFilePath.File)"
+
+                    $modelFile = Get-Item $modelFilePath.File
+                    Rename-Item $modelFile.FullName (($modelName)+($modelFile.Extension)) -Force
+
+                    $newModelFileName = Join-Path $modelFile.DirectoryName (($modelName)+($modelFile.Extension))
+
+                    Write-Host "::set-output name=MODEL_FILE::$($newModelFileName)"
+                    Write-Host "set-output name=MODEL_FILE::$($newModelFileName)"
+                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($newModelFileName)"
 
                     Write-Output "::endgroup::"
                 }

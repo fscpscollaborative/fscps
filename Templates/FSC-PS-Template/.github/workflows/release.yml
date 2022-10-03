@@ -173,15 +173,17 @@ jobs:
 
       - name: Upload release artifacts
         run: |
+          
           $release = @{
             AccessToken = "${{ github.token }}"
             TagName = "${{ env.tag }}"
             Name = "${{ env.packageName }}"
             ReleaseText = "First version of my cool thing"
-            Draft = ${{ github.event.inputs.draft=='Y' }}
-            PreRelease = ${{ github.event.inputs.prerelease=='Y' }}
+            Draft = ${{ github.event.inputs.draft }} -eq 'Y'
+            PreRelease = ${{ github.event.inputs.prerelease }} -eq 'Y'
             RepositoryName = "MyGithubRepository"
           }
+
           Publish-GithubRelease @release -Artifact '${{ env.ARTIFACTS_PATH }}'
 
 
