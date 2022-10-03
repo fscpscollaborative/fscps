@@ -86,7 +86,7 @@ try {
         RepositoryName = "$($github.Payload.repository.name)"
     }
 
-    Publish-GithubRelease @release -Artifact
+    Publish-GithubRelease @release -Artifact $artifactsPath
 
 }
 catch {
