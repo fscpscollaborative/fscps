@@ -298,6 +298,31 @@ try {
 
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
 
+
+                
+                if($settings.exportModel)
+                {
+                    Write-Output "::group::Export axmodel file"
+
+                    if($settings.models.Split(','))
+                    {
+                        $modelName = $settings.models.Split(',')[0]
+                    }
+                    else
+                    {
+                        $modelName = $settings.models
+                    }
+                    $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+ 
+                    Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
+                    Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"
+                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($modelFilePath.File)"
+
+                    Write-Output "::endgroup::"
+                }
+
+
+
                 Write-Host "::set-output name=PACKAGE_NAME::$pname"
                 Write-Host "set-output name=PACKAGE_NAME::$pname"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
@@ -331,26 +356,6 @@ try {
 
 
 
-                if($settings.exportModel)
-                {
-                    Write-Output "::group::Export axmodel file"
-
-                    if($settings.models.Split(','))
-                    {
-                        $modelName = $settings.models.Split(',')[0]
-                    }
-                    else
-                    {
-                        $modelName = $settings.models
-                    }
-                    $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
- 
-                    Write-Host "::set-output name=MODEL_FILE::$($modelFilePath.File)"
-                    Write-Host "set-output name=MODEL_FILE::$($modelFilePath.File)"
-                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($modelFilePath.File)"
-
-                    Write-Output "::endgroup::"
-                }
 
                 #Upload to LCS
                 $assetId = ""
