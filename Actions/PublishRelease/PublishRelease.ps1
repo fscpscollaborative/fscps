@@ -23,7 +23,7 @@ try {
     $github = (Get-ActionContext)
 
 
-    $github.Payload.input
+    $github.Payload.inputs
 
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
