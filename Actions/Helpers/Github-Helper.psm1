@@ -594,9 +594,6 @@ function Publish-GithubRelease
         catch {
             throw $_
         }
-        finally {
-            Set-TlsLevel -Revert
-        }
     }
 
     process
