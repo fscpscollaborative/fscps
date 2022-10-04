@@ -1,20 +1,18 @@
 # Settings
-The behavior of AL-Go for GitHub is very much controlled by the settings in the settings file.
+The behavior of FSC-PS for GitHub is very much controlled by the settings in the settings file.
 
 ## Where is the settings file located
-An AL-Go repository can consist of a single project (with multiple apps) or multiple projects (each with multiple apps). Multiple projects in a single repository are comparable to multiple repositories; they are built, deployed, and tested separately. All apps in each project (single or multiple) are built together in the same pipeline, published and tested together. If a repository is multiple projects, each project is stored in a separate folder in the root of the repository.
+An FSC-PS repository can consist of a single project (with multiple apps) or multiple projects (each with multiple apps). Multiple projects in a single repository are comparable to multiple repositories; they are built, deployed, and tested separately. All apps in each project (single or multiple) are built together in the same pipeline, published and tested together. If a repository is multiple projects, each project is stored in a separate folder in the root of the repository.
 
 When running a workflow or a local script, the settings are applied by reading one or more settings files. Last applied settings file wins. The following lists the settings files and their location:
 
-**.github\\AL-Go-settings.json** is the repository settings file. This settings file contains settings that are relevant for all projects in the repository. If a settings in the repository settings file is found in a subsequent settings file, it will be overridden by the new value.
+**.github\\FSC-PS-settings.json** is the repository settings file. This settings file contains settings that are relevant for all projects in the repository. If a settings in the repository settings file is found in a subsequent settings file, it will be overridden by the new value.
 
-**Special note:** The repository settings file can also contains `BcContainerHelper` settings, which will be applied when loading `BcContainerHelper` in a workflow (see expert section).
+**.FSC-PS\\settings.json** is the project settings file. If the repository is a single project, the .FSC-PS folder is in the root folder of the repository. If the repository contains multiple projects, there will be a .FSC-PS folder in each project folder.
 
-**.AL-Go\\settings.json** is the project settings file. If the repository is a single project, the .AL-Go folder is in the root folder of the repository. If the repository contains multiple projects, there will be a .AL-Go folder in each project folder.
+**.FSC-PS\\\<workflow\>.settings.json** is the workflow-specific settings file. This option is used for the Current, NextMinor and NextMajor workflows to determine artifacts and build numbers when running these workflows.
 
-**.AL-Go\\\<workflow\>.settings.json** is the workflow-specific settings file. This option is used for the Current, NextMinor and NextMajor workflows to determine artifacts and build numbers when running these workflows.
-
-**.AL-Go\\\<username\>.settings.json** is the user-specific settings file. This option is rarely used, but if you have special settings, which should only be used for one specific user (potentially in the local scripts), these settings can be added to a settings file with the name of the user followed by `.settings.json`.
+**.FSC-PS\\\<username\>.settings.json** is the user-specific settings file. This option is rarely used, but if you have special settings, which should only be used for one specific user (potentially in the local scripts), these settings can be added to a settings file with the name of the user followed by `.settings.json`.
 
 ## Basic settings
 
@@ -33,19 +31,19 @@ When running a workflow or a local script, the settings are applied by reading o
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | appSourceCopMandatoryAffixes | This setting is only used if the type is AppSource App. The value is an array of affixes, which is used for running AppSource Cop. | [ ] |
-| appSourceProductId<br />appSourceMainAppFolder<br />appSourceContinuousDelivery | Use these settings to enable publishing of apps to AppSource directly from AL-Go for GitHub.<br />**appSourceProductId** must be the product Id from partner Center.<br />**appSourceMainAppFolder** specifies the appFolder of the main app if you have multiple apps in the same project.<br />**appSourceContinuousDelivery** can be set to true to enable continuous delivery of every successful build to AppSource Validation. Note that the app will only be in preview in AppSource and you will need to manually press GO LIVE in order for the app to be promoted to production.<br />**Note:** You will need to define an AppSourceContext secret in order to publish to AppSource. | |
+| appSourceProductId<br />appSourceMainAppFolder<br />appSourceContinuousDelivery | Use these settings to enable publishing of apps to AppSource directly from FSC-PS for GitHub.<br />**appSourceProductId** must be the product Id from partner Center.<br />**appSourceMainAppFolder** specifies the appFolder of the main app if you have multiple apps in the same project.<br />**appSourceContinuousDelivery** can be set to true to enable continuous delivery of every successful build to AppSource Validation. Note that the app will only be in preview in AppSource and you will need to manually press GO LIVE in order for the app to be promoted to production.<br />**Note:** You will need to define an AppSourceContext secret in order to publish to AppSource. | |
 | obsoleteTagMinAllowedMajorMinor | This setting will enable AppSource cop rule AS0105, which causes objects that are pending obsoletion with an obsolete tag version lower than the minimum set in this property are not allowed. | |
 
 ## Basic Repository settings
-The repository settings are only read from the repository settings file (.github\AL-Go-Settings.json)
+The repository settings are only read from the repository settings file (.github\FSC-PS-Settings.json)
 
 | Name | Description |
 | :-- | :-- |
-| templateUrl | Defines the URL of the template repository used to create this project and is used for checking and downloading updates to AL-Go System files. |
+| templateUrl | Defines the URL of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. |
 | nextMajorSchedule | CRON schedule for when NextMajor workflow should run. Default is no scheduled run, only manual trigger. Build your CRON string here: https://crontab.guru |
 | nextMinorSchedule | CRON schedule for when NextMinor workflow should run. Default is no scheduled run, only manual trigger. Build your CRON string here: https://crontab.guru |
 | currentSchedule | CRON schedule for when Current workflow should run. Default is no scheduled run, only manual trigger. Build your CRON string here: https://crontab.guru |
-| runs-on | Specifies which github runner will be used for all jobs in all workflows (except the Update AL-Go System Files workflow). The default is to use the GitHub hosted runner Windows-latest. You can specify a special GitHub Runner for the build job using the GitHubRunner setting. Read [this](SelfHostedGitHubRunner.md) for more information.
+| runs-on | Specifies which github runner will be used for all jobs in all workflows (except the Update FSC-PS System Files workflow). The default is to use the GitHub hosted runner Windows-latest. You can specify a special GitHub Runner for the build job using the GitHubRunner setting. Read [this](SelfHostedGitHubRunner.md) for more information.
 | githubRunner | Specifies which github runner will be used for the build job in workflows including a build job. This is the most time consuming task. By default this job uses the Windows-latest github runner (unless overridden by the runs-on setting). This settings takes precedence over runs-on so that you can use different runners for the build job and the housekeeping jobs. See runs-on setting.
 
 ## Advanced settings
@@ -53,16 +51,16 @@ The repository settings are only read from the repository settings file (.github
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | artifact | Determines the artifacts used for building and testing the app.<br />This setting can either be an absolute pointer to Business Central artifacts (https://... - rarely used) or it can be a search specification for artifacts (\<storageaccount\>/\<type\>/\<version\>/\<country\>/\<select\>/\<sastoken\>).<br />If not specified, the artifacts used will be the latest sandbox artifacts from the country specified in the country setting. | |
-| updateDependencies | Setting updateDependencies to true causes AL-Go to build your app against the first compatible Business Central build and set the dependency version numbers in the app.json accordingly during build. All version numbers in the built app will be set to the version number used during compilation. | false |
+| updateDependencies | Setting updateDependencies to true causes FSC-PS to build your app against the first compatible Business Central build and set the dependency version numbers in the app.json accordingly during build. All version numbers in the built app will be set to the version number used during compilation. | false |
 | generateDependencyArtifact | When this repository setting is true, CI/CD pipeline generates an artifact with the external dependencies used for building the apps in this repo. | false |
 | companyName | Company name selected in the database, used for running the CI/CD workflow. Default is to use the default company in the selected Business Central localization. | |
 | versioningStrategy | The versioning strategy determines how versioning is performed in this project. The version number of an app consists of 4 tuples: **Major**.**Minor**.**Build**.**Revision**. **Major** and **Minor** are read from the app.json file for each app. **Build** and **Revision** are calculated. Currently 3 versioning strategies are supported:<br />**0** = **Build** is the **github [run_number](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)** for the CI/CD workflow, increased by the **runNumberOffset** setting value (if specified). **Revision** is the **github [run_attempt](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)** subtracted 1.<br />**1** = **Build** is the **github [run_id](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)** for the repository. **Revision** is the **github [run_attempt](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)** subtracted 1.<br />**2** = **Build** is the current date  as **yyyyMMdd**. **Revision** is the current time as **hhmmss**. Date and time are always **UTC** timezone to avoid problems during daylight savings time change. Note that if two CI/CD workflows are started within the same second, this could yield to identical version numbers from two different runs.<br />**+16** use **repoVersion** setting as **appVersion** (**Major** and **Minor**) for all apps | 0 |
 | additionalCountries | This property can be set to an additional number of countries to compile, publish and test your app against during workflows. Note that this setting can be different in NextMajor and NextMinor workflows compared to the CI/CD workflow, by specifying a different value in a workflow settings file. | [ ] |
 | keyVaultName | When using Azure KeyVault for the secrets used in your workflows, the KeyVault name needs to be specified in this setting if it isn't specified in the AZURE_CREDENTIALS secret. Read [this](UseAzureKeyVault.md) for more information. | |
-| licenseFileUrlSecretName | Specify the name (**NOT the secret**) of the LicenseFileUrl secret. Default is LicenseFileUrl. AL-Go for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as LicenseFileUrl when running the CI/CD workflow for AppSource Apps. Read [this](SetupCiCdForExistingAppSourceApp.md) for more information. | LicenseFileUrl |
-| insiderSasTokenSecretName | Specifies the name (**NOT the secret**) of the InsiderSasToken secret. Default is InsiderSasToken. AL-Go for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as InsiderSasToken for getting access to Next Minor and Next Major builds. | InsiderSasToken |
-| ghTokenWorkflowSecretName | Specifies the name (**NOT the secret**) of the GhTokenWorkflow secret. Default is GhTokenWorkflow. AL-Go for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update AL-Go System Files workflow. Read [this](UpdateAlGoSystemFiles.md) for more information. | GhTokenWorkflow |
-| adminCenterApiCredentialsSecretName | Specifies the name (**NOT the secret**) of the adminCenterApiCredentials secret. Default is adminCenterApiCredentials. AL-Go for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use when connecting to the Admin Center API when creating Online Development Environments. Read [this](CreateOnlineDevEnv2.md) for more information. | AdminCenterApiCredentials |
+| licenseFileUrlSecretName | Specify the name (**NOT the secret**) of the LicenseFileUrl secret. Default is LicenseFileUrl. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as LicenseFileUrl when running the CI/CD workflow for AppSource Apps. Read [this](SetupCiCdForExistingAppSourceApp.md) for more information. | LicenseFileUrl |
+| insiderSasTokenSecretName | Specifies the name (**NOT the secret**) of the InsiderSasToken secret. Default is InsiderSasToken. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as InsiderSasToken for getting access to Next Minor and Next Major builds. | InsiderSasToken |
+| ghTokenWorkflowSecretName | Specifies the name (**NOT the secret**) of the GhTokenWorkflow secret. Default is GhTokenWorkflow. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update FSC-PS System Files workflow. Read [this](UpdateAlGoSystemFiles.md) for more information. | GhTokenWorkflow |
+| adminCenterApiCredentialsSecretName | Specifies the name (**NOT the secret**) of the adminCenterApiCredentials secret. Default is adminCenterApiCredentials. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use when connecting to the Admin Center API when creating Online Development Environments. Read [this](CreateOnlineDevEnv2.md) for more information. | AdminCenterApiCredentials |
 | installApps | An array of 3rd party dependency apps, which you do not have access to through the appDependencyProbingPaths. The setting should be an array of either secure URLs or paths to folders or files relative to the project, where the CI/CD workflow can find and download the apps. The apps in installApps are downloaded and installed before compiling and installing the apps. | [ ] |
 | installTestApps | An array of 3rd party dependency apps, which you do not have access to through the appDependencyProbingPaths. The setting should be an array of either secure URLs or paths to folders or files relative to the project, where the CI/CD workflow can find and download the apps. The apps in installTestApps are downloaded and installed before compiling and installing the test apps. Adding a parantheses around the setting indicates that the test in this app will NOT be run, only installed. | [ ] |
 | configPackages | An array of configuration packages to be applied to the build container before running tests. Configuration packages can be the relative path within the project or it can be STANDARD, EXTENDED or EVALUATION for the rapidstart packages, which comes with Business Central. | [ ] |
@@ -75,18 +73,18 @@ The repository settings are only read from the repository settings file (.github
 | rulesetFile | Filename of the custom ruleset file | |
 | codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | When developing AppSource Apps, your app needs to be code signed and you need to add secrets to GitHub secrets or Azure KeyVault, specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCiCdForExistingAppSourceApp.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
 | applicationInsightsConnectionStringSecretName | This setting specifies the name (**NOT the secret**) of a secret containing the application insights connection string for the apps. | applicationInsightsConnectionString |
-| storageContextSecretName | This setting specifies the name (**NOT the secret**) of a secret containing a json string with StorageAccountName, ContainerName, BlobName and StorageAccountKey or SAS Token. If this secret exists, AL-Go will upload builds to this storage account for every successful build.<br />The BcContainerHelper function New-ALGoStorageContext can create a .json structure with this content. | StorageContext |
+| storageContextSecretName | This setting specifies the name (**NOT the secret**) of a secret containing a json string with StorageAccountName, ContainerName, BlobName and StorageAccountKey or SAS Token. If this secret exists, FSC-PS will upload builds to this storage account for every successful build.<br />The BcContainerHelper function New-ALGoStorageContext can create a .json structure with this content. | StorageContext |
 | alwaysBuildAllProjects | This setting only makes sense if the repository is setup for multiple projects.<br />Standard behavior of the CI/CD workflow is to only build the projects, in which files have changes when running the workflow due to a push or a pull request | false |
 | skipUpgrade | This setting is used to signal to the pipeline to NOT run upgrade and ignore previous releases of the app. | false |
 | cacheImageName | When using self-hosted runners, cacheImageName specifies the prefix for the docker image created for increased performance | my |
 | cacheKeepDays | When using self-hosted runners, cacheKeepDays specifies the number of days docker image are cached before cleaned up when running the next pipeline.<br />Note that setting cacheKeepDays to 0 will flush the cache before every build and will cause all other running builds using agents on the same host to fail. | 3 |
-| BcContainerHelperVersion | This setting can be set to a specific version (ex. 3.0.8) of BcContainerHelper to force AL-Go to use this version. **latest** means that AL-Go will use the latest released version. **preview** means that AL-Go will use the latest preview version. **dev** means that AL-Go will use the dev branch of containerhelper. | latest (or preview for AL-Go preview) |
+| BcContainerHelperVersion | This setting can be set to a specific version (ex. 3.0.8) of BcContainerHelper to force FSC-PS to use this version. **latest** means that FSC-PS will use the latest released version. **preview** means that FSC-PS will use the latest preview version. **dev** means that FSC-PS will use the dev branch of containerhelper. | latest (or preview for FSC-PS preview) |
 
 ## AppSource specific advanced settings
 
 | Name | Description | Default value |
 | :-- | :-- | :-- |
-| appSourceContextSecretName | This setting specifies the name (**NOT the secret**) of a secret containing a json string with ClientID, TenantID and ClientSecret or RefreshToken. If this secret exists, AL-Go will can upload builds to AppSource validation. | AppSourceContext |
+| appSourceContextSecretName | This setting specifies the name (**NOT the secret**) of a secret containing a json string with ClientID, TenantID and ClientSecret or RefreshToken. If this secret exists, FSC-PS will can upload builds to AppSource validation. | AppSourceContext |
 | keyVaultCertificateUrlSecretName<br />keyVaultCertificatePasswordSecretName<br />keyVaultClientIdSecretName | If you want to enable KeyVault access for your AppSource App, you need to provide 3 secrets as GitHub Secrets or in the Azure KeyVault. The names of those secrets (**NOT the secrets**) should be specified in the settings file with these 3 settings. Default is to not have KeyVault access from your AppSource App. Read [this](EnableKeyVaultForAppSourceApp.md) for more information. | |
 
 ## Expert settings (rarely used)
@@ -111,7 +109,7 @@ The repository settings are only read from the repository settings file (.github
 
 ## Custom Delivery
 
-You can override existing AL-Go Delivery functionality or you can define your own custom delivery mechanism for AL-Go for GitHub, by specifying a PowerShell script named DeliverTo*.ps1 in the .github folder. The following example will spin up a delivery job to SharePoint on CI/CD and Release.
+You can override existing FSC-PS Delivery functionality or you can define your own custom delivery mechanism for FSC-PS for GitHub, by specifying a PowerShell script named DeliverTo*.ps1 in the .github folder. The following example will spin up a delivery job to SharePoint on CI/CD and Release.
 
 DeliverToSharePoint.ps1
 ```
@@ -132,13 +130,13 @@ Write-Host "Project settings:"
 $parameters.ProjectSettings | Out-Host
 ```
 
-**Note:** You can also override existing AL-Go for GitHub delivery functionality by creating a script called f.ex. DeliverToStorage.ps1 in the .github folder.
+**Note:** You can also override existing FSC-PS for GitHub delivery functionality by creating a script called f.ex. DeliverToStorage.ps1 in the .github folder.
 
 ## Run-AlPipeline script override
 
-AL-Go for GitHub utilizes the Run-AlPipeline function from BcContainerHelper to perform the actual build (compile, publish, test etc). The Run-AlPipeline function supports overriding functions for creating containers, compiling apps and a lot of other things.
+FSC-PS for GitHub utilizes the Run-AlPipeline function from BcContainerHelper to perform the actual build (compile, publish, test etc). The Run-AlPipeline function supports overriding functions for creating containers, compiling apps and a lot of other things.
 
-This functionality is also available in AL-Go for GitHub, by adding a file to the .AL-Go folder, you automatically override the function.
+This functionality is also available in FSC-PS for GitHub, by adding a file to the .FSC-PS folder, you automatically override the function.
 
 | Override | Description |
 | :-- | :-- |
@@ -158,7 +156,7 @@ This functionality is also available in AL-Go for GitHub, by adding a file to th
 
 ## BcContainerHelper settings
 
-The repo settings file (.github\\AL-Go-Settings.json) can contain BcContainerHelper settings. Some BcContainerHelper settings are machine specific (folders and like), and should not be set in the repo settings file.
+The repo settings file (.github\\FSC-PS-Settings.json) can contain BcContainerHelper settings. Some BcContainerHelper settings are machine specific (folders and like), and should not be set in the repo settings file.
 
 Settings, which might be relevant to set in the settings file includes
 
@@ -172,8 +170,8 @@ Settings, which might be relevant to set in the settings file includes
 | TreatWarningsAsErrors | A list of AL warning codes, which should be treated as errors | [ ] |
 | DefaultNewContainerParameters | A list of parameters to be added to all container creations in this repo | { } |
 
-## Your own version of AL-Go for GitHub
+## Your own version of FSC-PS for GitHub
 
-For experts only, following the description [here](Contributing.md) you can setup a local fork of **AL-Go for GitHub** and use that as your templates. You can fetch upstream changes from Microsoft regularly to incorporate these changes into your version and this way have your modified version of AL-Go for GitHub.
+For experts only, following the description [here](Contributing.md) you can setup a local fork of **FSC-PS for GitHub** and use that as your templates. You can fetch upstream changes from Microsoft regularly to incorporate these changes into your version and this way have your modified version of FSC-PS for GitHub.
 
-**Note:** Our goal is to never break repositories, which are using AL-Go for GitHub as their template. We almost certainly will break you if you create local modifications to scripts and pipelines.
+**Note:** Our goal is to never break repositories, which are using FSC-PS for GitHub as their template. We almost certainly will break you if you create local modifications to scripts and pipelines.

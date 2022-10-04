@@ -251,11 +251,11 @@ jobs:
 
       - name: Create Release Branch
         run: |
-          git checkout -b release/${{ github.event.inputs.versionNumber }}
+          git checkout -b "releases/${{ github.event.inputs.versionNumber }}"
           git config user.name ${{ github.actor}}
           git config user.email ${{ github.actor}}@users.noreply.github.com
           git commit --allow-empty -m "Release branch ${{ github.event.inputs.versionNumber }}"
-          git push origin release/${{ github.event.inputs.versionNumber }}
+          git push origin "releases/${{ github.event.inputs.versionNumber }}"
           
   PostProcess:
     if: always()
