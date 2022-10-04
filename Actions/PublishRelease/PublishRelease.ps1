@@ -72,9 +72,9 @@ try {
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
 
-      
+       
     $tag = "v"+"$($github.Payload.inputs.versionNumber)"+"_"+"$($settings.currentBranch)"
-
+    Write-Output "Tag is : $tag"
     $release = @{
         AccessToken = "$token"
         TagName = "$tag"
@@ -85,6 +85,9 @@ try {
         RepositoryName = "$($github.Payload.repository.name)"
         RepositoryOwner = "$($github.Payload.organization.login)"
     }
+    Write-Output "Release: "
+    $release 
+    Write-Output "Artifacts path: $artifactsPath"
 
     Publish-GithubRelease @release -Artifact "$artifactsPath"
 
