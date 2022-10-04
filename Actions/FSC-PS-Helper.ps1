@@ -75,7 +75,7 @@ function OutputInfo {
     param (
         [string]$Message
     )
-        filter timestamp {"[$(Get-Date -Format yyyy:MM:dd-HH:mm:ss)]: $_"}
+        filter timestamp {"[ $(Get-Date -Format yyyy.MM.dd-HH:mm:ss) ]: $_"}
         Write-Output ($Message | timestamp)
 }
 

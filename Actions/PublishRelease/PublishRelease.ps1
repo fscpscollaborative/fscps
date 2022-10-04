@@ -71,15 +71,17 @@ try {
 
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
-
+    
+    $name = "$($github.Payload.inputs.name)" -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
        
     $tag = "v"+"$($github.Payload.inputs.versionNumber)"+"_"+"$($settings.currentBranch)"
+
     Write-Output "Tag is : $tag"
     $release = @{
         AccessToken = "$token"
         TagName = "$tag"
-        Name = "$($github.Payload.inputs.name)"
-        ReleaseText = "$($github.Payload.inputs.name)"
+        Name = "$name"
+        ReleaseText = "$name"
         Draft = "$($github.Payload.inputs.draft)" -eq "Y"
         PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
         RepositoryName = "$($github.Payload.repository.name)"
