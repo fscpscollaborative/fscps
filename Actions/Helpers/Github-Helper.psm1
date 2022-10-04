@@ -530,21 +530,21 @@ function Publish-GithubRelease
 
         # Path to the artifact to upload to the release
         [Parameter( ValueFromPipeline, ValueFromPipelineByPropertyName )]
-        [ValidateScript(
-            {
-                if (-not (Test-Path $_ -PathType Leaf))
-                {
-                    $exception = ([System.ArgumentException]"File not found")
-                    $errorId = 'ParameterValue.FileNotFound'
-                    $errorCategory = 'ObjectNotFound'
-                    $errorTarget = $_
-                    $errorItem = New-Object -TypeName System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $errorTarget
-                    $errorItem.ErrorDetails = "No file could be found with the provided path '$_'."
-                    $PSCmdlet.ThrowTerminatingError($errorItem)
-                }
-                return $true
-            }
-        )]
+        #[ValidateScript(
+        #    {
+        #        if (-not (Test-Path $_ -PathType Leaf))
+        #        {
+        #            $exception = ([System.ArgumentException]"File not found")
+        #            $errorId = 'ParameterValue.FileNotFound'
+        #            $errorCategory = 'ObjectNotFound'
+        #            $errorTarget = $_
+        #            $errorItem = New-Object -TypeName System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $errorTarget
+        #            $errorItem.ErrorDetails = "No file could be found with the provided path '$_'."
+        #            $PSCmdlet.ThrowTerminatingError($errorItem)
+        #        }
+        #        return $true
+        #    }
+        #)]
         [Alias('File', 'FullName', 'Path')]
         [String[]]
         $Artifact
@@ -601,6 +601,7 @@ function Publish-GithubRelease
 
     process
     {
+
         if ($Artifact)
         {
             foreach ($file in (Get-ChildItem $Artifact))
