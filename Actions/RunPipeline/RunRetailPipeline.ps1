@@ -158,12 +158,15 @@ try {
     if($settings.generatePackages)
     {
         $artifactDirectory = [System.IO.Path]::GetDirectoryName((Join-Path $buildPath $($settings.artifactsPath)))
+        Write-Output "Artifacts directory: $artifactDirectory" 
         if (!(Test-Path -Path $artifactDirectory))
         {
             # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
             # whereas New-Item would only create the top level directory
             [System.IO.Directory]::CreateDirectory($artifactDirectory)
         }
+
+
 
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
