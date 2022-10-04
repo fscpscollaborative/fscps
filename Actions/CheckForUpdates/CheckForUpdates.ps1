@@ -409,7 +409,7 @@ try {
                 OutputInfo "ReleaseNotes:"
                 OutputInfo $releaseNotes
 
-                $targetBranch = ("$env:GITHUB_REF").Replace("origin/refs/heads/","")
+                $targetBranch = ("$env:GITHUB_REF").Replace("refs/heads/","")
                 #$status = invoke-git status --porcelain=v2
                 #OutputInfo "Git changes: $($status)"
                 #if ($status) {
