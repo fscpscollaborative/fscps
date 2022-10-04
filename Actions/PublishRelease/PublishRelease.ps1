@@ -75,7 +75,6 @@ try {
       
     $tag = "v"+"$($github.Payload.inputs.versionNumber)"+"_"+"$($settings.currentBranch)"
 
-    $github.Payload.inputs
     $release = @{
         AccessToken = "$token"
         TagName = "$tag"
@@ -87,7 +86,7 @@ try {
         RepositoryOwner = "$($github.Payload.organization.login)"
     }
 
-    Publish-GithubRelease @release -Artifact $artifactsPath
+    Publish-GithubRelease @release -Artifact "$artifactsPath"
 
 }
 catch {

@@ -567,11 +567,11 @@ function Publish-GithubRelease
         }
         if ($PSBoundParameters.ContainsKey("Draft"))
         {
-            $body["draft"] = $true
+            $body["draft"] = $Draft.IsPresent
         }
         if ($PSBoundParameters.ContainsKey("PreRelease"))
         {
-            $body["prerelease"] = $true
+            $body["prerelease"] = $PreRelease.IsPresent
         }
 
         $releaseParams = @{
@@ -616,7 +616,7 @@ function Publish-GithubRelease
 
                     $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
                 }
-                                
+                $uri                
                 $assetParams = @{
                     Uri         = $uri
                     Method      = 'POST'
