@@ -78,7 +78,7 @@ try {
 
     Write-Output "Tag is : $tag"
     $release = @{
-        AccessToken = "$token"
+        AccessToken = "$repoTokenSecretName"
         TagName = "$tag"
         Name = "$name"
         ReleaseText = "$name"
