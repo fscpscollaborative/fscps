@@ -157,7 +157,7 @@ try {
      #GeneratePackages
     if($settings.generatePackages)
     {
-        $artifactDirectory = [System.IO.Path]::GetDirectoryName(Join-Path $buildPath $settings.artifactsPath)
+        $artifactDirectory = [System.IO.Path]::GetDirectoryName((Join-Path $buildPath $($settings.artifactsPath)))
         if (!(Test-Path -Path $artifactDirectory))
         {
             # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
