@@ -84,6 +84,7 @@ try {
         Draft = "$($github.Payload.inputs.draft)" -eq "Y"
         PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
         RepositoryName = "$($github.Payload.repository.name)"
+        RepositoryOwner = "$($github.Payload.organization.login)"
     }
 
     Publish-GithubRelease @release -Artifact $artifactsPath
