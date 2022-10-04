@@ -422,6 +422,7 @@ try {
                     }
                     else {
                         invoke-git push -u $url $branch
+                        Write-Output "Create PR to the $targetBranch"
                         invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base "$targetBranch"
                     }
                 #}
