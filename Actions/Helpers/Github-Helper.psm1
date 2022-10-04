@@ -587,11 +587,8 @@ function Publish-GithubRelease
             ErrorAction = "Stop"
         }
         try {
-            Write-Output "Release parameters: "
-            $releaseParams
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             $release = Invoke-RestMethod @releaseParams
-            $release
         }
         catch {
             throw $_
@@ -605,7 +602,7 @@ function Publish-GithubRelease
         {
             foreach ($file in (Get-ChildItem $Artifact))
             {
-                Write-Output "File: "
+                Write-Output "Release File: "
                 $file
 
                 $body = [System.IO.File]::ReadAllBytes($file.FullName)
@@ -620,8 +617,6 @@ function Publish-GithubRelease
 
                     $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
                 }
-                Write-Output "Uri: "
-                $uri                
                 $assetParams = @{
                     Uri         = $uri
                     Method      = 'POST'
