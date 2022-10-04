@@ -157,7 +157,7 @@ try {
      #GeneratePackages
     if($settings.generatePackages)
     {
-        $artifactDirectory = [System.IO.Path]::GetDirectoryName((Join-Path $buildPath $($settings.artifactsPath)))
+        $artifactDirectory = (Join-Path $buildPath $($settings.artifactsPath))
         Write-Output "Artifacts directory: $artifactDirectory" 
         if (!(Test-Path -Path $artifactDirectory))
         {
