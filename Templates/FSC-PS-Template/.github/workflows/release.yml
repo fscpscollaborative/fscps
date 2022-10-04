@@ -64,9 +64,7 @@ jobs:
       - name: Read settings
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-        with:
-          version: ${{ inputs.version }}
-          
+                
       - name: Check for updates to FSCM-PS system files
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
         with:
@@ -149,44 +147,22 @@ jobs:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
           SecretsJson: ${{ env.RepoSecrets }}
-          
-      - name: Update settings
-        run: |
-          $settingsJson = '${{ env.Settings }}'
-          $settings = $settingsJson | ConvertFrom-Json
-          if ($settings) {
-              Write-Host "Repo type is: $($settings.type)"
-              Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
-              
-              $tag = "v"+"${{ github.event.inputs.versionNumber }}"+"_"+"$($settings.currentBranch)"
-              Write-Host "Tag is: $tag"
-              Add-Content -Path $env:GITHUB_ENV -Value "tag=$tag"
-              
-          }      
 
       - name: Publish artifacts  
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
+          name: ${{ env.PACKAGE_NAME }}
           path: '${{ env.ARTIFACTS_PATH }}'
-
-
-      - name: Upload release artifacts
-        run: |
           
-          $release = @{
-            AccessToken = "${{ github.token }}"
-            TagName = "${{ env.tag }}"
-            Name = "${{ env.packageName }}"
-            ReleaseText = "First version of my cool thing"
-            Draft = '${{ github.event.inputs.draft }}' -eq 'Y'
-            PreRelease = '${{ github.event.inputs.prerelease }}' -eq 'Y'
-            RepositoryName = "MyGithubRepository"
-          }
-
-          Publish-GithubRelease @release -Artifact '${{ env.ARTIFACTS_PATH }}'
-
-
+      - name: Publish Release
+        id: PublishRelease
+        uses: ciellosinc/FSC-PS-Actions/PublishRelease@v1.1   
+        with:
+          type: ${{ needs.Initialization.outputs.type}}
+          settingsJson: ${{ env.Settings }}
+          secretsJson: ${{ env.RepoSecrets }}
+          artifactsPath: '${{ env.ARTIFACTS_PATH }}'
+          
   UpdateVersion:
     if: ${{ github.event.inputs.updateVersionNumber=='Y' }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
