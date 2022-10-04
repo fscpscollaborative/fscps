@@ -206,6 +206,19 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
             
+                if ($fileName -ne "update_fsc_system_files.yml") {
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "Initialization:`r`n  runs-on: [ windows ]`r`n"
+                        $replacePattern = "Initialization:`r`n  runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                        #if (!($repoSettings.ContainsKey("gitHubRunner"))) {
+                        #    $srcPattern = "runs-on: `${{ fromJson(needs.Initialization.outputs.githubRunner) }}`r`n"
+                        #    $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        #    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                        #}
+                    }
+                }
+                
                 if($fileName -eq "build.yml")
                 {
                     $srcPattern = '        - "*"'

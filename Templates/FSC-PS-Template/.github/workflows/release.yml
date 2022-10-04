@@ -45,7 +45,7 @@ defaults:
 
 jobs:
   Initialization:
-    runs-on: [ windows-latest ]
+    runs-on: [ windows ]
     outputs:
       settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
       type: ${{ steps.ReadSettings.outputs.type }}
