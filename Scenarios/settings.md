@@ -6,9 +6,9 @@ An FSC-PS repository can consist of a single project (with multiple apps) or mul
 
 When running a workflow or a local script, the settings are applied by reading one or more settings files. Last applied settings file wins. The following lists the settings files and their location:
 
-**.github\\FSC-PS-settings.json** is the repository settings file. This settings file contains settings that are relevant for all projects in the repository. If a settings in the repository settings file is found in a subsequent settings file, it will be overridden by the new value.
+**.FSC-PS\\settings.json** is the root repository settings file. The .FSC-PS folder should be in the root folder of the repository.
 
-**.FSC-PS\\settings.json** is the project settings file. If the repository is a single project, the .FSC-PS folder is in the root folder of the repository. If the repository contains multiple projects, there will be a .FSC-PS folder in each project folder.
+**.github\\FSC-PS-settings.json** is the repository settings file. This settings file contains settings for the repository. If a settings in the repository settings file is found in a subsequent settings file, it will be overridden by the new value.
 
 **.FSC-PS\\\<workflow\>.settings.json** is the workflow-specific settings file. This option is used for the Current, NextMinor and NextMajor workflows to determine artifacts and build numbers when running these workflows.
 
