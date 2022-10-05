@@ -325,6 +325,7 @@ try {
                 # Environment variables for hub commands
                 $env:GITHUB_USER = $actor
                 $env:GITHUB_TOKEN = $token
+                $targetBranch = ("$env:GITHUB_REF").Replace("refs/heads/","")
 
                 # Configure git username and email
                 invoke-git config --global user.email "$actor@users.noreply.github.com"
@@ -337,10 +338,10 @@ try {
                 invoke-git clone $url
 
                 Set-Location -Path *
-            
+                
                 if (!$directcommit) {
                     $branch = [System.IO.Path]::GetRandomFileName()
-                    invoke-git checkout -b $branch
+                    invoke-git checkout -b $branch $targetBranch
                 }
 
                 invoke-git status
@@ -409,7 +410,7 @@ try {
                 OutputInfo "ReleaseNotes:"
                 OutputInfo $releaseNotes
 
-                $targetBranch = ("$env:GITHUB_REF").Replace("refs/heads/","")
+                
                 #$status = invoke-git status --porcelain=v2
                 #OutputInfo "Git changes: $($status)"
                 #if ($status) {
