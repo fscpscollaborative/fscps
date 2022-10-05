@@ -175,6 +175,36 @@ function CmdDo {
     }
 }
 
+function invoke-choco {
+    Param(
+        [switch] $silent,
+        [switch] $returnValue,
+        [parameter(mandatory = $true, position = 0)][string] $command,
+        [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
+    )
+    begin
+    {
+        If(!(Get-Command -Name choco.exe -ErrorAction SilentlyContinue))
+        {
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  
+        }
+    }
+    process
+    {
+        $arguments = "$command "
+        $remaining | ForEach-Object {
+            if ("$_".IndexOf(" ") -ge 0 -or "$_".IndexOf('"') -ge 0) {
+                $arguments += """$($_.Replace('"','\"'))"" "
+            }
+            else {
+                $arguments += "$_ "
+            }
+        }
+        cmdDo -command choco -arguments $arguments -silent:$silent -returnValue:$returnValue
+    }
+}
+
+
 function invoke-gh {
     Param(
         [switch] $silent,
@@ -183,16 +213,24 @@ function invoke-gh {
         [parameter(mandatory = $false, position = 1, ValueFromRemainingArguments = $true)] $remaining
     )
 
-    $arguments = "$command "
-    $remaining | ForEach-Object {
-        if ("$_".IndexOf(" ") -ge 0 -or "$_".IndexOf('"') -ge 0) {
-            $arguments += """$($_.Replace('"','\"'))"" "
-        }
-        else {
-            $arguments += "$_ "
-        }
+    begin
+    {
+        invoke-choco install gh -y --allow-unofficial -silent
+        refreshenv
     }
-    cmdDo -command gh -arguments $arguments -silent:$silent -returnValue:$returnValue
+    process
+    {
+        $arguments = "$command "
+        $remaining | ForEach-Object {
+            if ("$_".IndexOf(" ") -ge 0 -or "$_".IndexOf('"') -ge 0) {
+                $arguments += """$($_.Replace('"','\"'))"" "
+            }
+            else {
+                $arguments += "$_ "
+            }
+        }
+        cmdDo -command gh -arguments $arguments -silent:$silent -returnValue:$returnValue
+    }
 }
 
 function invoke-git {

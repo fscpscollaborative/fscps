@@ -7,17 +7,13 @@ if (Test-Path $gitHubHelperPath) {
     Import-Module $gitHubHelperPath
 }
 
-#$ErrorActionPreference = "stop"
-#Set-StrictMode -Version 2.0
+$ErrorActionPreference = "stop"
+Set-StrictMode -Version 2.0
 
 $FnSCMFolder = ".FSC-PS\"
 $FnSCMSettingsFile = ".FSC-PS\settings.json"
 $RepoSettingsFile = ".github\FSC-PS-Settings.json"
 $runningLocal = $false #$local.IsPresent
-
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-choco install gh -y --allow-unofficial
-refreshenv
 
 
 function ConvertTo-HashTable {
