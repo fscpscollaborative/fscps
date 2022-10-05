@@ -341,7 +341,6 @@ try {
                 
                 if (!$directcommit) {
                     $branch = [System.IO.Path]::GetRandomFileName()
-                    invoke-git remote set-branches origin \*
                     invoke-git fetch $targetBranch
                     invoke-git checkout -b $branch $targetBranch
                 }
