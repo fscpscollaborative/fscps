@@ -27,7 +27,7 @@ When running a workflow or a local script, the settings are applied by reading o
 
 ## Runtime generated settings
 | Name | Description | Default value |
-| :-- | :-- | 
+| :-- | :-- | :-- |
 | currentBranch | The workflow execution branch name | {current execution branch} |
 | sourceBranch | The branch used to build and generate the package. Using for deployment | {branch name from environment settings} |
 
