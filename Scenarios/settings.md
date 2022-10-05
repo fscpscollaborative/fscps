@@ -23,10 +23,30 @@ When running a workflow or a local script, the settings are applied by reading o
 | buildVersion | The default D365 FSC version used to build and generate the package. Can be overriden by FSC-PS-Settings/environment/build/ci/deploy settings  | |
 | models | The models string array taking a part in the solution. Should be specified with comma delimeter. Example ("Contoso,ContosoTextExtension,ContosoExtension")| |
 | buildPath | The FSC-PS system will copy the {github.workspace} into this folder and will do the build from it. The folder will be located inside C:\Temp\   | _bld |
-| metadataPath | FSC. Specify the folder hat contains the FSC models  {github.workspace}\{metadataPath} | PackagesLocalDirectory |
-| modelsIntoPackagePattern | FSC. Search pattern for binaries to package. Optional search pattern for the packages to include from the binaries location. Wildcards can be used, or a list of packages by specifying one package name per line. | * |
+| metadataPath | FSC specific. Specify the folder hat contains the FSC models  {github.workspace}\{metadataPath} | PackagesLocalDirectory |
+| modelsIntoPackagePattern | FSC specific. Search pattern for binaries to package. Optional search pattern for the packages to include from the binaries location. Wildcards can be used, or a list of packages by specifying one package name per line. | * |
 | deployScheduleCron | CRON schedule for when deploy workflow should run. Default is execute each first minute of hour, only manual trigger. Build your CRON string here: https://crontab.guru | 1 * * * * |
+| generatePackages | Option to generate a package after build. Often used in build, deploy and release workflows | true |
+| uploadPackageToLCS | Option to upload generated package to the LCS after build and generate process. IMPORTANT!!! generatePackages option should be set to True  | false |
+| exportModel | FSC specific. Option to generate axmodel file. If more than one models was specified in the "models" parameter, it will take first one, and generate the axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
 
+### NuGet settings
+The custom NuGet repository setting contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
+
+| Name | Description | Default value |
+| :-- | :-- | :-- |
+| nugetFeedName | The name of the Nuget feed.  | |
+| nugetSourcePath | The URL of the Nuget feed.  | |
+| nugetFeedUserName | The username credential of the NuGet feed. | |
+| nugetFeedUserSecretName | The github secret name contains the username credential of the NuGet feed. If specified will be used instead of nugetFeedUserName parameter | |
+| nugetFeedPasswordSecretName | The github secret name contains the password credential of the NuGet feed. | |
+| nugetPackagesPath | The name of the directory where Nuget packages will be stored  | NuGet |
+
+### LCS settings
+
+| Name | Description | Default value |
+| :-- | :-- | :-- |
+| companyName | Company name using for generate the package name.  | |
 
 ## Runtime generated settings
 | Name | Description | Default value |
