@@ -34,7 +34,7 @@ When running a workflow or a local script, the settings are applied by reading o
 ## Basic Repository settings
 The repository settings are only read from the repository settings file (.github\FSC-PS-Settings.json)
 
-| Name | Description |
+| Name | Description | Default value |
 | :-- | :-- | :-- |
 | templateUrl | Defines the URL of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. | https://github.com/ciellosinc/FSC-PS-Template |
 | templateBranch | Defines the branchranch of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. | main |
