@@ -9,8 +9,11 @@ The template repository to use as starting point are:
 The below usage scenarios takes you through how to get started and how to perform the most common tasks.
 
 Usage scenarios:
-1. [Set up CI/CD](Scenarios/SetupCiCdForExistingPTE.md)
-2. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
+1. [Set up repository](Scenarios/SetupRepo.md)
+2. [Settings configuration](Scenarios/ConfigureSettings.md)
+3. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
+4. [Set up CI/CD](Scenarios/SetupCICD.md)
+
 
 
 **Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
