@@ -27,13 +27,6 @@ When running a workflow or a local script, the settings are applied by reading o
 | appDependencyProbingPaths | Array of dependency specifications, from which apps will be downloaded when the CI/CD workflow is starting. Every dependency specification consists of the following properties:<br />**repo** = repository<br />**version** = version (default latest)<br />**release_status** = latestBuild/release/prerelease/draft (default release)<br />**projects** = projects (default * = all)<br />**AuthTokenSecret** = Name of secret containing auth token (default none)<br /> | [ ] |
 | environments | Array of logical environment names. You can specify environments in GitHub environments or in the repo settings file. If you specify environments in the settings file, you can create your AUTHCONTEXT secret using **&lt;environmentname&gt;_AUTHCONTEXT**. If the actual environment name is different from the logical environmentname, then you can create a secret with the actual name called **&lt;environmentname&gt;_ENVIRONMENTNAME** | [ ] |
 
-## AppSource specific basic settings
-| Name | Description | Default value |
-| :-- | :-- | :-- |
-| appSourceCopMandatoryAffixes | This setting is only used if the type is AppSource App. The value is an array of affixes, which is used for running AppSource Cop. | [ ] |
-| appSourceProductId<br />appSourceMainAppFolder<br />appSourceContinuousDelivery | Use these settings to enable publishing of apps to AppSource directly from FSC-PS for GitHub.<br />**appSourceProductId** must be the product Id from partner Center.<br />**appSourceMainAppFolder** specifies the appFolder of the main app if you have multiple apps in the same project.<br />**appSourceContinuousDelivery** can be set to true to enable continuous delivery of every successful build to AppSource Validation. Note that the app will only be in preview in AppSource and you will need to manually press GO LIVE in order for the app to be promoted to production.<br />**Note:** You will need to define an AppSourceContext secret in order to publish to AppSource. | |
-| obsoleteTagMinAllowedMajorMinor | This setting will enable AppSource cop rule AS0105, which causes objects that are pending obsoletion with an obsolete tag version lower than the minimum set in this property are not allowed. | |
-
 ## Basic Repository settings
 The repository settings are only read from the repository settings file (.github\FSC-PS-Settings.json)
 
@@ -80,83 +73,6 @@ The repository settings are only read from the repository settings file (.github
 | cacheKeepDays | When using self-hosted runners, cacheKeepDays specifies the number of days docker image are cached before cleaned up when running the next pipeline.<br />Note that setting cacheKeepDays to 0 will flush the cache before every build and will cause all other running builds using agents on the same host to fail. | 3 |
 | BcContainerHelperVersion | This setting can be set to a specific version (ex. 3.0.8) of BcContainerHelper to force FSC-PS to use this version. **latest** means that FSC-PS will use the latest released version. **preview** means that FSC-PS will use the latest preview version. **dev** means that FSC-PS will use the dev branch of containerhelper. | latest (or preview for FSC-PS preview) |
 
-## AppSource specific advanced settings
-
-| Name | Description | Default value |
-| :-- | :-- | :-- |
-| appSourceContextSecretName | This setting specifies the name (**NOT the secret**) of a secret containing a json string with ClientID, TenantID and ClientSecret or RefreshToken. If this secret exists, FSC-PS will can upload builds to AppSource validation. | AppSourceContext |
-| keyVaultCertificateUrlSecretName<br />keyVaultCertificatePasswordSecretName<br />keyVaultClientIdSecretName | If you want to enable KeyVault access for your AppSource App, you need to provide 3 secrets as GitHub Secrets or in the Azure KeyVault. The names of those secrets (**NOT the secrets**) should be specified in the settings file with these 3 settings. Default is to not have KeyVault access from your AppSource App. Read [this](EnableKeyVaultForAppSourceApp.md) for more information. | |
-
-## Expert settings (rarely used)
-
-| Name | Description | Default value |
-| :-- | :-- | :-- |
-| repoName | the name of the repository | name of GitHub repository |
-| runNumberOffset | when using **VersioningStrategy** 0, the CI/CD workflow uses the GITHUB RUN_NUMBER as the build part of the version number as described under VersioningStrategy. The RUN_NUMBER is ever increasing and if you want to reset it, when increasing the Major or Minor parts of the version number, you can specify a negative number as runNumberOffset. You can also provide a positive number to get a starting offset. Read about RUN_NUMBER [here](https://docs.github.com/en/actions/learn-github-actions/contexts) | 0 |
-| applicationDependency | Application dependency defines the lowest Business Central version supported by your app (Build will fail early if artifacts used are lower than this). The value is calculated by reading app.json for all apps, but cannot be lower than the applicationDependency setting which has a default value of 18.0.0.0 | 18.0.0.0 |
-| installTestRunner | Determines whether the test runner will be installed in the pipeline. If there are testFolders in the project, this setting will be true. | calculated |
-| installTestFramework | Determines whether the test framework apps will be installed in the pipeline. If the test apps in the testFolders have dependencies on the test framework apps, this setting will be true | calculated |
-| installTestLibraries | Determines whether the test libraries apps will be installed in the pipeline. If the test apps in the testFolders have dependencies on the test library apps, this setting will be true | calculated |
-| installPerformanceToolkit | Determines whether the performance test toolkit apps will be installed in the pipeline. If the test apps in the testFolders have dependencies on the performance test toolkit apps, this setting will be true | calculated |
-| enableAppSourceCop | Determines whether the AppSourceCop will be enabled in the pipeline. If the project type is AppSource App, then the AppSourceCop will be enabled by default. You can set this value to false to force the AppSourceCop to be disabled | calculated |
-| enablePerTenantExtensionCop | Determines whether the PerTenantExtensionCop will be enabled in the pipeline. If the project type is PTE, then the PerTenantExtensionCop will be enabled by default. You can set this value to false to force the PerTenantExtensionCop to be disabled | calculated |
-| doNotBuildTests | This setting forces the pipeline to NOT build and run the tests and performance tests in testFolders and bcptTestFolders | false |
-| doNotRunTests | This setting forces the pipeline to NOT run the tests in testFolders. Tests are still being built and published. Note this setting can be set in a workflow specific settings file to only apply to that workflow | false |
-| doNotRunBcptTests | This setting forces the pipeline to NOT run the performance tests in testFolders. Performance tests are still being built and published. Note this setting can be set in a workflow specific settings file to only apply to that workflow | false |
-| memoryLimit | Specifies the memory limit for the build container. By default, this is left to BcContainerHelper to handle and will currently be set to 8G | 8G |
-
-# Expert level
-
-## Custom Delivery
-
-You can override existing FSC-PS Delivery functionality or you can define your own custom delivery mechanism for FSC-PS for GitHub, by specifying a PowerShell script named DeliverTo*.ps1 in the .github folder. The following example will spin up a delivery job to SharePoint on CI/CD and Release.
-
-DeliverToSharePoint.ps1
-```
-Param(
-    [Hashtable]$parameters
-)
-
-Write-Host "Current project path: $($parameters.project)"
-Write-Host "Current project name: $($parameters.projectName)"
-Write-Host "Delivery Type (CD or Release): $($parameters.type)"
-Write-Host "Folder containing apps: $($parameters.appsFolder)"
-Write-Host "Folder containing test apps: $($parameters.testAppsFolder)"
-Write-Host "Folder containing dependencies (requires generateDependencyArtifact set to true): $($parameters.dependenciesFolder)"
-
-Write-Host "Repository settings:"
-$parameters.RepoSettings | Out-Host
-Write-Host "Project settings:"
-$parameters.ProjectSettings | Out-Host
-```
-
-**Note:** You can also override existing FSC-PS for GitHub delivery functionality by creating a script called f.ex. DeliverToStorage.ps1 in the .github folder.
-
-## Run-AlPipeline script override
-
-FSC-PS for GitHub utilizes the Run-AlPipeline function from BcContainerHelper to perform the actual build (compile, publish, test etc). The Run-AlPipeline function supports overriding functions for creating containers, compiling apps and a lot of other things.
-
-This functionality is also available in FSC-PS for GitHub, by adding a file to the .FSC-PS folder, you automatically override the function.
-
-| Override | Description |
-| :-- | :-- |
-| DockerPull.ps1 | Pull the image specified by the parameter $imageName |
-| NewBcContainer.ps1 | Create the container using the parameters transferred in the $parameters hashtable |
-| ImportTestToolkitToBcContainer.ps1 | Import the test toolkit apps specified by the $parameters hashtable |
-| CompileAppInBcContainer.ps1 | Compile the apps specified by the $parameters hashtable |
-| GetBcContainerAppInfo.ps1 | Get App Info for the apps specified by the $parameters hashtable |
-| PublishBcContainerApp.ps1 | Publish apps specified by the $parameters hashtable |
-| UnPublishBcContainerApp.ps1 | UnPublish apps specified by the $parameters hashtable |
-| InstallBcAppFromAppSource.ps1 | Install apps from AppSource specified by the $parameters hashtable |
-| SignBcContainerApp.ps1 | Sign apps specified by the $parameters hashtable|
-| ImportTestDataInBcContainer.ps1 | If this function is provided, it is expected to insert the test data needed for running tests |
-| RunTestsInBcContainer.ps1 | Run the tests specified by the $parameters hashtable |
-| GetBcContainerAppRuntimePackage.ps1 | Get the runtime package specified by the $parameters hashtable |
-| RemoveBcContainer.ps1 | Cleanup based on the $parameters hashtable |
-
-## BcContainerHelper settings
-
-The repo settings file (.github\\FSC-PS-Settings.json) can contain BcContainerHelper settings. Some BcContainerHelper settings are machine specific (folders and like), and should not be set in the repo settings file.
 
 Settings, which might be relevant to set in the settings file includes
 
@@ -170,8 +86,3 @@ Settings, which might be relevant to set in the settings file includes
 | TreatWarningsAsErrors | A list of AL warning codes, which should be treated as errors | [ ] |
 | DefaultNewContainerParameters | A list of parameters to be added to all container creations in this repo | { } |
 
-## Your own version of FSC-PS for GitHub
-
-For experts only, following the description [here](Contributing.md) you can setup a local fork of **FSC-PS for GitHub** and use that as your templates. You can fetch upstream changes from Microsoft regularly to incorporate these changes into your version and this way have your modified version of FSC-PS for GitHub.
-
-**Note:** Our goal is to never break repositories, which are using FSC-PS for GitHub as their template. We almost certainly will break you if you create local modifications to scripts and pipelines.
