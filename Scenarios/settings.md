@@ -26,7 +26,7 @@ When running a workflow or a local script, the settings are applied by reading o
 | githubRunner | Specifies which github runner will be used for the build/ci/deploy/release job in workflows. This is the most time consuming task. By default this job uses the Windows-latest github runner (unless overridden by the runs-on setting). This settings takes precedence over runs-on so that you can use different runners for the build job and the housekeeping jobs. See runs-on setting. | windows-latest |
 | buildVersion | The default D365 FSC version used to build and generate the package. Can be overriden by FSC-PS-Settings/environment/build/ci/deploy settings  | |
 | models | The models string array taking a part in the solution. Should be specified with comma delimeter. Example ("Contoso,ContosoTextExtension,ContosoExtension")| |
-| buildPath | The FSC-PS system will copy the {github.workspace} into this folder and will do the build from it. The folder will be located at C:\Temp\_bld   | _bld |
+| buildPath | The FSC-PS system will copy the {github.workspace} into this folder and will do the build from it. The folder will be located inside C:\Temp\   | _bld |
 
 ## Runtime generated settings
 | Name | Description | Default value |
