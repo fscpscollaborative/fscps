@@ -74,15 +74,3 @@ The repository settings are only read from the repository settings file (.github
 | BcContainerHelperVersion | This setting can be set to a specific version (ex. 3.0.8) of BcContainerHelper to force FSC-PS to use this version. **latest** means that FSC-PS will use the latest released version. **preview** means that FSC-PS will use the latest preview version. **dev** means that FSC-PS will use the dev branch of containerhelper. | latest (or preview for FSC-PS preview) |
 
 
-Settings, which might be relevant to set in the settings file includes
-
-| Setting | Description | Default |
-| :-- | :-- | :-- |
-| baseUrl | The Base Url for the online Business Central Web Client. This should be changed when targetting embed apps. | https://businesscentral.dynamics.com |
-| apiBaseUrl | The Base Url for the online Business Central API endpoint. This should be changed when targetting embed apps. | https://api.businesscentral.dynamics.com |
-| PartnerTelemetryConnectionString | The Telemetry Connection String for partner telemetry for DevOps telemetry. | |
-| SendExtendedTelemetryToMicrosoft | Set this value to true if you agree to emit extended DevOps telemetry to Microsoft. | false |
-| ObjectIdForInternalUse | BcContainerHelper will use this Object ID for internal purposes. Change if the default Object ID is in use. | 88123 |
-| TreatWarningsAsErrors | A list of AL warning codes, which should be treated as errors | [ ] |
-| DefaultNewContainerParameters | A list of parameters to be added to all container creations in this repo | { } |
-
