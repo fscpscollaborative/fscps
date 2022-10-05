@@ -18,8 +18,7 @@ When running a workflow or a local script, the settings are applied by reading o
 
 | Name | Description | Default value |
 | :-- | :-- | :-- |
-| type | Specifies the type of project. Allowed values are **PTE** or **AppSource App**. This value comes with the default repository. | PTE |
-| country | Specifies which country this app is built against. | us |
+| type | Specifies the type of project. Allowed values are **FSCM** or **Retail**. This value comes with the default repository. | FSCM |
 | repoVersion | RepoVersion is the repository version number. The Repo Version number consists of \<major\>.\<minor\> only and is used for naming build artifacts in the CI/CD workflow. Build artifacts are named **\<project\>-Apps-\<repoVersion\>.\<build\>.\<revision\>** and can contain multiple apps. The Repo Version number is used as major.minor for individual apps if versioningStrategy is +16. | 1.0 |
 | appFolders | appFolders should be an array of folders (relative to project root), which contains apps for this project. Apps in these folders are sorted based on dependencies and built and published in that order. | [ ] |
 | testFolders | testFolders should be an array of folders (relative to project root), which contains test apps for this project. Apps in these folders are sorted based on dependencies and built, published and tests are run in that order. | [ ] |
