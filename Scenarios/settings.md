@@ -31,7 +31,7 @@ When running a workflow or a local script, the settings are applied by reading o
 | exportModel | FSC specific. Option to generate axmodel file. If more than one models was specified in the "models" parameter, it will take first one, and generate the axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
 
 ### NuGet settings
-The custom NuGet repository setting contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
+The custom NuGet repository settings contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
 
 | Name | Description | Default value |
 | :-- | :-- | :-- |
@@ -43,10 +43,24 @@ The custom NuGet repository setting contains the D365 FSC nuget packages for bui
 | nugetPackagesPath | The name of the directory where Nuget packages will be stored  | NuGet |
 
 ### LCS settings
+These LCS settings should contain the tenant configuration what will use by default for all deployments. Can be overrided in the environments settings.
+| Name | Description |
+| :-- | :-- | 
+| lcsEnvironmentId | The Guid of the LCS environment |
+| lcsProjectId | The ID of the LCS project |
+| lcsClientId | The ClientId of the azure application what has access to the LCS |
+| lcsUsernameSecretname | The github secret name that contains the username what has at least Owner access to the LCS project. It is a highly recommend to create a separate AAD user for this purposes. E.g. lcsadmin@contoso.com |
+| lcsPasswordSecretname | The github secret name that contains the password of the LCS user. |
 
-| Name | Description | Default value |
-| :-- | :-- | :-- |
-| companyName | Company name using for generate the package name.  | |
+### Azure settings
+These Azure settings should contain the tenant configuration what will use by default for all deployments. Used for checking the VM status in the deploy workflow. AAD Application should have "DevTest labs" permitions for the Azure sebscription. Can be overrided in the environments settings.
+| Name | Description | 
+| :-- | :-- | 
+| azTenantId | The Guid of the Azure tenant  | 
+| azClientId | The Guid AAD registered application  | 
+| azClientsecretSecretname | The github secret name that contains ClientSecret of the registered application  | 
+| azVmname | The name of the Azure Virtual Machine. Should be specified in the environments.json settings  | 
+| azVmrg |  The name of the Azure Resouce Group contains the Virtual machine. Should be specified in the environments.json settings | 
 
 ## Runtime generated settings
 | Name | Description | Default value |
