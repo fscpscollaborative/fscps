@@ -43,7 +43,7 @@ The custom NuGet repository settings contains the D365 FSC nuget packages for bu
 | nugetPackagesPath | The name of the directory where Nuget packages will be stored  | NuGet |
 
 ### LCS settings
-These LCS settings should contain the tenant configuration what will use by default for all deployments. Can be overrided in the environments settings.
+These LCS settings should contain the tenant configuration what will use by default for all deployments. Can be overrided in the .FSC-PS\environments.jsom settings.
 | Name | Description |
 | :-- | :-- | 
 | lcsEnvironmentId | The Guid of the LCS environment |
@@ -57,16 +57,25 @@ These Azure settings should contain the tenant configuration what will use by de
 | Name | Description | 
 | :-- | :-- | 
 | azTenantId | The Guid of the Azure tenant  | 
-| azClientId | The Guid AAD registered application  | 
+| azClientId | The Guid of the AAD registered application  | 
 | azClientsecretSecretname | The github secret name that contains ClientSecret of the registered application  | 
-| azVmname | The name of the Azure Virtual Machine. Should be specified in the environments.json settings  | 
-| azVmrg |  The name of the Azure Resouce Group contains the Virtual machine. Should be specified in the environments.json settings | 
+| azVmname | The name of the Azure Virtual Machine. Should be specified in the .FSC-PS\environments.json settings  | 
+| azVmrg |  The name of the Azure Resouce Group contains the Virtual machine. Should be specified in the .FSC-PS\environments.json settings | 
+
+### Retail settings
+These Retail settings should contain the RetailSDK settings. Can be overrided in the .FSC-PS\versions.json settings.
+| Name | Description | Default value |
+| :-- | :-- | :-- | 
+| retailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+| retailSDKZipPath | Retail specific. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
+| retailSDKBuildPath | Retail specific. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
+| retailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ## Runtime generated settings
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | currentBranch | The workflow execution branch name | {current execution branch} |
-| sourceBranch | The branch used to build and generate the package. Using for deployment | {branch name from environment settings} |
+| sourceBranch | The branch used to build and generate the package. Using for deployment | {branch name from .FSC-PS\environments.json settings} |
 
 ## Basic Repository settings
 The repository settings are only read from the repository settings file (.github\FSC-PS-Settings.json)
