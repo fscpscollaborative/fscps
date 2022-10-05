@@ -234,6 +234,8 @@ function ReadSettings {
         "buildVersion"                           = ""
         "exportModel"                            = $false
         "uploadPackageToLCS"                     = $false
+        "codeSignCertificateUrlSecretName"       = ""
+        "codeSignCertificatePasswordSecretName"  = ""
         "nugetFeedName"                          = ""
         "nugetFeedUserName"                      = ""
         "nugetFeedUserSecretName"                = ""
