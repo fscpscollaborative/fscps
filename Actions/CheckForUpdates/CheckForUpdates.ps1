@@ -341,7 +341,8 @@ try {
                 
                 if (!$directcommit) {
                     $branch = [System.IO.Path]::GetRandomFileName()
-                    invoke-git fetch --all
+                    invoke-git remote set-branches origin \*
+                    invoke-git fetch origin
                     invoke-git checkout -b $branch $targetBranch
                 }
 
@@ -376,25 +377,7 @@ try {
                     if (-not (Test-Path -path $path -PathType Container)) {
                         New-Item -Path $path -ItemType Directory | Out-Null
                     }
-                    if (([System.IO.Path]::GetFileName($_.DstFile) -eq "RELEASENOTES.copy.md") -and (Test-Path $_.DstFile)) {
-                        $oldReleaseNotes = (Get-Content -Path $_.DstFile -Encoding UTF8 -Raw).Replace("`r", "").TrimEnd("`n").Replace("`n", "`r`n")
-                        while ($oldReleaseNotes) {
-                            $releaseNotes = $_.Content
-                            if ($releaseNotes.indexOf($oldReleaseNotes) -gt 0) {
-                                $releaseNotes = $releaseNotes.SubString(0, $releaseNotes.indexOf($oldReleaseNotes))
-                                $oldReleaseNotes = ""
-                            }
-                            else {
-                                $idx = $oldReleaseNotes.IndexOf("`r`n## ")
-                                if ($idx -gt 0) {
-                                    $oldReleaseNotes = $oldReleaseNotes.Substring($idx)
-                                }
-                                else {
-                                    $oldReleaseNotes = ""
-                                }
-                            }
-                        }
-                    }
+                    
                     OutputInfo "Update $($_.DstFile)"
                     Set-Content -Path $_.DstFile -Encoding UTF8 -Value $_.Content
                 }
