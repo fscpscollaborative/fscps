@@ -27,7 +27,7 @@ When running a workflow or a local script, the settings are applied by reading o
 
 ## Runtime generated settings
 | Name | Description | Default value |
-| :-- | :-- | :-- |
+| :-- | :-- | 
 | currentBranch | The workflow execution branch name | {current execution branch} |
 | sourceBranch | The branch used to build and generate the package. Using for deployment | {branch name from environment settings} |
 
@@ -35,7 +35,7 @@ When running a workflow or a local script, the settings are applied by reading o
 The repository settings are only read from the repository settings file (.github\FSC-PS-Settings.json)
 
 | Name | Description |
-| :-- | :-- |
+| :-- | :-- | :-- |
 | templateUrl | Defines the URL of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. | https://github.com/ciellosinc/FSC-PS-Template |
 | templateBranch | Defines the branchranch of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. | main |
 | runs-on | Specifies which github runner will be used for all jobs in all workflows (except the Update FSC-PS System Files workflow). The default is to use the GitHub hosted runner Windows-latest. You can specify a special GitHub Runner for the build job using the GitHubRunner setting. Read [this](SelfHostedGitHubRunner.md) for more information. | windows-latest |
