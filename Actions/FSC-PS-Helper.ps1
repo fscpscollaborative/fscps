@@ -265,7 +265,7 @@ function ReadSettings {
         "retailSDKZipPath"                       = "C:\RSDK"
         "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
         "retailSDKURL"                           = ""
-        "repoTokenSecretName"                    = ""
+        "repoTokenSecretName"                    = "REPO_TOKEN"
         "ciBranches"                             = "main,release"
         "deployScheduleCron"                     = "1 * * * *"
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
