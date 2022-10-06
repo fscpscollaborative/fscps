@@ -22,11 +22,11 @@ try {
     #Load secrets from github
     $github = (Get-ActionContext)
     try {
-        {
-            $secList = (invoke-gh secret list --repo "$($github.Repo)")
-            $ghSecrets = $secList | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
-            $ghSecrets
-            }
+        
+        $secList = (invoke-gh secret list --repo "$($github.Repo)")
+        $ghSecrets = $secList | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
+        $ghSecrets
+    }
     catch {
 
     }
