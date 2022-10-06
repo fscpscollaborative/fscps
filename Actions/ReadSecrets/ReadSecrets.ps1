@@ -20,10 +20,6 @@ try {
 
 
     #Load secrets from github
-    $ghToken = GetSecret -secret "REPO_TOKEN"
-    Add-Content -Path $env:GITHUB_ENV -Value "GH_TOKEN=$ghToken"
-    "GH_TOKEN=$ghToken" >> $env:GITHUB_ENV
-
     $github = (Get-ActionContext)
     $ghSecrets = (invoke-gh secret list --repo "$($github.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
 
