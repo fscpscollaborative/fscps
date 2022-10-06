@@ -86,11 +86,8 @@ jobs:
           
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ env.Settings }}
-          secrets: ""
           
       - name: Setup MSBuild
         if: ${{ needs.Initialization.outputs.type != 'Retail'}}
@@ -309,11 +306,8 @@ jobs:
         
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ needs.Initialization.outputs.settings }}
-          secrets: ""
           
       - name: Finalize the workflow
         id: PostProcess

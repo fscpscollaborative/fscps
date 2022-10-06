@@ -1,9 +1,7 @@
 Param(
 
     [Parameter(HelpMessage = "Settings from template repository in compressed Json format", Mandatory = $false)]
-    [string] $settingsJson = '',
-    [Parameter(HelpMessage = "Comma separated list of Secrets to get", Mandatory = $false)]
-    [string] $secrets = ""
+    [string] $settingsJson = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -20,10 +18,10 @@ try {
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $outSettings = $settings
 
-    if($secrets -eq "")
-    {
-        $secrets = $settings.githubSecrets
-    }
+
+    #Load secrets from github
+    $github = (Get-ActionContext)
+    $secrets = (invoke-gh secret list --repo "$($github.Payload.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
 
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {

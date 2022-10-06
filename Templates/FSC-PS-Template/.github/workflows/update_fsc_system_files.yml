@@ -58,11 +58,8 @@ jobs:
         
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ needs.Initialization.outputs.settings }}
-          secrets: ""
           
       - name: Override TemplateUrl
         run: |
@@ -106,11 +103,8 @@ jobs:
 
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ needs.Initialization.outputs.settings }}
-          secrets: ""
           
       - name: Finalize the workflow
         id: PostProcess

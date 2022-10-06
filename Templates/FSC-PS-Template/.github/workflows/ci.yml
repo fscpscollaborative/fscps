@@ -61,11 +61,8 @@ jobs:
 
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ env.Settings }}
-          secrets: ""
           
       - name: Setup MSBuild
         if: ${{ needs.Initialization.outputs.type != 'Retail'}}
@@ -88,7 +85,7 @@ jobs:
         with:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
           
    PostProcess: 
     if: always()
@@ -104,11 +101,8 @@ jobs:
 
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ env.Settings }}
-          secrets: ""
           
       - name: Finalize the workflow
         id: PostProcess
@@ -116,4 +110,4 @@ jobs:
         with:
           remove_current: ${{ needs.Initialization.outputs.environments == '' }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}

@@ -5,13 +5,10 @@ inputs:
     description: Settings from template repository in compressed Json format
     required: false
     default: '{"keyVaultName": ""}'
-  secrets:
-    description: Comma separated list of Secrets to get
-    required: false
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/ReadSecrets.ps1 -settingsJson '${{ inputs.settingsJson }}' -secrets '${{ inputs.secrets }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSecrets.ps1 -settingsJson '${{ inputs.settingsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       shell: PowerShell
 branding:
   icon: terminal
