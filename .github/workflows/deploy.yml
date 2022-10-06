@@ -42,7 +42,8 @@ jobs:
               $settings = [ordered]@{
                   "githubOwner" = $githubOwner
                   "actionsRepo" = "FSC-PS-Actions"
-                  "templateRepo" = "FSC-PS-Template"
+                  "fscTemplateRepo" = "FSC-PS.FSC"
+                  "commerceTemplateRepo" = "FSC-PS.Commerce"
                   "branch" = '${{ github.event.inputs.branch }}'
                   "copyToMain" = ('${{ github.event.inputs.copyToMain }}' -eq 'Y')
                   "localFolder" = ""

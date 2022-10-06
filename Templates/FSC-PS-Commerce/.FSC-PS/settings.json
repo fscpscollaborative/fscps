@@ -1,17 +1,14 @@
 {
-    "uploadPackageToLCS" : false,
+    "type":"Retail",
     "githubRunner":"windows,winstandard",
     "models":"Contoso,ContosoTestEssentials",
-	  "modelsIntoPackagePattern": "Contoso",
+    "modelsIntoPackagePattern": "Contoso",
     "packageName": "ContosoExtension",
-	  "nugetPackagesPath": "NuGets",
-	  "nugetFeedName":"Artifactory",
+    "nugetPackagesPath": "NuGets",
+    "nugetFeedName":"Artifactory",
     "nugetFeedUserSecretName": "AF_CONNECTORS_CICD_USER",
     "nugetFeedPasswordSecretName": "AF_CONNECTORS_CICD_PASS",
     "nugetSourcePath":"https://contoso.nuget.com/artifactory/api/nuget/connector-nuget-local",
-    "githubSecrets": "AZ_TENANT_USERNAME,AZ_TENANT_PASSWORD,AZ_CLIENTSECRET,AZ_CLIENTID,AZDO_PAT,AZDO_TEST_PAT,AZ_TEST_CLIENTID,AZ_TEST_CLIENTSECRET,AZ_TEST_ENV_URL,AZ_TEST_TENANT_NAME,AZ_TEST_TENANT_PASSWORD,AZ_TEST_TENANT_USERNAME,GIST_SECRET,REPO_SCOPED_TOKEN,AF_CONNECTORS_CICD_USER,AF_CONNECTORS_CICD_PASS",
-    "buildPath": "_bld",
-    "metadataPath": "PackagesLocalDirectory",
     "lcsProjectId": 1234566,
     "lcsClientId": "892da30e-e292-437a-b1aa-ec2ecff7b21f",
     "lcsUsernameSecretname": "AZ_TENANT_USERNAME",
@@ -19,6 +16,5 @@
     "azTenantId": "dfc1b5c3-94fc-4abc-b8fb-09484816c011",
     "azClientId" : "492b2997-68ed-4bca-95c5-306cdedf288a",
     "azClientsecretSecretname" : "AZ_CLIENTSECRET",
-    "buildVersion": "10.0.27",
-    "deploy": false
+    "buildVersion": "10.0.27"
 }

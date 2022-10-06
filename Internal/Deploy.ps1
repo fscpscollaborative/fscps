@@ -31,7 +31,8 @@ try {
 
     $originalOwnerAndRepo = @{
         "actionsRepo" = "ciellosinc/FSC-PS-Actions"
-        "templateRepo" = "ciellosinc/FSC-PS-Template"
+        "fscTemplateRepo" = "ciellosinc/FSC-PS.FSC"
+        "commerceTemplateRepo" = "ciellosinc/FSC-PS.Commerce"
     }
     $originalBranch = "main"
 
@@ -86,7 +87,7 @@ try {
     }
     Set-Location $baseFolder
 
-    $config.actionsRepo, $config.templateRepo | ForEach-Object {
+    $config.actionsRepo, $config.fscTemplateRepo, $config.commerceTemplateRepo | ForEach-Object {
         if (Test-Path $_) {
             Set-Location $_
             if ($collect) {
@@ -109,13 +110,16 @@ try {
     }
 
     $actionsRepoPath = Join-Path $baseFolder $config.actionsRepo
-    $templateRepoPath = Join-Path $baseFolder $config.templateRepo
+    $fscTemplateRepoPath = Join-Path $baseFolder $config.fscTemplateRepo
+    $commerceTemplateRepoPath = Join-Path $baseFolder $config.commerceTemplateRepo
+
 
     if ($collect) {
         Write-Host "This script will collect the changes in $($config.branch) from three repositories:"
         Write-Host
         Write-Host "https://github.com/$($config.githubOwner)/$($config.actionsRepo)  (folder $actionsRepoPath)"
-        Write-Host "https://github.com/$($config.githubOwner)/$($config.templateRepo)   (folder $templateRepoPath)"
+        Write-Host "https://github.com/$($config.githubOwner)/$($config.fscTemplateRepo)   (folder $fscTemplateRepoPath)"
+        Write-Host "https://github.com/$($config.githubOwner)/$($config.commerceTemplateRepo)   (folder $commerceTemplateRepoPath)"
         Write-Host
         Write-Host "To the $algoBranch branch from $srcOwnerAndRepo (folder $baseRepoPath)"
         Write-Host
@@ -125,7 +129,8 @@ try {
         Write-Host
         Write-Host "Destination is the $($config.branch) branch in the followingrepositories:"
         Write-Host "https://github.com/$($config.githubOwner)/$($config.actionsRepo)  (folder $actionsRepoPath)"
-        Write-Host "https://github.com/$($config.githubOwner)/$($config.templateRepo)  (folder $templateRepoPath)"
+        Write-Host "https://github.com/$($config.githubOwner)/$($config.fscTemplateRepo)  (folder $fscTemplateRepoPath)"
+        Write-Host "https://github.com/$($config.githubOwner)/$($config.commerceTemplateRepo)   (folder $commerceTemplateRepoPath)"
         Write-Host
         Write-Host "Run the collect.ps1 to collect your modifications in these work repos and copy back"
         Write-Host
@@ -134,7 +139,7 @@ try {
         Read-Host "If this is not what you want to do, then press Ctrl+C now, else press Enter."
     }
 
-    $config.actionsRepo, $config.templateRepo | ForEach-Object {
+    $config.actionsRepo, $config.fscTemplateRepo, $config.commerceTemplateRepo | ForEach-Object {
         if ($collect) {
             if (Test-Path $_) {
                 Set-Location $_
@@ -154,8 +159,9 @@ try {
     }
 
     $repos = @(
-        @{ "repo" = $config.actionsRepo;        "srcPath" = Join-Path $baseRepoPath "Actions";                        "dstPath" = $actionsRepoPath;            "branch" = $config.branch }
-        @{ "repo" = $config.templateRepo;       "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS-Template";      "dstPath" = $templateRepoPath;           "branch" = $config.branch }
+        @{ "repo" = $config.actionsRepo;            "srcPath" = Join-Path $baseRepoPath "Actions";                      "dstPath" = $actionsRepoPath;            "branch" = $config.branch }
+        @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.FSC";         "dstPath" = $fscTemplateRepoPath;       "branch" = $config.branch }
+        @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Commerce";    "dstPath" = $commerceTemplateRepoPath;   "branch" = $config.branch }
     )
 
     if ($collect) {
@@ -225,8 +231,9 @@ try {
         if ($copyToMain -and $config.branch -ne "main") {
             Write-Host "Copy template repositories to main branch"
             $additionalRepos = @(
-                @{ "repo" = $config.templateRepo;       "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS-Template";     "dstPath" = $templateRepoPath;       "branch" = "main" }
-                @{ "repo" = $config.actionsRepo;        "srcPath" = Join-Path $baseRepoPath "Actions";                       "dstPath" = $actionsRepoPath;        "branch" = "main" }
+                @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.FSC";      "dstPath" = $fscTemplateRepoPath;     "branch" = "main" }
+                @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Commerce"; "dstPath" = $commerceTemplateRepoPath; "branch" = "main" }
+                @{ "repo" = $config.actionsRepo;            "srcPath" = Join-Path $baseRepoPath "Actions";                   "dstPath" = $actionsRepoPath;          "branch" = "main" }
             )
         }
 
@@ -292,7 +299,7 @@ try {
                     $useBranch = $branch
                 }
                 $lines = ([string](Get-Content -Raw -path $srcFile)).Split("`n")
-                "templateRepo","templateRepo" | ForEach-Object {
+                "actionsRepo","commerceTemplateRepo","fscTemplateRepo" | ForEach-Object {
                     $regex = "^(.*)$($originalOwnerAndRepo."$_")(.*)$originalBranch(.*)$"
                     $replace = "`$1$($config.githubOwner)/$($config."$_")`$2$($useBranch)`$3"
                     $lines = $lines | ForEach-Object { $_ -replace $regex, $replace }

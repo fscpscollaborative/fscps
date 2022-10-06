@@ -1,0 +1,32 @@
+[
+    {
+        "name":"Contoso-QA",
+        "settings":{
+            "buildVersion": "10.0.29",
+            "sourceBranch": "main",
+            "lcsEnvironmentId": "73369230-3240-4f14-b9d2-cb214bd31504",
+            "azVmname" : "Contoso-QA-1",
+            "azVmrg" : "contoso-qa",
+            "cron":"0 21 * * *"
+        }
+    },
+    {
+        "name":"Contoso-UAT",
+        "settings":{
+            "buildVersion": "10.0.27",
+            "deploy": false,
+            "sourceBranch": "release",
+            "lcsEnvironmentId": "19450674-0040-4d48-a09f-ff2235042e2c",
+            "lcsProjectId": 1234567,
+            "lcsClientId": "220ebf68-a86d-4392-ae38-57b2172ee3fc",
+            "lcsUsernameSecretname": "AZ_TENANT_USERNAME",
+            "lcsPasswordSecretname": "AZ_TENANT_PASSWORD",
+            "azTenantId": "dd64b6ec-0a2a-4f60-8ca1-eeaab33884d7",
+            "azClientId" : "220ebf68-a86d-4392-ae38-57b2172ee3fc",
+            "azClientsecretSecretname" : "AZ_TEST_CLIENTSECRET",
+            "azVmname" : "Contoso-UAT-1",
+            "azVmrg" : "contoso-uat",
+            "cron":"0 21 * * *"
+        }
+    }
+]
