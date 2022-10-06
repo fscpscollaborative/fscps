@@ -58,6 +58,8 @@ jobs:
         
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
+        env:
+          secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ needs.Initialization.outputs.settings }}
           
@@ -103,6 +105,8 @@ jobs:
 
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
+        env:
+          secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ needs.Initialization.outputs.settings }}
           

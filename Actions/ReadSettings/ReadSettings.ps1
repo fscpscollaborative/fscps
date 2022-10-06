@@ -145,8 +145,6 @@ try {
     Write-Host "set-output name=type::$repoType"
     Add-Content -Path $env:GITHUB_ENV -Value "Versions=$repoType"
 
-    $ghToken = GetSecret -secret "REPO_TOKEN"
-    Add-Content -Path $env:GITHUB_ENV -Value "GH_TOKEN=$ghToken"
 }
 catch {
     OutputError -message $_.Exception.Message

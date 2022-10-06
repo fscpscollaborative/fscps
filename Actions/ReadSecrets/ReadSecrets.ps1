@@ -12,7 +12,7 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
 
-    Import-Module (Join-Path $PSScriptRoot ".\ReadSecretsHelper.psm1")
+    Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
 
     $outSecrets = [ordered]@{}
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
