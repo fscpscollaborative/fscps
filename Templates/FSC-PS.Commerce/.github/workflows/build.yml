@@ -50,7 +50,7 @@ jobs:
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
 
    Build:
     needs: [ Initialization ]
@@ -76,12 +76,8 @@ jobs:
         with:
           settingsJson: ${{ env.Settings }}
           
-      - name: Setup MSBuild
-        if: ${{ needs.Initialization.outputs.type != 'Retail'}}
-        uses: microsoft/setup-msbuild@v1
 
       - name: Setup MSBuild
-        if: ${{ needs.Initialization.outputs.type == 'Retail'}}
         uses: microsoft/setup-msbuild@v1
         with:
          vs-version: '[15.9,16.11)'

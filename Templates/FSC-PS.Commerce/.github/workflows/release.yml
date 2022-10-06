@@ -90,13 +90,8 @@ jobs:
           secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ env.Settings }}
-          
-      - name: Setup MSBuild
-        if: ${{ needs.Initialization.outputs.type != 'Retail'}}
-        uses: microsoft/setup-msbuild@v1
 
       - name: Setup MSBuild
-        if: ${{ needs.Initialization.outputs.type == 'Retail'}}
         uses: microsoft/setup-msbuild@v1
         with:
          vs-version: '[15.9,16.11)'
@@ -110,34 +105,10 @@ jobs:
         run: |
           $settingsJson = '${{ env.Settings }}'
           $settings = $settingsJson | ConvertFrom-Json
-          if ($settings) {
-            if($settings.type -eq 'FSCM')
-            {
-              if($settings.models.Split(','))
-              {
-                $modelName = $settings.models.Split(',')[0]
-              }
-              else
-              {
-                $modelName = $settings.models
-              }
-              Write-Host "Model name is: $modelName"
-              Add-Content -Path $env:GITHUB_ENV -Value "Model=$modelName"
-              Write-Host "Metadata path is: $($settings.metadataPath)"
-              Add-Content -Path $env:GITHUB_ENV -Value "metadata_path=$($settings.metadataPath)"
-            }
-            
+          if ($settings) {          
             Write-Host "Repo type is: $($settings.type)"
             Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
           }
-          
-      - uses: ciellosinc/d365fo-update-model-version@v0.1.3
-        if: ${{env.type == 'FSCM'}}
-        with:
-         xppSourcePath: '${{ github.workspace }}\${{ env.metadata_path }}'
-         xppDescriptorSearch: '${{ env.Model }}\Descriptor\*.xml'
-         xppLayer: "ISV" 
-         versionNumber: '${{ github.event.inputs.versionNumber }}'   
       
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.1
@@ -186,33 +157,9 @@ jobs:
           $settings = $settingsJson | ConvertFrom-Json
           $settings
           if ($settings) {
-            if($settings.type -eq 'FSCM')
-            {
-              if($settings.models.Split(','))
-              {
-                $modelName = $settings.models.Split(',')[0]
-              }
-              else
-              {
-                $modelName = $settings.models
-              }
-              Write-Host "Model name is: $modelName"
-              Add-Content -Path $env:GITHUB_ENV -Value "Model=$modelName"
-              Write-Host "Metadata path is: $($settings.metadataPath)"
-              Add-Content -Path $env:GITHUB_ENV -Value "metadata_path=$($settings.metadataPath)"
-            }
-            
             Write-Host "Repo type is: $($settings.type)"
             Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
           }
-          
-      - uses: ciellos-dev/d365fo-update-model-version@v0.1.3
-        if: ${{env.type == 'FSCM'}}
-        with:
-         xppSourcePath: '${{ github.workspace }}\${{ env.metadata_path }}'
-         xppDescriptorSearch: '${{ env.Model }}\Descriptor\*.xml'
-         xppLayer: "ISV" 
-         versionNumber: '${{ github.event.inputs.versionNumber }}'
            
       - name: Create Pull Request
         id: cpr
@@ -265,33 +212,9 @@ jobs:
           $settings = $settingsJson | ConvertFrom-Json
           $settings
           if ($settings) {
-            if($settings.type -eq 'FSCM')
-            {
-              if($settings.models.Split(','))
-              {
-                $modelName = $settings.models.Split(',')[0]
-              }
-              else
-              {
-                $modelName = $settings.models
-              }
-              Write-Host "Model name is: $modelName"
-              Add-Content -Path $env:GITHUB_ENV -Value "Model=$modelName"
-              Write-Host "Metadata path is: $($settings.metadataPath)"
-              Add-Content -Path $env:GITHUB_ENV -Value "metadata_path=$($settings.metadataPath)"
-            }
-            
             Write-Host "Repo type is: $($settings.type)"
             Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
           }
-          
-      - uses: ciellos-dev/d365fo-update-model-version@v0.1.3
-        if: ${{env.type == 'FSCM'}}
-        with:
-         xppSourcePath: '${{ github.workspace }}\${{ env.metadata_path }}'
-         xppDescriptorSearch: '${{ env.Model }}\Descriptor\*.xml'
-         xppLayer: "ISV" 
-         versionNumber: '${{ github.event.inputs.versionNumber }}'
 
       - name: Commit Release Branch
         run: |
