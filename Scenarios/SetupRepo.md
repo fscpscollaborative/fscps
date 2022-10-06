@@ -1,6 +1,6 @@
 # #1 Set up repository
 *Prerequisites:* 
-	- A GitHub account.
+- A GitHub account.
 
 
 1. Navigate to https://github.com/ciellosinc/FSC-PS-Template and then choose **Use this template**.
