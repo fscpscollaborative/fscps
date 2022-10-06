@@ -7,6 +7,7 @@
 
 ![Created repo](/Scenarios/images/2a.png)
 1. Done [scenario 1](SetupRepo.md)
+
 2. Update settings file in the .FSC-PS folder.
 ~~~javascript
 {
@@ -35,6 +36,7 @@
 }
 ~~~
 Please find setup details [here](settings.md)
+
 3. Update environments file
 ~~~javascript
 [
@@ -71,6 +73,7 @@ Please find setup details [here](settings.md)
 ]
 ~~~
 Please find setup details [here](settings.md)
+
 4. Update versions file
 ~~~javascript
 [
