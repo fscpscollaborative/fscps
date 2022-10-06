@@ -21,7 +21,7 @@ try {
 
     #Load secrets from github
     $github = (Get-ActionContext)
-    $secrets = (invoke-gh secret list --repo "$($github.Payload.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
+    $secrets = (invoke-gh secret list --repo "$($github.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
 
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
