@@ -25,6 +25,7 @@ try {
     "GH_TOKEN=$ghToken" >> $env:GITHUB_ENV
 
     $github = (Get-ActionContext)
+    $ghToken | invoke-gh auth login --with-token 
     $secrets = (invoke-gh secret list --repo "$($github.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
 
     [System.Collections.ArrayList]$secretsCollection = @()
