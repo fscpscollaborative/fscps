@@ -9,6 +9,8 @@ runs:
   using: composite
   steps:
     - run: try { ${{ github.action_path }}/ReadSecrets.ps1 -settingsJson '${{ inputs.settingsJson }}' } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+      env:
+        GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       shell: PowerShell
 branding:
   icon: terminal
