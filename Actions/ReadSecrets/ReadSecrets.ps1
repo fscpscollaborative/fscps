@@ -23,7 +23,9 @@ try {
     $github = (Get-ActionContext)
     try {
         $ghToken = GetSecret -secret "REPO_TOKEN"
-        $secretsList = (GetGHSecrets -token "$ghToken" -repository "$($github.Repo)") | ForEach-Object { $_."name" }
+        $ghSecretsList = (GetGHSecrets -token "$ghToken" -repository "$($github.Repo)")
+        $ghSecretsList
+        $secretsList = $ghSecretsList | ForEach-Object { $_."name" }
         $secretsList
     }
     catch {
