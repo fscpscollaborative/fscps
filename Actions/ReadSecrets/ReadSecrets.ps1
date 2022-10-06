@@ -26,8 +26,11 @@ try {
 
     $github = (Get-ActionContext)
     $ghToken | invoke-gh auth login --with-token 
-    $secrets = (invoke-gh secret list --repo "$($github.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
+    $ghSecrets = (invoke-gh secret list --repo "$($github.Repo)") | ForEach-Object { $_.ToString().Substring(0, $($_.ToString().Length - 11)).Trim()}
 
+
+    $secrets = $settings.githubSecrets
+    
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
         $secret = $_
