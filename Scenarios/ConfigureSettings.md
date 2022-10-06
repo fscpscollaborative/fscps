@@ -35,7 +35,6 @@
 }
 ~~~
 Please find setup details [here](settings.md)
-
 1. Update environments file
 ~~~javascript
 [
@@ -72,7 +71,6 @@ Please find setup details [here](settings.md)
 ]
 ~~~
 Please find setup details [here](settings.md)
-
 1. Update versions file
 ~~~javascript
 [
