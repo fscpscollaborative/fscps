@@ -31,11 +31,6 @@ try {
     }
     
 
-    if(!$secrets)
-    {
-        $secrets = $settings.githubSecrets
-    }
-
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
         $secret = $_
