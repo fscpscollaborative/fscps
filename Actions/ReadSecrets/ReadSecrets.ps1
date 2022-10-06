@@ -24,16 +24,17 @@ try {
     try {
         $ghToken = GetSecret -secret "REPO_TOKEN"
         $ghSecretsList = (GetGHSecrets -token "$ghToken" -repository "$($github.Repo)")
-        $secretsList = $ghSecretsList.secrets | ForEach-Object { $_."name" }
-        $secretsList
+        $secrets = ($ghSecretsList.secrets | ForEach-Object { $_."name" }) -join ","
     }
     catch {
         OutputInfo $_.Exception.Message
     }
     
 
-
-    $secrets = $settings.githubSecrets
+    if(!$secrets)
+    {
+        $secrets = $settings.githubSecrets
+    }
 
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
