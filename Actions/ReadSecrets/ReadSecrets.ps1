@@ -24,8 +24,7 @@ try {
     try {
         $ghToken = GetSecret -secret "REPO_TOKEN"
         $ghSecretsList = (GetGHSecrets -token "$ghToken" -repository "$($github.Repo)")
-        $ghSecretsList
-        $secretsList = $ghSecretsList | ForEach-Object { $_."name" }
+        $secretsList = $ghSecretsList.secrets | ForEach-Object { $_."name" }
         $secretsList
     }
     catch {
