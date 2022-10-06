@@ -12,5 +12,7 @@
 **NOTE** The source code should be in the root of **zip** archive. The root folder of the archive will be the root folder of the repository.
 1. Wait a workflow completion
 1. Use [scenario 2](ConfigureSettings.md), [scenario 3](SelfHostedGitHubRunner.md), and [scenario 4](SetupCICD.md).
+
+
 ---
 [back](/README.md)

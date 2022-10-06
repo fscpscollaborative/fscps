@@ -2,7 +2,7 @@
 *Prerequisites:* 
 - A GitHub account.
 - An Azure account.
-- An LCS account.
+- An LCS access.
 - A NuGet feed.
 
 

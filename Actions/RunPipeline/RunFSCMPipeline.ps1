@@ -428,13 +428,19 @@ try {
                             {
                                 $errorCnt++
                             }
+
                             if($errorCnt -eq 3)
                             {
                                 if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
-                                    $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
                                     $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                                     OutputError -message $errorMessagePayload
                                 }
+                            }
+                            #if deployment is failed throw anyway
+                            if(($deploymentStatus.OperationStatus -eq "Failed"))
+                            {
+                                $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
+                                OutputError -message $errorMessagePayload
                             }
                             OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
                         }
@@ -446,6 +452,7 @@ try {
                             Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                         }
                         Write-Output "::endgroup::"
+
                     }
                 }
             }
@@ -459,6 +466,7 @@ try {
                 {
                     Remove-Item -Path $tempCombinedPackage -Force
                 }
+                OutputInfo "Execution is done."
             }
         }
         else
@@ -470,4 +478,7 @@ try {
 catch {
     OutputError -message $_.Exception.Message
 }
-
+finally
+{
+    OutputInfo "Execution is done."
+}
