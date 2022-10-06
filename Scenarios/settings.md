@@ -13,7 +13,6 @@ When running a workflow or a local script, the settings are applied by reading o
 **.FSC-PS\\\<username\>.settings.json** is the user-specific settings file. This option is rarely used, but if you have special settings, which should only be used for one specific user (potentially in the local scripts), these settings can be added to a settings file with the name of the user followed by `.settings.json`.
 
 ## Basic settings
-
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | type | Specifies the type of project. Allowed values are **FSCM** or **Retail**. This value comes with the default repository. | FSCM |
@@ -86,7 +85,6 @@ The repository settings are only read from the repository settings file (.github
 | githubRunner | Specifies which github runner will be used for the build/ci/deploy/release job in workflows. This is the most time consuming task. By default this job uses the Windows-latest github runner (unless overridden by the runs-on setting). This settings takes precedence over runs-on so that you can use different runners for the build job and the housekeeping jobs. See runs-on setting. | windows-latest |
 
 ## Advanced settings
-
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | versioningStrategy |	under development | 0 |
