@@ -26,6 +26,8 @@ When running a workflow or a local script, the settings are applied by reading o
 | generatePackages | Option to generate a package after build. Often used in build, deploy and release workflows | true |
 | uploadPackageToLCS | Option to upload generated package to the LCS after build and generate process. IMPORTANT!!! generatePackages option should be set to True  | false |
 | exportModel | FSC specific. Option to generate axmodel file. If more than one models was specified in the "models" parameter, it will take first one, and generate the axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
+| retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
+| retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
 
 ### NuGet settings
 The custom NuGet repository settings contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
@@ -64,8 +66,6 @@ These Retail settings should contain the RetailSDK settings. Can be overrided in
 | Name | Description | Default value |
 | :-- | :-- | :-- | 
 | retailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
-| retailSDKZipPath | Retail specific. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
-| retailSDKBuildPath | Retail specific. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
 | retailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ## Runtime generated settings
@@ -88,6 +88,6 @@ The repository settings are only read from the repository settings file (.github
 | Name | Description | Default value |
 | :-- | :-- | :-- |
 | versioningStrategy |	under development | 0 |
-| repoTokenSecretName | Specifies the name (**NOT the secret**) of the REPO_TOKEN secret. Default is REPO_TOKEN. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update FSC-PS System Files workflow. Read [this](UpdateAlGoSystemFiles.md) for more information. | REPO_TOKEN |
+| repoTokenSecretName | Specifies the name (**NOT the secret**) of the REPO_TOKEN secret. Default is REPO_TOKEN. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update FSC-PS System Files workflow. Read [this](UpdateFSC-PSSystemFiles.md) for more information. | REPO_TOKEN |
 | failOn | Specifies what the pipeline will fail on. Allowed values are none, warning and error | error |
-| codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCiCdForExistingAppSourceApp.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
+| codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCICD.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
