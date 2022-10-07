@@ -67,7 +67,7 @@ Please find setup details [here](settings.md)
     }
 ]
 ~~~
-Please find setup details [here](settings.md)
+Please find setup details [here](settings.md#basic-settings)
 
 4. Update versions file
 ~~~javascript
