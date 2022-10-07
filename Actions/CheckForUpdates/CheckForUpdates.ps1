@@ -298,6 +298,33 @@ try {
         }
     }
     $removeFiles = @()
+    
+    if($type -eq "FSCM")
+    {
+        $settingsFile = ".FSC-PS\settings.json"
+        if (Test-Path $settingsFile) {
+            $repoSettings = Get-Content $settingsFile -Encoding UTF8 | ConvertFrom-Json
+        }
+        else {
+            $repoSettings = [PSCustomObject]@{}
+        }
+        
+        ##update models settings
+        if(Test-Path $settings.metadataPath)
+        {
+            $models = Get-ChildItem -Directory $settings.metadataPath
+            $models = ($models | ForEach-Object {$_.BaseName}) -join ","
+        }
+
+        if ($repoSettings.PSObject.Properties.Name -eq "models") {
+            $repoSettings.models = $models
+        }
+        else {
+            $repoSettings | Add-Member -MemberType NoteProperty -Name "models" -Value $models
+        }
+
+        $repoSettings | ConvertTo-Json -Depth 99 | Set-Content $settingsFile -Encoding UTF8
+    }
 
     OutputInfo "Update files: $($updateFiles.Count -gt 0)"
     OutputInfo "Remove files $($removeFiles.Count -gt 0)"
