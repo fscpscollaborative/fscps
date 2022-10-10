@@ -18,10 +18,9 @@ When running a workflow or a local script, the settings are applied by reading o
 | type | Specifies the type of project. Allowed values are **FSCM** or **Retail**. This value comes with the default repository. | FSCM |
 | companyName | Company name using for generate the package name.  | |
 | buildVersion | The default D365 FSC version used to build and generate the package. Can be overriden by FSC-PS-Settings/environment/build/ci/deploy settings  | |
-| models | The models string array taking a part in the solution. Should be specified with comma delimeter. Example ("Contoso,ContosoTextExtension,ContosoExtension")| |
 | buildPath | The FSC-PS system will copy the {github.workspace} into this folder and will do the build from it. The folder will be located inside C:\Temp\  | _bld |
 | metadataPath | FSC specific. Specify the folder hat contains the FSC models  {github.workspace}\{metadataPath} | PackagesLocalDirectory |
-| modelsIntoPackagePattern | FSC specific. Search pattern for binaries to package. Optional search pattern for the packages to include from the binaries location. Wildcards can be used, or a list of packages by specifying one package name per line. | * |
+| includeTestModel | FSC specific. Include unit test models into the package. Can be overriden by FSC-PS-Settings/environment/build/ci/deploy settings. | false |
 | deployScheduleCron | CRON schedule for when deploy workflow should run. Default is execute each first minute of hour, only manual trigger. Build your CRON string here: https://crontab.guru | 1 * * * * |
 | generatePackages | Option to generate a package after build. Often used in build, deploy and release workflows | true |
 | uploadPackageToLCS | Option to upload generated package to the LCS after build and generate process. IMPORTANT!!! generatePackages option should be set to True  | false |

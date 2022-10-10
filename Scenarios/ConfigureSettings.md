@@ -12,8 +12,6 @@
 ~~~javascript
 {
     "githubRunner":"windows,winstandard",
-    "models":"Contoso,ContosoTestEssentials",
-    "modelsIntoPackagePattern": "Contoso",
     "packageName": "ContosoExtension",
     "nugetPackagesPath": "NuGets",
     "nugetFeedName":"Artifactory",
@@ -43,7 +41,8 @@ Please find setup details [here](settings.md)
             "lcsEnvironmentId": "73369230-3240-4f14-b9d2-cb214bd31504",
             "azVmname" : "Contoso-QA-1",
             "azVmrg" : "contoso-qa",
-            "cron":"0 21 * * *"
+            "cron":"0 21 * * *",
+            "includeTestModel": true
         }
     },
     {
@@ -62,7 +61,8 @@ Please find setup details [here](settings.md)
             "azClientsecretSecretname" : "AZ_TEST_CLIENTSECRET",
             "azVmname" : "Contoso-UAT-1",
             "azVmrg" : "contoso-uat",
-            "cron":"0 21 * * *"
+            "cron":"0 21 * * *".
+            "includeTestModel": false
         }
     }
 ]
