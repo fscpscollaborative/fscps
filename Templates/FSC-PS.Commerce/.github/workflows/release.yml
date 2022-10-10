@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       versionNumber:
-        description: Extension version to promote to release (default is 1.0.0.0)
+        description: Release version number
         required: true
         default: '1.0.0.0'
       name:
@@ -21,14 +21,6 @@ on:
         default: 'N'
       createReleaseBranch:
         description: Create Release Branch (Y/N)
-        required: false
-        default: 'N'
-      updateVersionNumber:
-        description: Update Version Number in main branch.
-        required: false
-        default: 'Y'
-      directCommit:
-        description: Direct COMMIT (Y/N)
         required: false
         default: 'N'
 
@@ -90,11 +82,9 @@ jobs:
           secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ env.Settings }}
-
+          
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
-        with:
-         vs-version: '[15.9,16.11)'
 
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1
@@ -105,11 +95,11 @@ jobs:
         run: |
           $settingsJson = '${{ env.Settings }}'
           $settings = $settingsJson | ConvertFrom-Json
-          if ($settings) {          
+          if ($settings) {
             Write-Host "Repo type is: $($settings.type)"
             Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
           }
-      
+          
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.1
         id: runpipeline
@@ -132,65 +122,12 @@ jobs:
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
           artifactsPath: '${{ env.ARTIFACTS_PATH }}'
-          
-  UpdateVersion:
-    if: ${{ github.event.inputs.updateVersionNumber=='Y' }}
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, CreateRelease ]
-    steps:
 
-      - name: Cleanup folder
-        if: always()
-        continue-on-error: true
-        shell: powershell
-        run:  Remove-Item ${{ github.workspace }}\* -Recurse -Force
-         
-      - uses: actions/checkout@v3
-      
-      - name: Read settings
-        id: ReadSettings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-        
-      - name: Read environment variables
-        run: |
-          $settingsJson = '${{ env.Settings }}'
-          $settings = $settingsJson | ConvertFrom-Json
-          $settings
-          if ($settings) {
-            Write-Host "Repo type is: $($settings.type)"
-            Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
-          }
-           
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v4.0.4
-        with: 
-          branch: gitmvu
-          delete-branch: true
-          commit-message: "Update Model to ${{ github.event.inputs.versionNumber }}"
-          title: 'Pushing Version Update ${{ github.event.inputs.versionNumber }} into ${{ github.ref }}'
-          labels: automated pr    
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-
-      - name: auto-pull-request-merge
-        if: ${{ steps.cpr.outputs.pull-request-number }}
-        uses: KeisukeYamashita/auto-pull-request-merge@v1.0.6
-        with:
-            checkStatus: false
-            pullRequestNumber: ${{ steps.cpr.outputs.pull-request-number }}
-            timeoutSeconds: 500
-            token: ${{ secrets.REPO_SCOPED_TOKEN }}
-            sha: ${{ steps.cpr.outputs.pull-request-head-sha }}
-       
-      - name: Delete temp branch
-        if: ${{ steps.cpr.outputs.pull-request-number }}
-        run: |
-           git push origin gitmvu --delete
            
   CreateReleaseBranch:
     if: ${{ github.event.inputs.createReleaseBranch=='Y' }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, UpdateVersion, CreateRelease ]
+    needs: [ Initialization, CreateRelease ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -204,27 +141,14 @@ jobs:
           git checkout -b "releases/${{ github.event.inputs.versionNumber }}"
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com
-          
-        
-      - name: Read environment variables
-        run: |
-          $settingsJson = '${{ env.Settings }}'
-          $settings = $settingsJson | ConvertFrom-Json
-          $settings
-          if ($settings) {
-            Write-Host "Repo type is: $($settings.type)"
-            Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
-          }
-
-      - name: Commit Release Branch
-        run: |
           git commit --allow-empty -m "Release branch ${{ github.event.inputs.versionNumber }}"
           git push origin "releases/${{ github.event.inputs.versionNumber }}"   
+
 
   PostProcess:
     if: always()
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, UpdateVersion, CreateRelease, CreateReleaseBranch ]
+    needs: [ Initialization, CreateRelease, CreateReleaseBranch ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

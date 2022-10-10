@@ -3,6 +3,10 @@ name: (RELEASE)
 on:
   workflow_dispatch:
     inputs:
+      versionNumber:
+        description: Release version number
+        required: true
+        default: '1.0.0.0'
       name:
         description: Name of this release (Default is generated package name)
         required: true
