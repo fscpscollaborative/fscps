@@ -80,13 +80,21 @@ try {
     }
     $workflowName = $env:GITHUB_WORKFLOW
 
+    if(($settings.includeTestModel -eq 'true'))
+    {
+        $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest
+    }
+    else {
+        $models = Get-FSCModels -metadataPath $settings.metadataPath
+    }
     
+
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
     #Generate solution folder
     Write-Output "::group::Generate solution folder"
     OutputInfo "======================================== Generate solution folder"
-    GenerateSolution -ModelName $settings.models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
+    GenerateSolution -ModelName $models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
     Write-Output "::endgroup::"
 
     Write-Output "::group::Cleanup Build folder"
@@ -222,7 +230,7 @@ try {
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
-        $xppBinariesSearch = $settings.modelsIntoPackagePattern
+        $xppBinariesSearch = $models
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.artifactsPath) ($packageName)
 
 
@@ -293,7 +301,6 @@ try {
                 [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::CreateMetadataPackage($outputDir, $tempCombinedPackage)
                 OutputInfo "  - Creating merged deployable package"
                 [Microsoft.Dynamics.AXCreateDeployablePackageBase.BuildDeployablePackages]::MergePackage("$xppToolsPath\BaseMetadataDeployablePackage.zip", $tempCombinedPackage, $deployablePackagePath, $true, [String]::Empty)
-
                 OutputInfo "Deployable package '$deployablePackagePath' successfully created."
 
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
@@ -304,28 +311,14 @@ try {
                 {
                     Write-Output "::group::Export axmodel file"
 
-                    if($settings.models.Split(','))
-                    {
-                        $modelName = $settings.models.Split(',')[0]
+                    $models | ForEach-Object{
+                        $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $_ -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+                        $modelFile = Get-Item $modelFilePath.File
+                        Rename-Item $modelFile.FullName (($_)+($modelFile.Extension)) -Force
                     }
-                    else
-                    {
-                        $modelName = $settings.models
-                    }
-                    $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $modelName -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
-
-                    $modelFile = Get-Item $modelFilePath.File
-                    Rename-Item $modelFile.FullName (($modelName)+($modelFile.Extension)) -Force
-
-                    $newModelFileName = Join-Path $modelFile.DirectoryName (($modelName)+($modelFile.Extension))
-
-                    Write-Host "::set-output name=MODEL_FILE::$($newModelFileName)"
-                    Write-Host "set-output name=MODEL_FILE::$($newModelFileName)"
-                    Add-Content -Path $env:GITHUB_ENV -Value "MODEL_FILE=$($newModelFileName)"
 
                     Write-Output "::endgroup::"
                 }
-
 
 
                 Write-Host "::set-output name=PACKAGE_NAME::$pname"

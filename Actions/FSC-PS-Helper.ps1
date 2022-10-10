@@ -210,6 +210,39 @@ function MergeCustomObjectIntoOrderedDictionary {
     }
 }
 
+function Get-FSCModels
+{
+    [CmdletBinding()]
+    param (
+        [string]
+        $metadataPath,
+        [switch]
+        $includeTest = $false
+
+    )
+    if(Test-Path "$metadataPath")
+    {
+        $modelsList = @()
+        $models = Get-ChildItem -Directory "$metadataPath"
+
+        $models | ForEach-Object {
+
+            $testModel = ($_.BaseName -match "Test")
+
+            if ($testModel -and $includeTest) {
+                $modelsList += ($_.BaseName)
+            }
+            if((Test-Path ("$metadataPath/$($_.BaseName)/Descriptor")) -and !$testModel) {
+                $modelsList += ($_.BaseName)
+            }
+        }
+        $modelsList -join ","
+    }
+    else 
+    {
+        Throw "Folder $metadataPath with metadata doesnot exists"
+    }
+}
 function ReadSettings {
     Param(
         [string] $baseFolder,
