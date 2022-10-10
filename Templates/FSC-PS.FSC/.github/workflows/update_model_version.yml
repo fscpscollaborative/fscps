@@ -3,6 +3,13 @@ name: (UPDATE) Model Version
 on:
    workflow_dispatch:
     inputs:
+      model:
+        description: 'Select FSCM Environment'
+        required: false
+        default: ''
+        type: choice
+        options:
+        - "*"
       versionNumber:
         description: Updated Version Number.
         required: true
@@ -27,7 +34,7 @@ jobs:
       - uses: ciellos-dev/d365fo-update-model-version@v0.1.3
         with:
          xppSourcePath: ${{ github.workspace }}\${{ env.metadata_path }}
-         xppDescriptorSearch: 'Contoso\Descriptor\*.xml'
+         xppDescriptorSearch: '${{ github.event.inputs.model }}\Descriptor\*.xml'
          xppLayer: "ISV" 
          versionNumber: ${{ github.event.inputs.versionNumber }}
            
@@ -37,7 +44,7 @@ jobs:
         with: 
           branch: gitmvu
           delete-branch: true
-          commit-message: "Update Contoso Model to ${{ github.event.inputs.versionNumber }}"
+          commit-message: "Update ${{ github.event.inputs.model }} model to ${{ github.event.inputs.versionNumber }}"
           title: 'Pushing Version Update ${{ github.event.inputs.versionNumber }} into ${{ github.ref }}'
           labels: automated pr    
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>

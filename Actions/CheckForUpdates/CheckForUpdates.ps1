@@ -267,14 +267,10 @@ try {
                 if($fileName -eq "update_model_version.yml")
                 {
                     if($type -eq "Retail"){ return }
-                    $srcPattern = 'Contoso'
+                    $srcPattern = '        - "*"'
                     $replacePattern = ""
-                    if($settings.models.Split(','))
-                    {
-                        $replacePattern = "$($settings.models.Split(',')[0])"
-                    }
-                    else {
-                        $replacePattern = "$($settings.models)"
+                    (Get-FSCModels -metadataPath $settings.metadataPath) | ForEach-Object { 
+                        $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }

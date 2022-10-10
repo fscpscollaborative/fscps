@@ -276,7 +276,6 @@ function ReadSettings {
         "nugetFeedPasswordSecretName"            = ""
         "nugetSourcePath"                        = ""
         "nugetPackagesPath"                      = "NuGets"
-        "models"                                 = ""
         "githubSecrets"                          = ""
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
@@ -292,7 +291,6 @@ function ReadSettings {
         "azVmrg"                                 = ""
         "artifactsPath"                          = "artifacts"
         "generatePackages"                       = $true
-        "modelsIntoPackagePattern"               = "*"
         "packageNamePattern"                     = "BRANCHNAME-PACKAGENAME-FNSCMVERSION_DATE.RUNNUMBER"
         "packageName"                            = ""
         "retailSDKVersion"                       = ""
