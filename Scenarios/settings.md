@@ -24,7 +24,7 @@ When running a workflow or a local script, the settings are applied by reading o
 | deployScheduleCron | CRON schedule for when deploy workflow should run. Default is execute each first minute of hour, only manual trigger. Build your CRON string here: https://crontab.guru | 1 * * * * |
 | generatePackages | Option to generate a package after build. Often used in build, deploy and release workflows | true |
 | uploadPackageToLCS | Option to upload generated package to the LCS after build and generate process. IMPORTANT!!! generatePackages option should be set to True  | false |
-| exportModel | FSC specific. Option to generate axmodel file. If more than one models was specified in the "models" parameter, it will take first one, and generate the axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
+| exportModel | FSC specific. Option to generate axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
 | retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
 | retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
 
