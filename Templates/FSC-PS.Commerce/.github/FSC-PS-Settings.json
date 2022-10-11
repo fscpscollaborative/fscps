@@ -1,5 +1,5 @@
 {
       "templateUrl":  "https://github.com/ciellosinc/FSC-PS.Commerce",
       "templateBranch":  "main",
-      "runs-on":  "windows"
+      "runs-on":  "windows-latest"
 }

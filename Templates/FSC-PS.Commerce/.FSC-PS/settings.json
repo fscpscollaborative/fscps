@@ -1,6 +1,5 @@
 {
     "type":"Retail",
-    "githubRunner":"windows,winstandard",
     "models":"Contoso,ContosoTestEssentials",
     "modelsIntoPackagePattern": "Contoso",
     "packageName": "ContosoExtension",

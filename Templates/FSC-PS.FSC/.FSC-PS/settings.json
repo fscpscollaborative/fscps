@@ -1,6 +1,5 @@
 {
     "type":"FSCM",
-    "githubRunner":"windows,winstandard",
     "models":"Contoso,ContosoTestEssentials",
     "modelsIntoPackagePattern": "Contoso",
     "packageName": "ContosoExtension",
