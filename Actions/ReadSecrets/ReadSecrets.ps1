@@ -27,7 +27,7 @@ try {
         $secrets = ($ghSecretsList.secrets | ForEach-Object { $_."name" }) -join ","
     }
     catch {
-        OutputInfo $_.Exception.Message
+        OutputError $_.Exception.Message
     }
     
 

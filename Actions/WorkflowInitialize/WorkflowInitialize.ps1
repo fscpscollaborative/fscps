@@ -25,6 +25,15 @@ try {
 
     Write-Big -str "a$verstr"
 
+     #Load REPO_TOKEN secret from github
+     $github = (Get-ActionContext)
+     try {
+         $ghToken = GetSecret -secret "REPO_TOKEN"
+     }
+     catch {
+         OutputError $_.Exception.Message
+     }
+
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
     $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
     $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
