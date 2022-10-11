@@ -1994,7 +1994,7 @@ function Extract-D365FSCSource
 
     $tempFolder = "$targetPath\_tmp"
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-    Expand-7zipArchive -Path C:\temp\WCI_CHS_20221007.zip -DestinationPath $tempFolder
+    Expand-7zipArchive -Path $archivePath -DestinationPath $tempFolder
 
     $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
     $metadataPath = $modelPath[0].Parent.Parent.FullName
