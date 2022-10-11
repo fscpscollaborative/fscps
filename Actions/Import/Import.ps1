@@ -88,7 +88,7 @@ try {
     # Clone URL
     invoke-git clone $url
 
-    Set-Location -Path *
+    #Set-Location -Path *
     
     invoke-git status
 
