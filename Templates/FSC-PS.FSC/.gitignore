@@ -298,21 +298,11 @@ __pycache__/
 *.xsd.cs
 # But descend into directories
 !/VSProjects
-!/VSProjects/*
-!/VSProjects/*/*
+!/VSProjects/**
 !/PackagesLocalDirectory
-!/PackagesLocalDirectory/*
-!/PackagesLocalDirectory/Contoso
-!/PackagesLocalDirectory/Contoso/Contoso
-!/PackagesLocalDirectory/Contoso/Descriptor
-!/PackagesLocalDirectory/Contoso/bin
-!/PackagesLocalDirectory/Contoso/bin/Test.dll
-!/PackagesLocalDirectory/ContosoTestEssentials
-!/PackagesLocalDirectory/ContosoTestEssentials/ContosoTestEssentials
-!/PackagesLocalDirectory/ContosoTestEssentials/Descriptor
+!/PackagesLocalDirectory/**
 !.gitignore
 /PackagesLocalDirectory/Readme.txt
-/PackagesLocalDirectory/DBSynchronization.xml
 !.github
 !.github/*
 !.github/workflows/*
