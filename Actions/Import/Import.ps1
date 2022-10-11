@@ -87,12 +87,12 @@ try {
     invoke-git clone $url 
     $archivePath = "$baseFolder\temp.zip"
     Invoke-WebRequest -Uri $artifactsPath -OutFile $archivePath
-
+    Set-Location -Path $baseFolder
     Extract-D365FSCSource -archivePath $archivePath -targetPath $baseFolder
 
     Remove-Item $archivePath -Force
+
     
-    #Set-Location -Path *
     
     invoke-git status
 
