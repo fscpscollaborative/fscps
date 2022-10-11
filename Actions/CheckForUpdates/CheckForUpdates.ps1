@@ -195,7 +195,7 @@ try {
                         if ($_ -match '^name:([^#]*)(#.*$|$)') { $name = "workflow '$($Matches[1].Trim())'" }
                     }
                 }
-
+            
                 $workflowScheduleKey = "$($baseName)Schedule"
                 if ($repoSettings.ContainsKey($workflowScheduleKey)) {
                     $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
@@ -205,7 +205,7 @@ try {
             
                 if ($fileName -ne "update_fsc_system_files.yml") {
                     if ($repoSettings.ContainsKey("runs-on")) {
-                        $srcPattern = "Initialization:`r`n    runs-on: [ windows ]`r`n"
+                        $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                         #if (!($repoSettings.ContainsKey("gitHubRunner"))) {
@@ -214,6 +214,11 @@ try {
                         #    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                         #}
                     }
+                }
+                
+                if(($fileName -eq "import.yml") -and $type -eq "FSCM")
+                {
+                    if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ return }
                 }
                 
                 if($fileName -eq "build.yml")
