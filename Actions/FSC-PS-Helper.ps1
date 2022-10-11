@@ -1980,6 +1980,33 @@ function ConvertTo-OrderedDictionary
         Write-Output $outputObject
     }
 }
+
+function Extract-D365FSCSource
+{
+    [CmdletBinding()]
+    param (
+        [string]
+        $archivePath,
+        [string]
+        $targetPath
+
+    )
+
+    $tempFolder = "$targetPath\_tmp"
+    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+    Expand-7zipArchive -Path C:\temp\WCI_CHS_20221007.zip -DestinationPath $tempFolder
+
+    $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
+    $metadataPath = $modelPath[0].Parent.Parent.FullName
+    $metadataPath
+    Copy-Item -Path "$metadataPath\" -Destination  (Join-Path $targetPath "PackagesLocalDirectory") -Recurse -Force
+
+    $solutionPath = Get-ChildItem -Path $tempFolder -Filter *.sln -Recurse -ErrorAction SilentlyContinue -Force
+    $projectsPath = $solutionPath[1].Directory.Parent.FullName
+    $projectsPath
+    Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
+    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+}
 ################################################################################
 # End - Private functions.
 ################################################################################

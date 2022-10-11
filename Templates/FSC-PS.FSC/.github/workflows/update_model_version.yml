@@ -19,7 +19,7 @@ env:
   
 jobs:
   update_model_version:
-    runs-on: [self-hosted, Windows, WinStandard]
+    runs-on: [ windows-latest ]
 
     steps:
 

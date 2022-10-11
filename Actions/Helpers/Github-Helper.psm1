@@ -234,7 +234,6 @@ function invoke-choco {
     }
 }
 
-
 function invoke-gh {
     Param(
         [switch] $silent,
@@ -955,8 +954,6 @@ function AddReadOnlyProps {
     }
 }
 
-
-
 function Test-CronExpression
 {
     param (
@@ -1021,8 +1018,6 @@ function Test-CronExpression
     # date is valid
     return $true
 }
-
-
 
 function Get-CronFields
 {
@@ -1353,8 +1348,6 @@ None
     Write-Output 'Finished'
   }
 }
-
-
 
 
 function Test-Property {

@@ -24,7 +24,7 @@ env:
 
 jobs:
    Initialization:
-    runs-on: [ windows ]
+    runs-on: [ windows-latest ]
     outputs:
       settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
       type: ${{ steps.ReadSettings.outputs.type }}
@@ -33,6 +33,10 @@ jobs:
       environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
       githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
     steps:
+
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+        
       - name: Checkout
         uses: actions/checkout@v3
 
