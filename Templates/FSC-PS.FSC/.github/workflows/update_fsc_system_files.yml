@@ -26,7 +26,6 @@ jobs:
    Initialization:
     runs-on: [ windows-latest ]
     outputs:
-      settings: ${{ steps.ReadSettings.outputs.SettingsJson }}
       type: ${{ steps.ReadSettings.outputs.type }}
       source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
       versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
@@ -67,7 +66,7 @@ jobs:
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
-          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          settingsJson: ${{ env.Settings }}
           
       - name: Override TemplateUrl
         run: |
@@ -109,12 +108,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Read settings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
-          settingsJson: ${{ needs.Initialization.outputs.settings }}
+          settingsJson: ${{ env.Settings }}
           
       - name: Finalize the workflow
         id: PostProcess
