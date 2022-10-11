@@ -30,6 +30,7 @@ try {
      $github = (Get-ActionContext)
      try {
          $ghToken = GetSecret -secret "REPO_TOKEN"
+         if(!$ghToken){throw "GitHub secret REPO_TOKEN not found. Please, create it."}
      }
      catch {
          OutputError $_.Exception.Message
