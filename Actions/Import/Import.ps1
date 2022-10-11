@@ -68,9 +68,11 @@ try {
 
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
-    
-    Extract-D365FSCSource -archivePath $artifactsPath -targetPath $baseFolder
+    $archivePath = "$baseFolder\temp.zip"
+    Invoke-WebRequest -Uri $artifactsPath -OutFile $archivePath
+    Extract-D365FSCSource -archivePath $archivePath -targetPath $baseFolder
 
+    Remove-Item $archivePath -Force
     # Environment variables for hub commands
     $env:GITHUB_USER = $actor
     $env:GITHUB_TOKEN = $token
