@@ -77,10 +77,10 @@ jobs:
           settingsJson: ${{ env.Settings }}
           
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v1.1.1
 
       - name: Setup NuGet
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v1.0.7
         with:
           nuget-version: 5.10.x    
           
@@ -94,7 +94,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
       
       - name: Publish artifacts  
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ env.PACKAGE_NAME }}
           path: ${{ env.ARTIFACTS_PATH }}
