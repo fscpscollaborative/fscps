@@ -234,9 +234,9 @@ try {
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.artifactsPath) ($packageName)
 
 
-        if ($xppBinariesSearch.Contains(";"))
+        if ($xppBinariesSearch.Contains(","))
         {
-            [string[]]$xppBinariesSearch = $xppBinariesSearch -split ";"
+            [string[]]$xppBinariesSearch = $xppBinariesSearch -split ","
         }
 
         $potentialPackages = Find-Match -DefaultRoot $xppBinariesPath -Pattern $xppBinariesSearch | Where-Object { (Test-Path -LiteralPath $_ -PathType Container) }
