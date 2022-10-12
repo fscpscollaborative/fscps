@@ -74,11 +74,6 @@ try {
     Write-Output "::endgroup::"
 
 
-
-    if ($update -and -not $token) {
-        throw "A personal access token with permissions to modify Workflows is needed. You must add a secret called repoTokenSecretName containing a personal access token. You can Generate a new token from https://github.com/settings/tokens. Make sure that the workflow scope is checked."
-    }
-
     if(!$templateUrl)
     {
         $templateUrl = $settings.templateUrl
@@ -220,7 +215,7 @@ try {
                 {
                     if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ return }
                 }
-                
+
                 if($fileName -eq "build.yml")
                 {
                     $srcPattern = '        - "*"'
@@ -318,11 +313,11 @@ try {
                 New-Item $tempRepo -ItemType Directory | Out-Null
                 Set-Location $tempRepo
                 $serverUri = [Uri]::new($env:GITHUB_SERVER_URL)
-                $url = "$($serverUri.Scheme)://$($actor):$($token)@$($serverUri.Host)/$($env:GITHUB_REPOSITORY)"
+                $url = "$($serverUri.Scheme)://$($actor):$($repoTokenSecretName)@$($serverUri.Host)/$($env:GITHUB_REPOSITORY)"
 
                 # Environment variables for hub commands
                 $env:GITHUB_USER = $actor
-                $env:GITHUB_TOKEN = $token
+                $env:GITHUB_TOKEN = $repoTokenSecretName
                 $targetBranch = ("$env:GITHUB_REF").Replace("refs/heads/","")
 
                 # Configure git username and email
