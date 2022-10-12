@@ -266,8 +266,16 @@ try {
                     if($type -eq "Retail"){ return }
                     $srcPattern = '        - "*"'
                     $replacePattern = ""
-                    (Get-FSCModels -metadataPath $settings.metadataPath) | ForEach-Object { 
-                        $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
+                    $models = (Get-FSCModels -metadataPath $settings.metadataPath)
+                    if($models.Split(','))
+                    {
+                        $models.Split(',') | ForEach-Object { 
+                            $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
+                    }
+                    else {
+                        $replacePattern += "         - "+'"'+$($models)+'"'+"`r`n"
+                    }
+
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
