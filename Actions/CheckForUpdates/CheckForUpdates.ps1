@@ -323,7 +323,7 @@ try {
                 # Configure git username and email
                 invoke-git config --global user.email "$actor@users.noreply.github.com"
                 invoke-git config --global user.name "$actor"
-
+                invoke-git config --system core.longpaths true
                 # Configure hub to use https
                 invoke-git config --global hub.protocol https
 
