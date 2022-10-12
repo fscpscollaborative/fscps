@@ -64,32 +64,32 @@ jobs:
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
 
-    - name: Setup NuGet.exe
-      uses: nuget/setup-nuget@v1
-      with:
-        nuget-version: 5.10.x
+      - name: Setup NuGet.exe
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: 5.10.x
 
-    - name: Cleanup NuGet
-      if: always()
-      continue-on-error: true
-      run: nuget sources remove -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }}
+      - name: Cleanup NuGet
+        if: always()
+        continue-on-error: true
+        run: nuget sources remove -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }}
 
-    - name: Nuget add source
-      run: nuget sources Add -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }} -username ${{ env.nugetFeedUserName }} -password ${{ secrets.nugetFeedPassword }}
-   
-    - name: Nuget install packages
-      run: |
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        $dest = "c:\temp"
-        cd $dest
-        $fileUrls = @("${{ github.event.inputs.PlatformBuildReference }}",
-                      "${{ github.event.inputs.CompilerTools }}",
-                      "${{ github.event.inputs.ApplicationBuildReference }}",
-                      "${{ github.event.inputs.ApplicationSuiteBuildReference }}")
-        ForEach($item in $fileUrls)
-        {
-            $content = Invoke-WebRequest -URI $item
-            $fileName = [regex]::match($content.Headers.'Content-Disposition','(?<=filename=").*(?=";)').Value
-            Invoke-WebRequest -URI $item -OutFile $dest\$fileName
-            nuget push  $fileName  -Source ${{ env.nugetSourcePath }}
-        }
+      - name: Nuget add source
+        run: nuget sources Add -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }} -username ${{ env.nugetFeedUserName }} -password ${{ secrets.nugetFeedPassword }}
+    
+      - name: Nuget install packages
+        run: |
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          $dest = "c:\temp"
+          cd $dest
+          $fileUrls = @("${{ github.event.inputs.PlatformBuildReference }}",
+                        "${{ github.event.inputs.CompilerTools }}",
+                        "${{ github.event.inputs.ApplicationBuildReference }}",
+                        "${{ github.event.inputs.ApplicationSuiteBuildReference }}")
+          ForEach($item in $fileUrls)
+          {
+              $content = Invoke-WebRequest -URI $item
+              $fileName = [regex]::match($content.Headers.'Content-Disposition','(?<=filename=").*(?=";)').Value
+              Invoke-WebRequest -URI $item -OutFile $dest\$fileName
+              nuget push  $fileName  -Source ${{ env.nugetSourcePath }}
+          }
