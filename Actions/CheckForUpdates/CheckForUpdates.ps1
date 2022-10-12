@@ -271,6 +271,7 @@ try {
                     {
                         $models.Split(',') | ForEach-Object { 
                             $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
+                        }
                     }
                     else {
                         $replacePattern += "         - "+'"'+$($models)+'"'+"`r`n"
