@@ -1,0 +1,95 @@
+name: (UPLOAD) New FSC NuGet
+
+
+on:
+  workflow_dispatch:
+   inputs:
+    PlatformBuildReference:
+      description: Platform Build Reference URL.
+      required: true
+    CompilerTools:
+      description: Compiler Tools URL.
+      required: true
+    ApplicationBuildReference:
+      description: Application Build Reference URL.
+      required: true
+    ApplicationSuiteBuildReference:
+      description: Application Suite Build Reference URL.
+      required: true
+
+jobs:
+  Initialization:
+    runs-on: [ windows-latest ]
+    outputs:
+      type: ${{ steps.ReadSettings.outputs.type }}
+      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
+      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
+      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
+      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+    steps:
+
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+        
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize the workflow
+        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.1
+        id: init
+        env:
+          secrets: ${{ toJson(secrets) }}    
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+
+  Upload_NuGet:
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    needs: [ Initialization ]
+    steps:   
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+        
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Initialize the workflow
+        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.1
+        id: init
+        env:
+          secrets: ${{ toJson(secrets) }}    
+
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
+
+    - name: Setup NuGet.exe
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: 5.10.x
+
+    - name: Cleanup NuGet
+      if: always()
+      continue-on-error: true
+      run: nuget sources remove -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }}
+
+    - name: Nuget add source
+      run: nuget sources Add -Name ${{ env.nugetFeedName }} -Source ${{ env.nugetSourcePath }} -username ${{ env.nugetFeedUserName }} -password ${{ secrets.nugetFeedPassword }}
+   
+    - name: Nuget install packages
+      run: |
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $dest = "c:\temp"
+        cd $dest
+        $fileUrls = @("${{ github.event.inputs.PlatformBuildReference }}",
+                      "${{ github.event.inputs.CompilerTools }}",
+                      "${{ github.event.inputs.ApplicationBuildReference }}",
+                      "${{ github.event.inputs.ApplicationSuiteBuildReference }}")
+        ForEach($item in $fileUrls)
+        {
+            $content = Invoke-WebRequest -URI $item
+            $fileName = [regex]::match($content.Headers.'Content-Disposition','(?<=filename=").*(?=";)').Value
+            Invoke-WebRequest -URI $item -OutFile $dest\$fileName
+            nuget push  $fileName  -Source ${{ env.nugetSourcePath }}
+        }
