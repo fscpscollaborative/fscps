@@ -277,7 +277,6 @@ try {
                         $replacePattern += "         - "+'"'+$($models)+'"'+"`r`n"
                     }
 
-                    }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
 
