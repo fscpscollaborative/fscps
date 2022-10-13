@@ -126,8 +126,6 @@ try {
         Get-FSCDefaultNuGets -PlatformVersion "$PlatformVersion" -ApplicationVersion "$ApplicationVersion"
     }
 
-
-
     Write-Output "::group::Nuget add source"
     OutputInfo "======================================== Nuget add source"
     #Nuget add source
@@ -180,7 +178,7 @@ try {
     $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
     Set-Content $buidPropsFile $tempFile
 
-    Install-Module -Name Invoke-MsBuild
+    installModules "Invoke-MsBuild"
 
     $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" -ShowBuildOutputInCurrentWindow
 
