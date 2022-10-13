@@ -276,7 +276,7 @@ function ReadSettings {
         "nugetFeedPasswordSecretName"            = ""
         "nugetSourcePath"                        = ""
         "nugetPackagesPath"                      = "NuGets"
-        "useLocslNuGetStorage"                   = $false
+        "useLocalNuGetStorage"                   = $false
         "githubSecrets"                          = ""
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
