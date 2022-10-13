@@ -276,6 +276,7 @@ function ReadSettings {
         "nugetFeedPasswordSecretName"            = ""
         "nugetSourcePath"                        = ""
         "nugetPackagesPath"                      = "NuGets"
+        "useLocslNuGetStorage"                   = $false
         "githubSecrets"                          = ""
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
@@ -1092,6 +1093,34 @@ function Update-RetailSDK
     }
 }
 
+function Update-FSCNuGet
+{
+    [CmdletBinding()]
+    param (
+        [string]$sdkVersion,
+        [string]$sdkPath,
+        [string]$token
+    )
+
+    process
+    {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $version = Get-VersionData -sdkVersion $sdkVersion
+        $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
+
+        if(!(Test-Path -Path $sdkPath))
+        {
+            New-Item -ItemType Directory -Force -Path $sdkPath
+        }
+
+        if(!(Test-Path -Path $path))
+        {
+            Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+        }
+        Write-Output $path
+    }
+}
+
 function Get-VersionData
 {
     [CmdletBinding()]
@@ -1122,41 +1151,45 @@ function Get-Versions
         $versionsDefaultFile = Join-Path "$PSScriptRoot" "Helpers\versions.default.json"
         $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
         $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\versions.json'
-        $versions = (Get-Content $versionsFile) | ConvertFrom-Json
-
-        ForEach($version in $versions)
-        { 
-            ForEach($versionDefault in $versionsDefault)
-            {
-                if($version.version -eq $versionDefault.version)
-                {
         
-                    if($version.data.PSobject.Properties.name -match "AppVersion")
+
+        if(Test-Path $versionsFile)
+        {
+            $versions = (Get-Content $versionsFile) | ConvertFrom-Json
+            ForEach($version in $versions)
+            { 
+                ForEach($versionDefault in $versionsDefault)
+                {
+                    if($version.version -eq $versionDefault.version)
                     {
-                        if($version.data.AppVersion -ne "")
+            
+                        if($version.data.PSobject.Properties.name -match "AppVersion")
                         {
-                            $versionDefault.data.AppVersion = $version.data.AppVersion
+                            if($version.data.AppVersion -ne "")
+                            {
+                                $versionDefault.data.AppVersion = $version.data.AppVersion
+                            }
                         }
-                    }
-                    if($version.data.PSobject.Properties.name -match "PlatformVersion")
-                    {
-                        if($version.data.PlatformVersion -ne "")
+                        if($version.data.PSobject.Properties.name -match "PlatformVersion")
                         {
-                            $versionDefault.data.PlatformVersion = $version.data.PlatformVersion
+                            if($version.data.PlatformVersion -ne "")
+                            {
+                                $versionDefault.data.PlatformVersion = $version.data.PlatformVersion
+                            }
                         }
-                    }
-                    if($version.data.PSobject.Properties.name -match "retailSDKURL")
-                    {
-                        if($version.data.retailSDKURL -ne "")
+                        if($version.data.PSobject.Properties.name -match "retailSDKURL")
                         {
-                            $versionDefault.data.retailSDKURL = $version.data.retailSDKURL
+                            if($version.data.retailSDKURL -ne "")
+                            {
+                                $versionDefault.data.retailSDKURL = $version.data.retailSDKURL
+                            }
                         }
-                    }
-                    if($version.data.PSobject.Properties.name -match "retailSDKVersion")
-                    {
-                        if($version.data.retailSDKVersion -ne "")
+                        if($version.data.PSobject.Properties.name -match "retailSDKVersion")
                         {
-                            $versionDefault.data.retailSDKVersion = $version.data.retailSDKVersion
+                            if($version.data.retailSDKVersion -ne "")
+                            {
+                                $versionDefault.data.retailSDKVersion = $version.data.retailSDKVersion
+                            }
                         }
                     }
                 }
@@ -2007,6 +2040,37 @@ function Extract-D365FSCSource
     Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
+
+function Get-FSCDefaultNuGets {
+    [CmdletBinding()]
+    param (
+        [string]$PlatformVersion,
+        [string]$ApplicationVersion
+    )
+        #Temporary sas token
+        $storageAccountUrl = "https://ciellosnuget.z13.web.core.windows.net"
+        $dest = "c:\temp\packages\"
+
+        Remove-Item $dest -Recurse -ErrorAction SilentlyContinue -Force
+        [System.IO.Directory]::CreateDirectory($dest)
+
+        $applicationBuildName   = "Microsoft.Dynamics.AX.Application.DevALM.BuildXpp"
+        $applicationSuiteName   = "Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp"
+        $compileToolsName       = "Microsoft.Dynamics.AX.Platform.CompilerPackage"
+        $platformNuildName      = "Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp"
+
+        $applicationBuildNameUrl   = "$storageAccountUrl/$applicationBuildName.$ApplicationVersion.nupkg"
+        $applicationSuiteNameUrl   = "$storageAccountUrl/$applicationSuiteName.$ApplicationVersion.nupkg"
+        $compileToolsNameUrl       = "$storageAccountUrl/$compileToolsName.$PlatformVersion.nupkg"
+        $platformNuildNameUrl      = "$storageAccountUrl/$platformNuildName.$PlatformVersion.nupkg"
+
+        Invoke-WebRequest -URI $applicationBuildNameUrl -OutFile $dest\"$($applicationBuildName+".nupkg")"
+        Invoke-WebRequest -URI $applicationSuiteNameUrl -OutFile $dest\"$($applicationSuiteName+".nupkg")"
+        Invoke-WebRequest -URI $compileToolsNameUrl     -OutFile $dest\"$($compileToolsName+".nupkg")"
+        Invoke-WebRequest -URI $platformNuildNameUrl    -OutFile $dest\"$($platformNuildName+".nupkg")"
+
+        Get-ChildItem $dest 
+ }
 ################################################################################
 # End - Private functions.
 ################################################################################

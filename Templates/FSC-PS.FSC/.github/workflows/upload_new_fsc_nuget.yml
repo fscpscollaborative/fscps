@@ -54,12 +54,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Initialize the workflow
-        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.1
-        id: init
-        env:
-          secrets: ${{ toJson(secrets) }}    
-
       - name: Read settings
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
