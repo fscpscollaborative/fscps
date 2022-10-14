@@ -290,7 +290,7 @@ try {
                 if($status.DeploymentState -eq "Servicing")
                 {
                     do {
-                        Start-Sleep -Seconds 10
+                        Start-Sleep -Seconds 60
                         $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
                     
                         OutputInfo "Waiting of previous deployment finish. Current status: $($status.DeploymentState)"
@@ -304,7 +304,7 @@ try {
                 {
                     OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
                 }
-                
+
                 #Startup environment
                 #if($PowerState -ne "running")
                 #{
@@ -319,7 +319,7 @@ try {
                 $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$packageNamePattern"
                 $errorCnt = 0
                 do {
-                    Start-Sleep -Seconds 10
+                    Start-Sleep -Seconds 60
                     $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
 
                     if (($deploymentStatus.ErrorMessage))
