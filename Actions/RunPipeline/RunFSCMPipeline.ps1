@@ -416,6 +416,7 @@ try {
                             while ($status.DeploymentState -eq "Servicing")
                             
                             OutputInfo "Previous deployment status: $($status.DeploymentState)"
+                            Start-Sleep -Seconds 120
                         }
 
                         if($status.DeploymentState -eq "Failed")
