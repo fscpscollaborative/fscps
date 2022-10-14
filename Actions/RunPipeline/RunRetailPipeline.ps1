@@ -127,7 +127,7 @@ try {
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
-    Install-Module -Name Invoke-MsBuild
+    installModules "Invoke-MsBuild"
     #& msbuild
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
     if($msbuildpath -ne "")
@@ -286,7 +286,25 @@ try {
                     OutputInfo "....state is $($PowerState)"
                 }
 
+                $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                if($status.DeploymentState -eq "Servicing")
+                {
+                    do {
+                        Start-Sleep -Seconds 10
+                        $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                    
+                        OutputInfo "Waiting of previous deployment finish. Current status: $($status.DeploymentState)"
+                    }
+                    while ($status.DeploymentState -eq "Servicing")
+                    
+                    OutputInfo "Previous deployment status: $($status.DeploymentState)"
+                }
 
+                if($status.DeploymentState -eq "Failed")
+                {
+                    OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
+                }
+                
                 #Startup environment
                 #if($PowerState -ne "running")
                 #{

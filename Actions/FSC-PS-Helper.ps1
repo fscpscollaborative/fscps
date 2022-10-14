@@ -301,6 +301,7 @@ function ReadSettings {
         "repoTokenSecretName"                    = "REPO_TOKEN"
         "ciBranches"                             = "main,release"
         "deployScheduleCron"                     = "1 * * * *"
+        "deploy"                                 = $false
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
 
     }

@@ -403,7 +403,25 @@ try {
                             $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
                             OutputInfo "....state is $($PowerState)"
                         }
+                        
+                        $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                        if($status.DeploymentState -eq "Servicing")
+                        {
+                            do {
+                                Start-Sleep -Seconds 10
+                                $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                            
+                                OutputInfo "Waiting of previous deployment finish. Current status: $($status.DeploymentState)"
+                            }
+                            while ($status.DeploymentState -eq "Servicing")
+                            
+                            OutputInfo "Previous deployment status: $($status.DeploymentState)"
+                        }
 
+                        if($status.DeploymentState -eq "Failed")
+                        {
+                            OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
+                        }
 
                         #Startup environment
                         #if($PowerState -ne "running")
@@ -464,7 +482,6 @@ try {
                 {
                     Remove-Item -Path $tempCombinedPackage -Force
                 }
-                OutputInfo "Execution is done."
             }
         }
         else
