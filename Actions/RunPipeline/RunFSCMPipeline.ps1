@@ -202,20 +202,8 @@ try {
     {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
-        #check nuget instalation
-        $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
-        $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
 
-        if([string]::IsNullOrEmpty($Az))
-        {
-            Install-Module -Name AZ -AllowClobber -Scope CurrentUser -Force -Confirm:$False -SkipPublisherCheck
-        }
-        if([string]::IsNullOrEmpty($DfoTools))
-        {
-            Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
-        }
-
-
+        installModules @("d365fo.tools","AZ")
 
         $packageNamePattern = $settings.packageNamePattern;
 
