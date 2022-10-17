@@ -40,8 +40,8 @@
     "data": {
       "PlatformVersion": "7.0.6592.33",
       "AppVersion": "10.0.1362.27",
-      "retailSDKVersion": "",
-      "retailSDKURL": ""
+      "retailSDKVersion": "10.0.1362.15",
+      "retailSDKURL": "https://ciellosarchive.blob.core.windows.net/retailsdk/RetailSDK.10.0.1362.15.7z?sp=r&st=2022-10-16T18:25:35Z&se=2032-10-17T02:25:35Z&spr=https&sv=2021-06-08&sr=b&sig=Zh6SioFIXD24XgdfhpE6FvGMoPjNz1M5kfQpfG3fVl0%3D"
     }
   }
 ]
