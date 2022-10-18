@@ -25,12 +25,6 @@ env:
 jobs:
    Initialization:
     runs-on: [ windows-latest ]
-    outputs:
-      type: ${{ steps.ReadSettings.outputs.type }}
-      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
-      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
-      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
-      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
     steps:
 
       - name: Support longpaths
@@ -49,18 +43,6 @@ jobs:
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
 
-   Update:
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization ]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Read settings
-        id: ReadSettings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-        
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
         env:
@@ -92,36 +74,18 @@ jobs:
       - name: Check for updates to FSCM-PS system files
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
         with:
-          type: ${{ needs.Initialization.outputs.type}}
+          type: ${{ steps.ReadSettings.outputs.type}}
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
           update: Y
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
           templateUrl: ${{ env.TemplateUrl }}
           directCommit: ${{ env.directCommit }}
-          
-   PostProcess: 
-    if: always()
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization,  Update ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-
-      - name: Read secrets
-        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}    
-        with:
-          settingsJson: ${{ env.Settings }}
-          
       - name: Finalize the workflow
         id: PostProcess
         uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.1
         with:
-          remove_current: ${{ needs.Initialization.outputs.environments == '' }}
+          remove_current: ${{ steps.ReadSettings.outputs.EnvironmentsJson == '' }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
