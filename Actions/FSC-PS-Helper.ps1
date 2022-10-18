@@ -674,12 +674,12 @@ function installModules {
 
         if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
             Write-Host "Installing module $_"
-            Install-Module $_ -Force | Out-Null
+            Install-Module $_ -Force -AllowClobber -Scope CurrentUser | Out-Null
         }
     }
     $modules | ForEach-Object { 
         Write-Host "Importing module $_"
-        Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue | Out-Null
+        Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue -Scope CurrentUser | Out-Null
     }
 }
 
