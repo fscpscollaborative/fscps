@@ -303,7 +303,7 @@ try {
                 if($settings.exportModel)
                 {
                     Write-Output "::group::Export axmodel file"
-
+                    installModules @("d365fo.tools")
                     if($models.Split(","))
                     {
                         $models.Split(",") | ForEach-Object{
