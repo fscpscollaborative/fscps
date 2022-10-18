@@ -170,7 +170,7 @@ try {
         OutputInfo "======================================== Generate packages"
 
         #check nuget instalation
-        installModules @("d365fo.tools","AZ")
+        installModules @("AZ","Azure.Storage","d365fo.tools")
 
         $packageNamePattern = $settings.packageNamePattern;
 
