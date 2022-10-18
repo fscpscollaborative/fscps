@@ -304,11 +304,20 @@ try {
                 {
                     Write-Output "::group::Export axmodel file"
 
-                    $models | ForEach-Object{
-                        $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $_ -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
-                        $modelFile = Get-Item $modelFilePath.File
-                        Rename-Item $modelFile.FullName (($_)+($modelFile.Extension)) -Force
+                    if($models.Split(","))
+                    {
+                        $models.Split(",") | ForEach-Object{
+                            $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $_ -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+                            $modelFile = Get-Item $modelFilePath.File
+                            Rename-Item $modelFile.FullName (($_)+($modelFile.Extension)) -Force
+                        }
                     }
+                    else {
+                        $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $models -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
+                        $modelFile = Get-Item $modelFilePath.File
+                        Rename-Item $modelFile.FullName (($models)+($modelFile.Extension)) -Force
+                    }
+
 
                     Write-Output "::endgroup::"
                 }
