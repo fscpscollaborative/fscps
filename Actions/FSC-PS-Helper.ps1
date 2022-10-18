@@ -666,6 +666,12 @@ function installModules {
     )
 
     $modules | ForEach-Object {
+        if($_ -eq "Az")
+        {
+            Set-ExecutionPolicy RemoteSigned
+            Uninstall-AzureRm
+        }
+
         if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
             Write-Host "Installing module $_"
             Install-Module $_ -Force | Out-Null
