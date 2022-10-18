@@ -244,8 +244,15 @@ function invoke-gh {
 
     begin
     {
-        invoke-choco install gh -y --allow-unofficial -silent
-        refreshenv
+        $pList = invoke-choco search ' gh ' -returnValue -silent
+        if(-not ($pList.Item($pList.Length - 1).Substring(0,1) -gt 0))
+        {
+            invoke-choco install gh -y --allow-unofficial -silent
+            refreshenv
+        }
+        else {
+            invoke-choco upgrade gh -y --allow-unofficial
+        }
     }
     process
     {
