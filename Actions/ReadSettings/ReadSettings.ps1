@@ -38,13 +38,28 @@ try {
         #merge environment settings into current Settings
         ForEach($env in $envsFile)
         {
-            if($env.name -eq $dynamicsEnvironment)
+            if($dynamicsEnvironment.Split(","))
             {
-                if($env.settings.PSobject.Properties.name -match "deploy")
-                {
-                    $env.settings.deploy = $true
+                $dynamicsEnvironment.Split(",") | ForEach-Object {
+                    if($env.name -eq $_)
+                    {
+                        if($env.settings.PSobject.Properties.name -match "deploy")
+                        {
+                            $env.settings.deploy = $true
+                        }
+                        MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+                    }
                 }
-                MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+            }
+            else {
+                if($env.name -eq $dynamicsEnvironment)
+                {
+                    if($env.settings.PSobject.Properties.name -match "deploy")
+                    {
+                        $env.settings.deploy = $true
+                    }
+                    MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
+                }
             }
         }
         if($settings.sourceBranch){
@@ -55,11 +70,21 @@ try {
             $sourceBranch = $settings.currentBranch;
         }
 
+        if($dynamicsEnvironment.Split(","))
+        {
+            $environmentsJSon = $dynamicsEnvironment | ConvertTo-Json -compress
+        }
+        else
+        {
+            $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+        }
+
+
         Write-Host "::set-output name=SOURCE_BRANCH::$sourceBranch"
         Write-Host "set-output name=SOURCE_BRANCH::$sourceBranch"
         Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
 
-        $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+        #$environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
         Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
         Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
