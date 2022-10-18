@@ -198,7 +198,7 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
             
-                if ($fileName -ne "update_fsc_system_files.yml") {
+                #if ($fileName -ne "update_fsc_system_files.yml") {
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
@@ -209,7 +209,7 @@ try {
                         #    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                         #}
                     }
-                }
+                #}
                 
                 if(($fileName -eq "import.yml") -and $type -eq "FSCM")
                 {
