@@ -72,7 +72,7 @@ try {
 
         if($dynamicsEnvironment.Split(","))
         {
-            $environmentsJSon = $dynamicsEnvironment | ConvertTo-Json -compress
+            $environmentsJSon = '["'+$dynamicsEnvironment+'"]'
         }
         else
         {
