@@ -203,7 +203,7 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-        installModules @("d365fo.tools","AZ")
+        installModules @("AZ","d365fo.tools")
 
         $packageNamePattern = $settings.packageNamePattern;
 
@@ -303,7 +303,6 @@ try {
                 if($settings.exportModel)
                 {
                     Write-Output "::group::Export axmodel file"
-                    installModules @("Azure.Storage","d365fo.tools")
                     if($models.Split(","))
                     {
                         $models.Split(",") | ForEach-Object{
