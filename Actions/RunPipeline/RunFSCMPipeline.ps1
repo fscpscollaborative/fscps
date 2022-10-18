@@ -203,7 +203,7 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-        installModules @("AZ","d365fo.tools")
+        installModules @("AZ","Azure.Storage","d365fo.tools")
 
         $packageNamePattern = $settings.packageNamePattern;
 
