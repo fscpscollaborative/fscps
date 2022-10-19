@@ -1136,8 +1136,11 @@ function Update-FSCNuGet
 
         $nugets | Foreach-Object{
             $destinationNugetFilePath = Join-Path $NugetPath $_ 
-            $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $_ -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
-            $blob.Name
+            if(-not(Test-Path $destinationNugetFilePath))
+            {
+                $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $_ -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+                $blob.Name
+            }
         } 
     }
 }
