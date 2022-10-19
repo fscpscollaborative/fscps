@@ -52,6 +52,8 @@ try {
         $DynamicsVersion = $settings.buildVersion
     }
 
+    installModules @("AZ","Azure.Storage","d365fo.tools")
+
     $version = Get-VersionData -sdkVersion $DynamicsVersion
 
     if($settings.sourceBranch -eq "")
@@ -123,7 +125,7 @@ try {
 
     if($settings.useLocalNuGetStorage)
     {
-        Get-FSCDefaultNuGets -PlatformVersion "$PlatformVersion" -ApplicationVersion "$ApplicationVersion"
+        Update-FSCNuGet -sdkVersion $settings.buildVersion
     }
 
     Write-Output "::group::Nuget add source"
@@ -202,8 +204,6 @@ try {
     {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
-
-        installModules @("AZ","Azure.Storage","d365fo.tools")
 
         $packageNamePattern = $settings.packageNamePattern;
 

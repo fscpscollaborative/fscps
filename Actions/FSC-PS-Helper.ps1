@@ -1100,33 +1100,70 @@ function Update-RetailSDK
     }
 }
 
+        
+
+
+
+
 function Update-FSCNuGet
 {
     [CmdletBinding()]
     param (
         [string]$sdkVersion,
-        [string]$sdkPath,
-        [string]$token
+        [string]$NugetPath = 'C:\temp\packages'
     )
 
+    begin
+    {
+        $storageAccountName = 'ciellosnuget'
+        $storageContainer = 'fsc'
+        $StorageSAStoken = '?sp=r&st=2022-10-19T10:21:51Z&se=2032-10-19T18:21:51Z&spr=https&sv=2021-06-08&sr=c&sig=zaLN%2FBw%2FBEPkYhAcJqnB7JzEqzmns13FlA%2BCxchzJCE%3D'
+        $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
+
+    }
     process
     {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $version = Get-VersionData -sdkVersion $sdkVersion
-        $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
 
-        if(!(Test-Path -Path $sdkPath))
-        {
-            New-Item -ItemType Directory -Force -Path $sdkPath
-        }
+       # $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
+        
+        #Microsoft.Dynamics.AX.Application.DevALM.BuildXpp
+        $nugetName = "Microsoft.Dynamics.AX.Application.DevALM.BuildXpp"
 
-        if(!(Test-Path -Path $path))
-        {
-            Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
-        }
-        Write-Output $path
+        $blobFileName = $nugetName + "." + $version.AppVersion + ".nupkg"
+        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+
+        Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+
+        #Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp
+        $nugetName = "Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp"
+
+        $blobFileName = $nugetName + "." + $version.AppVersion + ".nupkg"
+        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+
+        Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+
+        #Microsoft.Dynamics.AX.Platform.CompilerPackage
+        $nugetName = "Microsoft.Dynamics.AX.Platform.CompilerPackage"
+
+        $blobFileName = $nugetName + "." + $version.PlatformVersion + ".nupkg"
+        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+
+        Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+
+        #Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp
+        $nugetName = "Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp"
+
+        $blobFileName = $nugetName + "." + $version.PlatformVersion + ".nupkg"
+        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+
+        Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+
     }
 }
+
+
 
 function Get-VersionData
 {
