@@ -222,6 +222,9 @@ try {
                     if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
                         $removeFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
                     }
+                    else {
+                        return
+                    }
                 }
 
                 if($fileName -eq "build.yml")
