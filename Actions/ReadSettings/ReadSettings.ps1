@@ -33,9 +33,12 @@ try {
     $github = (Get-ActionContext)
 
 
-    if($github.Payload.inputs.PSObject.Properties.Name -eq "includeTestModels")
+    if($github.Payload.inputs)
     {
-        $settings.includeTestModels = ($github.Payload.inputs.includeTestModels -eq "True")
+        if($github.Payload.inputs.PSObject.Properties.Name -eq "includeTestModels")
+        {
+            $settings.includeTestModels = ($github.Payload.inputs.includeTestModels -eq "True")
+        }
     }
 
     $repoType = $settings.type
