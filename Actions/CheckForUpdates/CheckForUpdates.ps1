@@ -219,8 +219,11 @@ try {
 
                 if(($fileName -eq "import.yml") -and $type -eq "FSCM")
                 {
-                    if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
-                        $removeFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
+                    if(Join-Path $dstPath $filename)
+                    {
+                        if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
+                            $removeFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
+                        }
                     }
                     else {
                         return
