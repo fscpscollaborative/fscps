@@ -1161,7 +1161,7 @@ function Update-FSCNuGet
         $nugetName = "Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp"
 
         $blobFileName = $nugetName + "." + $version.PlatformVersion + ".nupkg"
-        $destinationNugetFilePath = Join-Path $blobFileName #($nugetName + ".nupkg")
+        $destinationNugetFilePath = Join-Path $NugetPath $blobFileName #($nugetName + ".nupkg")
 
         Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
 
