@@ -19,14 +19,9 @@ defaults:
     shell: pwsh
 
 jobs:
-   Initialization:
+   CI:
     runs-on: [ windows-latest ]
-    outputs:
-      type: ${{ steps.ReadSettings.outputs.type }}
-      source_branch: ${{ steps.ReadSettings.outputs.source_branch }}
-      versions: ${{ steps.ReadSettings.outputs.VersionsJson }}
-      environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
-      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+    name: Gated Build
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
@@ -44,38 +39,20 @@ jobs:
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
 
-      - name: Check for updates to FSC-PS system files
-        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
-        with:
-          type: ${{ steps.ReadSettings.outputs.type }}
-          settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
-
-   Build:
-    needs: [ Initialization ]
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    strategy:
-      matrix:
-        version: ${{ fromJson(needs.Initialization.outputs.versions) }}
-      fail-fast: false
-    name: Gated Build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-        id: ReadSettings
-        with:
-          version: ${{ matrix.version }}
-
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ env.Settings }}
-          
+
+      - name: Check for updates to FSC-PS system files
+        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
+        with:
+          type: ${{ steps.ReadSettings.outputs.type }}
+          settingsJson: ${{ env.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
+        
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
 
@@ -88,32 +65,14 @@ jobs:
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.1
         id: runpipeline
         with:
-          type: ${{ needs.Initialization.outputs.type}}
+          type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-          
-   PostProcess: 
-    if: always()
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization,  Build ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
-
-      - name: Read secrets
-        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.1
-        env:
-          secrets: ${{ toJson(secrets) }}    
-        with:
-          settingsJson: ${{ env.Settings }}
-          
+                   
       - name: Finalize the workflow
         id: PostProcess
         uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.1
         with:
-          remove_current: ${{ needs.Initialization.outputs.environments == '' }}
+          remove_current: ${{ steps.ReadSettings.outputs.EnvironmentsJson == '' }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}

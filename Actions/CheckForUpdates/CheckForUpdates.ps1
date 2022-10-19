@@ -199,19 +199,24 @@ try {
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                 }
             
-                #if ($fileName -ne "update_fsc_system_files.yml") {
+                if ($fileName -eq "update_fsc_system_files.yml") {
+                    #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
-                        #if (!($repoSettings.ContainsKey("gitHubRunner"))) {
-                        #    $srcPattern = "runs-on: `${{ fromJson(needs.Initialization.outputs.githubRunner) }}`r`n"
-                        #    $replacePattern = "runs-on: [ $($repoSettings."runs-on") ]`r`n"
-                        #    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
-                        #}
                     }
-                #}
+                }
                 
+                if ($fileName -eq "release.yml") {
+                    #GitHub runner
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
+                }
+
                 if(($fileName -eq "import.yml") -and $type -eq "FSCM")
                 {
                     if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
@@ -230,6 +235,12 @@ try {
 
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    #GitHub runner
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
                 }
                 
                 if($fileName -eq "deploy.yml")
@@ -245,6 +256,12 @@ try {
                     $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
                     $replacePattern = "on:`r`n  schedule:`r`n   - cron: '$($settings.deployScheduleCron)'`r`n  workflow_dispatch:`r`n"
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    #GitHub runner
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
                 }
 
                 if($fileName -eq "ci.yml")
@@ -261,6 +278,12 @@ try {
                         $replacePattern += "       - "+'"'+$($settings.ciBranches)+'"'+"`r`n"
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    #GitHub runner
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "CI:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "CI:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
                 }
 
 
@@ -281,6 +304,12 @@ try {
                     }
 
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    #GitHub runner
+                    if ($repoSettings.ContainsKey("runs-on")) {
+                        $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
                 }
 
                 
