@@ -82,9 +82,11 @@ try {
     }
 
     $outSecretsJson = $outSecrets | ConvertTo-Json -Compress
+    Add-Content -Path $env:GITHUB_OUTPUT -Value "RepoSecrets=$outSecretsJson"
     Add-Content -Path $env:GITHUB_ENV -Value "RepoSecrets=$outSecretsJson"
 
     $outSettingsJson = $outSettings | ConvertTo-Json -Compress
+    Add-Content -Path $env:GITHUB_OUTPUT -Value "Settings=$OutSettingsJson"
     Add-Content -Path $env:GITHUB_ENV -Value "Settings=$OutSettingsJson"
 
 }

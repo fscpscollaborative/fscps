@@ -125,7 +125,7 @@ try {
 
     if($settings.useLocalNuGetStorage)
     {
-        Write-Output "::group::Download default NuGet"
+        Write-Output "::group::Download default NuGet packages"
         OutputInfo "======================================== Download default NuGet"
 
         Update-FSCNuGet -sdkVersion $settings.buildVersion
@@ -325,17 +325,11 @@ try {
                     Write-Output "::endgroup::"
                 }
 
-
-                Write-Host "::set-output name=PACKAGE_NAME::$pname"
-                Write-Host "set-output name=PACKAGE_NAME::$pname"
+                Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$pname"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
-
-                Write-Host "::set-output name=PACKAGE_PATH::$deployablePackagePath"
-                Write-Host "set-output name=PACKAGE_PATH::$deployablePackagePath"
+                Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
-
-                Write-Host "::set-output name=ARTIFACTS_PATH::$artifactDirectory"
-                Write-Host "set-output name=ARTIFACTS_PATH::$artifactDirectory"
+                Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
                 Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
 
                 $artifacts = Get-ChildItem $artifactDirectory
@@ -351,8 +345,7 @@ try {
 
                 }
 
-                Write-Host "::set-output name=ARTIFACTS_LIST::$artifacts"
-                Write-Host "set-output name=ARTIFACTS_LIST::$artifacts"
+                Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
                 Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
 
                 Write-Output "::endgroup::"
