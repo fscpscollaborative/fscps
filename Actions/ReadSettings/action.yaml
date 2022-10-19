@@ -24,19 +24,16 @@ inputs:
 outputs:
   SettingsJson:
     description: Settings in compressed Json format
-    value: ${{ steps.readsettings.outputs.SettingsJson }}
+    value: ${{ steps.readsettings.outputs.Settings }}
   GitHubRunnerJson:
     description: GitHubRunner in compressed Json format
-    value: ${{ steps.readsettings.outputs.GitHubRunnerJson }}
+    value: ${{ steps.readsettings.outputs.GitHubRunner }}
   VersionsJson:
     description: Versions in compressed Json format
-    value: ${{ steps.readsettings.outputs.VersionsJson }}
+    value: ${{ steps.readsettings.outputs.Versions }}
   EnvironmentsJson:
     description: Environments in compressed Json format
-    value: ${{ steps.readsettings.outputs.EnvironmentsJson }}
-  EnvironmentCount:
-    description: Number of environments in array
-    value: ${{ steps.readsettings.outputs.EnvironmentCount }}
+    value: ${{ steps.readsettings.outputs.Environments }}
   source_branch:
     description: Source branch
     value: ${{ steps.readsettings.outputs.SOURCE_BRANCH }}

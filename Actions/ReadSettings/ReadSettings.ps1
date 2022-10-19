@@ -89,14 +89,9 @@ try {
         }
 
 
-        #Write-Host "::set-output name=SOURCE_BRANCH::$sourceBranch"
-        #Write-Host "set-output name=SOURCE_BRANCH::$sourceBranch"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "SOURCE_BRANCH=$sourceBranch"
         Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
 
-        #$environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
-        #Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
-        #Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "Environments=$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
@@ -131,8 +126,6 @@ try {
             $environmentsJSon = $environments | ConvertTo-Json -compress
         }
 
-        #Write-Host "::set-output name=EnvironmentsJson::$environmentsJson"
-        #Write-Host "set-output name=EnvironmentsJson::$environmentsJson"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "Environments=$environmentsJson"
         Add-Content -Path $env:GITHUB_ENV -Value "Environments=$environmentsJson"
     }
@@ -155,36 +148,28 @@ try {
     }
 
     $outSettingsJson = $outSettings | ConvertTo-Json -Compress
-    #Write-Host "::set-output name=SettingsJson::$outSettingsJson"
-    #Write-Host "set-output name=SettingsJson::$outSettingsJson"
-    Add-Content -Path $env:GITHUB_OUTPUT -Value "SettingsJson=$OutSettingsJson"
+
     Add-Content -Path $env:GITHUB_OUTPUT -Value "Settings=$OutSettingsJson"
     Add-Content -Path $env:GITHUB_ENV -Value "Settings=$OutSettingsJson"
 
     $gitHubRunner = $settings.githubRunner.Split(',') | ConvertTo-Json -compress
-    #Write-Host "::set-output name=GitHubRunnerJson::$githubRunner"
-    #Write-Host "set-output name=GitHubRunnerJson::$githubRunner"
-    Add-Content -Path $env:GITHUB_OUTPUT -Value "GitHubRunnerJson=$githubRunner"
+    Add-Content -Path $env:GITHUB_OUTPUT -Value "GitHubRunner=$githubRunner"
 
     if($settings.buildVersion.Contains(','))
     {
         $versionsJSon = $settings.buildVersion.Split(',') | ConvertTo-Json -compress
-        #Write-Host "::set-output name=VersionsJson::$versionsJSon"
-        #Write-Host "set-output name=VersionsJson::$versionsJSon"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "VersionsJson=$versionsJSon"
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "Versions=$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
     else
     {
         $versionsJSon = '["'+$($settings.buildVersion).ToString()+'"]'
-        #Write-Host "::set-output name=VersionsJson::$versionsJSon"
-        #Write-Host "set-output name=VersionsJson::$versionsJSon"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "VersionsJson=$versionsJSon"
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "Versions=$versionsJSon"
         Add-Content -Path $env:GITHUB_ENV -Value "Versions=$versionsJSon"
     }
 
-    #Write-Host "::set-output name=type::$repoType"
-    #Write-Host "set-output name=type::$repoType"
     Add-Content -Path $env:GITHUB_OUTPUT -Value "type=$repoType"
     Add-Content -Path $env:GITHUB_ENV -Value "type=$repoType"
 
