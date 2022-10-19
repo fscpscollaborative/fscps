@@ -1137,7 +1137,7 @@ function Update-FSCNuGet
         $nugetName = "Microsoft.Dynamics.AX.Application.DevALM.BuildXpp"
 
         $blobFileName = $nugetName + "." + $version.AppVersion + ".nupkg"
-        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+        $destinationNugetFilePath = Join-Path $NugetPath $blobFileName#($nugetName + ".nupkg")
 
         Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
 
@@ -1145,7 +1145,7 @@ function Update-FSCNuGet
         $nugetName = "Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp"
 
         $blobFileName = $nugetName + "." + $version.AppVersion + ".nupkg"
-        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+        $destinationNugetFilePath = Join-Path $NugetPath $blobFileName#($nugetName + ".nupkg")
 
         Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
 
@@ -1153,7 +1153,7 @@ function Update-FSCNuGet
         $nugetName = "Microsoft.Dynamics.AX.Platform.CompilerPackage"
 
         $blobFileName = $nugetName + "." + $version.PlatformVersion + ".nupkg"
-        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+        $destinationNugetFilePath = Join-Path $NugetPath $blobFileName#($nugetName + ".nupkg")
 
         Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
 
@@ -1161,7 +1161,7 @@ function Update-FSCNuGet
         $nugetName = "Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp"
 
         $blobFileName = $nugetName + "." + $version.PlatformVersion + ".nupkg"
-        $destinationNugetFilePath = Join-Path $NugetPath ($nugetName + ".nupkg")
+        $destinationNugetFilePath = Join-Path $blobFileName#($nugetName + ".nupkg")
 
         Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $blobFileName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
 
