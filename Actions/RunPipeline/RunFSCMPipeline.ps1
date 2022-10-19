@@ -125,7 +125,11 @@ try {
 
     if($settings.useLocalNuGetStorage)
     {
+        Write-Output "::group::Download default NuGet"
+        OutputInfo "======================================== Download default NuGet"
+
         Update-FSCNuGet -sdkVersion $settings.buildVersion
+        Write-Output "::endgroup::"
     }
 
     Write-Output "::group::Nuget add source"
