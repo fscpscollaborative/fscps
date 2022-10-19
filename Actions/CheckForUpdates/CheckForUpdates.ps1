@@ -215,7 +215,7 @@ try {
                 if(($fileName -eq "import.yml") -and $type -eq "FSCM")
                 {
                     if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
-                        $removeFiles += "import.yml"
+                        $removeFiles += @{ "DstFile" = Join-Path $dstPath $filename; "content" = $srcContent }
                     }
                 }
 
@@ -388,7 +388,7 @@ try {
                     $releaseNotes = "No release notes available!"
                 }
                 $removeFiles | ForEach-Object {
-                    OutputInfo "Remove $_"
+                    OutputInfo "Remove $(Join-Path (Get-Location).Path $_)"
                     Remove-Item (Join-Path (Get-Location).Path $_) -Force
                 }
 
