@@ -4,7 +4,7 @@ on:
    workflow_dispatch:
     inputs:
       model:
-        description: 'Select FSCM Environment'
+        description: 'Select FSCM Model'
         required: false
         default: ''
         type: choice

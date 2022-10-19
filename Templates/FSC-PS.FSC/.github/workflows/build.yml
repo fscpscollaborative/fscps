@@ -11,6 +11,11 @@ on:
         options:
         - "*"
 
+      includeTestModels:
+        type: boolean
+        default: false
+        description: Include test models
+
 permissions:
   contents: read
 
