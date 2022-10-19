@@ -669,7 +669,12 @@ function installModules {
         if($_ -eq "Az")
         {
             Set-ExecutionPolicy RemoteSigned
-            Uninstall-AzureRm
+            try {
+                Uninstall-AzureRm
+            }
+            catch {
+            }
+            
         }
 
         if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
