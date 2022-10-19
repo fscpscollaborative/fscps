@@ -33,11 +33,14 @@ try {
     $github = (Get-ActionContext)
 
 
-    if($github.Payload.inputs)
+    if($github.Payload.PSObject.Properties.Name -eq "inputs")
     {
-        if($github.Payload.inputs.PSObject.Properties.Name -eq "includeTestModels")
+        if($github.Payload.inputs)
         {
-            $settings.includeTestModel = ($github.Payload.inputs.includeTestModels -eq "True")
+            if($github.Payload.inputs.PSObject.Properties.Name -eq "includeTestModels")
+            {
+                $settings.includeTestModel = ($github.Payload.inputs.includeTestModels -eq "True")
+            }
         }
     }
 
