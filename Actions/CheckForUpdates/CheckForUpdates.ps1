@@ -388,8 +388,8 @@ try {
                     $releaseNotes = "No release notes available!"
                 }
                 $removeFiles | ForEach-Object {
-                    OutputInfo "Remove $(Join-Path (Get-Location).Path $_)"
-                    Remove-Item (Join-Path (Get-Location).Path $_) -Force
+                    OutputInfo "Remove $($_.DstFile)"
+                    Remove-Item -Path $($_.DstFile) -Force
                 }
 
                 invoke-git add *
