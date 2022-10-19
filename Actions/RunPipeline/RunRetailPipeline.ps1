@@ -60,6 +60,9 @@ try {
     }
     $settings
     $version
+
+    #check nuget instalation
+    installModules @("AZ","Azure.Storage","d365fo.tools")
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
@@ -169,8 +172,6 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-        #check nuget instalation
-        installModules @("AZ","Azure.Storage","d365fo.tools")
 
         $packageNamePattern = $settings.packageNamePattern;
 

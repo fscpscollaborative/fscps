@@ -1115,7 +1115,7 @@ function Update-FSCNuGet
     [CmdletBinding()]
     param (
         [string]$sdkVersion,
-        [string]$NugetPath = 'C:\temp\packages'
+        [string]$NugetPath = 'C:\Temp\packages'
     )
 
     begin
@@ -1124,7 +1124,7 @@ function Update-FSCNuGet
         $storageContainer = 'fsc'
         $StorageSAStoken = '?sp=r&st=2022-10-19T10:21:51Z&se=2032-10-19T18:21:51Z&spr=https&sv=2021-06-08&sr=c&sig=zaLN%2FBw%2FBEPkYhAcJqnB7JzEqzmns13FlA%2BCxchzJCE%3D'
         $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-
+        [System.IO.Directory]::CreateDirectory($NugetPath) 
     }
     process
     {
