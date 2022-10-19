@@ -169,6 +169,7 @@ try {
         }
     }
     $updateFiles = @()
+    $removeFiles = @()
 
     $checkfiles | ForEach-Object {
         $fileType = $_.type
@@ -213,7 +214,9 @@ try {
                 
                 if(($fileName -eq "import.yml") -and $type -eq "FSCM")
                 {
-                    if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ return }
+                    if(Test-Path -Path (Join-Path $baseFolder "PackagesLocalDirectory")){ 
+                        $removeFiles += "import.yml"
+                    }
                 }
 
                 if($fileName -eq "build.yml")
@@ -298,7 +301,7 @@ try {
             }
         }
     }
-    $removeFiles = @()
+    
     
     OutputInfo "Update files: $($updateFiles.Count -gt 0)"
     OutputInfo "Remove files $($removeFiles.Count -gt 0)"
