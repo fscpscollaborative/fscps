@@ -463,7 +463,7 @@ try {
             }
         }
         else {
-            OutputWarning "Your repository runs on the latest version of FSC-PS System."
+            OutputInfo "Your repository runs on the latest version of FSC-PS System."
         }
     }
 
