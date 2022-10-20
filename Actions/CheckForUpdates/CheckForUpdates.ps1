@@ -202,8 +202,8 @@ try {
                 if ($fileName -eq "update_fsc_system_files.yml") {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
-                        $srcPattern = "UpdateFSC-PS:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "UpdateFSC-PS:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $srcPattern = "Update:`r`n    runs-on: [ windows-latest ]`r`n"
+                        $replacePattern = "Update:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }

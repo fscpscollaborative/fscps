@@ -23,7 +23,7 @@ env:
   FORCE_COLOR: 3
 
 jobs:
-   Initialization:
+   Update:
     runs-on: [ windows-latest ]
     steps:
 
