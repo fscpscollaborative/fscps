@@ -348,7 +348,7 @@ try {
             OutputWarning -message "There are updates for your FSC-PS system, run 'Update FSC-PS System Files' workflow to download the latest version of FSC-PS."
         }
         else {
-            OutputWarning "Your repository runs on the latest version of FSC-PS System."
+            OutputInfo "Your repository runs on the latest version of FSC-PS System."
         }
     }
     else {
