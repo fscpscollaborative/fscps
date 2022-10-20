@@ -1116,10 +1116,10 @@ function Update-FSCNuGet
 
     begin
     {
-        $storageAccountName = 'ciellosnuget'
-        $storageContainer = 'fsc'
+        $storageAccountName = 'ciellosarchive'
+        $storageContainer = 'nuget'
         #Just read-only SAS token :)
-        $StorageSAStoken = '?sp=r&st=2022-10-19T10:21:51Z&se=2032-10-19T18:21:51Z&spr=https&sv=2021-06-08&sr=c&sig=zaLN%2FBw%2FBEPkYhAcJqnB7JzEqzmns13FlA%2BCxchzJCE%3D'
+        $StorageSAStoken = '?sp=r&st=2022-10-20T09:13:13Z&se=2032-10-20T17:13:13Z&spr=https&sv=2021-06-08&sr=b&sig=x8KQ0xVw3nDN7lQQPBJOf7nAOXcGkyGzfg%2FB5rLQaPI%3D'
         $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
         [System.IO.Directory]::CreateDirectory($NugetPath) 
     }
