@@ -136,11 +136,12 @@ try {
     if($DynamicsVersion -ne "*" -and $DynamicsVersion)
     {
         $settings.buildVersion = $DynamicsVersion
+        
+        $ver = Get-VersionData -sdkVersion $settings.buildVersion
+        $settings.retailSDKVersion = $ver.retailSDKVersion
+        $settings.retailSDKURL = $ver.retailSDKURL
     }
 
-    $ver = Get-VersionData -sdkVersion $settings.buildVersion
-    $settings.retailSDKVersion = $ver.retailSDKVersion
-    $settings.retailSDKURL = $ver.retailSDKURL
 
 
     $outSettings = @{}
