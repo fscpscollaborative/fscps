@@ -136,15 +136,13 @@ try {
         Write-Output "::group::Nuget add source"
         OutputInfo "======================================== Nuget add source"
         #Nuget add source
-        nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
-    
-        $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
+        nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName       
         Write-Output "::endgroup::"
     }
 
     Write-Output "::group::Nuget install packages"
     OutputInfo "======================================== Nuget install packages"
-
+    $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
     if(Test-Path $packagesFilePath)
     {
         OutputInfo "Found packages.config file at path: $packagesFilePath "
