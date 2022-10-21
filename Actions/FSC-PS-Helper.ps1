@@ -1056,7 +1056,13 @@ function GenerateSolution {
     #generate nuget.config
     $NugetConfigFileName = 'nuget.config'
     $NewNugetFile = Join-Path $NugetFolderPath $NugetConfigFileName
-    $tempFile = (Get-Content $NugetConfigFileName).Replace('NugetFeedName', $NugetFeedName).Replace('NugetSourcePath', $NugetSourcePath)
+    if($NugetFeedName)
+    {
+        $tempFile = (Get-Content $NugetConfigFileName).Replace('NugetFeedName', $NugetFeedName).Replace('NugetSourcePath', $NugetSourcePath)
+    }
+    else {
+        $tempFile = (Get-Content $NugetConfigFileName).Replace('<add key="NugetFeedName" value="NugetSourcePath" />', '')
+    }
     Set-Content $NewNugetFile $tempFile
 
 
