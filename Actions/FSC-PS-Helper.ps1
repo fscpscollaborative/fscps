@@ -988,10 +988,8 @@ function Get-AXModelDisplayName {
     )
     process{
         $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
-        Write-Host "Model Path $descriptorSearchPath"
         [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
-
         return $modelDisplayName.InnerText
     }
 }
@@ -1039,13 +1037,13 @@ function GenerateSolution {
         $SolutionFileData += $Line
         Foreach($model in $ModelName.Split(','))
         {
-            OutputInfo "Generate project for $model"
             $projectGuid = $projectGuids.Item($model)
-            OutputInfo "Get AXModel Display Name"
-            $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
 
             if ($Line -eq $ProjectPattern) 
             {
+                OutputInfo "Get AXModel Display Name"
+                $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
+                OutputInfo "AXModel Display Name is $modelDisplayName"
                 OutputInfo "Update Project line"
                 $newLine = $ProjectPattern -replace 'ModelName', $model
                 $newLine = $newLine -replace 'ModelDisplayName', $modelDisplayName
@@ -1071,7 +1069,7 @@ function GenerateSolution {
         }
     }
     OutputInfo "Save solution file"
-    #save solution file
+    #save solution file 
     Set-Content $NewSolutionName $SolutionFileData;
     #cleanup solution file
     $tempFile = Get-Content $NewSolutionName
