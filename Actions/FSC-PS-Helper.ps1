@@ -985,7 +985,9 @@ function Get-AXModelDisplayName {
         [string]$ModelPath
     )
     process{
-        [xml]$xmlData = Get-Content (Get-ChildItem -Path (Join-Path $ModelPath (Join-Path $ModelName "Descriptor")) -Filter *.xml)
+        $descriptorSearchPath = (Join-Path $ModelPath (Join-Path $ModelName "Descriptor"))
+        OutputInfo "Model Path $descriptorSearchPath"
+        [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter *.xml)
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
         if(!$modelDisplayName){$ModelName}
     }
