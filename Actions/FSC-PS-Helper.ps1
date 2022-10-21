@@ -1036,6 +1036,7 @@ function GenerateSolution {
         $SolutionFileData += $Line
         Foreach($model in $ModelName.Split(','))
         {
+            OutputInfo "Generate project for $model"
             $projectGuid = $projectGuids.Item($model)
             $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
             if ($Line -eq $ProjectPattern) 
