@@ -981,16 +981,18 @@ function GenerateProjectFile {
 
 function Get-AXModelDisplayName {
     param (
-        [string]$ModelName,
-        [string]$ModelPath
+        [Alias('ModelName')]
+        [string]$_modelName,
+        [Alias('ModelPath')]
+        [string]$_modelPath
     )
     process{
-        $descriptorSearchPath = (Join-Path $ModelPath (Join-Path $ModelName "Descriptor"))
-        #OutputInfo "Model Path $descriptorSearchPath"
+        $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
+        Write-Host "Model Path $descriptorSearchPath"
         [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
-        if(!($modelDisplayName.InnerText)){$ModelName}
-        else{$modelDisplayName.InnerText}
+
+        return $modelDisplayName.InnerText
     }
 }
 
