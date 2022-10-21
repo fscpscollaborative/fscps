@@ -1030,9 +1030,9 @@ function GenerateSolution {
         Foreach($model in $ModelName.Split(','))
         {
             $projectGuid = $projectGuids.Item($model)
+            $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
             if ($Line -eq $ProjectPattern) 
             {
-                $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
                 $newLine = $ProjectPattern -replace 'ModelName', $model
                 $newLine = $newLine -replace 'ModelDisplayName', $modelDisplayName
                 $newLine = $newLine -replace 'Build.rnrproj', ($model+'.rnrproj')
