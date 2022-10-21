@@ -985,7 +985,7 @@ function Get-AXModelDisplayName {
         [string]$ModelPath
     )
     process{
-        [xml]$xmlData = Get-Content (Get-ChildItem -Path (Join-Path $ModelPath "$ModelName/Descriptor") -Filter *.xml)
+        [xml]$xmlData = Get-Content (Get-ChildItem -Path (Join-Path $ModelPath (Join-Path $ModelName "Descriptor")) -Filter *.xml)
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
         if(!$modelDisplayName){$ModelName}
     }
@@ -1003,6 +1003,7 @@ function GenerateSolution {
 
     cd $PSScriptRoot\Build\Build
 
+    OutputInfo "MetadataPath: $MetadataPath"
     $SolutionFileName =  'Build.sln'
     $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
     $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
