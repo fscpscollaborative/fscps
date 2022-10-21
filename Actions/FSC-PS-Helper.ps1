@@ -988,7 +988,10 @@ function Get-AXModelDisplayName {
     )
     process{
         $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
-        [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
+        OutputInfo "Descriptor search path $descriptorSearchPath"
+        $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
+        OutputInfo "Descriptor found at $descriptor"
+        [xml]$xmlData = Get-Content $descriptor.FullName
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
         return $modelDisplayName.InnerText
     }
