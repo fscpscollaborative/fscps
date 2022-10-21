@@ -74,7 +74,13 @@ function OutputInfo {
         filter timestamp {"[ $(Get-Date -Format yyyy.MM.dd-HH:mm:ss) ]: $_"}
         Write-Output ($Message | timestamp)
 }
+function OutputVerbose {
+    Param(
+        [string] $message
+    )
 
+    Write-Host $message
+}
 function OutputDebug {
     Param(
         [string] $message
@@ -962,6 +968,7 @@ function GenerateProjectFile {
     [CmdletBinding()]
     param (
         [string]$ModelName,
+        [string]$MetadataPath,
         [string]$ProjectGuid
     )
 
@@ -970,10 +977,10 @@ function GenerateProjectFile {
     $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
     $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
     $ModelProjectFile = Join-Path $SolutionFolderPath $ModelProjectFileName
-
+    $modelDisplayName = Get-AXModelDisplayName -ModelName $ModelName -ModelPath $MetadataPath 
     #generate project file
 
-    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('ModelDisplayName', $modelDisplayName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
      
     Set-Content $ModelProjectFile $ProjectFileData
 }
@@ -988,9 +995,8 @@ function Get-AXModelDisplayName {
     )
     process{
         $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
-        Write-Host "Descriptor search path $descriptorSearchPath"
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
-        Write-Host "Descriptor found at $descriptor"
+        OutputVerbose "Descriptor found at $descriptor"
         [xml]$xmlData = Get-Content $descriptor.FullName
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
         return $modelDisplayName.InnerText
@@ -1009,7 +1015,7 @@ function GenerateSolution {
 
     cd $PSScriptRoot\Build\Build
 
-    OutputInfo "MetadataPath: $MetadataPath"
+    OutputDebug "MetadataPath: $MetadataPath"
 
     $SolutionFileName =  'Build.sln'
     $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
@@ -1024,17 +1030,17 @@ function GenerateSolution {
     [String[]] $SolutionFileData = @() 
 
     $projectGuids = @{};
-    OutputInfo "Generate projects GUIDs..."
+    OutputDebug "Generate projects GUIDs..."
     Foreach($model in $ModelName.Split(','))
     {
         $projectGuids.Add($model, ([string][guid]::NewGuid()).ToUpper())
     }
-    OutputInfo $projectGuids
+    OutputDebug $projectGuids
 
     #generate project files file
     $FileOriginal = Get-Content $SolutionFileName
         
-    OutputInfo "Parse files"
+    OutputDebug "Parse files"
     Foreach ($Line in $FileOriginal)
     {   
         $SolutionFileData += $Line
@@ -1044,10 +1050,10 @@ function GenerateSolution {
 
             if ($Line -eq $ProjectPattern) 
             {
-                OutputInfo "Get AXModel Display Name"
+                OutputDebug "Get AXModel Display Name"
                 $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
-                OutputInfo "AXModel Display Name is $modelDisplayName"
-                OutputInfo "Update Project line"
+                OutputDebug "AXModel Display Name is $modelDisplayName"
+                OutputDebug "Update Project line"
                 $newLine = $ProjectPattern -replace 'ModelName', $model
                 $newLine = $newLine -replace 'ModelDisplayName', $modelDisplayName
                 $newLine = $newLine -replace 'Build.rnrproj', ($model+'.rnrproj')
@@ -1059,19 +1065,19 @@ function GenerateSolution {
             } 
             if ($Line -eq $ActiveCFGPattern) 
             { 
-                OutputInfo "Update Active CFG line"
+                OutputDebug "Update Active CFG line"
                 $newLine = $ActiveCFGPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
                 $SolutionFileData += $newLine
             } 
             if ($Line -eq $BuildPattern) 
             {
-                OutputInfo "Update Build line"
+                OutputDebug "Update Build line"
                 $newLine = $BuildPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
                 $SolutionFileData += $newLine
             } 
         }
     }
-    OutputInfo "Save solution file"
+    OutputDebug "Save solution file"
     #save solution file 
     Set-Content $NewSolutionName $SolutionFileData;
     #cleanup solution file
@@ -1081,7 +1087,7 @@ function GenerateSolution {
     #generate project files
     Foreach($project in $projectGuids.GetEnumerator())
     {
-        GenerateProjectFile -ModelName $project.Name -ProjectGuid $project.Value
+        GenerateProjectFile -ModelName $project.Name -ProjectGuid $project.Value -MetadataPath $MetadataPath 
     }
 
     cd $PSScriptRoot\Build
@@ -1143,7 +1149,6 @@ function Update-RetailSDK
     }
 }
 
-        
 function Update-FSCNuGet
 {
     [CmdletBinding()]
@@ -2115,38 +2120,6 @@ function Extract-D365FSCSource
     Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
-
-function Get-FSCDefaultNuGets {
-    [CmdletBinding()]
-    param (
-        [string]$PlatformVersion,
-        [string]$ApplicationVersion
-    )
-        #Temporary sas token
-        $storageAccountUrl = "https://ciellosnuget.z13.web.core.windows.net"
-        $dest = "c:\temp\packages\"
-
-        Remove-Item $dest -Recurse -ErrorAction SilentlyContinue -Force
-        [System.IO.Directory]::CreateDirectory($dest)
-
-        $applicationBuildName   = "Microsoft.Dynamics.AX.Application.DevALM.BuildXpp"
-        $applicationSuiteName   = "Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp"
-        $compileToolsName       = "Microsoft.Dynamics.AX.Platform.CompilerPackage"
-        $platformNuildName      = "Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp"
-
-        $applicationBuildNameUrl   = "$storageAccountUrl/$applicationBuildName.$ApplicationVersion.nupkg"
-        $applicationSuiteNameUrl   = "$storageAccountUrl/$applicationSuiteName.$ApplicationVersion.nupkg"
-        $compileToolsNameUrl       = "$storageAccountUrl/$compileToolsName.$PlatformVersion.nupkg"
-        $platformNuildNameUrl      = "$storageAccountUrl/$platformNuildName.$PlatformVersion.nupkg"
-
-        Invoke-WebRequest -URI $applicationBuildNameUrl -OutFile $dest\"$($applicationBuildName+".nupkg")"
-        Invoke-WebRequest -URI $applicationSuiteNameUrl -OutFile $dest\"$($applicationSuiteName+".nupkg")"
-        Invoke-WebRequest -URI $compileToolsNameUrl     -OutFile $dest\"$($compileToolsName+".nupkg")"
-        Invoke-WebRequest -URI $platformNuildNameUrl    -OutFile $dest\"$($platformNuildName+".nupkg")"
-
-        Get-ChildItem $dest 
- }
-
 
  function ConvertTo-ASCIIArt
  {
