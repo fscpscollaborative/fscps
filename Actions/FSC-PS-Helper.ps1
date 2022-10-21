@@ -1136,7 +1136,20 @@ function Update-FSCNuGet
 
         $nugets | Foreach-Object{
             $destinationNugetFilePath = Join-Path $NugetPath $_ 
-            if(-not(Test-Path $destinationNugetFilePath))
+            
+            $download = (-not(Test-Path $destinationNugetFilePath))
+
+            if(!$download)
+            {
+                OutputDebug $_
+                $blobSize = (Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $_ -ConcurrentTaskCount 10).Length
+                $localSize = (Get-Item $destinationNugetFilePath).length
+                OutputDebug "BlobSize is: $blobSize"
+                OutputDebug "LocalSize is: $blobSize"
+                $download = $blobSize -ne $localSize
+            }
+
+            if($download)
             {
                 $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $_ -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
                 $blob.Name
