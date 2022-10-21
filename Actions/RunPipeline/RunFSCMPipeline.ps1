@@ -19,6 +19,9 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
     $LastExitCode = 0
+    $baseFolder = $ENV:GITHUB_WORKSPACE
+    $workflowName = $env:GITHUB_WORKFLOW
+
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
@@ -74,13 +77,6 @@ try {
     $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
 
 
-    $project = "" 
-    $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
-    $sharedFolder = ""
-    if ($project) {
-        $sharedFolder = $ENV:GITHUB_WORKSPACE
-    }
-    $workflowName = $env:GITHUB_WORKFLOW
 
     if(($settings.includeTestModel -eq 'true'))
     {
@@ -96,7 +92,7 @@ try {
     #Generate solution folder
     Write-Output "::group::Generate solution folder"
     OutputInfo "======================================== Generate solution folder"
-    GenerateSolution -ModelName $models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion
+    GenerateSolution -ModelName $models -NugetFeedName $settings.nugetFeedName -NugetSourcePath $settings.nugetSourcePath -DynamicsVersion $DynamicsVersion -MetadataPath (Join-Path $baseFolder $settings.metadataPath)
     Write-Output "::endgroup::"
 
     Write-Output "::group::Cleanup Build folder"
@@ -117,11 +113,14 @@ try {
     Copy-Item NewBuild -Destination $buildPath -Recurse -Force
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Cleanup NuGet"
-    OutputInfo "======================================== Cleanup NuGet"
-    #Cleanup NuGet
-    nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
-    Write-Output "::endgroup::"
+    if($settings.nugetFeedName)
+    {
+        Write-Output "::group::Cleanup NuGet"
+        OutputInfo "======================================== Cleanup NuGet"
+        #Cleanup NuGet
+        nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
+        Write-Output "::endgroup::"
+    }
 
     if($settings.useLocalNuGetStorage)
     {
@@ -132,25 +131,29 @@ try {
         Write-Output "::endgroup::"
     }
 
-    Write-Output "::group::Nuget add source"
-    OutputInfo "======================================== Nuget add source"
-    #Nuget add source
-    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
-   
-    $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
-    Write-Output "::endgroup::"
+    if($settings.nugetFeedName)
+    {
+        Write-Output "::group::Nuget add source"
+        OutputInfo "======================================== Nuget add source"
+        #Nuget add source
+        nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetFeedUserSecretName -password $nugetFeedPasswordSecretName
+    
+        $packagesFilePath = Join-Path $buildPath NewBuild\packages.config
+        Write-Output "::endgroup::"
+    }
 
     Write-Output "::group::Nuget install packages"
     OutputInfo "======================================== Nuget install packages"
 
     if(Test-Path $packagesFilePath)
     {
-        OutputInfo "Found packages.config file at path:  $packagesFilePath "
+        OutputInfo "Found packages.config file at path: $packagesFilePath "
     }
     else
     {
         OutputInfo "Not Found packages.config file at path: $packagesFilePath "
     }
+    
     cd $buildPath
     cd NewBuild
     #Nuget install packages
