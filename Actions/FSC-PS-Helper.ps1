@@ -987,7 +987,7 @@ function Get-AXModelDisplayName {
     process{
         $descriptorSearchPath = (Join-Path $ModelPath (Join-Path $ModelName "Descriptor"))
         #OutputInfo "Model Path $descriptorSearchPath"
-        [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter *.xml)
+        [xml]$xmlData = Get-Content (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
         if(!($modelDisplayName.InnerText)){$ModelName}
         else{$modelDisplayName.InnerText}
@@ -1039,9 +1039,12 @@ function GenerateSolution {
         {
             OutputInfo "Generate project for $model"
             $projectGuid = $projectGuids.Item($model)
+            OutputInfo "Get AXModel Display Name"
             $modelDisplayName = Get-AXModelDisplayName -ModelName $model -ModelPath $MetadataPath 
+
             if ($Line -eq $ProjectPattern) 
             {
+                OutputInfo "Update Project line"
                 $newLine = $ProjectPattern -replace 'ModelName', $model
                 $newLine = $newLine -replace 'ModelDisplayName', $modelDisplayName
                 $newLine = $newLine -replace 'Build.rnrproj', ($model+'.rnrproj')
@@ -1053,12 +1056,13 @@ function GenerateSolution {
             } 
             if ($Line -eq $ActiveCFGPattern) 
             { 
+                OutputInfo "Update Active CFG line"
                 $newLine = $ActiveCFGPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
                 $SolutionFileData += $newLine
             } 
             if ($Line -eq $BuildPattern) 
             {
-            
+                OutputInfo "Update Build line"
                 $newLine = $BuildPattern -replace '62C69717-A1B6-43B5-9E86-24806782FEC2', $projectGuid
                 $SolutionFileData += $newLine
             } 
