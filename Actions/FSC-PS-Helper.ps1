@@ -1006,6 +1006,7 @@ function GenerateSolution {
     cd $PSScriptRoot\Build\Build
 
     OutputInfo "MetadataPath: $MetadataPath"
+
     $SolutionFileName =  'Build.sln'
     $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
     $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
@@ -1019,14 +1020,17 @@ function GenerateSolution {
     [String[]] $SolutionFileData = @() 
 
     $projectGuids = @{};
+    OutputInfo "Generate projects GUIDs..."
     Foreach($model in $ModelName.Split(','))
     {
         $projectGuids.Add($model, ([string][guid]::NewGuid()).ToUpper())
     }
+    OutputInfo $projectGuids
 
     #generate project files file
     $FileOriginal = Get-Content $SolutionFileName
         
+    OutputInfo "Parse files"
     Foreach ($Line in $FileOriginal)
     {   
         $SolutionFileData += $Line
@@ -1058,7 +1062,7 @@ function GenerateSolution {
             } 
         }
     }
-    
+    OutputInfo "Save solution file"
     #save solution file
     Set-Content $NewSolutionName $SolutionFileData;
     #cleanup solution file
