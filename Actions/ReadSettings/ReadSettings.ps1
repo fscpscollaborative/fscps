@@ -48,9 +48,10 @@ try {
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
         #merge environment settings into current Settings
+        $dEnvCount = $dynamicsEnvironment.Split(",").Count
         ForEach($env in $envsFile)
         {
-            if($dynamicsEnvironment.Split(","))
+            if($dEnvCount -eq 1)
             {
                 $dynamicsEnvironment.Split(",") | ForEach-Object {
                     if($env.name -eq $_)
@@ -82,7 +83,7 @@ try {
             $sourceBranch = $settings.currentBranch;
         }
 
-        if($dynamicsEnvironment.Split(","))
+        if($dEnvCount -eq 1)
         {
             $environmentsJSon = $($dynamicsEnvironment.Split(",")  | ConvertTo-Json -compress)
         }
