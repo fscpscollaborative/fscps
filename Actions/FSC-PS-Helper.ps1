@@ -1141,7 +1141,7 @@ function Update-RetailSDK
     {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $version = Get-VersionData -sdkVersion $sdkVersion
-        $path = Join-Path $sdkPath "RetailSDK.$($version.retailSDKVersion).7z"
+        $path = Join-Path $sdkPath ("RetailSDK.$($version.retailSDKVersion).7z")
 
         if(!(Test-Path -Path $sdkPath))
         {
@@ -1155,7 +1155,7 @@ function Update-RetailSDK
                 Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
             }
             else {
-                $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "RetailSDK.$($version.retailSDKVersion).7z" -Destination $path -ConcurrentTaskCount 10 -Force
+                $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.retailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
                 $blob.Name
             }
         }
