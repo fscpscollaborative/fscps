@@ -1147,14 +1147,14 @@ function Update-RetailSDK
 
         if(!(Test-Path -Path $path))
         {
-            OutputInfo "RetailSDK $($version.retailSDKVersion) is not found."
+            OutputDebug "RetailSDK $($version.retailSDKVersion) is not found."
             if($version.retailSDKURL)
             {
-                OutputInfo "Web request. Downloading..."
+                OutputDebug "Web request. Downloading..."
                 $silent = Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
             }
             else {
-                OutputInfo "Azure Blob. Downloading..."
+                OutputDebug "Azure Blob. Downloading..."
                 $silent = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.retailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
             }
         }
