@@ -69,14 +69,9 @@ try {
     $PlatformVersion = $version.PlatformVersion
     $ApplicationVersion = $version.AppVersion
 
-    $project = "" 
-    $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
-    $sharedFolder = ""
-    if ($project) {
-        $sharedFolder = $ENV:GITHUB_WORKSPACE
-    }
+    $baseFolder = $ENV:GITHUB_WORKSPACE
     $workflowName = $env:GITHUB_WORKFLOW
-
+    $sdkPath = ($settings.retailSDKZipPath)
     
     $buildPath = $settings.retailSDKBuildPath
     Write-Output "::endgroup::"
@@ -85,13 +80,15 @@ try {
     OutputInfo "======================================== Cleanup folders"
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item ($settings.retailSDKZipPath) -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item $sdkPath -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Expand RetailSDK"
-    OutputInfo "======================================== Expand RetailSDK"
-    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath $settings.retailSDKZipPath
+    Write-Output "::group::Update RetailSDK"
+    OutputInfo "======================================== Update RetailSDK"
+    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath $sdkPath
+    OutputInfo "SDK is located at $sdkzipPath"
     Expand-7zipArchive -Path $sdkzipPath -DestinationPath $buildPath
+    OutputInfo "SDK archive was expanded to $buildPath"
 
     Remove-Item $buildPath\SampleExtensions -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
