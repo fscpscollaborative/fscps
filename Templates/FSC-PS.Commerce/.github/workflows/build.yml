@@ -46,7 +46,7 @@ jobs:
         with:
           version: ${{ inputs.version }}
           
-      - name: Check for updates to FSCM-PS system files
+      - name: Check for updates to FSC-PS system files
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
