@@ -1135,7 +1135,7 @@ function Update-RetailSDK
         #Just read-only SAS token :)
         $StorageSAStoken = 'sp=r&st=2022-10-26T06:49:19Z&se=2032-10-26T14:49:19Z&spr=https&sv=2021-06-08&sr=c&sig=MXHL7F8liAPlwIxzg8FJNjfwJVIjpLMqUV2HYlyvieA%3D'
         $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-        [System.IO.Directory]::CreateDirectory($NugetPath) 
+        [System.IO.Directory]::CreateDirectory($sdkPath) 
     }
     process
     {
