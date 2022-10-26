@@ -1130,6 +1130,8 @@ function Update-RetailSDK
     )
     begin
     {
+        OutputDebug "SDKVersion is $sdkVersion"
+        OutputDebug "SDKPath is $sdkPath"
         $storageAccountName = 'ciellosarchive'
         $storageContainer = 'retailsdk'
         #Just read-only SAS token :)
@@ -1143,18 +1145,16 @@ function Update-RetailSDK
         $version = Get-VersionData -sdkVersion $sdkVersion
         $path = Join-Path $sdkPath ("RetailSDK.$($version.retailSDKVersion).7z")
 
-        if(!(Test-Path -Path $sdkPath))
-        {
-            New-Item -ItemType Directory -Force -Path $sdkPath
-        }
-
         if(!(Test-Path -Path $path))
         {
+            OutputInfo "RetailSDK $($version.retailSDKVersion) is not found."
             if($version.retailSDKURL)
             {
+                OutputInfo "Web request. Downloading..."
                 Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
             }
             else {
+                OutputInfo "Azure Blob. Downloading..."
                 $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.retailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
                 $blob.Name
             }
