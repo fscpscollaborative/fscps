@@ -985,7 +985,6 @@ function GenerateProjectFile {
     Set-Content $ModelProjectFile $ProjectFileData
 }
 
-
 function Get-AXModelDisplayName {
     param (
         [Alias('ModelName')]
@@ -1129,7 +1128,15 @@ function Update-RetailSDK
         [string]$sdkVersion,
         [string]$sdkPath
     )
-
+    begin
+    {
+        $storageAccountName = 'ciellosarchive'
+        $storageContainer = 'retailsdk'
+        #Just read-only SAS token :)
+        $StorageSAStoken = 'sp=r&st=2022-10-26T06:49:19Z&se=2032-10-26T14:49:19Z&spr=https&sv=2021-06-08&sr=c&sig=MXHL7F8liAPlwIxzg8FJNjfwJVIjpLMqUV2HYlyvieA%3D'
+        $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
+        [System.IO.Directory]::CreateDirectory($NugetPath) 
+    }
     process
     {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -1143,7 +1150,14 @@ function Update-RetailSDK
 
         if(!(Test-Path -Path $path))
         {
-            Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+            if($version.retailSDKURL)
+            {
+                Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+            }
+            else {
+                $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "RetailSDK.$($version.retailSDKVersion).7z" -Destination $path -ConcurrentTaskCount 10 -Force
+                $blob.Name
+            }
         }
         Write-Output $path
     }
