@@ -56,7 +56,7 @@ jobs:
          vs-version: '[15.9,16.11)'
 
       - name: Setup NuGet
-        uses: nuget/setup-nuget@v1.0.7
+        uses: nuget/setup-nuget@v1.1.1
         with:
           nuget-version: 5.10.x    
           
