@@ -85,6 +85,7 @@ try {
     OutputInfo "======================================== Cleanup folders"
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item ($settings.retailSDKZipPath) -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
 
     Write-Output "::group::Expand RetailSDK"
