@@ -5,7 +5,7 @@
       "PlatformVersion": "7.0.6354.86",
       "AppVersion": "10.0.1192.92",
       "retailSDKVersion": "10.0.1192.72",
-      "retailSDKURL": "https://ciellosarchive.blob.core.windows.net/retailsdk/RetailSDK.10.0.1192.72.7z?sp=r&st=2022-09-15T09:09:42Z&se=2032-09-15T17:09:42Z&spr=https&sv=2021-06-08&sr=b&sig=ixdBClUYz2IMraItUu8a2Upg8JNF%2BtvfvC1r1DAKSv4%3D"
+      "retailSDKURL": ""
     }
   },
   {
@@ -14,7 +14,7 @@
       "PlatformVersion": "7.0.6395.47",
       "AppVersion": "10.0.1227.52",
       "retailSDKVersion": "10.0.1227.52",
-      "retailSDKURL": "https://ciellosarchive.blob.core.windows.net/retailsdk/RetailSDK.10.0.1227.52.7z?sp=r&st=2022-09-21T11:33:52Z&se=2032-09-21T19:33:52Z&spr=https&sv=2021-06-08&sr=b&sig=zcm5FPTS%2BP4t1lT8SKC7nvhSGpP%2FxMAii3w6zPMwqjQ%3D"
+      "retailSDKURL": ""
     }
   },
   {
@@ -50,7 +50,7 @@
       "PlatformVersion": "7.0.6651.24",
       "AppVersion": "10.0.1406.18",
       "retailSDKVersion": "10.0.1406.18",
-      "retailSDKURL": "https://ciellosarchive.blob.core.windows.net/retailsdk/RetailSDK.10.0.1406.18.7z?sp=r&st=2022-10-16T18:25:35Z&se=2032-10-17T02:25:35Z&spr=https&sv=2021-06-08&sr=b&sig=Zh6SioFIXD24XgdfhpE6FvGMoPjNz1M5kfQpfG3fVl0%3D"
+      "retailSDKURL": ""
     }
   }
 ]
