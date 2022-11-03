@@ -1,14 +1,16 @@
-name: Update
+name: Update NuGets
 
 on:
   workflow_dispatch:
-
+  schedule:
+   - cron: '0 23 * * *'
+   
 defaults:
   run:
     shell: PowerShell
 
 jobs:
-  Deploy:
+  Update:
     runs-on: [ windows-latest ]
     steps:
       - uses: actions/checkout@v2
