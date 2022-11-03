@@ -110,7 +110,7 @@ jobs:
                   $storageAccountName = 'ciellosarchive'
                   $storageContainer = 'nuget'
                   #Just read-only SAS token :)
-                  $StorageSAStoken = '{{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
+                  $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
                   $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
                   $header = GetHeader -token $token
                   if(-not(Test-Path $PackageDestination))
@@ -153,10 +153,10 @@ jobs:
           Import-Module PowerShellGet
           #installModules AZ
 
-          $lcsUserName = "{{ secrets.LCS_USERNAME }}"
-          $lcsUserPassword = "{{ secrets.LCS_USER_PASSWORD }}"
-          $lcsProjectId = "{{ secrets.LCS_PROJECT_ID }}"
-          $lcsClientId = "{{ secrets.LCS_CLIENT_ID }}"
+          $lcsUserName = "${{ secrets.LCS_USERNAME }}"
+          $lcsUserPassword = "${{ secrets.LCS_USER_PASSWORD }}"
+          $lcsProjectId = "${{ secrets.LCS_PROJECT_ID }}"
+          $lcsClientId = "${{ secrets.LCS_CLIENT_ID }}"
           $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
 
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
