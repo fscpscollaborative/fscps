@@ -52,7 +52,7 @@ jobs:
 
                   if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
                       Write-Host "Installing module $_"
-                      Install-Module $_ -Force -AllowClobber | Out-Null
+                      Install-Module $_ -Force -AllowClobber -Scope CurrentUser | Out-Null
                   }
               }
               $modules | ForEach-Object { 
@@ -151,7 +151,7 @@ jobs:
           }
 
           Import-Module PowerShellGet
-          #installModules AZ
+          installModules AZ
 
           $lcsUserName = "${{ secrets.LCS_USERNAME }}"
           $lcsUserPassword = "${{ secrets.LCS_USER_PASSWORD }}"
