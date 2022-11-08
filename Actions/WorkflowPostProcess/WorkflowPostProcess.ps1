@@ -18,8 +18,8 @@ try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
 
     $github = (Get-ActionContext)
-        Write-Host ($github | ConvertTo-Json)
-       #Use settings and secrets
+    Write-Host ($github | ConvertTo-Json)
+    #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
@@ -29,7 +29,7 @@ try {
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
-    'nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName' | ForEach-Object {
+    $settings.secretsList | ForEach-Object {
         $setValue = ""
         if($settingsHash.Contains($_))
         {
@@ -46,15 +46,10 @@ try {
         Set-Variable -Name $_ -Value $value
     }
 
-    $versions = Get-Versions
-
-    $settings
-
     Write-Output "::endgroup::"
 
-
-    #Cleanup failed/skiped workflow runs
-    if($github.EventName -eq "schedule" -and $github.Workflow -match "DEPLOY" -and $remove)
+    #Cleanup workflow runs
+    if($github.EventName -eq "schedule")
     {
         #Cleanup failed/skiped workflow runs
         $githubRepository = $github.Repo
@@ -68,25 +63,27 @@ try {
         }
         Write-Host ($runsActiveParams | ConvertTo-Json)
         $runsActive = Invoke-RestMethod @runsActiveParams
-        $actionsFailure = $runsActive.workflow_runs
+        $actions = $runsActive.workflow_runs
         [array]$baseURIJobs = @()
-        foreach ($actionFail in $actionsFailure) 
-        {
-            if($github.RunId -eq $actionFail.id)
-            {
-                continue;
-            
+
+        foreach ($action in $actions) {
+            $del = $false
+            #if run older than 7 days - delete
+            $timeSpan = NEW-TIMESPAN –Start $action.created_at –End (Get-Date).ToString()
+            if ($timeSpan.Days -gt 7) {
+                $del = $true
             }
-            #$timeDiff = NEW-TIMESPAN -Start $actionFail.run_started_at -End $actionFail.updated_at
-            #if($timeDiff.TotalSeconds -le 120)
-            #{
-                if($actionFail.display_title -match "DEPLOY" -and ($actionFail.status -eq "completed"))
-                {
-                    #$actionFail
-                    Write-Host "Found job $($actionFail.display_title)"
-                    $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $actionFail.id)
-                }
-            #}
+            #if it`s a clean deploy run - delete
+            if($action.display_title -match "DEPLOY" -and ($action.status -eq "completed") -and $remove)
+            {
+                $del = $true
+            }
+
+            if($del)
+            {
+                Write-Host "Found job $($action.display_title)"
+                $baseURIJobs += ("/repos/{0}/actions/runs/{1}" -f $githubRepository, $action.id)
+            }
         }
         foreach ($baseURIJob in $baseURIJobs) {
             $delete = $false
@@ -112,9 +109,7 @@ try {
                 Invoke-RestMethod @runsDeleteParam
             }
         }
-
     }
-
 }
 catch {
     OutputError -message $_.Exception.Message
