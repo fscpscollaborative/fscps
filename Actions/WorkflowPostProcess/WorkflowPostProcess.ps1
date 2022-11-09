@@ -24,8 +24,6 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-
-    #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -69,8 +67,9 @@ try {
         foreach ($action in $actions) {
             $del = $false
             #if run older than 7 days - delete
+            $retentionHours = (7 * 24)
             $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
-            if ($timeSpan.Days -gt 7) {
+            if ($timeSpan.TotalHours -gt $retentionHours) {
                 $del = $true
             }
             #if it`s a clean deploy run - delete
