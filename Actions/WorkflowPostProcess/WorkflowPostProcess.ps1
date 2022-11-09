@@ -95,7 +95,7 @@ try {
         foreach ($action in $deleteRuns) {
 
                 $runsDeleteParam = @{
-                    Uri     = $action.html_url
+                    Uri     = $action.url
                     Method  = "Delete"
                     Headers = $baseHeader
                 } 
