@@ -69,7 +69,7 @@ try {
         foreach ($action in $actions) {
             $del = $false
             #if run older than 7 days - delete
-            $timeSpan = NEW-TIMESPAN –Start $action.created_at –End (Get-Date).ToString()
+            $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
             if ($timeSpan.Days -gt 7) {
                 $del = $true
             }
