@@ -66,12 +66,14 @@ try {
 
         foreach ($action in $actions) {
         
+            #if run older than 7 days - delete
+            $retentionHours = (7 * 24)
             $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
-            $del = $false
-            if ($timeSpan.Days -gt 7) {
-              $del = $true
+            if ($timeSpan.TotalHours -gt $retentionHours) {
+                $del = $true
             }
-        
+            #if it`s a clean deploy run - delete
+       
             if($action.display_title -match "DEPLOY" -and ($action.status -eq "completed"))
             {
                 $getJobsParam = @{
@@ -94,13 +96,13 @@ try {
         }
         foreach ($action in $deleteRuns) {
 
-                $runsDeleteParam = @{
-                    Uri     = $action.url
-                    Method  = "Delete"
-                    Headers = $baseHeader
-                } 
-                Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
-                Invoke-RestMethod @runsDeleteParam
+            $runsDeleteParam = @{
+                Uri     = $action.url
+                Method  = "Delete"
+                Headers = $baseHeader
+            } 
+            Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
+            Invoke-RestMethod @runsDeleteParam
         }
     }
 }
