@@ -55,7 +55,7 @@ try {
         $baseHeader =  @{"Authorization" = "token $($repoTokenSecretName)"} 
 
         $runsActiveParams = @{
-            Uri     = ("{0}/repos/{1}/actions/runs" -f $uriBase , $githubRepository)
+            Uri     = ("{0}/repos/{1}/actions/runs?per_page=100" -f $uriBase , $githubRepository)
             Method  = "Get"
             Headers = $baseHeader
         }
