@@ -65,7 +65,7 @@ try {
         [array]$deleteRuns = @()
 
         foreach ($action in $actions) {
-        
+            $del = $false
             #if run older than 7 days - delete
             $retentionHours = (7 * 24)
             $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
