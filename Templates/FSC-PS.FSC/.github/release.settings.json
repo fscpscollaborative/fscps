@@ -1,6 +1,5 @@
 {
     "generatePackages" : true,
     "uploadPackageToLCS":  false,
-    "models":"Contoso",
     "exportModel":true
 }

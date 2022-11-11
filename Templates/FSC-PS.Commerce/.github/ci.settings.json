@@ -1,5 +1,5 @@
 {
+    "deploy": false,
     "generatePackages" : false,
-    "uploadPackageToLCS":  false,
-    "buildVersion": "10.0.27"
+    "uploadPackageToLCS":  false
 }

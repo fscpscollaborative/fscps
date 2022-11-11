@@ -1,9 +1,6 @@
 {
     "type":"Retail",
-    "models":"Contoso,ContosoTestEssentials",
-    "modelsIntoPackagePattern": "Contoso",
     "packageName": "ContosoExtension",
-    "nugetPackagesPath": "NuGets",
     "nugetFeedName":"Artifactory",
     "nugetFeedUserSecretName": "AF_CONNECTORS_CICD_USER",
     "nugetFeedPasswordSecretName": "AF_CONNECTORS_CICD_PASS",

@@ -1,6 +1,5 @@
 {
 	"deploy": true,
     "generatePackages" : true,
-    "uploadPackageToLCS":  true,
-    "modelsIntoPackagePattern": "Contoso;ContosoTestEssentials"    
+    "uploadPackageToLCS":  true
 }
