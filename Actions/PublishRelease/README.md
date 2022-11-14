@@ -1,5 +1,6 @@
 # Action 'PublishRelease' 
 ## Parameters 
+## Inputs 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 

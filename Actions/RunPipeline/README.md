@@ -1,5 +1,6 @@
 # Action 'RunPipeline' 
 ## Parameters 
+## Inputs 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 
@@ -20,5 +21,21 @@
 
 ### token (Default: '${{ github.token }}') 
  The GitHub token running the action 
+
+## Outputs 
+### package_path (Default: '') 
+ Package path 
+
+### package_name (Default: '') 
+ Package name 
+
+### artifacts_list (Default: '') 
+ Artifacts folder path 
+
+### artifacts_path (Default: '') 
+ Artifacts folder path 
+
+### modelfile_path (Default: '') 
+ Modelfile path 
 
 

@@ -1,5 +1,6 @@
 # Action 'ReadSettings' 
 ## Parameters 
+## Inputs 
 ### environment (Default: '') 
  Merge settings from specific environment 
 
@@ -14,5 +15,24 @@
 
 ### version (Default: '') 
  The Dynamics Application Version 
+
+## Outputs 
+### SettingsJson (Default: '') 
+ Settings in compressed Json format 
+
+### type (Default: '') 
+ Repo type 
+
+### EnvironmentsJson (Default: '') 
+ Environments in compressed Json format 
+
+### VersionsJson (Default: '') 
+ Versions in compressed Json format 
+
+### GitHubRunnerJson (Default: '') 
+ GitHubRunner in compressed Json format 
+
+### source_branch (Default: '') 
+ Source branch 
 
 

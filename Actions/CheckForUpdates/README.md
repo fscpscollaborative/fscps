@@ -1,5 +1,6 @@
 # Action 'CheckForUpdates' 
 ## Parameters 
+## Inputs 
 ### directCommit (Default: 'N') 
  Direct Commit (Y/N) 
 
