@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Read secrets from GitHub secrets for FSC-PS workflows
 author: Oleksandr Nikolaiev
 inputs:
   settingsJson:

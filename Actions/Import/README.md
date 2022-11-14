@@ -1,4 +1,5 @@
 # :rocket: Action 'Import' 
+Import the existing metadata source code into the current repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### settingsJson (Default: '') 

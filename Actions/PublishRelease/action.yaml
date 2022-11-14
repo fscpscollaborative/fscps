@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Build package and publish the GitHub release
 author: Oleksandr Nikolaiev
 permissions:
   contents: write

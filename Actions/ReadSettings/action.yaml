@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Read settings for FSC-PS workflows
 author: Oleksandr Nikolaiev
 inputs:
   actor:

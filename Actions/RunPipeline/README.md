@@ -1,4 +1,5 @@
 # :rocket: Action 'RunPipeline' 
+Run pipeline in FSC-PS repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### settingsJson (Default: '') 

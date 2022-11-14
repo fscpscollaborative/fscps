@@ -1,4 +1,5 @@
 # :rocket: Action 'ReadSettings' 
+Read settings for FSC-PS workflows 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### environment (Default: '') 

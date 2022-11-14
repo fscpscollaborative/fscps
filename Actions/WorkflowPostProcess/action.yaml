@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Post process action. Cleanup.
 author: Oleksandr Nikolaiev
 inputs:
   token:

@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Import the existing metadata source code into the current repository
 author: Oleksandr Nikolaiev
 permissions:
   contents: write

@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Initialize FSC-PS system
 author: Oleksandr Nikolaiev 
 runs:
   using: composite

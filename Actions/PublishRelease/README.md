@@ -1,4 +1,5 @@
 # :rocket: Action 'PublishRelease' 
+Build package and publish the GitHub release 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### settingsJson (Default: '') 

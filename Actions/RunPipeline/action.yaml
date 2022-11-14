@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Run pipeline in FSC-PS repository
 author: Oleksandr Nikolaiev
 inputs:
   actor:

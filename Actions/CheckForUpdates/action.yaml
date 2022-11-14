@@ -1,4 +1,4 @@
-name: PowerShell script
+name: Check for updates to FSC-PS system files
 author: Oleksandr Nikolaiev
 permissions:
   contents: write
@@ -30,7 +30,7 @@ inputs:
     required: false
     default: ''
   update:
-    description: Set this input to Y in order to update AL-Go System Files if needed
+    description: Set this input to Y in order to update FSC-PS System Files if needed
     required: false
     default: 'N'
   directCommit:

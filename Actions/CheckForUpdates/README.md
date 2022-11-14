@@ -1,11 +1,12 @@
 # :rocket: Action 'CheckForUpdates' 
+Check for updates to FSC-PS system files 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### directCommit (Default: 'N') 
  Direct Commit (Y/N) 
 
 ### update (Default: 'N') 
- Set this input to Y in order to update AL-Go System Files if needed 
+ Set this input to Y in order to update FSC-PS System Files if needed 
 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
