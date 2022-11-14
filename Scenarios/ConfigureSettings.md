@@ -13,11 +13,6 @@
 {
     "githubRunner":"windows,winstandard",
     "packageName": "ContosoExtension",
-    "nugetPackagesPath": "NuGets",
-    "nugetFeedName":"Artifactory",
-    "nugetFeedUserSecretName": "AF_CONNECTORS_CICD_USER",
-    "nugetFeedPasswordSecretName": "AF_CONNECTORS_CICD_PASS",
-    "nugetSourcePath":"https://contoso.nuget.com/artifactory/api/nuget/connector-nuget-local",
     "lcsProjectId": 1234566,
     "lcsClientId": "892da30e-e292-437a-b1aa-ec2ecff7b21f",
     "lcsUsernameSecretname": "AZ_TENANT_USERNAME",
@@ -25,7 +20,7 @@
     "azTenantId": "dfc1b5c3-94fc-4abc-b8fb-09484816c011",
     "azClientId" : "492b2997-68ed-4bca-95c5-306cdedf288a",
     "azClientsecretSecretname" : "AZ_CLIENTSECRET",
-    "buildVersion": "10.0.27"
+    "buildVersion": "10.0.28"
 }
 ~~~
 Please find setup details [here](settings.md)
