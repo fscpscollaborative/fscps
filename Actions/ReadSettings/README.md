@@ -1,6 +1,6 @@
-# Action 'ReadSettings' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'ReadSettings' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### environment (Default: '') 
  Merge settings from specific environment 
 
@@ -16,7 +16,7 @@
 ### version (Default: '') 
  The Dynamics Application Version 
 
-## Outputs 
+## :arrow_up: Outputs 
 ### SettingsJson (Default: '') 
  Settings in compressed Json format 
 

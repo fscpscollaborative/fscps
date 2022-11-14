@@ -1,6 +1,6 @@
-# Action 'RunPipeline' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'RunPipeline' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 
@@ -22,7 +22,7 @@
 ### token (Default: '${{ github.token }}') 
  The GitHub token running the action 
 
-## Outputs 
+## :arrow_up: Outputs 
 ### package_path (Default: '') 
  Package path 
 

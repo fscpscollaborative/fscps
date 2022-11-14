@@ -1,6 +1,6 @@
-# Action 'PublishRelease' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'PublishRelease' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 

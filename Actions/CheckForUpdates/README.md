@@ -1,6 +1,6 @@
-# Action 'CheckForUpdates' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'CheckForUpdates' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### directCommit (Default: 'N') 
  Direct Commit (Y/N) 
 

@@ -1,6 +1,6 @@
-# Action 'WorkflowPostProcess' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'WorkflowPostProcess' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}') 
  Secrets from repository in compressed Json format 
 

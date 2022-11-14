@@ -1,6 +1,6 @@
-# Action 'Import' 
-## Parameters 
-## Inputs 
+# :rocket: Action 'Import' 
+## :wrench: Parameters 
+## :arrow_down: Inputs 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 
