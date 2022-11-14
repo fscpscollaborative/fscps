@@ -1,44 +1,24 @@
 # Action 'RunPipeline' 
-## Parameter 'settingsJson' 
-### Description 
+## Parameters 
+### 'settingsJson' (Default: '') 
  'Settings from repository in compressed Json format' 
-### Default value 
- '' 
 
-## Parameter 'version' 
-### Description 
+### 'version' (Default: '') 
  'The Dynamics Application Version' 
-### Default value 
- '' 
 
-## Parameter 'type' 
-### Description 
+### 'type' (Default: 'FSCM') 
  'The application type. FSCM or Commerce' 
-### Default value 
- 'FSCM' 
 
-## Parameter 'environment_name' 
-### Description 
+### 'environment_name' (Default: '') 
  'The Dynamics Environment Name' 
-### Default value 
- '' 
 
-## Parameter 'actor' 
-### Description 
+### 'actor' (Default: '${{ github.actor }}') 
  'The GitHub actor running the action' 
-### Default value 
- '${{ github.actor }}' 
 
-## Parameter 'secretsJson' 
-### Description 
+### 'secretsJson' (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}') 
  'Secrets from repository in compressed Json format' 
-### Default value 
- '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}' 
 
-## Parameter 'token' 
-### Description 
+### 'token' (Default: '${{ github.token }}') 
  'The GitHub token running the action' 
-### Default value 
- '${{ github.token }}' 
 
 

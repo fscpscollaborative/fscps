@@ -1,32 +1,18 @@
 # Action 'ReadSettings' 
-## Parameter 'environment' 
-### Description 
+## Parameters 
+### 'environment' (Default: '') 
  'Merge settings from specific environment' 
-### Default value 
- '' 
 
-## Parameter 'actor' 
-### Description 
+### 'actor' (Default: '${{ github.actor }}') 
  'The GitHub actor running the action' 
-### Default value 
- '${{ github.actor }}' 
 
-## Parameter 'token' 
-### Description 
+### 'token' (Default: '${{ github.token }}') 
  'The GitHub token running the action' 
-### Default value 
- '${{ github.token }}' 
 
-## Parameter 'get' 
-### Description 
+### 'get' (Default: '') 
  'Specifies which properties to get from the settings file, default is all' 
-### Default value 
- '' 
 
-## Parameter 'version' 
-### Description 
+### 'version' (Default: '') 
  'The Dynamics Application Version' 
-### Default value 
- '' 
 
 

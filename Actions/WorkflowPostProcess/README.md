@@ -1,26 +1,15 @@
 # Action 'WorkflowPostProcess' 
-## Parameter 'secretsJson' 
-### Description 
+## Parameters 
+### 'secretsJson' (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}') 
  'Secrets from repository in compressed Json format' 
-### Default value 
- '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":"","KeyVaultCertificateUrl":"","KeyVaultCertificatePw":"","KeyVaultClientId":"","applicationInsightsConnectionString": ""}' 
 
-## Parameter 'token' 
-### Description 
+### 'token' (Default: '${{ github.token }}') 
  'The GitHub token running the action' 
-### Default value 
- '${{ github.token }}' 
 
-## Parameter 'remove_current' 
-### Description 
+### 'remove_current' (Default: '') 
  'The GitHub actor running the action' 
-### Default value 
- '' 
 
-## Parameter 'settingsJson' 
-### Description 
+### 'settingsJson' (Default: '') 
  'Settings from repository in compressed Json format' 
-### Default value 
- '' 
 
 

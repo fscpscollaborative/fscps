@@ -1,56 +1,30 @@
 # Action 'CheckForUpdates' 
-## Parameter 'directCommit' 
-### Description 
+## Parameters 
+### 'directCommit' (Default: 'N') 
  'Direct Commit (Y/N)' 
-### Default value 
- 'N' 
 
-## Parameter 'update' 
-### Description 
+### 'update' (Default: 'N') 
  'Set this input to Y in order to update AL-Go System Files if needed' 
-### Default value 
- 'N' 
 
-## Parameter 'settingsJson' 
-### Description 
+### 'settingsJson' (Default: '') 
  'Settings from repository in compressed Json format' 
-### Default value 
- '' 
 
-## Parameter 'templateBranch' 
-### Description 
+### 'templateBranch' (Default: '') 
  'Branch in template repository to use for the update (default is the default branch)' 
-### Default value 
- '' 
 
-## Parameter 'type' 
-### Description 
+### 'type' (Default: 'FSCM') 
  'Repo type' 
-### Default value 
- 'FSCM' 
 
-## Parameter 'actor' 
-### Description 
+### 'actor' (Default: '${{ github.actor }}') 
  'The GitHub actor running the action' 
-### Default value 
- '${{ github.actor }}' 
 
-## Parameter 'secretsJson' 
-### Description 
+### 'secretsJson' (Default: '') 
  'Secrets from repository in compressed Json format' 
-### Default value 
- '' 
 
-## Parameter 'templateUrl' 
-### Description 
+### 'templateUrl' (Default: '') 
  'URL of the template repository (default is the template repository used to create the repository)' 
-### Default value 
- '' 
 
-## Parameter 'token' 
-### Description 
+### 'token' (Default: '${{ github.token }}') 
  'The GitHub token running the action' 
-### Default value 
- '${{ github.token }}' 
 
 

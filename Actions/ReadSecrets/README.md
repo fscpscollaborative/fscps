@@ -1,8 +1,6 @@
 # Action 'ReadSecrets' 
-## Parameter 'settingsJson' 
-### Description 
+## Parameters 
+### 'settingsJson' (Default: '{"keyVaultName": ""}') 
  'Settings from template repository in compressed Json format' 
-### Default value 
- '{"keyVaultName": ""}' 
 
 

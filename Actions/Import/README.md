@@ -1,38 +1,21 @@
 # Action 'Import' 
-## Parameter 'settingsJson' 
-### Description 
+## Parameters 
+### 'settingsJson' (Default: '') 
  'Settings from repository in compressed Json format' 
-### Default value 
- '' 
 
-## Parameter 'type' 
-### Description 
+### 'type' (Default: 'FSCM') 
  'Repo type' 
-### Default value 
- 'FSCM' 
 
-## Parameter 'actor' 
-### Description 
+### 'actor' (Default: '${{ github.actor }}') 
  'The GitHub actor running the action' 
-### Default value 
- '${{ github.actor }}' 
 
-## Parameter 'artifactsPath' 
-### Description 
+### 'artifactsPath' (Default: '') 
  'Artifacts archive url' 
-### Default value 
- '' 
 
-## Parameter 'secretsJson' 
-### Description 
+### 'secretsJson' (Default: '') 
  'Secrets from repository in compressed Json format' 
-### Default value 
- '' 
 
-## Parameter 'token' 
-### Description 
+### 'token' (Default: '${{ github.token }}') 
  'The GitHub token running the action' 
-### Default value 
- '${{ github.token }}' 
 
 
