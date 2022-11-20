@@ -670,28 +670,38 @@ function installModules {
     Param(
         [String[]] $modules
     )
+    begin{
+        Set-MpPreference -DisableRealtimeMonitoring $true
+    }
+    process{
+        $modules | ForEach-Object {
+            if($_ -eq "Az")
+            {
+                Set-ExecutionPolicy RemoteSigned
+                try {
+                    Uninstall-AzureRm
+                }
+                catch {
+                }
+                
+            }
 
-    $modules | ForEach-Object {
-        if($_ -eq "Az")
-        {
-            Set-ExecutionPolicy RemoteSigned
-            try {
-                Uninstall-AzureRm
+            if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
+                Write-Host "Installing module $_"
+                Install-Module $_ -Force -AllowClobber | Out-Null
             }
-            catch {
-            }
-            
         }
 
-        if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
-            Write-Host "Installing module $_"
-            Install-Module $_ -Force -AllowClobber | Out-Null
+        $modules | ForEach-Object { 
+            Write-Host "Importing module $_"
+            Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue | Out-Null
         }
+
     }
-    $modules | ForEach-Object { 
-        Write-Host "Importing module $_"
-        Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue | Out-Null
+    end{
+        Set-MpPreference -DisableRealtimeMonitoring $false
     }
+    
 }
 
 function CloneIntoNewFolder {
