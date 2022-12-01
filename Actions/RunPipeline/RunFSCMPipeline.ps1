@@ -398,6 +398,7 @@ try {
                             OutputInfo "....state is $($PowerState)"
                         }
                         
+                        OutputInfo "Getting LCS State $($settings.azVmname)"
                         $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
                         if($status.DeploymentState -eq "Servicing")
                         {
