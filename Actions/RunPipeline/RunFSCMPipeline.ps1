@@ -27,10 +27,7 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-
-    #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
-
     $settingsHash = $settings #| ConvertTo-HashTable
     $settings.secretsList | ForEach-Object {
         $setValue = ""
@@ -49,7 +46,6 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-
     if($DynamicsVersion -eq "")
     {
         $DynamicsVersion = $settings.buildVersion
@@ -76,8 +72,6 @@ try {
     $app_package =  'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.' + $ApplicationVersion
     $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
 
-
-
     if(($settings.includeTestModel -eq 'true'))
     {
         $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest
@@ -86,7 +80,6 @@ try {
         $models = Get-FSCModels -metadataPath $settings.metadataPath
     }
     
-
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
     #Generate solution folder
@@ -158,13 +151,11 @@ try {
     nuget restore -PackagesDirectory ..\NuGets
     Write-Output "::endgroup::"
 
-
     Write-Output "::group::Copy dll`s to build folder"
     #Copy dll`s to build folder
     OutputInfo "======================================== Copy dll`s to build folder"
     OutputInfo "Source path: (Join-Path $($buildPath) $($settings.metadataPath))"
     OutputInfo "Destination path: (Join-Path $($buildPath) bin)"
-
 
     Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
     Write-Output "::endgroup::"
@@ -231,7 +222,6 @@ try {
         $xppBinariesSearch = $models
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.artifactsPath) ($packageName)
 
-
         if ($xppBinariesSearch.Contains(","))
         {
             [string[]]$xppBinariesSearch = $xppBinariesSearch -split ","
@@ -271,25 +261,21 @@ try {
             try
             {
                 New-Item -Path $outputDir -ItemType Directory > $null
-
                 OutputInfo "Creating binary packages"
                 foreach($packagePath in $packages)
                 {
                     $packageName = (Get-Item $packagePath).Name
                     OutputInfo "  - '$packageName'"
-
                     $version = ""
                     $packageDll = Join-Path -Path $packagePath -ChildPath "bin\Dynamics.AX.$packageName.dll"
                     if (Test-Path $packageDll)
                     {
                         $version = (Get-Item $packageDll).VersionInfo.FileVersion
                     }
-
                     if (!$version)
                     {
                         $version = "1.0.0.0"
                     }
-
                     New-XppRuntimePackage -packageName $packageName -packageDrop $packagePath -outputDir $outputDir -metadataDir $xppBinariesPath -packageVersion $version -binDir $xppToolsPath -enforceVersionCheck $True
                 }
 
@@ -302,9 +288,7 @@ try {
                 OutputInfo "Deployable package '$deployablePackagePath' successfully created."
 
                 $pname = ($deployablePackagePath.SubString("$deployablePackagePath".LastIndexOf('\') + 1)).Replace(".zip","")
-
-
-                
+              
                 if($settings.exportModel)
                 {
                     Write-Output "::group::Export axmodel file"
@@ -321,8 +305,6 @@ try {
                         $modelFile = Get-Item $modelFilePath.File
                         Rename-Item $modelFile.FullName (($models)+($modelFile.Extension)) -Force
                     }
-
-
                     Write-Output "::endgroup::"
                 }
 
@@ -351,9 +333,6 @@ try {
 
                 Write-Output "::endgroup::"
 
-
-
-
                 #Upload to LCS
                 $assetId = ""
                 if($settings.uploadPackageToLCS)
@@ -375,7 +354,6 @@ try {
 
                         $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
                         $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
 
                         OutputInfo "Check az cli installation..."
                         if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
@@ -413,7 +391,6 @@ try {
                             OutputInfo "Previous deployment status: $($status.DeploymentState)"
                             Start-Sleep -Seconds 120
                         }
-
                         if($status.DeploymentState -eq "Failed")
                         {
                             OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
@@ -464,7 +441,6 @@ try {
                             Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                         }
                         Write-Output "::endgroup::"
-
                     }
                 }
             }

@@ -24,10 +24,7 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-
-    #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
-
     $settingsHash = $settings #| ConvertTo-HashTable
     $settings.secretsList | ForEach-Object {
         $setValue = ""
@@ -45,7 +42,6 @@ try {
         }
         Set-Variable -Name $_ -Value $value
     }
-
 
     if($DynamicsVersion -eq "")
     {
@@ -170,9 +166,7 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-
         $packageNamePattern = $settings.packageNamePattern;
-
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
 
         if($settings.deploy)
@@ -195,18 +189,12 @@ try {
         $packagePath = Join-Path $packagePath $packageName
         Copy-Item $packagePath -Destination $artifactDirectory -Force
 
-        Write-Host "::set-output name=PACKAGE_NAME::$packageName"
-        Write-Host "set-output name=PACKAGE_NAME::$packageName"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
-
-        Write-Host "::set-output name=PACKAGE_PATH::$packagePath"
-        Write-Host "set-output name=PACKAGE_PATH::$packagePath"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$packagePath"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
-
-        Write-Host "::set-output name=ARTIFACTS_PATH::$artifactDirectory"
-        Write-Host "set-output name=ARTIFACTS_PATH::$artifactDirectory"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
-
         
         $artifacts = Get-ChildItem $artifactDirectory
         $artifactsList = $artifacts.FullName -join ","
@@ -221,13 +209,10 @@ try {
 
         }
 
-        Write-Host "::set-output name=ARTIFACTS_LIST::$artifacts"
-        Write-Host "set-output name=ARTIFACTS_LIST::$artifacts"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
 
-
         Write-Output "::endgroup::"
-
 
         #Upload to LCS
         $assetId = ""
@@ -250,7 +235,6 @@ try {
 
                 $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
                 $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
 
                 OutputInfo "Check az cli installation..."
                 if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
@@ -341,7 +325,6 @@ try {
                 Write-Output "::endgroup::"
             }
         }
-
     }
 }
 catch {
