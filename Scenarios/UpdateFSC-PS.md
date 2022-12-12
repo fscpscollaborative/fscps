@@ -1,4 +1,4 @@
-# #6 Update FSC-PS files
+# #5 Update FSC-PS files
 *Prerequisites:* 
 - A GitHub account.
 

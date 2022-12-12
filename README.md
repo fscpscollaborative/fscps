@@ -13,9 +13,8 @@ Usage scenarios:
 1. [Set up repository](Scenarios/SetupRepo.md)
 2. [Set up CI](Scenarios/SetupCI.md)
 3. [Set up CD](Scenarios/SetupCD.md)
-4. [Settings configuration](Scenarios/ConfigureSettings.md)
-5. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
-6. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+4. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
+5. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
 
 
 
