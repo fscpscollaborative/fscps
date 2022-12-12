@@ -4,9 +4,9 @@
         "settings":{
             "buildVersion": "10.0.29",
             "sourceBranch": "main",
-            "lcsEnvironmentId": "73369230-3240-4f14-b9d2-cb214bd31504",
+            "lcsEnvironmentId": "fb08e7be-3d0b-40bd-a84f-6cc80a758c48",
             "azVmname" : "Contoso-QA-1",
-            "azVmrg" : "contoso-qa",
+            "azVmrg" : "Contoso-QA",
             "cron":"0 21 * * *"
         }
     }
