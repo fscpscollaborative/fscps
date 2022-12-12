@@ -14,7 +14,7 @@
 1. Under **Actions** select the **(IMPORT)** workflow and choose **Run workflow**.
 1. In the **Direct download URL** field, paste in the direct download URL of the source code 7z archive.
 1. Wait a workflow completion
-![Sources imported](/Scenarios/images/1f.png)
+![Sources imported](/Scenarios/images/2b.png)
 1. Use [scenario 2](SetupCI.md), [scenario 3](SetupCD.md).
 
 
