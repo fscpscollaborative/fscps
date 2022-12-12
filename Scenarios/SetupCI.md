@@ -8,6 +8,7 @@
 2. Update settings file in the .FSC-PS folder.
 ~~~javascript
 {
+    "type":"FSCM",
     "packageName": "ContosoExtension",
     "buildVersion": "10.0.29",
     "ciBranches": "main,release",

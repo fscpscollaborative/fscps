@@ -17,7 +17,6 @@ Usage scenarios:
 5. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
 
 
-
 **Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
 # This project
 This project in the main source repository for FSC-PS for GitHub. This project is deployed on every release to a branch in the following repositories:
