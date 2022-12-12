@@ -15,7 +15,8 @@
     "useLocalNuGetStorage":true
 }
 ~~~
-Please find setup details [here](settings.md)
+
+**NOTE:** Please refer to [this description](Scenarios/settings.md) to find more details.
 
 3. Update versions file
 ~~~javascript
@@ -29,8 +30,9 @@ Please find setup details [here](settings.md)
     }
 ]
 ~~~
-**NOTE** If you have some specific versions different with version.default, you can override them inside the versions.json file
-Please find setup details [here](settings.md)
+
+**NOTE** If you have some specific versions different with version.default, you can override them inside the versions.json file. Please refer to [this description](Scenarios/settings.md) to find more details.
+
 
 4. Execute
 [Update FSC-PS files](UpdateFSC-PS.md)

@@ -24,7 +24,8 @@
     "azClientId": "{SetRegisteredAppId-GUID}"
 }
 ~~~
-**NOTE:** lcsProjectId - Paste the LCS projectID.
+
+**NOTE:** lcsProjectId - Paste the LCS projectID. Please refer to [this description](Scenarios/settings.md) to find more details.
 6. Login to the LCS and deploy new or use the existing one environment.
 7. Update .\FSC-PS\environments.json file
 ~~~javascript
@@ -42,6 +43,9 @@
     }
 ]
 ~~~
-**NOTE:** cron - It meant that the environment will deploy 
----
+
+**NOTE:** "cron" - It meant that the environment will deploy at 21:00 PM UTC. Please refer to [this description](Scenarios/settings.md) to find more details.
+
+8. Run [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+9. Run Deploy workflow and Selec
 [back](/README.md)
