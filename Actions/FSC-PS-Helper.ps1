@@ -2134,11 +2134,17 @@ function Extract-D365FSCSource
 
     $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
     $metadataPath = $modelPath[0].Parent.Parent.FullName
-    $metadataPath
-    Copy-Item -Path "$metadataPath\" -Destination  (Join-Path $targetPath "PackagesLocalDirectory") -Recurse -Force
-
+    
+    Get-ChildItem -Path $metadataPath | ForEach-Object {
+        $_.Name
+        if(Get-ChildItem -Path $_.FullName -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force)
+        {
+            Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+        }
+    }
+    
     $solutionPath = Get-ChildItem -Path $tempFolder -Filter *.sln -Recurse -ErrorAction SilentlyContinue -Force
-    $projectsPath = $solutionPath[1].Directory.Parent.FullName
+    $projectsPath = $solutionPath[0].Directory.Parent.FullName
     $projectsPath
     Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false

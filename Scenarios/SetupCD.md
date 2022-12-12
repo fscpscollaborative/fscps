@@ -1,4 +1,4 @@
-# #5 Setup CD
+# #3 Setup CD
 *Prerequisites:* 
 - A GitHub account.
 - An AAD account.

@@ -1,4 +1,4 @@
-# #4 Setup CI
+# #2 Setup CI
 *Prerequisites:* 
 - A GitHub account.
 
