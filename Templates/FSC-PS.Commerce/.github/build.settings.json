@@ -1,5 +1,5 @@
 {
 	"deploy": false,
     "generatePackages" : true,
-    "uploadPackageToLCS":  true
+    "uploadPackageToLCS":  false
 }
