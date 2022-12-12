@@ -32,7 +32,7 @@ Please find setup details [here](settings.md)
 Please find setup details [here](settings.md)
 
 4. Execute
-[Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+[Update FSC-PS files](UpdateFSC-PS.md)
 
 5. Execute CI workflow
 ![Execute CI](/Scenarios/images/2a.png)
