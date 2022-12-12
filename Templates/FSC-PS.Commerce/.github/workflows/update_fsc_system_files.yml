@@ -75,7 +75,7 @@ jobs:
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.1
         with:
           type: ${{ steps.ReadSettings.outputs.type}}
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+          token: ${{ secrets.REPO_TOKEN }}
           update: Y
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
