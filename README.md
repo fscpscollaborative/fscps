@@ -15,6 +15,7 @@ Usage scenarios:
 3. [Set up CD](Scenarios/SetupCD.md)
 4. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
 5. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+6. [Add environment from the different tenant](Scenarios/AddEnvironmentFromTheDifferentTenant.md)
 
 
 **Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
