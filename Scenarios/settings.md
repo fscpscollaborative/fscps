@@ -8,9 +8,11 @@ When running a workflow or a local script, the settings are applied by reading o
 
 **.github\\FSC-PS-settings.json** is the repository settings file. This settings file contains settings for the repository. If a settings in the repository settings file is found in a subsequent settings file, it will be overridden by the new value.
 
-**.FSC-PS\\\<workflow\>.settings.json** is the workflow-specific settings file. This option is used for the Current, NextMinor and NextMajor workflows to determine artifacts and build numbers when running these workflows.
+**.FSC-PS\\\<workflow\>.settings.json** is the workflow-specific settings file. This option is used for the build, ci and deploy workflows to determine artifacts and build numbers when running these workflows.
 
 **.FSC-PS\\\<username\>.settings.json** is the user-specific settings file. This option is rarely used, but if you have special settings, which should only be used for one specific user (potentially in the local scripts), these settings can be added to a settings file with the name of the user followed by `.settings.json`.
+
+**.FSC-PS\\environments.json** is the environment settings file. This settings file contains the list on the environments with the environment specific settings(branch, FSC version, etc.).
 
 ## Basic settings
 | Name | Description | Default value |
@@ -82,6 +84,18 @@ The repository settings are only read from the repository settings file (.github
 | templateBranch | Defines the branchranch of the template repository used to create this project and is used for checking and downloading updates to FSC-PS System files. | main |
 | runs-on | Specifies which github runner will be used for all jobs in all workflows (except the Update FSC-PS System Files workflow). The default is to use the GitHub hosted runner Windows-latest. You can specify a special GitHub Runner for the build job using the GitHubRunner setting. Read [this](SelfHostedGitHubRunner.md) for more information. | windows-latest |
 | githubRunner | Specifies which github runner will be used for the build/ci/deploy/release job in workflows. This is the most time consuming task. By default this job uses the Windows-latest github runner (unless overridden by the runs-on setting). This settings takes precedence over runs-on so that you can use different runners for the build job and the housekeeping jobs. See runs-on setting. | windows-latest |
+
+## Environments settings
+| Name | Description | Default value |
+| :-- | :-- | :-- |
+| Name | The LCS environment name ||
+| settings | The environment specific settings which will override the basic settings in the .\FSC-PS\settings.json file.  ||
+| settings.buildVersion | The FSC version (e.g. 10.0.29). Will be used to build the package and deploy to this environment  | buildVersion value from the .\FSC-PS\settings.json file |
+| settings.sourceBranch | The source branch name (e.g. main). Will be used to get the latest source code, build the package and deploy to this environment  | main |
+| settings.lcsEnvironmentId | The LCS EnvironmentID. Will be used to identify the environment to deploy the package  | |
+| settings.azVmname | The Azure VM name. Will be used to identify the current status of the VM and to Start or Stop it.  | |
+| settings.azVmrg | The Azure VM ResourceGrop. Will be used to identify the current status of the VM and to Start or Stop it.  | |
+| settings.cron | The Cron string. Will be used to identify the time to schedule the deployment. (UTC)  | |
 
 ## Advanced settings
 | Name | Description | Default value |

@@ -48,5 +48,6 @@
 **NOTE:** "cron" - It meant that the environment will deploy at 21:00 PM UTC. Please refer to [this description](settings.md) to find more details.
 
 8. Run [Update FSC-PS files](UpdateFSC-PS.md)
-9. Run Deploy workflow and Selec
+9. Run Deploy workflow and Select the exact environment from the dropdown field.
+![Deploy](/Scenarios/images/3a.png)
 [back](/README.md)
