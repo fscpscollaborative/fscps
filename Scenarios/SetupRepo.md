@@ -10,7 +10,7 @@
 ![Added repo](/Scenarios/images/1e.png)
 4. Generate REPO_TOKEN secret.
 ![Create_Token](/Scenarios/images/1c.png)
-![Create_Secret](/Scenarios/images/4d.png)
+![Create_Secret](/Scenarios/images/1d.png)
 1. Under **Actions** select the **(IMPORT)** workflow and choose **Run workflow**.
 1. In the **Direct download URL** field, paste in the direct download URL of the source code 7z archive.
 1. Wait a workflow completion
