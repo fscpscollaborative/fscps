@@ -2,7 +2,7 @@
 *Prerequisites:* 
 - A GitHub account.
 
-![Created repo](/Scenarios/images/2a.png)
+![Created repo](/Scenarios/images/1f.png)
 1. Done [scenario 1](SetupRepo.md)
 
 2. Update settings file in the .FSC-PS folder.
@@ -30,6 +30,7 @@ Please find setup details [here](settings.md)
 Please find setup details [here](settings.md)
 
 4. Execute CI workflow
+![Execute CI](/Scenarios/images/2a.png)
 
 ---
 [back](/README.md)
