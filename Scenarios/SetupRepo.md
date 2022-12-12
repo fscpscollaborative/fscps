@@ -8,7 +8,9 @@
 1. Enter **appName** as repository name and select **Create Repository from template**.
 ![Add repo](/Scenarios/images/1b.png)
 ![Added repo](/Scenarios/images/1e.png)
-4. Generate REPO_TOKEN secret.
+1. Execute
+[Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+1. Generate REPO_TOKEN secret.
 ![Create_Token](/Scenarios/images/1c.png)
 ![Create_Secret](/Scenarios/images/1d.png)
 1. Under **Actions** select the **(IMPORT)** workflow and choose **Run workflow**.
