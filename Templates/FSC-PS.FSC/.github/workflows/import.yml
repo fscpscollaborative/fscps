@@ -7,8 +7,11 @@ on:
         description: Direct download URL to the sources archive
         required: false
         default: ''
+        
 permissions:
-  contents: read
+  pull-requests: write
+  issues: write
+  repository-projects: write
 
 defaults:
   run:
@@ -51,7 +54,9 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-      
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+          
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
    
