@@ -2,14 +2,16 @@
 *Prerequisites:* 
 - A GitHub account.
 
-![Created repo](/Scenarios/images/1f.png)
+![Created repo](/Scenarios/images/2b.png)
 1. Done [scenario 1](SetupRepo.md)
 
 2. Update settings file in the .FSC-PS folder.
 ~~~javascript
 {
     "packageName": "ContosoExtension",
-    "buildVersion": "10.0.29"
+    "buildVersion": "10.0.29",
+    "ciBranches": "main,release",
+    "useLocalNuGetStorage":true
 }
 ~~~
 Please find setup details [here](settings.md)
@@ -32,5 +34,10 @@ Please find setup details [here](settings.md)
 4. Execute CI workflow
 ![Execute CI](/Scenarios/images/2a.png)
 
+4. Waiting for result
+![Execution done](/Scenarios/images/2c.png)
+
+5. Setup security rules for branch
+![Execution done](/Scenarios/images/2d.png)
 ---
 [back](/README.md)
