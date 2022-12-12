@@ -17,7 +17,7 @@
     "lcsClientId": "892da30e-e292-437a-b1aa-ec2ecff7b21f",
     "lcsUsernameSecretname": "AZ_TENANT_USERNAME",
     "lcsPasswordSecretname": "AZ_TENANT_PASSWORD",
-    "azTenantId": "dfc1b5c3-94fc-4abc-b8fb-09484816c011",
+    "azTenantId": "dfc1b5c3-94fc-4abc-b8fb-09484816c022",
     "azClientId" : "492b2997-68ed-4bca-95c5-306cdedf288a",
     "azClientsecretSecretname" : "AZ_CLIENTSECRET",
     "buildVersion": "10.0.28"
@@ -62,6 +62,7 @@ Please find setup details [here](settings.md)
     }
 ]
 ~~~
+**NOTE** If some of your environment is located in the another tenant, you can specify these variables inside the "settings" group of the specific enironment.
 Please find setup details [here](settings.md#basic-settings)
 
 4. Update versions file
@@ -97,6 +98,7 @@ Please find setup details [here](settings.md#basic-settings)
     }
 ]
 ~~~
+**NOTE** If you have some specific versions different with version.default, you can override them inside the versions.json file
 Please find setup details [here](settings.md)
 
 

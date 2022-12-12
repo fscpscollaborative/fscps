@@ -1,9 +1,8 @@
-# #4 Setup CI/CD
+# #5 Setup CD
 *Prerequisites:* 
 - A GitHub account.
-- An Azure account.
+- An AAD account.
 - An LCS access.
-- A NuGet feed.
 
 
 
