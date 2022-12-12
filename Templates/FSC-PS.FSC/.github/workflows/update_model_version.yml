@@ -58,7 +58,7 @@ jobs:
             checkStatus: false
             pullRequestNumber: ${{ steps.cpr.outputs.pull-request-number }}
             timeoutSeconds: 500
-            token: ${{ secrets.REPO_SCOPED_TOKEN }}
+            token: ${{ secrets.REPO_TOKEN }}
             sha: ${{ steps.cpr.outputs.pull-request-head-sha }}
        
       - name: Delete temp branch
