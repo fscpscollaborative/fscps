@@ -5,7 +5,7 @@
 ![Created repo](/Scenarios/images/2b.png)
 1. Done [scenario 1](SetupRepo.md)
 
-2. Update settings file in the .FSC-PS folder.
+2. Update settings.json file in the .FSC-PS folder.
 ~~~javascript
 {
     "type":"FSCM",
