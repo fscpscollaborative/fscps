@@ -4,6 +4,7 @@
 
 ![Created repo](/Scenarios/images/2b.png)
 1. Done [scenario 1](SetupRepo.md)
+
 2. Update settings file in the .FSC-PS folder.
 ~~~javascript
 {
@@ -14,6 +15,7 @@
 }
 ~~~
 Please find setup details [here](settings.md)
+
 3. Update versions file
 ~~~javascript
 [
@@ -28,13 +30,18 @@ Please find setup details [here](settings.md)
 ~~~
 **NOTE** If you have some specific versions different with version.default, you can override them inside the versions.json file
 Please find setup details [here](settings.md)
+
 4. Execute
 [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
+
 5. Execute CI workflow
 ![Execute CI](/Scenarios/images/2a.png)
+
 6. Waiting for result
 ![Execution done](/Scenarios/images/2c.png)
+
 7. Setup security rules for branch
 ![Execution done](/Scenarios/images/2d.png)
+
 ---
 [back](/README.md)
