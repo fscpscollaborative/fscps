@@ -2,7 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/FnSCM-Go-Actions/FileContentIndex
-/.vs/FnSCM-Go-Actions/v17
 /.vs
 .suo
