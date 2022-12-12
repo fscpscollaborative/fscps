@@ -40,7 +40,7 @@
     "data": {
       "PlatformVersion": "7.0.6592.110",
       "AppVersion": "10.0.1362.96",
-      "retailSDKVersion": "10.0.1362.96",
+      "retailSDKVersion": "10.0.1362.77",
       "retailSDKURL": ""
     }
   },
@@ -49,7 +49,7 @@
     "data": {
       "PlatformVersion": "7.0.6651.87",
       "AppVersion": "10.0.1406.72",
-      "retailSDKVersion": "10.0.1406.72",
+      "retailSDKVersion": "10.0.1406.69",
       "retailSDKURL": ""
     }
   }
