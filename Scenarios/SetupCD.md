@@ -26,6 +26,7 @@
 ~~~
 
 **NOTE:** lcsProjectId - Paste the LCS projectID. Please refer to [this description](Scenarios/settings.md) to find more details.
+
 6. Login to the LCS and deploy new or use the existing one environment.
 7. Update .\FSC-PS\environments.json file
 ~~~javascript
