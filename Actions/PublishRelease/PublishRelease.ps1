@@ -77,6 +77,15 @@ try {
     $tag = "v"+"$($github.Payload.inputs.versionNumber)"+"_"+"$($settings.currentBranch)"
 
     Write-Output "Tag is : $tag"
+
+
+    $repoOwner = ""
+    try{
+        $repoOwner = "$($github.Payload.organization.login)"
+    }
+    catch{
+        $repoOwner = "$($github.Payload.sender.login)"
+    }
     $release = @{
         AccessToken = "$repoTokenSecretName"
         TagName = "$tag"
@@ -85,7 +94,7 @@ try {
         Draft = "$($github.Payload.inputs.draft)" -eq "Y"
         PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
         RepositoryName = "$($github.Payload.repository.name)"
-        RepositoryOwner = "$($github.Payload.organization.login)"
+        RepositoryOwner = $repoOwner
     }
     Write-Output "Release: "
     $release 
