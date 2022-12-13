@@ -16,7 +16,7 @@ Usage scenarios:
 4. [Set up your own GitHub runner to increase build performance](Scenarios/SelfHostedGitHubRunner.md)
 5. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
 6. [Add environment from the different tenant](Scenarios/AddEnvironmentFromTheDifferentTenant.md)
-
+7. [D365FSC. Include Test model into the deployable package ](Scenarios/IncludeTestModel.md)
 
 **Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
 # This project

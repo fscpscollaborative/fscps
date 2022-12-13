@@ -18,7 +18,6 @@ try {
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable
     $outSettings = $settings
 
-
     #Load secrets from github
     $github = (Get-ActionContext)
     try {
