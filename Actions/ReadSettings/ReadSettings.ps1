@@ -109,7 +109,10 @@ try {
                         $check = $true
                     }
                     else {
-                        $check = $false
+                        if($github.EventName -eq "schedule")
+                        {
+                            $check = $false
+                        }
                     }
                 }
                 catch { 
@@ -170,7 +173,10 @@ try {
                         $check = $true
                     }
                     else {
-                        $check = $false
+                        if(($github.EventName -eq "schedule") -or ($dynamicsEnvironment -eq "*"))
+                        {
+                            $check = $false
+                        }
                     }
                 }
                 catch { 
