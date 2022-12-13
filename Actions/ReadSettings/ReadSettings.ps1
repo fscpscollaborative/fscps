@@ -108,6 +108,9 @@ try {
                     {
                         $check = $true
                     }
+                    else {
+                        $check = $false
+                    }
                 }
                 catch { 
                     
@@ -165,6 +168,9 @@ try {
                     if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
                     {
                         $check = $true
+                    }
+                    else {
+                        $check = $false
                     }
                 }
                 catch { 
