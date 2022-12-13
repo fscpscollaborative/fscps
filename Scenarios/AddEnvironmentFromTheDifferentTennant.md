@@ -12,7 +12,7 @@
 - AZ_ANOTHER_CLIENTSECRET - Set the ClientSecret of the registered application.
 
 2. Update .\FSC-PS\environments.json file with the folowing settings:
-~~~javascipt
+~~~javascript
 [
     .....,
     {
@@ -20,13 +20,13 @@
         "settings":{
             "buildVersion": "10.0.27",
             "sourceBranch": "release",
-            "lcsEnvironmentId": "26578974-0040-4d48-a09f-ff2235042e2c",
+            "lcsEnvironmentId": "{SetLCSEnvironmemntID}",
             "lcsProjectId": 1234568,
-            "lcsClientId": "110ebf68-a86d-4392-ae38-57b0040ee3fc",
+            "lcsClientId": "{SetAzureRegisteredAppId-GUID}",
             "lcsUsernameSecretname": "AZ_ANOTHER_TENANT_USERNAME",
             "lcsPasswordSecretname": "AZ_ANOTHER_TENANT_PASSWORD",
-            "azTenantId": "a86db6ec-0a2a-4f60-8ca1-eeaab338ae38",
-            "azClientId" : "110ebf68-a86d-4392-ae38-57b0040ee3fc",
+            "azTenantId": "{SetAnotherTenantId-GUID}",
+            "azClientId" : "{SetAzureRegisteredAppId-GUID}",
             "azClientsecretSecretname" : "AZ_ANOTHER_CLIENTSECRET",
             "azVmname" : "ClientContoso-UAT-1",
             "azVmrg" : "ClientContoso-UAT",

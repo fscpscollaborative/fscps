@@ -411,6 +411,40 @@ function GetHeader {
     return $headers
 }
 
+function Set-EnvironmentSecret {
+    Param(
+        [string] $token,
+        [string] $environment_name,
+        [string] $secret_name,
+        [string] $secret_value,
+        [string] $repository = $ENV:GITHUB_REPOSITORY,
+        [string] $api_url = $ENV:GITHUB_API_URL
+    )
+    $github = (Get-ActionContext)
+    $GetPublicKey = @{
+        Uri     = "$api_url/repos/$repository/actions/secrets/public-key"
+        Headers = @{
+            Authorization = "Bearer $($token)"
+        }
+        Method = "GET"
+    }
+    $GitHubPublicKey = Invoke-RestMethod @GetPublicKey
+    $putParams = @{
+        encrypted_value = ConvertTo-SodiumEncryptedString -Text $secret_value -PublicKey $GitHubPublicKey.key;
+        key_id = $GitHubPublicKey.key_id;
+    }
+
+    $SetEnvSecret = @{
+        Uri     = "$api_url/repositories/$($github.Payload.repository.id)/environments/$environment_name/secrets/$secret_name"
+        Headers = @{
+            Authorization = "Token $($token)"
+        }
+        Method = "PUT"
+        Body = ($putParams | ConvertTo-Json)
+    }
+    Invoke-RestMethod @SetEnvSecret
+}
+
 function GetReleaseNotes {
     Param(
         [string] $token,

@@ -30,7 +30,9 @@ try {
         OutputError $_.Exception.Message
     }
     
-
+    ##add last commit
+    $secrets += "LAST_COMMIT"
+    
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
         $secret = $_

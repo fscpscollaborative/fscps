@@ -51,6 +51,25 @@ try {
         $DynamicsVersion = $settings.buildVersion
     }
 
+    
+    $latestCommitId = invoke-git rev-parse --short $settings.sourceBranch -returnValue
+    
+    
+    if($workflowName -eq "(DEPLOY)")
+    {
+        if($latestCommitId -ne $LAST_COMMIT)
+        {
+            Set-EnvironmentSecret -token $token -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
+        }
+        else {
+            OutputInfo "Environment $($EnvironmentName) has latest code. Don`t need to deploy."
+            return;
+        }
+    
+    }
+
+
+
     installModules @("AZ","Azure.Storage","d365fo.tools")
 
     $version = Get-VersionData -sdkVersion $DynamicsVersion

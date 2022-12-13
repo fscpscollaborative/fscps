@@ -308,7 +308,7 @@ function ReadSettings {
         "ciBranches"                             = "main,release"
         "deployScheduleCron"                     = "1 * * * *"
         "deploy"                                 = $false
-        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
+        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName', 'LAST_COMMIT')
 
     }
 

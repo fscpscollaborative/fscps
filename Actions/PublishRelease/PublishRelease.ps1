@@ -79,13 +79,6 @@ try {
     Write-Output "Tag is : $tag"
 
 
-    $repoOwner = ""
-    try{
-        $repoOwner = "$($github.Payload.organization.login)"
-    }
-    catch{
-        $repoOwner = "$($github.Payload.sender.login)"
-    }
     $release = @{
         AccessToken = "$repoTokenSecretName"
         TagName = "$tag"
@@ -94,14 +87,13 @@ try {
         Draft = "$($github.Payload.inputs.draft)" -eq "Y"
         PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
         RepositoryName = "$($github.Payload.repository.name)"
-        RepositoryOwner = $repoOwner
+        RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
     }
     Write-Output "Release: "
     $release 
     Write-Output "Artifacts path: $artifactsPath"
 
     Publish-GithubRelease @release -Artifact "$artifactsPath"
-
 }
 catch {
     OutputError -message $_.Exception.Message

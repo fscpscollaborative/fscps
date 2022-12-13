@@ -23,7 +23,7 @@ try {
     else {
         $verstr = $branch
     }
-
+    Install-Module -Name PSSodium -Force
     Write-Big -str "a$verstr"
 
      #Load REPO_TOKEN secret from github
