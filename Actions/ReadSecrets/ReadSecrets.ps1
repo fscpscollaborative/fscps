@@ -31,8 +31,8 @@ try {
     }
     
     ##add last commit
-    $secrets += "LAST_COMMIT"
-    
+    $secrets += ",LAST_COMMIT"
+
     [System.Collections.ArrayList]$secretsCollection = @()
     $secrets.Split(',') | ForEach-Object {
         $secret = $_
