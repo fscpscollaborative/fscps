@@ -60,6 +60,7 @@ try {
         try {
             if($latestCommitId -ne $env:LAST_COMMIT)
             {
+                Install-Module -Name PSSodium -Force
                 Set-EnvironmentSecret -token $repoTokenSecretName -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
             }
             else {
