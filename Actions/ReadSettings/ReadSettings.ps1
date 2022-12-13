@@ -46,7 +46,7 @@ try {
 
     @($envsFile | ForEach-Object { 
         try {
-            $lastCommitedDate = Get-Date -UnixTimeSeconds  $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+            $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
             OutputInfo "Environment $($_.Name). Latest branch commit at: $($lastCommitedDate)"
             $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
             OutputInfo "Environment $($_.Name). Latest deployed commit at: $($deployedDate)"
