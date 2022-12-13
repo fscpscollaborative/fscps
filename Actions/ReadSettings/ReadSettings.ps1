@@ -99,26 +99,6 @@ try {
                 }
             }
 
-            if($settings.deployOnlyNew)
-            {
-                try {
-                    $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
-                    $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
-                    if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
-                    {
-                        $check = $true
-                    }
-                    else {
-                        if($github.EventName -eq "schedule")
-                        {
-                            $check = $false
-                        }
-                    }
-                }
-                catch { 
-                    
-                }
-            }
             if($check) {$deployEns.Add($env.Name)}
         }
         if($settings.sourceBranch){
@@ -148,20 +128,11 @@ try {
     }
     else    
     {
-
         $environments = @($envsFile | ForEach-Object { 
             $check = $true
             if($_.settings.PSobject.Properties.name -match "deploy")
             {
                 $check = $_.settings.deploy
-            }
-            
-            if($check)
-            {
-                if($github.EventName -eq "schedule")
-                {
-                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now) -WithDelayMinutes 29
-                }
             }
             if($settings.deployOnlyNew)
             {
@@ -183,6 +154,14 @@ try {
                     
                 }
             }
+            if($check)
+            {
+                if($github.EventName -eq "schedule")
+                {
+                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now) -WithDelayMinutes 29
+                }
+            }
+            
             if($check)
             {
                 $_.Name
