@@ -57,7 +57,7 @@ try {
     
     if($workflowName -eq "(DEPLOY)")
     {
-        if($latestCommitId -ne $LAST_COMMIT)
+        if($latestCommitId -ne $lastCommit)
         {
             Set-EnvironmentSecret -token $token -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
         }
