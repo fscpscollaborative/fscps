@@ -16,6 +16,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
+
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
     $LastExitCode = 0
@@ -52,20 +53,23 @@ try {
     }
 
     
-    $latestCommitId = invoke-git rev-parse --short $settings.sourceBranch -returnValue
-    
     if($workflowName -eq "(DEPLOY)")
     {
+        $latestCommitId = invoke-git rev-parse --short $settings.sourceBranch -returnValue
         OutputInfo "Last commit $($env:LAST_COMMIT)"
-        if($latestCommitId -ne $env:LAST_COMMIT)
-        {
-            Set-EnvironmentSecret -token $token -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
+        try {
+            if($latestCommitId -ne $env:LAST_COMMIT)
+            {
+                Set-EnvironmentSecret -token $repoTokenSecretName -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
+            }
+            else {
+                OutputInfo "Environment $($EnvironmentName) has latest code. Don`t need to deploy."
+                return;
+            }
         }
-        else {
-            OutputInfo "Environment $($EnvironmentName) has latest code. Don`t need to deploy."
-            return;
+        catch {
+            OutputInfo $_.Exception.ToString()    
         }
-    
     }
 
 
@@ -333,6 +337,7 @@ try {
                 Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
                 Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
                 Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
+
 
                 $artifacts = Get-ChildItem $artifactDirectory
                 $artifactsList = $artifacts.FullName -join ","
