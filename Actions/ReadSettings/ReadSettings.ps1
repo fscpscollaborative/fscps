@@ -71,10 +71,8 @@ try {
     {
         #merge environment settings into current Settings
         $dEnvCount = $dynamicsEnvironment.Split(",").Count
-        $deployEns = @()
         ForEach($env in $envsFile)
         {
-            $check = $false
             if($dEnvCount -gt 1)
             {
                 $dynamicsEnvironment.Split(",") | ForEach-Object {
@@ -98,8 +96,6 @@ try {
                     MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
                 }
             }
-
-            if($check) {$deployEns.Add($env.Name)}
         }
         if($settings.sourceBranch){
             $sourceBranch = $settings.sourceBranch;
@@ -109,14 +105,13 @@ try {
             $sourceBranch = $settings.currentBranch;
         }
 
-
         if($dEnvCount -gt 1)
         {
-            $environmentsJSon = $($deployEns.Split(",")  | ConvertTo-Json -compress)
+            $environmentsJSon = $($dynamicsEnvironment.Split(",")  | ConvertTo-Json -compress)
         }
         else
         {
-            $environmentsJson = '["'+$($deployEns).ToString()+'"]'
+            $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
         }
 
 
