@@ -445,6 +445,55 @@ function Set-EnvironmentSecret {
     Invoke-RestMethod @SetEnvSecret
 }
 
+function Get-LatestDeployedCommit
+{
+    Param(
+        [string] $token,
+        [string] $repoName = "$env:GITHUB_REPOSITORY",
+        [string] $repoOwner = "$Env:GITHUB_REPOSITORY_OWNER",
+        [string] $environmentName = ""
+    )
+    begin{
+$query = @"
+{
+    repository(name: "$($repoName)", owner: "$($repoOwner)") {
+        deployments(environments: "$($environmentName)", orderBy: {field: CREATED_AT, direction: DESC}, first: 100) {
+        nodes {
+            state
+            commitOid
+            createdAt
+            environment
+            commit {
+            abbreviatedOid
+            }
+        }
+        }
+    }
+    }
+"@
+    }
+    process{
+        $body = @{query=$query} | ConvertTo-Json
+
+        $graphQL = @{
+            Uri     = "https://api.github.com/graphql"
+            Headers = @{
+                Authorization = "Token $token"
+            }
+            Method = "POST"
+            Body = $body
+        }
+        $data = Invoke-RestMethod @graphQL
+
+        $resArray = @{}
+        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $resArray.Add( $_.state, $_.commit.abbreviatedOid) }
+        if($resArray.Count -gt 0)
+        {
+           $resArray.GetEnumerator()[0]
+        }
+    }
+    end{}
+}
 function GetReleaseNotes {
     Param(
         [string] $token,

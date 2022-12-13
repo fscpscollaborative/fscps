@@ -115,6 +115,17 @@ try {
                      $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now) -WithDelayMinutes 29
                 }
             }
+            if($settings.deployOnlyNew)
+            {
+                $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
+                
+                $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
+                
+                if($result)
+                {
+                    $check = $latestCommitId -ne $result.Value
+                }
+            }
             if($check)
             {
                 $_.Name
