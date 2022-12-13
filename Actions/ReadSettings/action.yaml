@@ -8,7 +8,7 @@ inputs:
   token:
     description: The GitHub token running the action
     required: false
-    default: ${{ github.token }}
+    default: ${{ secrets.REPO_TOKEN }}
   version:
     description: The Dynamics Application Version
     required: true
