@@ -43,9 +43,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: |
-        $token = If (${{ secrets.REPO_TOKEN }} != '') {"${{ secrets.REPO_TOKEN }}"} Else {"${{ inputs.token }}"}
-        try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsEnvironment '${{ inputs.environment }}' -dynamicsVersion '${{ inputs.version }}' -token "$($token)"} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsEnvironment '${{ inputs.environment }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: readsettings
       shell: PowerShell
 branding:
