@@ -8,7 +8,7 @@ inputs:
   token:
     description: The GitHub token running the action
     required: false
-    default: ${{ secrets.REPO_TOKEN }}
+    default: ${{ github.token }}
   version:
     description: The Dynamics Application Version
     required: true
@@ -43,7 +43,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsEnvironment '${{ inputs.environment }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ inputs.token }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
+    - run: try { ${{ github.action_path }}/ReadSettings.ps1 -actor '${{ inputs.actor }}' -dynamicsEnvironment '${{ inputs.environment }}' -dynamicsVersion '${{ inputs.version }}' -token '${{ secrets.REPO_TOKEN }}'} catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message))"; exit 1 }
       id: readsettings
       shell: PowerShell
 branding:
