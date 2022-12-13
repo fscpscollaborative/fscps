@@ -44,6 +44,20 @@ try {
         }
     }
 
+
+    @($envsFile | ForEach-Object { 
+        try {
+            $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
+            OutputInfo "Environment $($_.Name). Latest branch commit is: $($latestCommitId)"
+            $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
+            OutputInfo "Environment $($_.Name). Latest deployed commit is: $($result.Value)"
+        }
+        catch { 
+
+        }
+    })
+
+
     $repoType = $settings.type
     if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
     {
@@ -120,17 +134,7 @@ try {
     }
     else    
     {
-        $environments = @($envsFile | ForEach-Object { 
-            try {
-                $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
-                OutputInfo "Environment $($_.Name). Latest branch commit is: $($latestCommitId)"
-                $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
-                OutputInfo "Environment $($_.Name). Latest deployed commit is: $($result.Value)"
-            }
-            catch { 
 
-            }
-        })
         $environments = @($envsFile | ForEach-Object { 
             $check = $true
             if($_.settings.PSobject.Properties.name -match "deploy")
