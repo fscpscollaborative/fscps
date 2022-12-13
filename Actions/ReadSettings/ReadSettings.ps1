@@ -49,8 +49,10 @@ try {
     {
         #merge environment settings into current Settings
         $dEnvCount = $dynamicsEnvironment.Split(",").Count
+        $deployEns = @()
         ForEach($env in $envsFile)
         {
+            $check = $false
             if($dEnvCount -gt 1)
             {
                 $dynamicsEnvironment.Split(",") | ForEach-Object {
@@ -74,6 +76,22 @@ try {
                     MergeCustomObjectIntoOrderedDictionary -dst $settings -src $env.settings
                 }
             }
+
+            if($settings.deployOnlyNew)
+            {
+                try {
+                    $result = Get-LatestDeployedCommit -token $token -environmentName $env.Name
+                
+                    $latestCommitId = invoke-git rev-parse --short $env.settings.sourceBranch -returnValue
+                    
+                    if($result)
+                    {
+                        $check = $latestCommitId -eq $result.Value
+                    }
+                }
+                catch { }
+            }
+            if($check) {$deployEns.Add($env.Name)}
         }
         if($settings.sourceBranch){
             $sourceBranch = $settings.sourceBranch;
@@ -83,13 +101,14 @@ try {
             $sourceBranch = $settings.currentBranch;
         }
 
+
         if($dEnvCount -gt 1)
         {
-            $environmentsJSon = $($dynamicsEnvironment.Split(",")  | ConvertTo-Json -compress)
+            $environmentsJSon = $($deployEns.Split(",")  | ConvertTo-Json -compress)
         }
         else
         {
-            $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
+            $environmentsJson = '["'+$($deployEns).ToString()+'"]'
         }
 
 
@@ -117,14 +136,17 @@ try {
             }
             if($settings.deployOnlyNew)
             {
-                $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
+                try {
+                    $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
                 
-                $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
-                
-                if($result)
-                {
-                    $check = $latestCommitId -ne $result.Value
+                    $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
+                    
+                    if($result)
+                    {
+                        $check = $latestCommitId -ne $result.Value
+                    }
                 }
+                catch { }
             }
             if($check)
             {
