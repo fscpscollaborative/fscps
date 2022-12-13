@@ -445,7 +445,7 @@ function Set-EnvironmentSecret {
     Invoke-RestMethod @SetEnvSecret
 }
 
-function Get-LatestDeployedCommit
+function Get-LatestDeployedDate
 {
     Param(
         [string] $token,
@@ -486,11 +486,9 @@ $query = @"
         $data = Invoke-RestMethod @graphQL
 
         $result = ""
-        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $result += ($_.commit.abbreviatedOid + ",") }
-        if($result.split(",").Count -gt 0)
-        {
-           return $result.split(",").Item(0)
-        }
+        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $result = ($_.createdAt) }
+
+        return $result
     }
     end{}
 }

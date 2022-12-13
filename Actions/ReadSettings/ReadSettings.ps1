@@ -44,13 +44,19 @@ try {
         }
     }
 
-
     @($envsFile | ForEach-Object { 
         try {
-            $latestCommitId = invoke-git rev-parse --short "origin/$($_.settings.sourceBranch)" -returnValue
-            OutputInfo "Environment $($_.Name). Latest branch commit is: $($latestCommitId)"
-            $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
-            OutputInfo "Environment $($_.Name). Latest deployed commit is: $($result)"
+            $lastCommitedDate = Get-Date -UnixTimeSeconds  $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+            OutputInfo "Environment $($_.Name). Latest branch commit at: $($lastCommitedDate)"
+            $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
+            OutputInfo "Environment $($_.Name). Latest deployed commit at: $($deployedDate)"
+            if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
+            {
+                OutputInfo "Deploy $($_.Name)"
+            }
+            else {
+                OutputInfo "Do not deploy $($_.Name)"
+            }
         }
         catch { 
             OutputInfo $_.Exception.ToString()
@@ -93,17 +99,7 @@ try {
 
             if($settings.deployOnlyNew)
             {
-                try {
-                    $result = Get-LatestDeployedCommit -token $token -environmentName $env.Name
-                
-                    $latestCommitId = invoke-git rev-parse --short $env.settings.sourceBranch -returnValue
-                    
-                    if($result)
-                    {
-                        $check = $latestCommitId -eq $result.Value
-                    }
-                }
-                catch { }
+              
             }
             if($check) {$deployEns.Add($env.Name)}
         }
@@ -151,15 +147,7 @@ try {
             }
             if($settings.deployOnlyNew)
             {
-                try {
-                    $latestCommitId = invoke-git rev-parse --short $_.settings.sourceBranch -returnValue
-                    $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
-                    if($result)
-                    {
-                        $check = $latestCommitId -ne $result.Value
-                    }
-                }
-                catch { }
+
             }
             if($check)
             {
