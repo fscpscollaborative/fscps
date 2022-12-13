@@ -54,9 +54,9 @@ try {
     
     $latestCommitId = invoke-git rev-parse --short $settings.sourceBranch -returnValue
     
-    
     if($workflowName -eq "(DEPLOY)")
     {
+        OutputInfo "Last commit $($env:LAST_COMMIT)"
         if($latestCommitId -ne $env:LAST_COMMIT)
         {
             Set-EnvironmentSecret -token $token -secret_name "LAST_COMMIT" -environment_name $EnvironmentName -secret_value $latestCommitId
