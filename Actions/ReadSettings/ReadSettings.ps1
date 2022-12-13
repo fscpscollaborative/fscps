@@ -99,7 +99,17 @@ try {
 
             if($settings.deployOnlyNew)
             {
-              
+                try {
+                    $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
+                    $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
+                    if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
+                    {
+                        $check = $true
+                    }
+                }
+                catch { 
+                    
+                }
             }
             if($check) {$deployEns.Add($env.Name)}
         }
@@ -147,7 +157,17 @@ try {
             }
             if($settings.deployOnlyNew)
             {
-
+                try {
+                    $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
+                    $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
+                    if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
+                    {
+                        $check = $true
+                    }
+                }
+                catch { 
+                    
+                }
             }
             if($check)
             {
