@@ -98,6 +98,8 @@ jobs:
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.1
         id: runpipeline
+        env:
+          LAST_COMMIT: ${{ secrets.LAST_COMMIT }} 
         with:
           type: ${{ needs.Initialization.outputs.type}}
           environment_name: ${{ matrix.environment }}
