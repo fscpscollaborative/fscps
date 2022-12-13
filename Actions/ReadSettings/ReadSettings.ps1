@@ -130,7 +130,7 @@ try {
             catch { 
 
             }
-        }
+        })
         $environments = @($envsFile | ForEach-Object { 
             $check = $true
             if($_.settings.PSobject.Properties.name -match "deploy")
