@@ -50,7 +50,7 @@ try {
             $latestCommitId = invoke-git rev-parse --short "origin/$($_.settings.sourceBranch)" -returnValue
             OutputInfo "Environment $($_.Name). Latest branch commit is: $($latestCommitId)"
             $result = Get-LatestDeployedCommit -token $token -environmentName $_.Name
-            OutputInfo "Environment $($_.Name). Latest deployed commit is: $($result.Value)"
+            OutputInfo "Environment $($_.Name). Latest deployed commit is: $($result)"
         }
         catch { 
             OutputInfo $_.Exception.ToString()

@@ -485,11 +485,11 @@ $query = @"
         }
         $data = Invoke-RestMethod @graphQL
 
-        $resArray = @{}
-        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $resArray.Add( $_.state, $_.commit.abbreviatedOid) }
-        if($resArray.Count -gt 0)
+        $result = ""
+        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $result += ($_.commit.abbreviatedOid + ",") }
+        if($result.split(",").Count -gt 0)
         {
-           $resArray.GetEnumerator()[0]
+           return $result.split(",").Item(0)
         }
     }
     end{}
