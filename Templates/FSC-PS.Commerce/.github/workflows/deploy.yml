@@ -41,6 +41,7 @@ jobs:
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.1
         with:
+          token: ${{ secrets.REPO_TOKEN }}
           environment: ${{ inputs.environment }}
 
       - name: Check for updates to FSC-PS system files
