@@ -29,6 +29,7 @@ When running a workflow or a local script, the settings are applied by reading o
 | exportModel | FSC specific. Option to generate axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
 | retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
 | retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
+| deployOnlyNew | Deploy environments while schedule only if the related environment branch has changes yongest then latest deploy  | true |
 
 ### NuGet settings
 The custom NuGet repository settings contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
@@ -96,6 +97,9 @@ The repository settings are only read from the repository settings file (.github
 | settings.azVmname | The Azure VM name. Will be used to identify the current status of the VM and to Start or Stop it.  | |
 | settings.azVmrg | The Azure VM ResourceGrop. Will be used to identify the current status of the VM and to Start or Stop it.  | |
 | settings.cron | The Cron string. Will be used to identify the time to schedule the deployment. (UTC)  | |
+| settings.deploy | Deploy environment while schedule  | true |
+| settings.deployOnlyNew | Deploy environment while schedule only if the related branch has changes yongest then latest deploy  | true |
+| settings.includeTestModel | FSC specific. Include unit test models into the package. | false |
 
 ## Advanced settings
 | Name | Description | Default value |
@@ -103,7 +107,7 @@ The repository settings are only read from the repository settings file (.github
 | versioningStrategy |	under development | 0 |
 | repoTokenSecretName | Specifies the name (**NOT the secret**) of the REPO_TOKEN secret. Default is REPO_TOKEN. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update FSC-PS System Files workflow. Read [this](UpdateFSC-PSSystemFiles.md) for more information. | REPO_TOKEN |
 | failOn | Specifies what the pipeline will fail on. Allowed values are none, warning and error | error |
-| codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCICD.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
+| codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCD.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
 
 ---
 [back](/README.md)
