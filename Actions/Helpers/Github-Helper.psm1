@@ -881,10 +881,6 @@ function Get-ActionContext {
     $context
 }
 
-<#
-.SYNOPSIS
-Returns details of the repository, including owner and repo name.
-#>
 function Get-ActionRepo {
     [CmdletBinding()]
     param()
@@ -900,11 +896,6 @@ function Get-ActionRepo {
     $repo
 }
 
-<#
-.SYNOPSIS
-Returns details of the issue associated with the workflow trigger,
-including owner and repo name, and the issue (or PR) number.
-#>
 function Get-ActionIssue {
     [CmdletBinding()]
     param()
@@ -1635,14 +1626,6 @@ $chars = @{
  | |  | |/ _ \ \ / /
  | |__| |  __/\ V / 
  |_____/ \___| \_(_)
-'@.Split("`n")
-"a" = @'
- ______                  _____          __              _____ _ _   _    _       _       
-|   ___|                / ____|        / _|            / ____(_) | | |  | |     | |      
-|  |__  _  ___   ______| |  __  ___   | |_ ___  _ __  | |  __ _| |_| |__| |_   _| |__    
-|   __|| |/_  \ |______| | |_ |/ _ \  |  _/ _ \| '__| | | |_ | | __|  __  | | | | '_ \   
-|  |   | |  | |        | |__| | (_) | | || (_) | |    | |__| | | |_| |  | | |_| | |_) |  
-|__|   | |  | |         \_____|\___/  |_| \___/|_|     \_____|_|\__|_|  |_|\__,_|_.__/   
 '@.Split("`n")
 }
 

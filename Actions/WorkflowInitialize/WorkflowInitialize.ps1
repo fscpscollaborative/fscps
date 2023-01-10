@@ -24,7 +24,7 @@ try {
         $verstr = $branch
     }
     Install-Module -Name PSSodium -Force
-    Write-Big -str "a$verstr"
+    Write-Big -str "$verstr"
 
      #Load REPO_TOKEN secret from github
      $github = (Get-ActionContext)

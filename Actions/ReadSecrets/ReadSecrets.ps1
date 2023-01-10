@@ -58,14 +58,6 @@ try {
         }
     }
 
-    if ($outSettings.ContainsKey('appDependencyProbingPaths')) {
-        $outSettings.appDependencyProbingPaths | ForEach-Object {
-            if ($_.PsObject.Properties.name -eq "AuthTokenSecret") {
-                $_.authTokenSecret = GetSecret -secret $_.authTokenSecret -keyVaultName $keyVaultName
-            } 
-        }
-    }
-
     if ($secretsCollection) {
         Write-Host "The following secrets was not found: $(($secretsCollection | ForEach-Object { 
             $secretSplit = @($_.Split('='))
