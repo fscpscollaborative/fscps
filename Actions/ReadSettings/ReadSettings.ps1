@@ -186,8 +186,6 @@ try {
         $settings.retailSDKURL = $ver.retailSDKURL
     }
 
-
-
     $outSettings = @{}
     $getSettings | ForEach-Object {
         $setting = $_.Trim()

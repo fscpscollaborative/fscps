@@ -20,10 +20,7 @@ Set-StrictMode -Version 2.0
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
-    $workflowName = $env:GITHUB_WORKFLOW
-    $baseFolder = $ENV:GITHUB_WORKSPACE
     $github = (Get-ActionContext)
-
 
     $github.Payload.inputs
 
@@ -32,10 +29,6 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-
-    $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
-    $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
-
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -56,20 +49,14 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-    $DynamicsVersion = $settings.buildVersion
-
-    $versions = Get-Versions
-
     if($settings.sourceBranch -eq "")
     {
         $settings.sourceBranch = $settings.currentBranch
     }
 
-
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
-    $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
     
     $name = "$($github.Payload.inputs.name)" -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."

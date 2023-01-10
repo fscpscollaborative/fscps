@@ -12,19 +12,9 @@ try {
 
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
-    $owner = $ap[$ap.Count-4]
 
-    if ($owner -ne "microsoft") {
-        $verstr = "d"
-    }
-    elseif ($branch -eq "preview") {
-        $verstr = "p"
-    }
-    else {
-        $verstr = $branch
-    }
     Install-Module -Name PSSodium -Force
-    Write-Big -str "$verstr"
+    Write-Big -str "$branch"
 
      #Load REPO_TOKEN secret from github
      $github = (Get-ActionContext)
