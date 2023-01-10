@@ -2,31 +2,31 @@
 Check for updates to FSC-PS system files 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
-### directCommit (Default: 'N') 
- Direct Commit (Y/N) 
+### type (Default: 'FSCM') 
+ Repo type 
 
 ### update (Default: 'N') 
  Set this input to Y in order to update FSC-PS System Files if needed 
 
+### templateUrl (Default: '') 
+ URL of the template repository (default is the template repository used to create the repository) 
+
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
-
-### templateBranch (Default: '') 
- Branch in template repository to use for the update (default is the default branch) 
-
-### type (Default: 'FSCM') 
- Repo type 
-
-### actor (Default: '${{ github.actor }}') 
- The GitHub actor running the action 
 
 ### secretsJson (Default: '') 
  Secrets from repository in compressed Json format 
 
-### templateUrl (Default: '') 
- URL of the template repository (default is the template repository used to create the repository) 
+### templateBranch (Default: '') 
+ Branch in template repository to use for the update (default is the default branch) 
 
 ### token (Default: '${{ github.token }}') 
  The GitHub token running the action 
+
+### directCommit (Default: 'N') 
+ Direct Commit (Y/N) 
+
+### actor (Default: '${{ github.actor }}') 
+ The GitHub actor running the action 
 
 
