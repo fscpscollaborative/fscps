@@ -52,5 +52,14 @@
       "retailSDKVersion": "10.0.1406.77",
       "retailSDKURL": ""
     }
+  },
+  {
+    "version": "10.0.32",
+    "data": {
+      "PlatformVersion": "7.0.6801.18",
+      "AppVersion": "10.0.1515.21",
+      "retailSDKVersion": "10.0.1515.21",
+      "retailSDKURL": ""
+    }
   }
 ]
