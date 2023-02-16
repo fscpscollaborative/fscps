@@ -19,7 +19,7 @@ Set-StrictMode -Version 2.0
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
     $workflowName = $env:GITHUB_WORKFLOW
-    $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $env:GITHUB_WORKFLOW
+    $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $workflowName
     if ($get) {
         $getSettings = $get.Split(',').Trim()
     }
@@ -40,6 +40,13 @@ try {
             if($github.Payload.inputs.PSObject.Properties.Name -eq "includeTestModels")
             {
                 $settings.includeTestModel = ($github.Payload.inputs.includeTestModels -eq "True")
+            }
+            if($github.Payload.inputs.PSObject.Properties.Name -eq "customFileUrl")
+            {
+                if($github.Payload.inputs.customFileUrl -ne "" -and $github.Payload.inputs.customFileName -eq "")
+                {
+                    OutputError "Custom file name with extension should be provided!"
+                }
             }
         }
     }

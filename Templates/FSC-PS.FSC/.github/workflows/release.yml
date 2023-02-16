@@ -23,6 +23,14 @@ on:
         description: Create Release Branch (Y/N)
         required: false
         default: 'N'
+      customFileUrl:
+        description: Add custom file to the release. Provide the file download url.
+        required: false
+        default: ''
+      customFileName:
+        description: Custom file name with extension.
+        required: false
+        default: ''
 
 permissions:
   contents: write

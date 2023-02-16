@@ -80,6 +80,20 @@ try {
     $release 
     Write-Output "Artifacts path: $artifactsPath"
 
+    ### Add custom file to the release folder
+    if($github.Payload.inputs.PSObject.Properties.Name -eq "customFileUrl")
+    {
+        if($github.Payload.inputs.customFileUrl -ne "" -and $github.Payload.inputs.customFileName -ne "")
+        {
+            try {
+                Invoke-WebRequest -Uri "$($github.Payload.inputs.customFileUrl)" -OutFile "$(Join-Path $artifactsPath $github.Payload.inputs.customFileName)"
+            }
+            catch {
+                OutputError "Something went wrong with the file downloading! Error: $($_.Exception.Message)"
+            }
+        }
+    }
+    ###
     Publish-GithubRelease @release -Artifact "$artifactsPath"
 }
 catch {
