@@ -22,6 +22,7 @@ try {
     $LastExitCode = 0
     $baseFolder = $ENV:GITHUB_WORKSPACE
     $workflowName = $env:GITHUB_WORKFLOW
+    $github = (Get-ActionContext)
 
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
@@ -165,6 +166,14 @@ try {
     #Build solution
     OutputInfo "======================================== Build solution"
     cd $buildPath
+    
+    ### Prebuild
+    $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
+    if(Test-Path $prebuildCustomScript)
+    {
+        & $prebuildCustomScript -settings $settings -githubContext $github
+    }
+    ### Prebuild
 
     $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($buildPath)\$($settings.metadataPath);$($buildPath)\bin"
     $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
@@ -194,6 +203,15 @@ try {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
 
+
+    ### Postbuild
+    $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
+    if(Test-Path $postbuildCustomScript)
+    {
+        & $postbuildCustomScript -settings $settings -githubContext $github
+    }
+    ### Postbuild
+    
     Write-Output "::endgroup::"
 
     #GeneratePackages
