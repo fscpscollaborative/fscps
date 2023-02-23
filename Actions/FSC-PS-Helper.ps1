@@ -1512,10 +1512,10 @@ function Extract-D365FSCSource
     
     Get-ChildItem -Path $metadataPath | ForEach-Object {
         $_.Name
-        if(Get-ChildItem -Path $_.FullName -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force)
-        {
+        #if(Get-ChildItem -Path $_.FullName -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force)
+        #{
             Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
-        }
+        #}
     }
     
     $solutionPath = Get-ChildItem -Path $tempFolder -Filter *.sln -Recurse -ErrorAction SilentlyContinue -Force
