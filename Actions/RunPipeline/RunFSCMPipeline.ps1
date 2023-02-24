@@ -257,6 +257,7 @@ try {
             {
                 $packageBinPath = Join-Path -Path $package -ChildPath "bin"
                 Write-Output $packageBinPath
+                
                 # If there is a bin folder and it contains *.MD files, assume it's a valid X++ binary
                 try {
                     if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
