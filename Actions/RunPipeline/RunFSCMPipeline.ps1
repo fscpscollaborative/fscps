@@ -269,17 +269,7 @@ try {
                 catch
                 {
                     Write-Output "  - $package (not an X++ binary folder, skip)"
-                    #$packagePath = Join-Path -Path "$($buildPath)\$($settings.metadataPath)" -ChildPath "$((Get-ChildItem $package).Directory.Name)"
-                    #$packageBinPath = Join-Path -Path "$packagePath" -ChildPath "bin"
-                    #if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
-                    #{
-                    #    Write-Output $packageBinPath
-                    #    OutputInfo "  - $packagePath"
-                    #    $packages += $packagePath
-                    #}
                 }
-
-
             }
 
             $artifactDirectory = [System.IO.Path]::GetDirectoryName($deployablePackagePath)

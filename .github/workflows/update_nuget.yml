@@ -74,6 +74,30 @@ jobs:
 
               return $headers
           }
+          function Get-NuGetVersion
+          {    
+            [CmdletBinding()]
+            param (
+                [System.IO.DirectoryInfo]$NugetPath
+            )
+            begin{
+                $zipFile = [IO.Compression.ZipFile]::OpenRead($NugetPath.FullName)
+            }
+            process{
+                
+                $zipFile.Entries | Where-Object {$_.FullName.Contains(".nuspec")} | ForEach-Object{
+                    $nuspecFilePath = "$(Join-Path $NugetPath.Parent.FullName $_.Name)"
+                    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $nuspecFilePath, $true)
+
+                    [xml]$XmlDocument = Get-Content $nuspecFilePath
+                    $XmlDocument.package.metadata.version
+                    Remove-Item $nuspecFilePath
+                }
+            }
+            end{
+                $zipFile.Dispose()
+            }
+          }
           function GetToken {
               param (
                   [string] $lcsClientId,
