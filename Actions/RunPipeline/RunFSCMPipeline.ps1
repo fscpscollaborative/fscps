@@ -161,7 +161,7 @@ try {
     OutputInfo "Source path: (Join-Path $($buildPath) $($settings.metadataPath))"
     OutputInfo "Destination path: (Join-Path $($buildPath) bin)"
 
-    Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.dll
+    Copy-Filtered -Source (Join-Path $($buildPath) $($settings.metadataPath)) -Target (Join-Path $($buildPath) bin) -Filter *.*
     Write-Output "::endgroup::"
 
     Write-Output "::group::Build solution"
@@ -268,15 +268,15 @@ try {
                 }
                 catch
                 {
-                    Write-Output "  - $package (not an X++ binary folder, processing metadata folder)"
-                    $packagePath = Join-Path -Path "$($buildPath)\$($settings.metadataPath)" -ChildPath "$((Get-ChildItem $package).Directory.Name)"
-                    $packageBinPath = Join-Path -Path "$packagePath" -ChildPath "bin"
-                    if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
-                    {
-                        Write-Output $packageBinPath
-                        OutputInfo "  - $packagePath"
-                        $packages += $packagePath
-                    }
+                    Write-Output "  - $package (not an X++ binary folder, skip)"
+                    #$packagePath = Join-Path -Path "$($buildPath)\$($settings.metadataPath)" -ChildPath "$((Get-ChildItem $package).Directory.Name)"
+                    #$packageBinPath = Join-Path -Path "$packagePath" -ChildPath "bin"
+                    #if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
+                    #{
+                    #    Write-Output $packageBinPath
+                    #    OutputInfo "  - $packagePath"
+                    #    $packages += $packagePath
+                    #}
                 }
 
 
