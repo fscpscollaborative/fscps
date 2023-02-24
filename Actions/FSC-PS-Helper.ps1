@@ -193,7 +193,9 @@ function Get-FSCModels
         [string]
         $metadataPath,
         [switch]
-        $includeTest = $false
+        $includeTest = $false,
+        [switch]
+        $all = $false
 
     )
     if(Test-Path "$metadataPath")
@@ -209,6 +211,9 @@ function Get-FSCModels
                 $modelsList += ($_.BaseName)
             }
             if((Test-Path ("$metadataPath/$($_.BaseName)/Descriptor")) -and !$testModel) {
+                $modelsList += ($_.BaseName)
+            }
+            if(!(Test-Path ("$metadataPath/$($_.BaseName)/Descriptor")) -and !$testModel -and $all) {
                 $modelsList += ($_.BaseName)
             }
         }

@@ -77,9 +77,11 @@ try {
     if(($settings.includeTestModel -eq 'true'))
     {
         $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest
+        $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest -all
     }
     else {
         $models = Get-FSCModels -metadataPath $settings.metadataPath
+        $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -all
     }
     
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
@@ -238,7 +240,7 @@ try {
 
         $xppToolsPath = $msFrameworkDirectory
         $xppBinariesPath = (Join-Path $($buildPath) bin)
-        $xppBinariesSearch = $models
+        $xppBinariesSearch = $modelsToPackage
         $deployablePackagePath = Join-Path (Join-Path $buildPath $settings.artifactsPath) ($packageName)
 
         if ($xppBinariesSearch.Contains(","))
