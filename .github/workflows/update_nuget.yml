@@ -23,226 +23,213 @@ jobs:
           }
       - name: Update Nugets
         run: |
-          enum LcsAssetFileType {
-              Model = 1
-              ProcessDataPackage = 4
-              SoftwareDeployablePackage = 10
-              GERConfiguration = 12
-              DataPackage = 15
-              PowerBIReportModel = 19
-              ECommercePackage = 26
-              NuGetPackage = 27
-              RetailSelfServicePackage = 28
-              CommerceCloudScaleUnitExtension = 29
-          }
-          function installModules {
-              Param(
-                  [String[]] $modules
-              )
-
-              $modules | ForEach-Object {
-                  if($_ -eq "Az")
-                  {
-                      Set-ExecutionPolicy RemoteSigned
-                      try {
-                          Uninstall-AzureRm
-                      }
-                      catch {
-                      }
-
-                  }
-
-                  if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
-                      Write-Host "Installing module $_"
-                      Install-Module $_ -Force -AllowClobber -Scope CurrentUser | Out-Null
-                  }
-              }
-              $modules | ForEach-Object { 
-                  Write-Host "Importing module $_"
-                  Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue | Out-Null
-              }
-          }
-          function GetHeader {
-              param (
-                  [string] $token,
-                  [string] $accept = "application/json"
-              )
-              $headers = @{ "Accept" = $accept }
-              if (![string]::IsNullOrEmpty($token)) {
-                  $headers["Authorization"] = "Bearer $token"
-              }
-
-              return $headers
-          }
-          function Get-NuGetVersion
-          {    
-            [CmdletBinding()]
-            param (
-                [System.IO.DirectoryInfo]$NugetPath
-            )
-            begin{
-                $zipFile = [IO.Compression.ZipFile]::OpenRead($NugetPath.FullName)
+            enum LcsAssetFileType {
+                Model = 1
+                ProcessDataPackage = 4
+                SoftwareDeployablePackage = 10
+                GERConfiguration = 12
+                DataPackage = 15
+                PowerBIReportModel = 19
+                ECommercePackage = 26
+                NuGetPackage = 27
+                RetailSelfServicePackage = 28
+                CommerceCloudScaleUnitExtension = 29
             }
-            process{
-                
-                $zipFile.Entries | Where-Object {$_.FullName.Contains(".nuspec")} | ForEach-Object{
-                    $nuspecFilePath = "$(Join-Path $NugetPath.Parent.FullName $_.Name)"
-                    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $nuspecFilePath, $true)
+            function installModules {
+                Param(
+                    [String[]] $modules
+                )
 
-                    [xml]$XmlDocument = Get-Content $nuspecFilePath
-                    $XmlDocument.package.metadata.version
-                    Remove-Item $nuspecFilePath
+                $modules | ForEach-Object {
+                    if($_ -eq "Az")
+                    {
+                        Set-ExecutionPolicy RemoteSigned
+                        try {
+                            Uninstall-AzureRm
+                        }
+                        catch {
+                        }
+
+                    }
+                    if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
+                        Write-Host "Installing module $_"
+                        Install-Module $_ -Force -AllowClobber -Scope CurrentUser | Out-Null
+                    }
+                }
+                $modules | ForEach-Object { 
+                    Write-Host "Importing module $_"
+                    Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue -Force | Out-Null
                 }
             }
-            end{
-                $zipFile.Dispose()
+            function GetHeader {
+                param (
+                    [string] $token,
+                    [string] $accept = "application/json"
+                )
+                $headers = @{ "Accept" = $accept }
+                if (![string]::IsNullOrEmpty($token)) {
+                    $headers["Authorization"] = "Bearer $token"
+                }
+
+                return $headers
             }
-          }
-          function GetToken {
-              param (
-                  [string] $lcsClientId,
-                  [string] $lcsUserName,
-                  [string] $lcsUserPasswd
-              )
-              $body = 'grant_type=password' + `
-              '&client_id='+$($lcsClientId)+'' + `
-              '&username='+$($lcsUserName)+'' +`
-              '&password='+$($lcsUserPasswd)+'' +`
-              '&resource=https://lcsapi.lcs.dynamics.com' +`
-              '&scope=openid'
+            function GetToken {
+                param (
+                    [string] $lcsClientId,
+                    [string] $lcsUserName,
+                    [string] $lcsUserPasswd
+                )
+                $body = 'grant_type=password' + `
+                '&client_id='+$($lcsClientId)+'' + `
+                '&username='+$($lcsUserName)+'' +`
+                '&password='+$($lcsUserPasswd)+'' +`
+                '&resource=https://lcsapi.lcs.dynamics.com' +`
+                '&scope=openid'
 
-              return (Invoke-RestMethod -Method Post -Uri https://login.microsoftonline.com/common/oauth2/token -Body $body).access_token
-          }
-          function GetLCSSharedAssetsList {
-              param (
-                  [string] $token,
-                  [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
+                return (Invoke-RestMethod -Method Post -Uri https://login.microsoftonline.com/common/oauth2/token -Body $body).access_token
+            }
+            function GetLCSSharedAssetsList {
+                param (
+                    [string] $token,
+                    [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
 
-              )
-              $header = GetHeader -token $token
-              $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
-              $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
-              return $assetsList
-          }
-          function UploadAssetToStorage {
-              param (
-                  [string]$AssetId,
-                  [string]$AssetName,
-                  [string]$ProjectId,
-                  [string]$LCSToken,
-                  [string]$PackageDestination = "C:\temp\packages"
-              )
-              Begin{
-                  $storageAccountName = 'ciellosarchive'
-                  $storageContainer = 'nuget'
-                  #Just read-only SAS token :)
-                  $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
-                  $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-                  $header = GetHeader -token $token
-                  if(-not(Test-Path $PackageDestination))
-                  {
-                      [System.IO.Directory]::CreateDirectory($PackageDestination)
-                  }
-              }
-              process{
-                  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                  $destinationNugetFilePath = Join-Path $PackageDestination $AssetName  
+                )
+                $header = GetHeader -token $token
+                $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
+                $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
+                return $assetsList
+            }
+            function Get-NuGetVersion
+            {    
+                [CmdletBinding()]
+                param (
+                    [System.IO.DirectoryInfo]$NugetPath
+                )
+                begin{
+                    $zipFile = [IO.Compression.ZipFile]::OpenRead($NugetPath.FullName)
+                }
+                process{
+                    
+                    $zipFile.Entries | Where-Object {$_.FullName.Contains(".nuspec")} | ForEach-Object{
+                        $nuspecFilePath = "$(Join-Path $NugetPath.Parent.FullName $_.Name)"
+                        [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $nuspecFilePath, $true)
 
-                  #get download link asset
-                  $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
-                  $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
-                  #$assetJson.FileLocation
-                  $download = (-not(Test-Path $destinationNugetFilePath))
+                        [xml]$XmlDocument = Get-Content $nuspecFilePath
+                        $XmlDocument.package.metadata.version
+                        Remove-Item $nuspecFilePath
+                    }
+                }
+                end{
+                    $zipFile.Dispose()
+                }
+            }
 
-                  $upload = $true
+            function UploadAssetToStorage {
+                param (
+                    [string]$AssetId,
+                    [string]$AssetName,
+                    [string]$ProjectId,
+                    [string]$LCSToken,
+                    [string]$PackageDestination = "C:\temp\packages"
+                )
+                Begin{
+                    $storageAccountName = 'ciellosarchive'
+                    $storageContainer = 'nuget'
+                    #Just read-only SAS token :)
+                    $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
+                    $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
+                    $header = GetHeader -token $token
+                    if(-not(Test-Path $PackageDestination))
+                    {
+                        [System.IO.Directory]::CreateDirectory($PackageDestination)
+                    }
+                }
+                process{
+                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                    $destinationNugetFilePath = Join-Path $PackageDestination $AssetName  
 
-                  $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
-                  if(!$blob)
-                  {
-                      if($download)
-                      {
-                          # Test if AzCopy.exe exists in current folder
-                          $WantFile = "azcopy.exe"
-                          $AzCopyExists = Test-Path $WantFile
-                          Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
+                    #get download link asset
+                    $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
+                    $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
+                    #$assetJson.FileLocation
+                    $download = (-not(Test-Path $destinationNugetFilePath))
 
-                          # Download AzCopy if it doesn't exist
-                          If ($AzCopyExists -eq $False)
-                          {
-                             Write-Output "AzCopy not found. Downloading..."
+                    $upload = $true
 
-                             #Download AzCopy
-                             Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile AzCopy.zip -UseBasicParsing
+                    $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
+                    if(!$blob)
+                    {
+                        if($download)
+                        {               
+                            # Test if AzCopy.exe exists in current folder
+                            $WantFile = "azcopy.exe"
+                            $AzCopyExists = Test-Path $WantFile
+                            Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
 
-                             #Expand Archive
-                             Write-Output "Expanding archive...`n"
-                             Expand-Archive ./AzCopy.zip ./AzCopy -Force
+                            # Download AzCopy if it doesn't exist
+                            If ($AzCopyExists -eq $False)
+                            {
+                            Write-Output "AzCopy not found. Downloading..."
 
-                             # Copy AzCopy to current dir
-                             Get-ChildItem ./AzCopy/*/azcopy.exe | Copy-Item -Destination "./azcopy.exe"
-                          }
-                          else
-                          {
-                             Write-Output "AzCopy found, skipping download.`n"
-                          }
+                            #Download AzCopy
+                            Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile AzCopy.zip -UseBasicParsing
 
-                      
-                          & ./$WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
-                          #Invoke-WebRequest -URI $assetJson.FileLocation -OutFile $destinationNugetFilePath
-                      }
-                  }
-                  else
-                  {
-                      $upload = $false
-                  }
+                            #Expand Archive
+                            Write-Output "Expanding archive...`n"
+                            Expand-Archive ./AzCopy.zip ./AzCopy -Force
 
-                  if($upload)
-                  {
-                      Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $AssetName -File $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
-                  }
-              }
-          }
+                            # Copy AzCopy to current dir
+                            Get-ChildItem ./AzCopy/*/azcopy.exe | Copy-Item -Destination "./azcopy.exe"
+                            }
+                            else
+                            {
+                            Write-Output "AzCopy found, skipping download.`n"
+                            }
 
-          Import-Module PowerShellGet
-          installModules AZ.Storage
+                        
+                            & ./$WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
+                            
+                            #Invoke-D365AzCopyTransfer $assetJson.FileLocation "$destinationNugetFilePath"
+                        }
+                    }
+                    else
+                    {
+                        $upload = $false
+                    }
 
-          $lcsUserName = "${{ secrets.LCS_USERNAME }}"
-          $lcsUserPassword = "${{ secrets.LCS_USER_PASSWORD }}"
-          $lcsProjectId = "${{ secrets.LCS_PROJECT_ID }}"
-          $lcsClientId = "${{ secrets.LCS_CLIENT_ID }}"
-          $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                    if($upload)
+                    {            
+                        $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                        $filenameVersion = $regex.Match($AssetName).Value
+                        $version = Get-NuGetVersion $destinationNugetFilePath
+                        $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                        $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
+                        $destinationNugetFilePath
+                        $version
+                        $AssetName
 
-          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-          $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
+                        Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
+                    }
+                }
+            }
 
-          $assetsList | ForEach-Object{
+            Import-Module PowerShellGet
+            installModules AZ.Storage,d365fo.tools
 
-              $version = $regex.Match($_.FileDescription).Value
-              if($version -eq "")
-              {
-                  $version = $regex.Match($_.FileName).Value
-              }
-              if($version -eq "")
-              {
-                  return
-              }
-              else {
-                  #$version
-              }
-              #check filename
-              $fileName = $_.FileName
-              $filenameVersion = $regex.Match($_.FileName).Value
+            $lcsUserName = "${{ secrets.LCS_USERNAME }}"
+            $lcsUserPassword = "${{ secrets.LCS_USER_PASSWORD }}"
+            $lcsProjectId = "${{ secrets.LCS_PROJECT_ID }}"
+            $lcsClientId = "${{ secrets.LCS_CLIENT_ID }}"
+            $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
 
-              if($filenameVersion -eq "")
-              {
-                  $fileName = ($_.FileName).Replace(".nupkg",".$version.nupkg")
-              }
-              $fileName
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
+            $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
 
+            $assetsList | ForEach-Object {
+                
+                $fileName = $_.FileName
 
-              UploadAssetToStorage -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
-              #$_.FileName + $_.FileDescription 
-
-          }
+                UploadAssetToStorage -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
+            }
 
