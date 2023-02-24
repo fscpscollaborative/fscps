@@ -256,20 +256,29 @@ try {
             foreach($package in $potentialPackages)
             {
                 $packageBinPath = Join-Path -Path $package -ChildPath "bin"
-                Write-Output $packageBinPath
                 
                 # If there is a bin folder and it contains *.MD files, assume it's a valid X++ binary
                 try {
                     if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
                     {
+                        Write-Output $packageBinPath
                         OutputInfo "  - $package"
                         $packages += $package
                     }
                 }
                 catch
                 {
-                    Write-Warning "  - $package (not an X++ binary folder, skipped)"
+                    Write-Output "  - $package (not an X++ binary folder, processing metadata folder)"
+                    $packageBinPath = Join-Path -Path "$($buildPath)\$($settings.metadataPath)\$((Get-ChildItem $package).Directory.Name)" -ChildPath "bin"
+                    if ((Test-Path -Path $packageBinPath) -and ((Get-ChildItem -Path $packageBinPath -Filter *.md).Count -gt 0))
+                    {
+                        Write-Output $packageBinPath
+                        OutputInfo "  - $package"
+                        $packages += $package
+                    }
                 }
+
+
             }
 
             $artifactDirectory = [System.IO.Path]::GetDirectoryName($deployablePackagePath)
