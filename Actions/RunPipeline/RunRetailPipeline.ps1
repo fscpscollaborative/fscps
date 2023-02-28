@@ -17,7 +17,8 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
+    $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
+    . ($helperPath)
     $LastExitCode = 0
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"

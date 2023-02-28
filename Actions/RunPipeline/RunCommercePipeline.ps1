@@ -17,7 +17,8 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
+    $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
+    . ($helperPath)
     $LastExitCode = 0
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
@@ -128,6 +129,14 @@ try {
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
+    ### Prebuild
+    $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
+    if(Test-Path $prebuildCustomScript)
+    {
+        & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### Prebuild
+
     Install-Module -Name Invoke-MsBuild
     #& msbuild
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
@@ -153,9 +162,19 @@ try {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
 
+    
+
+    ### Postbuild
+    $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
+    if(Test-Path $postbuildCustomScript)
+    {
+        & $postbuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### Postbuild
+
     Write-Output "::endgroup::"
 
-     #GeneratePackages
+    #GeneratePackages
     if($settings.generatePackages)
     {
         Write-Output "::group::Generate packages"
