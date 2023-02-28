@@ -144,121 +144,121 @@ jobs:
                         [System.IO.Directory]::CreateDirectory($PackageDestination)
                     }
                 }
- process{
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        $destinationNugetFilePath = Join-Path $PackageDestination $AssetName  
+                process {
+                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                    $destinationNugetFilePath = Join-Path $PackageDestination $AssetName  
 
-        #get download link asset
-        $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
-        $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
-        #$assetJson.FileLocation
+                    #get download link asset
+                    $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
+                    $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
+                    #$assetJson.FileLocation
 
-        if(Test-Path $destinationNugetFilePath)
-        {
-            $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
-            $filenameVersion = $regex.Match($AssetName).Value
-            $version = Get-NuGetVersion $destinationNugetFilePath
-            $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
-            $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
-            $destinationNugetFilePath
-            $version
-            $AssetName
-
-            if(-not(Test-Path $newdestinationNugetFilePath))
-            {
-                Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
-            }
-            else
-            {
-                if($filenameVersion -eq "")
-                {
-                    Remove-Item $destinationNugetFilePath
-                    #break;
-                }
-            }
-            $destinationNugetFilePath = $newdestinationNugetFilePath
-            $destinationNugetFilePath
-        }
-
-        $download = (-not(Test-Path $destinationNugetFilePath))
-
-        $upload = $true
-
-        $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
-        if(!$blob)
-        {
-            if($download)
-            {               
-                # Test if AzCopy.exe exists in current folder
-                $WantFile = "azcopy.exe"
-                $AzCopyExists = Test-Path $WantFile
-                Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
-
-                # Download AzCopy if it doesn't exist
-                If ($AzCopyExists -eq $False)
-                {
-                   Write-Output "AzCopy not found. Downloading..."
-
-                   #Download AzCopy
-                   Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile AzCopy.zip -UseBasicParsing
-
-                   #Expand Archive
-                   Write-Output "Expanding archive...`n"
-                   Expand-Archive ./AzCopy.zip ./AzCopy -Force
-
-                   # Copy AzCopy to current dir
-                   Get-ChildItem ./AzCopy/*/azcopy.exe | Copy-Item -Destination "./azcopy.exe"
-                }
-                else
-                {
-                   Write-Output "AzCopy found, skipping download.`n"
-                }
-
-            
-                & ./$WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
-                if(Test-Path $destinationNugetFilePath)
-                {
-                    $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
-                    $filenameVersion = $regex.Match($AssetName).Value
-                    $version = Get-NuGetVersion $destinationNugetFilePath
-                    $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
-                    $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
-
-                    if(-not(Test-Path $newdestinationNugetFilePath))
+                    if(Test-Path $destinationNugetFilePath)
                     {
-                        Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
+                        $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                        $filenameVersion = $regex.Match($AssetName).Value
+                        $version = Get-NuGetVersion $destinationNugetFilePath
+                        $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                        $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
+                        $destinationNugetFilePath
+                        $version
+                        $AssetName
+
+                        if(-not(Test-Path $newdestinationNugetFilePath))
+                        {
+                            Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
+                        }
+                        else
+                        {
+                            if($filenameVersion -eq "")
+                            {
+                                Remove-Item $destinationNugetFilePath
+                                #break;
+                            }
+                        }
+                        $destinationNugetFilePath = $newdestinationNugetFilePath
+                        $destinationNugetFilePath
+                    }
+
+                    $download = (-not(Test-Path $destinationNugetFilePath))
+
+                    $upload = $true
+
+                    $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
+                    if(!$blob)
+                    {
+                        if($download)
+                        {               
+                            # Test if AzCopy.exe exists in current folder
+                            $WantFile = "azcopy.exe"
+                            $AzCopyExists = Test-Path $WantFile
+                            Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
+
+                            # Download AzCopy if it doesn't exist
+                            If ($AzCopyExists -eq $False)
+                            {
+                            Write-Output "AzCopy not found. Downloading..."
+
+                            #Download AzCopy
+                            Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile AzCopy.zip -UseBasicParsing
+
+                            #Expand Archive
+                            Write-Output "Expanding archive...`n"
+                            Expand-Archive ./AzCopy.zip ./AzCopy -Force
+
+                            # Copy AzCopy to current dir
+                            Get-ChildItem ./AzCopy/*/azcopy.exe | Copy-Item -Destination "./azcopy.exe"
+                            }
+                            else
+                            {
+                            Write-Output "AzCopy found, skipping download.`n"
+                            }
+
+                        
+                            & ./$WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
+                            if(Test-Path $destinationNugetFilePath)
+                            {
+                                $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                                $filenameVersion = $regex.Match($AssetName).Value
+                                $version = Get-NuGetVersion $destinationNugetFilePath
+                                $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                                $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
+
+                                if(-not(Test-Path $newdestinationNugetFilePath))
+                                {
+                                    Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
+                                }
+                                else
+                                {
+                                    if($filenameVersion -eq "")
+                                    {
+                                        Remove-Item $destinationNugetFilePath
+                                        #break;
+                                    }
+                                }
+                                $destinationNugetFilePath = $newdestinationNugetFilePath
+                                $destinationNugetFilePath
+                            }
+                            #Invoke-D365AzCopyTransfer $assetJson.FileLocation "$destinationNugetFilePath"
+                        }
                     }
                     else
                     {
-                        if($filenameVersion -eq "")
-                        {
-                            Remove-Item $destinationNugetFilePath
-                            #break;
-                        }
+                        $upload = $false
                     }
-                    $destinationNugetFilePath = $newdestinationNugetFilePath
-                    $destinationNugetFilePath
+
+                    if($upload)
+                    {            
+                        $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                        $filenameVersion = $regex.Match($AssetName).Value
+                        $version = Get-NuGetVersion $destinationNugetFilePath
+                        $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                        $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
+
+
+                        Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
+                    }
                 }
-                #Invoke-D365AzCopyTransfer $assetJson.FileLocation "$destinationNugetFilePath"
-            }
-        }
-        else
-        {
-            $upload = $false
-        }
-
-        if($upload)
-        {            
-            $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
-            $filenameVersion = $regex.Match($AssetName).Value
-            $version = Get-NuGetVersion $destinationNugetFilePath
-            $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
-            $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
-
-
-            Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
-        }
-    }
             }
 
             Import-Module PowerShellGet
