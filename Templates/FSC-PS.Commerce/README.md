@@ -1,7 +1,7 @@
 # FSC-PS. D365Commerce Development Userguide 
 
 
-1. Generate GitHub PAT(Personal Access Token)
+### Generate GitHub PAT(Personal Access Token)
 
 - Login to your GitHub account and open Settings 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_a.png)
@@ -17,7 +17,7 @@
 - Copy and save your PAT somewhere and click the Authorize SSO 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_e.png)
 
-2. Map the repository code
+### Map the repository code
 - Log in to your devbox and run the Powershell ISE with administrator permissions.
 - Change the variables values and execute the folowing powershell code.
 
@@ -84,7 +84,7 @@ if( -Not (Test-Path  "$RetailExtensionFolderName\.git"))
 
 Paste the generated PAT into the popup GitHub window.
 
-3. Configure VisualStudio
+### Configure VisualStudio
 - Open VisualStudio and select “Open a Local Folder”
 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_f.png)
