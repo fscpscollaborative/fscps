@@ -6,15 +6,15 @@
 - Login to your GitHub account and open Settings 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_a.png)
 
-- -> Developer Settings 
+- Developer Settings 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_b.png)
 
-- -> Personal Access Token -> Generate New Token 
+- Personal Access Token -> Generate New Token 
  ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_c.png)
 
  ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_d.png)
 
-- -> Copy and save your PAT somewhere and click the Authorize SSO 
+- Copy and save your PAT somewhere and click the Authorize SSO 
 ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_e.png)
 
 2. Map the repository code
