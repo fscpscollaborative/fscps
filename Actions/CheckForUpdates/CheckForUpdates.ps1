@@ -258,10 +258,13 @@ try {
                         $replacePattern += "         - "+'"'+$($_)+'"'+"`r`n"
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
-                    #schedule
-                    $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
-                    $replacePattern = "on:`r`n  schedule:`r`n   - cron: '$($settings.deployScheduleCron)'`r`n  workflow_dispatch:`r`n"
-                    $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    if($settings.deploymentScheduler)
+                    {
+                        #schedule
+                        $srcPattern = "on:`r`n  workflow_dispatch:`r`n"
+                        $replacePattern = "on:`r`n  schedule:`r`n   - cron: '$($settings.deployScheduleCron)'`r`n  workflow_dispatch:`r`n"
+                        $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
+                    }
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"

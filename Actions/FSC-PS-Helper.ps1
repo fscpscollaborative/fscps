@@ -284,6 +284,7 @@ function ReadSettings {
         "deployScheduleCron"                     = "1 * * * *"
         "deploy"                                 = $false
         "deployOnlyNew"                          = $true
+        "deploymentScheduler"                    = $true
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
 
     }

@@ -3,5 +3,6 @@
     "packageName": "ContosoExtension",
     "buildVersion": "10.0.29",
     "ciBranches": "main,release",
-    "useLocalNuGetStorage":true
+    "useLocalNuGetStorage":true,
+    "deploymentScheduler":false
 }
