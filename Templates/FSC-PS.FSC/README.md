@@ -3,14 +3,14 @@
 
 1. Generate GitHub PAT(Personal Access Token)
 Login to your GitHub account and open Settings 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_a.png)
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_a.png)
 -> Developer Settings 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_b.png)
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_b.png)
 ->Personal Access Token -> Generate New Token 
- ![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_c.png)
- ![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_d.png)
+ ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_c.png)
+ ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_d.png)
 -> Copy and save your PAT somewhere and click the Authorize SSO 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_e.png)
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_e.png)
 
 2. Map the repository code
 - Log in to your devbox and run the Powershell ISE with administrator permissions.
@@ -71,11 +71,11 @@ if( -Not (Test-Path  ".git"))
 ~~~
 
 3. Configure VisualStudio
-Open VisualStudio and select “Open a Local Folder”
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_f.png)
-Find the AOSService folder and click select 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_g.png)
-Go to Tools->Options 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_h.png)
-Set Projects locations to AOSService/VSSProjects folder and click OK button. 
-![Deploy](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_i.png)
+- Open VisualStudio and select “Open a Local Folder”
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_f.png)
+- Find the AOSService folder and click select 
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_g.png)
+- Go to Tools->Options 
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_h.png)
+- Set Projects locations to AOSService/VSSProjects folder and click OK button. 
+![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_i.png)
