@@ -75,6 +75,8 @@ if( -Not (Test-Path  ".git"))
 
 ~~~
 
+Paste the generated PAT into the popup GitHub window.
+
 3. Configure VisualStudio
 - Open VisualStudio and select “Open a Local Folder”
 
