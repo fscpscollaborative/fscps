@@ -1,4 +1,4 @@
-# FSC-PS. D365Commerce Development Userguide 
+# FSC-PS. D365Commerce Development user guide 
 
 
 ### Generate GitHub PAT(Personal Access Token)
