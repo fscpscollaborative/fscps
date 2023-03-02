@@ -395,7 +395,7 @@ function GenerateProjectFile {
     $modelDisplayName = Get-AXModelDisplayName -ModelName $ModelName -ModelPath $MetadataPath 
     #generate project file
 
-    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName.Replace(' ', '')).Replace('ModelDisplayName', $modelDisplayName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('ModelDisplayName', $modelDisplayName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
      
     Set-Content $ModelProjectFile $ProjectFileData
 }
