@@ -392,10 +392,18 @@ function GenerateProjectFile {
     $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
     $SolutionFolderPath = Join-Path  $NugetFolderPath 'Build'
     $ModelProjectFile = Join-Path $SolutionFolderPath $ModelProjectFileName
-    $modelDisplayName = Get-AXModelDisplayName -ModelName $ModelName -ModelPath $MetadataPath 
+    #$modelDisplayName = Get-AXModelDisplayName -ModelName $ModelName -ModelPath $MetadataPath 
+    $modelDescriptorName = Get-AXModelName -ModelName $ModelName -ModelPath $MetadataPath 
     #generate project file
 
-    $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('ModelDisplayName', $modelDisplayName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+    if($modelDescriptorName -eq "")
+    {
+        $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $ModelName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+    }
+    else {
+        $ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $modelDescriptorName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
+    }
+    #$ProjectFileData = (Get-Content $ProjectFileName).Replace('ModelName', $modelDescriptorName).Replace('62C69717-A1B6-43B5-9E86-24806782FEC2'.ToLower(), $ProjectGuid.ToLower())
      
     Set-Content $ModelProjectFile $ProjectFileData
 }
@@ -410,9 +418,28 @@ function Get-AXModelDisplayName {
     process{
         $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
+        if($descriptor)
+        {
+            OutputVerbose "Descriptor found at $descriptor"
+            [xml]$xmlData = Get-Content $descriptor.FullName
+            $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
+            return $modelDisplayName.InnerText
+        }
+    }
+}
+function Get-AXModelName {
+    param (
+        [Alias('ModelName')]
+        [string]$_modelName,
+        [Alias('ModelPath')]
+        [string]$_modelPath
+    )
+    process{
+        $descriptorSearchPath = (Join-Path $_modelPath (Join-Path $_modelName "Descriptor"))
+        $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         OutputVerbose "Descriptor found at $descriptor"
         [xml]$xmlData = Get-Content $descriptor.FullName
-        $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/DisplayName")
+        $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/Name")
         return $modelDisplayName.InnerText
     }
 }
