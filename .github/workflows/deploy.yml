@@ -44,7 +44,7 @@ jobs:
                   "actionsRepo" = "FSC-PS-Actions"
                   "fscTemplateRepo" = "FSC-PS.FSC"
                   "retailTemplateRepo" = "FSC-PS.Retail"
-                  "ecommerceTemplateRepo" = "FSC-PS.Retail"
+                  "ecommerceTemplateRepo" = "FSC-PS.ECommerce"
                   "branch" = '${{ github.event.inputs.branch }}'
                   "copyToMain" = ('${{ github.event.inputs.copyToMain }}' -eq 'Y')
                   "localFolder" = ""
