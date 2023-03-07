@@ -143,7 +143,7 @@ try {
         Read-Host "If this is not what you want to do, then press Ctrl+C now, else press Enter."
     }
 
-    $config.actionsRepo, $config.fscTemplateRepo, $config.retailTemplateRepo | ForEach-Object {
+    $config.actionsRepo, $config.fscTemplateRepo, $config.retailTemplateRepo, $config.ecommerceTemplateRepo | ForEach-Object {
         if ($collect) {
             if (Test-Path $_) {
                 Set-Location $_
