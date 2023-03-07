@@ -6,7 +6,7 @@ Run pipeline in FSC-PS repository
  The Dynamics Application Version 
 
 ### type (Default: 'FSCM') 
- The application type. FSCM or Commerce 
+ The application type. FSCM/Retail/ECommerce 
 
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 

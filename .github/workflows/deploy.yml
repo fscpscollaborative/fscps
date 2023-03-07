@@ -43,7 +43,8 @@ jobs:
                   "githubOwner" = $githubOwner
                   "actionsRepo" = "FSC-PS-Actions"
                   "fscTemplateRepo" = "FSC-PS.FSC"
-                  "commerceTemplateRepo" = "FSC-PS.Commerce"
+                  "retailTemplateRepo" = "FSC-PS.Retail"
+                  "ecommerceTemplateRepo" = "FSC-PS.Retail"
                   "branch" = '${{ github.event.inputs.branch }}'
                   "copyToMain" = ('${{ github.event.inputs.copyToMain }}' -eq 'Y')
                   "localFolder" = ""

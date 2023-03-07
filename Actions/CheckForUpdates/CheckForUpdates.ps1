@@ -298,7 +298,7 @@ try {
 
                 if($fileName -eq "update_model_version.yml")
                 {
-                    if($type -eq "Retail"){ return }
+                    if($type -eq "Retail" -or $type -eq "ECommerce"){ return }
                     $srcPattern = '        - "*"'
                     $replacePattern = ""
                     $models = (Get-FSCModels -metadataPath $settings.metadataPath)

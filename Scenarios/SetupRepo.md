@@ -3,7 +3,7 @@
 - A GitHub account.
 
 
-1. Navigate to https://github.com/ciellosinc/FSC-PS.FSC or https://github.com/ciellosinc/FSC-PS.Commerce and then choose **Use this template**.
+1. Navigate to https://github.com/ciellosinc/FSC-PS.FSC or https://github.com/ciellosinc/FSC-PS.Retail or https://github.com/ciellosinc/FSC-PS.ECommerce and then choose **Use this template**.
 ![Use this template](/Scenarios/images/1a.png)
 1. Enter **appName** as repository name and select **Create Repository from template**.
 ![Add repo](/Scenarios/images/1b.png)

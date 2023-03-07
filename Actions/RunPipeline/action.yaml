@@ -26,7 +26,7 @@ inputs:
     required: false
     default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}'
   type:
-    description: The application type. FSCM or Commerce
+    description: The application type. FSCM/Retail/ECommerce
     required: false
     default: 'FSCM'
 outputs:
