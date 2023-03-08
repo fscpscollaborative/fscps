@@ -105,7 +105,7 @@ try {
     Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
     ### yarn load dependencies
-    #yarn
+    yarn
 
     ### generate package
     yarn msdyn365 pack
