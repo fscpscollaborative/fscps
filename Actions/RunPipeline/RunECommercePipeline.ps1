@@ -72,12 +72,6 @@ try {
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Copy branch files"
-    OutputInfo "======================================== Copy branch files"
-    #Copy branch files
-    New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
-    Write-Output "::endgroup::"
-
     Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
@@ -91,15 +85,21 @@ try {
     ###install yarn 
     npm install --global yarn
 
-
     $settings.ecommerceMicrosoftRepoUrl
     $settings.ecommerceMicrosoftRepoBranch
     Set-Location $tempPath
+
     ### clone msdyn365 repo
     invoke-git clone --quiet $settings.ecommerceMicrosoftRepoUrl
     Set-Location $buildPath
     invoke-git fetch --all
     invoke-git checkout "$($settings.ecommerceMicrosoftRepoBranch)"
+
+    #remove git folder
+    Remove-Item $buildPath\.git -Recurse -Force -ErrorAction SilentlyContinue
+
+    #Copy branch files
+    Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
     ### yarn load dependencies
     yarn

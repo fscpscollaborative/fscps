@@ -191,6 +191,7 @@ try {
         $ver = Get-VersionData -sdkVersion $settings.buildVersion
         $settings.retailSDKVersion = $ver.retailSDKVersion
         $settings.retailSDKURL = $ver.retailSDKURL
+        $settings.ecommerceMicrosoftRepoBranch = $ver.ecommerceMicrosoftRepoBranch
     }
 
     $outSettings = @{}
