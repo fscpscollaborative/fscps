@@ -84,13 +84,8 @@ jobs:
         with:
           settingsJson: ${{ env.Settings }}
           
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v1.1.1
-        with:
-          nuget-version: 5.10.x    
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.6.0   
       
       - name: Get Env Vars
         run: |
