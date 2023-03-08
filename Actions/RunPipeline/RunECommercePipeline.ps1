@@ -91,9 +91,13 @@ try {
     ###install yarn 
     npm install --global yarn
 
+
+    $settings.ecommerceMicrosoftRepoUrl
+    $settings.ecommerceMicrosoftRepoBranch
+
     ### clone msdyn365 repo
     invoke-git clone --quiet $settings.ecommerceMicrosoftRepoUrl
-    invoke-git checkout $settings.ecommerceMicrosoftRepoBranch
+    invoke-git checkout "$($settings.ecommerceMicrosoftRepoBranch)"
 
     ### yarn load dependencies
     yarn
