@@ -90,8 +90,10 @@ try {
     Set-Location $tempPath
 
     ### clone msdyn365 repo
-    New-Item -ItemType Directory -Force -Path $buildPath;
+    New-Item -ItemType Directory -Force -Path $buildPath
+    OutputInfo "Git clone"
     invoke-git clone --quiet $settings.ecommerceMicrosoftRepoUrl
+    OutputInfo "Set location $buildPath" 
     Set-Location $buildPath
     invoke-git fetch --all
     invoke-git checkout "$($settings.ecommerceMicrosoftRepoBranch)"
