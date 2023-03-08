@@ -105,7 +105,7 @@ try {
     Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
     ### yarn load dependencies
-    yarn
+    #yarn
 
     ### generate package
     yarn msdyn365 pack
@@ -147,7 +147,7 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
         $packageName = $packageNamePattern + ".zip"
         OutputInfo "Package name generated"
-        
+
         $packagePath = $buildPath 
         Rename-Item -Path Join-Path $packagePath $ecommPackageName -NewName $packageName
         OutputInfo "Package renamed"
