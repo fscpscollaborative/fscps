@@ -62,8 +62,8 @@ try {
     $ApplicationVersion = $version.AppVersion
     $workflowName = $env:GITHUB_WORKFLOW
 
-    
-    $buildPath = "C:\Temp\Msdyn365.Commerce.Online"
+    $tempPath = "C:\Temp"
+    $buildPath = "$tempPath\Msdyn365.Commerce.Online"
     Write-Output "::endgroup::"
 
     Write-Output "::group::Cleanup folder"
@@ -94,9 +94,11 @@ try {
 
     $settings.ecommerceMicrosoftRepoUrl
     $settings.ecommerceMicrosoftRepoBranch
-
+    Set-Location $tempPath
     ### clone msdyn365 repo
     invoke-git clone --quiet $settings.ecommerceMicrosoftRepoUrl
+    Set-Location $buildPath
+    invoke-git fetch --all
     invoke-git checkout "$($settings.ecommerceMicrosoftRepoBranch)"
 
     ### yarn load dependencies
