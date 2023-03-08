@@ -117,12 +117,9 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-        $packageConfig = (Get-Content "$buildPath\package.json") | ConvertFrom-Json
-        
+        $packageConfig = (Get-Content "$buildPath\package.json") | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
         $ecommPackageName = "$($packageConfig.name)-$($packageConfig.version).zip"
-
         $packageNamePattern = $settings.packageNamePattern;
-
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
 
         if($settings.deploy)
