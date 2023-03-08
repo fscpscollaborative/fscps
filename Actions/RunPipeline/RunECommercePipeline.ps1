@@ -149,7 +149,7 @@ try {
         OutputInfo "Package name generated"
 
         $packagePath = $buildPath 
-        Rename-Item -Path Join-Path $packagePath $ecommPackageName -NewName $packageName
+        Rename-Item -Path (Join-Path $packagePath $ecommPackageName) -NewName $packageName
         OutputInfo "Package renamed"
 
         $packagePath = Join-Path $packagePath $packageName
