@@ -125,8 +125,10 @@ try {
     {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
-
+        
         $packageConfig = (Get-Content "$buildPath\package.json") | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
+        OutputInfo "Parsed package.json file"
+
         $ecommPackageName = "$($packageConfig.name)-$($packageConfig.version).zip"
         $packageNamePattern = $settings.packageNamePattern;
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
@@ -144,9 +146,11 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
         $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
         $packageName = $packageNamePattern + ".zip"
-
+        OutputInfo "Package name generated"
+        
         $packagePath = $buildPath 
         Rename-Item -Path Join-Path $packagePath $ecommPackageName -NewName $packageName
+        OutputInfo "Package renamed"
 
         $packagePath = Join-Path $packagePath $packageName
 
