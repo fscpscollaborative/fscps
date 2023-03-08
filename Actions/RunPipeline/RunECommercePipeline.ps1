@@ -154,13 +154,13 @@ try {
 
         $packagePath = Join-Path $packagePath $packageName
 
-        Write-Host "::set-output name=PACKAGE_NAME::$packageName"
-        Write-Host "set-output name=PACKAGE_NAME::$packageName"
+        OutputInfo "Package name: $packageName"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
-
-        Write-Host "::set-output name=PACKAGE_PATH::$packagePath"
-        Write-Host "set-output name=PACKAGE_PATH::$packagePath"
+        OutputInfo "Package name: $packagePath"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$packagePath"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
+
 
         Write-Output "::endgroup::"
     }
