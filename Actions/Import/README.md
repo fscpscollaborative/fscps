@@ -2,6 +2,15 @@
 Import the existing metadata source code into the current repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
+### actor (Default: '${{ github.actor }}') 
+ The GitHub actor running the action 
+
+### token (Default: '${{ github.token }}') 
+ The GitHub token running the action 
+
+### artifactsPath (Default: '') 
+ Artifacts archive url 
+
 ### type (Default: 'FSCM') 
  Repo type 
 
@@ -10,14 +19,5 @@ Import the existing metadata source code into the current repository
 
 ### secretsJson (Default: '') 
  Secrets from repository in compressed Json format 
-
-### token (Default: '${{ github.token }}') 
- The GitHub token running the action 
-
-### artifactsPath (Default: '') 
- Artifacts archive url 
-
-### actor (Default: '${{ github.actor }}') 
- The GitHub actor running the action 
 
 

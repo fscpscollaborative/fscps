@@ -279,14 +279,15 @@ function ReadSettings {
         "retailSDKZipPath"                       = "C:\RSDK"
         "retailSDKBuildPath"                     = "C:\Temp\RetailSDK"
         "retailSDKURL"                           = ""
+        "ecommerceMicrosoftRepoUrl"              = "https://github.com/microsoft/Msdyn365.Commerce.Online.git"
+        "ecommerceMicrosoftRepoBranch"           = "master"
         "repoTokenSecretName"                    = "REPO_TOKEN"
         "ciBranches"                             = "main,release"
         "deployScheduleCron"                     = "1 * * * *"
         "deploy"                                 = $false
         "deployOnlyNew"                          = $true
-        "deploymentScheduler"                    = $true
+        "deploymentScheduler"                    = $true        
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
-
     }
 
     $gitHubFolder = ".github"

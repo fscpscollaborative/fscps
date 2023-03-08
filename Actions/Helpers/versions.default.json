@@ -5,7 +5,8 @@
       "PlatformVersion": "7.0.6354.86",
       "AppVersion": "10.0.1192.92",
       "retailSDKVersion": "10.0.1192.72",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.26"
     }
   },
   {
@@ -14,7 +15,8 @@
       "PlatformVersion": "7.0.6395.47",
       "AppVersion": "10.0.1227.52",
       "retailSDKVersion": "10.0.1227.52",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.27"
     }
   },
   {
@@ -23,7 +25,8 @@
       "PlatformVersion": "7.0.6441.41",
       "AppVersion": "10.0.1265.20",
       "retailSDKVersion": "10.0.1265.20",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.28"
     }
   },
   {
@@ -32,7 +35,8 @@
       "PlatformVersion": "7.0.6545.121",
       "AppVersion": "10.0.1326.144",
       "retailSDKVersion": "10.0.1326.70",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.29"
     }
   },
   {
@@ -41,7 +45,8 @@
       "PlatformVersion": "7.0.6592.110",
       "AppVersion": "10.0.1362.124",
       "retailSDKVersion": "10.0.1362.77",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.30"
     }
   },
   {
@@ -50,7 +55,8 @@
       "PlatformVersion": "7.0.6651.92",
       "AppVersion": "10.0.1406.77",
       "retailSDKVersion": "10.0.1406.77",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.31"
     }
   },
   {
@@ -59,7 +65,8 @@
       "PlatformVersion": "7.0.6801.18",
       "AppVersion": "10.0.1515.21",
       "retailSDKVersion": "10.0.1515.21",
-      "retailSDKURL": ""
+      "retailSDKURL": "",
+      "ecommerceMicrosoftRepoBranch":"RS/10.0.32"
     }
   }
 ]

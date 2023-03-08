@@ -2,8 +2,11 @@
 Read settings for FSC-PS workflows 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
-### get (Default: '') 
- Specifies which properties to get from the settings file, default is all 
+### environment (Default: '') 
+ Merge settings from specific environment 
+
+### token (Default: '${{ github.token }}') 
+ The GitHub token running the action 
 
 ### version (Default: '') 
  The Dynamics Application Version 
@@ -11,11 +14,8 @@ Read settings for FSC-PS workflows
 ### actor (Default: '${{ github.actor }}') 
  The GitHub actor running the action 
 
-### environment (Default: '') 
- Merge settings from specific environment 
-
-### token (Default: '${{ github.token }}') 
- The GitHub token running the action 
+### get (Default: '') 
+ Specifies which properties to get from the settings file, default is all 
 
 ## :arrow_up: Outputs 
 ### GitHubRunnerJson (Default: '') 
@@ -23,6 +23,9 @@ Read settings for FSC-PS workflows
 
 ### source_branch (Default: '') 
  Source branch 
+
+### EnvironmentsJson (Default: '') 
+ Environments in compressed Json format 
 
 ### type (Default: '') 
  Repo type 
@@ -32,8 +35,5 @@ Read settings for FSC-PS workflows
 
 ### SettingsJson (Default: '') 
  Settings in compressed Json format 
-
-### EnvironmentsJson (Default: '') 
- Environments in compressed Json format 
 
 

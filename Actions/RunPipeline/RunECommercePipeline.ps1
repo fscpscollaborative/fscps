@@ -25,11 +25,8 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
-
-    #$settings = $settingsJson | ConvertFrom-Json 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
-
-    $settingsHash = $settings #| ConvertTo-HashTable
+    $settingsHash = $settings 
     $settings.secretsList | ForEach-Object {
         $setValue = ""
         if($settingsHash.Contains($_))
@@ -47,37 +44,26 @@ try {
         Set-Variable -Name $_ -Value $value
     }
 
-
     if($DynamicsVersion -eq "")
     {
         $DynamicsVersion = $settings.buildVersion
     }
-
     $version = Get-VersionData -sdkVersion $DynamicsVersion
-
     if($settings.sourceBranch -eq "")
     {
         $settings.sourceBranch = $settings.currentBranch
     }
     $settings
     $version
-    #SourceBranchToPascakCase
+    #SourceBranchToPascalCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
     $PlatformVersion = $version.PlatformVersion
     $ApplicationVersion = $version.AppVersion
-
-
-    $project = "" 
-    $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE $project
-    $sharedFolder = ""
-    if ($project) {
-        $sharedFolder = $ENV:GITHUB_WORKSPACE
-    }
     $workflowName = $env:GITHUB_WORKFLOW
 
     
-    $buildPath = $settings.retailSDKBuildPath
+    $buildPath = "C:\Temp\Msdyn365.Commerce.Online"
     Write-Output "::endgroup::"
 
     Write-Output "::group::Cleanup folder"
@@ -86,83 +72,34 @@ try {
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Expand RetailSDK"
-    OutputInfo "======================================== Expand RetailSDK"
-    $sdkzipPath = Update-RetailSDK -sdkVersion $DynamicsVersion -sdkPath $settings.retailSDKZipPath
-    Expand-7zipArchive -Path $sdkzipPath -DestinationPath $buildPath
-
-    Remove-Item $buildPath\SampleExtensions -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "::endgroup::"
-
     Write-Output "::group::Copy branch files"
     OutputInfo "======================================== Copy branch files"
     #Copy branch files
     New-Item -ItemType Directory -Force -Path $buildPath; Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
     Write-Output "::endgroup::"
 
-    Write-Output "::group::Cleanup NuGet"
-    OutputInfo "======================================== Cleanup NuGet"
-    #Cleanup NuGet
-    nuget sources remove -Name $settings.nugetFeedName -Source $settings.nugetSourcePath
-    Write-Output "::endgroup::"
-
-    Write-Output "::group::Nuget add source"
-    OutputInfo "======================================== Nuget add source"
-    #Nuget add source
-    $nugetUserName = if($settings.nugetFeedUserName){$settings.nugetFeedUserName}else{$nugetFeedUserSecretName}
-    nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
-   
-    Write-Output "::endgroup::"
-
-    #Write-Output "::group::Nuget install packages"
-    #OutputInfo "======================================== Nuget install packages"
-
-    #cd $buildPath
-
-    #Nuget install packages
-    #nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
-    #Write-Output "::endgroup::"
-
-
     Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
-    cd $buildPath
 
-    ### Prebuild
-    $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
-    if(Test-Path $prebuildCustomScript)
-    {
-        & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
-    }
-    ### Prebuild
+    ### install python
+    Set-Location $buildPath
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe" -OutFile "$buildPath\python-3.7.0.exe"
+    .\python-3.7.0.exe /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
 
-    Install-Module -Name Invoke-MsBuild
-    #& msbuild
-    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
-    if($msbuildpath -ne "")
-    {
-        $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path dirs.proj -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
-    }
-    else
-    {
-        $msbuildresult = Invoke-MsBuild -Path dirs.proj -ShowBuildOutputInCurrentWindow 
-    }
-    if ($msbuildresult.BuildSucceeded -eq $true)
-    {
-      Write-Output ("Build completed successfully in {0:N1} seconds." -f $msbuildresult.BuildDuration.TotalSeconds)
-    }
-    elseif ($msbuildresult.BuildSucceeded -eq $false)
-    {
-      Write-Error ("Build failed after {0:N1} seconds. Check the build log file '$($msbuildresult.BuildLogFilePath)' for errors." -f $msbuildresult.BuildDuration.TotalSeconds)
-    }
-    elseif ($null -eq $msbuildresult.BuildSucceeded)
-    {
-      Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
-    }
+    ###install yarn 
+    npm install --global yarn
 
-    
+    ### clone msdyn365 repo
+    invoke-git clone --quiet $settings.ecommerceMicrosoftRepoUrl
+    invoke-git checkout $settings.ecommerceMicrosoftRepoBranch
+
+    ### yarn load dependencies
+    yarn
+
+    ### generate package
+    yarn msdyn365 pack
 
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
@@ -180,18 +117,9 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
 
-        #check nuget instalation
-        $Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
-        $DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
-
-        if([string]::IsNullOrEmpty($Az))
-        {
-            Install-Module -Name AZ -AllowClobber -Scope CurrentUser -Force -Confirm:$False -SkipPublisherCheck
-        }
-        if([string]::IsNullOrEmpty($DfoTools))
-        {
-            Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
-        }
+        $packageConfig = (Get-Content "$buildPath\package.json") | ConvertFrom-Json
+        
+        $ecommPackageName = "$($packageConfig.name)-$($packageConfig.version).zip"
 
         $packageNamePattern = $settings.packageNamePattern;
 
@@ -211,8 +139,8 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
         $packageName = $packageNamePattern + ".zip"
 
-        $packagePath = Join-Path $buildPath "\Packages\RetailDeployablePackage\RetailDeployablePackage.zip"
-        Rename-Item -Path Join-Path $packagePath "RetailDeployablePackage.zip"  -NewName $packageName
+        $packagePath = $buildPath 
+        Rename-Item -Path Join-Path $packagePath $ecommPackageName -NewName $packageName
 
         $packagePath = Join-Path $packagePath $packageName
 
@@ -225,95 +153,6 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
 
         Write-Output "::endgroup::"
-
-
-        #Upload to LCS
-        $assetId = ""
-        if($settings.uploadPackageToLCS)
-        {
-            Write-Output "::group::Upload artifact to the LCS"
-            OutputInfo "======================================== Upload artifact to the LCS"
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-            $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-            Write-Output "::endgroup::"
-
-            #Deploy asset to the LCS Environment
-            if($settings.deploy)
-            {
-                Write-Output "::group::Deploy asset to the LCS Environment"
-                OutputInfo "======================================== Deploy asset to the LCS Environment"
-                #Check environment status
-                OutputInfo "======================================== Check $($EnvironmentName) status"
-
-                $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
-                $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
-
-                OutputInfo "Check az cli installation..."
-                if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
-                {
-                    OutputInfo "az cli installing.."
-                    $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
-                    OutputInfo "az cli installed.."
-                }
-
-                Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-                $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
-
-                $PowerState = ""
-                if ($AzureRMAccount) { 
-                    #Do Logic
-                    OutputInfo "== Logged in == $($settings.azTenantId) "
-
-                    OutputInfo "Getting Azure VM State $($settings.azVmname)"
-                    $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
-                    OutputInfo "....state is $($PowerState)"
-                }
-
-
-                #Startup environment
-                #if($PowerState -ne "running")
-                #{
-                    OutputInfo "======================================== Start $($EnvironmentName)"
-                    Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
-                    Start-Sleep -Seconds 60
-                #}
-
-                #Deploy asset to the LCS Environment
-                OutputInfo "======================================== Deploy asset to the LCS Environment"
-                $WaitForCompletion = $true
-                $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
-                $errorCnt = 0
-                do {
-                    Start-Sleep -Seconds 10
-                    $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
-
-                    if (($deploymentStatus.ErrorMessage))
-                    {
-                        $errorCnt++
-                    }
-                    if($errorCnt -eq 3)
-                    {
-                        if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
-                            $messageString = "The request against LCS succeeded, but the response was an error message for the operation: <c='em'>$($deploymentStatus.ErrorMessage)</c>."
-                            $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                            OutputError -message $errorMessagePayload
-                        }
-                    }
-                    OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
-                }
-                while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                        
-                if($PowerState -ne "running")
-                {
-                    OutputInfo "======================================== Stop $($EnvironmentName)"
-                    Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
-                }
-                Write-Output "::endgroup::"
-            }
-        }
-
     }
 }
 catch {

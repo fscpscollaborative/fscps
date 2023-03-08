@@ -2,6 +2,15 @@
 Run pipeline in FSC-PS repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
+### environment_name (Default: '') 
+ The Dynamics Environment Name 
+
+### actor (Default: '${{ github.actor }}') 
+ The GitHub actor running the action 
+
+### token (Default: '${{ github.token }}') 
+ The GitHub token running the action 
+
 ### version (Default: '') 
  The Dynamics Application Version 
 
@@ -11,19 +20,13 @@ Run pipeline in FSC-PS repository
 ### settingsJson (Default: '') 
  Settings from repository in compressed Json format 
 
-### environment_name (Default: '') 
- The Dynamics Environment Name 
-
 ### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}') 
  Secrets from repository in compressed Json format 
 
-### token (Default: '${{ github.token }}') 
- The GitHub token running the action 
-
-### actor (Default: '${{ github.actor }}') 
- The GitHub actor running the action 
-
 ## :arrow_up: Outputs 
+### package_path (Default: '') 
+ Package path 
+
 ### package_name (Default: '') 
  Package name 
 
@@ -35,8 +38,3 @@ Run pipeline in FSC-PS repository
 
 ### artifacts_list (Default: '') 
  Artifacts folder path 
-
-### package_path (Default: '') 
- Package path 
-
-
