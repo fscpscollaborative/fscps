@@ -79,7 +79,7 @@ try {
     ### install python
     Set-Location $tempPath
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe" -OutFile "$buildPath\python-3.7.0.exe"
+    Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe" -OutFile "$tempPath\python-3.7.0.exe"
     .\python-3.7.0.exe /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
 
     ###install yarn 
