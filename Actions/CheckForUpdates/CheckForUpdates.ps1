@@ -35,7 +35,13 @@ try {
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
 
     $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
-    $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
+    try {
+        $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
+    }
+    catch {
+        $environments = @("")
+    }
+    
 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
@@ -58,7 +64,6 @@ try {
     }
     
     $DynamicsVersion = $settings.buildVersion
-
     $versions = Get-Versions
 
     if($settings.sourceBranch -eq "")
@@ -66,13 +71,11 @@ try {
         $settings.sourceBranch = $settings.currentBranch
     }
 
-    
-    #SourceBranchToPascakCase
+    #SourceBranchToPascalCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"
-
 
     if(!$templateUrl)
     {
