@@ -84,8 +84,10 @@ jobs:
         with:
           settingsJson: ${{ env.Settings }}
           
-      - name: Setup Node.js environment
+      - name: Setup Node.js
         uses: actions/setup-node@v3.6.0   
+        with:
+          node-version: '16'
       
       - name: Get Env Vars
         run: |
