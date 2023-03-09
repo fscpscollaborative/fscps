@@ -105,7 +105,12 @@ try {
     Copy-Item $ENV:GITHUB_WORKSPACE\* -Destination $buildPath -Recurse -Force
 
     ### yarn load dependencies
-    yarn
+    yarn msdyn365 update-versions sdk
+    yarn msdyn365 update-versions module-library
+    yarn msdyn365 update-versions retail-proxy
+
+    yarn -force
+    yarn cache clean
 
     ### generate package
     yarn msdyn365 pack
