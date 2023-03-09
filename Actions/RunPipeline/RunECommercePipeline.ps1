@@ -144,7 +144,7 @@ try {
         }
         else
         {
-            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $($settings.packageName)-$($packageConfig.version))
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", "$($settings.packageName)-$($packageConfig.version)")
         }
 
         $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
