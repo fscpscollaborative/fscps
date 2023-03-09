@@ -110,7 +110,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: '${{ env.ARTIFACTS_PATH }}'
+          path: '${{ env.PACKAGE_PATH }}'
           
       - name: Publish Release
         id: PublishRelease
@@ -119,7 +119,7 @@ jobs:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-          artifactsPath: '${{ env.ARTIFACTS_PATH }}'
+          artifactsPath: '${{ env.PACKAGE_PATH }}'
 
            
   CreateReleaseBranch:

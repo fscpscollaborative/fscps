@@ -95,7 +95,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: ${{ env.ARTIFACTS_PATH }}
+          path: ${{ env.PACKAGE_PATH }}
           
    PostProcess: 
     if: always()
