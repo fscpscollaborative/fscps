@@ -109,8 +109,7 @@ try {
     yarn msdyn365 update-versions module-library
     yarn msdyn365 update-versions retail-proxy
 
-    yarn -force
-    yarn cache clean
+    yarn
 
     ### generate package
     yarn msdyn365 pack
