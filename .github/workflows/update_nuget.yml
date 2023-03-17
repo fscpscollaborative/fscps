@@ -246,6 +246,12 @@ jobs:
             $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
 
             $branch = [System.IO.Path]::GetRandomFileName()
+            $githubOwner = "$ENV:GITHUB_ACTOR"
+            invoke-git config --global user.email "$githubOwner@users.noreply.github.com"
+            invoke-git config --global user.name "$githubOwner"
+            invoke-git config --global hub.protocol https
+            invoke-git config --global core.autocrlf true
+
             invoke-git checkout -b $branch main
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
