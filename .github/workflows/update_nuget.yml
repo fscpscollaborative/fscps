@@ -261,8 +261,7 @@ jobs:
             }
             Set-Location 
             invoke-git commit --allow-empty -m 'Update'
-            invoke-git push
-            invoke-git push -u $url $branch
+            invoke-git push -u origin $branch
             Write-Output "Create PR to the main"
             $releaseNotes = "No release notes available!"
             invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base main
