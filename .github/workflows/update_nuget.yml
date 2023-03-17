@@ -128,32 +128,31 @@ jobs:
                         if($download)
                         {               
                             # Test if AzCopy.exe exists in current folder
-                            $WantFile = "azcopy.exe"
+                            $WantFile = "c:\temp\azcopy.exe"
                             $AzCopyExists = Test-Path $WantFile
                             Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
 
                             # Download AzCopy if it doesn't exist
                             If ($AzCopyExists -eq $False)
                             {
-                            Write-Output "AzCopy not found. Downloading..."
+                                Write-Output "AzCopy not found. Downloading..."
 
-                            #Download AzCopy
-                            Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile AzCopy.zip -UseBasicParsing
+                                #Download AzCopy
+                                Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile c:\temp\AzCopy.zip -UseBasicParsing
 
-                            #Expand Archive
-                            Write-Output "Expanding archive...`n"
-                            Expand-Archive ./AzCopy.zip ./AzCopy -Force
+                                #Expand Archive
+                                Write-Output "Expanding archive...`n"
+                                Expand-Archive c:\temp\AzCopy.zip c:\temp\AzCopy -Force
 
-                            # Copy AzCopy to current dir
-                            Get-ChildItem ./AzCopy/*/azcopy.exe | Copy-Item -Destination "./azcopy.exe"
+                                # Copy AzCopy to current dir
+                                Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
                             }
                             else
                             {
-                            Write-Output "AzCopy found, skipping download.`n"
+                                Write-Output "AzCopy found, skipping download.`n"
                             }
-
                         
-                            & ./$WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
+                            & $WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
                             if(Test-Path $destinationNugetFilePath)
                             {
                                 $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
@@ -216,12 +215,12 @@ jobs:
                                 }
                                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
                                 $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
-                            {  
-                                "AppVersion"
-                                $curVer.data.AppVersion=$version;
-                                break;
-                            }
-                                Default {}
+                                {  
+                                    "AppVersion"
+                                    $curVer.data.AppVersion=$version;
+                                    break;
+                                }
+                                    Default {}
                             }
                             
                             Set-Content -Path $versionsDefaultFile ($versions | ConvertTo-Json)
@@ -247,8 +246,10 @@ jobs:
             $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
             $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
 
+            Set-Location $baseFolder
             $branch = [System.IO.Path]::GetRandomFileName()
             $githubOwner = "$ENV:GITHUB_ACTOR"
+            
             invoke-git config --global user.email "$githubOwner@users.noreply.github.com"
             invoke-git config --global user.name "$githubOwner"
             invoke-git config --global hub.protocol https
@@ -261,7 +262,8 @@ jobs:
                 $fscVersion = $regex.Match($_.Name).Value
                 UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
             }
-            Set-Location 
+            Set-Location $baseFolder
+            invoke-git add .
             invoke-git commit --allow-empty -m 'Update'
             invoke-git push -u origin $branch
             Write-Output "Create PR to the main"
