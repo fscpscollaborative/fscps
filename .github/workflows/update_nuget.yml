@@ -223,7 +223,7 @@ jobs:
                                     Default {}
                             }
                             
-                            Set-Content -Path $versionsDefaultFile ($versions | ConvertTo-Json)
+                            Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
                         }
 
                         Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
