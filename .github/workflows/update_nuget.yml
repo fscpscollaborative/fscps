@@ -22,6 +22,8 @@ jobs:
             exit 1
           }
       - name: Update Nugets
+        env:
+            GH_TOKEN: ${{ github.token }}
         run: |
      
             function GetUNHeader {
