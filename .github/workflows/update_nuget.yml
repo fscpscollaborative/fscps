@@ -24,7 +24,7 @@ jobs:
       - name: Update Nugets
         run: |
      
-            function GetHeader {
+            function GetUNHeader {
                 param (
                     [string] $token,
                     [string] $accept = "application/json"
@@ -66,7 +66,7 @@ jobs:
                     #Just read-only SAS token :)
                     $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
                     $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-                    $header = GetHeader -token $token
+                    $header = GetUNHeader -token $token
                     if(-not(Test-Path $PackageDestination))
                     {
                         [System.IO.Directory]::CreateDirectory($PackageDestination)
@@ -236,7 +236,6 @@ jobs:
             $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
 
             $branch = [System.IO.Path]::GetRandomFileName()
-            invoke-git checkout main
             invoke-git checkout -b $branch main
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
