@@ -787,17 +787,7 @@ function Copy-Filtered {
         Copy-Item $_.FullName $ItemTarget
     }
 }
-function GetLCSSharedAssetsList {
-    param (
-        [string] $token,
-        [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
-
-    )
-    $header = GetHeader -token $token
-    $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
-    $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
-    return $assetsList
-}     
+ 
 ################################################################################
 # Start - Private functions.
 ################################################################################

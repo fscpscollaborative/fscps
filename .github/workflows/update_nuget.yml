@@ -51,7 +51,17 @@ jobs:
 
                 return (Invoke-RestMethod -Method Post -Uri https://login.microsoftonline.com/common/oauth2/token -Body $body).access_token
             }                   
+            function GetLCSSharedAssetsList {
+                param (
+                    [string] $token,
+                    [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
 
+                )
+                $header = GetUNHeader -token $token
+                $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
+                $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
+                return $assetsList
+            }    
             function UploadAssetToStorage {
                 param (
                     [string]$AssetId,
