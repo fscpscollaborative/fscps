@@ -6,7 +6,18 @@ $gitHubHelperPath = Join-Path $PSScriptRoot 'Helpers\Github-Helper.psm1'
 if (Test-Path $gitHubHelperPath) {
     Import-Module $gitHubHelperPath
 }
-
+enum LcsAssetFileType {
+    Model = 1
+    ProcessDataPackage = 4
+    SoftwareDeployablePackage = 10
+    GERConfiguration = 12
+    DataPackage = 15
+    PowerBIReportModel = 19
+    ECommercePackage = 26
+    NuGetPackage = 27
+    RetailSelfServicePackage = 28
+    CommerceCloudScaleUnitExtension = 29
+}       
 $ErrorActionPreference = "stop"
 Set-StrictMode -Version 2.0
 
@@ -656,7 +667,30 @@ function Update-FSCNuGet
         } 
     }
 }
+function Get-NuGetVersion
+{    
+    [CmdletBinding()]
+    param (
+        [System.IO.DirectoryInfo]$NugetPath
+    )
+    begin{
+        $zipFile = [IO.Compression.ZipFile]::OpenRead($NugetPath.FullName)
+    }
+    process{
+        
+        $zipFile.Entries | Where-Object {$_.FullName.Contains(".nuspec")} | ForEach-Object{
+            $nuspecFilePath = "$(Join-Path $NugetPath.Parent.FullName $_.Name)"
+            [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $nuspecFilePath, $true)
 
+            [xml]$XmlDocument = Get-Content $nuspecFilePath
+            $XmlDocument.package.metadata.version
+            Remove-Item $nuspecFilePath
+        }
+    }
+    end{
+        $zipFile.Dispose()
+    }
+}
 function Get-VersionData
 {
     [CmdletBinding()]
@@ -753,7 +787,17 @@ function Copy-Filtered {
         Copy-Item $_.FullName $ItemTarget
     }
 }
+function GetLCSSharedAssetsList {
+    param (
+        [string] $token,
+        [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
 
+    )
+    $header = GetHeader -token $token
+    $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
+    $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
+    return $assetsList
+}     
 ################################################################################
 # Start - Private functions.
 ################################################################################

@@ -23,44 +23,7 @@ jobs:
           }
       - name: Update Nugets
         run: |
-            enum LcsAssetFileType {
-                Model = 1
-                ProcessDataPackage = 4
-                SoftwareDeployablePackage = 10
-                GERConfiguration = 12
-                DataPackage = 15
-                PowerBIReportModel = 19
-                ECommercePackage = 26
-                NuGetPackage = 27
-                RetailSelfServicePackage = 28
-                CommerceCloudScaleUnitExtension = 29
-            }
-            function installModules {
-                Param(
-                    [String[]] $modules
-                )
-
-                $modules | ForEach-Object {
-                    if($_ -eq "Az")
-                    {
-                        Set-ExecutionPolicy RemoteSigned
-                        try {
-                            Uninstall-AzureRm
-                        }
-                        catch {
-                        }
-
-                    }
-                    if (-not (get-installedmodule -Name $_ -ErrorAction SilentlyContinue)) {
-                        Write-Host "Installing module $_"
-                        Install-Module $_ -Force -AllowClobber -Scope CurrentUser | Out-Null
-                    }
-                }
-                $modules | ForEach-Object { 
-                    Write-Host "Importing module $_"
-                    Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue -Force | Out-Null
-                }
-            }
+     
             function GetHeader {
                 param (
                     [string] $token,
@@ -87,42 +50,7 @@ jobs:
                 '&scope=openid'
 
                 return (Invoke-RestMethod -Method Post -Uri https://login.microsoftonline.com/common/oauth2/token -Body $body).access_token
-            }
-            function GetLCSSharedAssetsList {
-                param (
-                    [string] $token,
-                    [LcsAssetFileType] $FileType = [LcsAssetFileType]::SoftwareDeployablePackage
-
-                )
-                $header = GetHeader -token $token
-                $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
-                $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
-                return $assetsList
-            }
-            function Get-NuGetVersion
-            {    
-                [CmdletBinding()]
-                param (
-                    [System.IO.DirectoryInfo]$NugetPath
-                )
-                begin{
-                    $zipFile = [IO.Compression.ZipFile]::OpenRead($NugetPath.FullName)
-                }
-                process{
-                    
-                    $zipFile.Entries | Where-Object {$_.FullName.Contains(".nuspec")} | ForEach-Object{
-                        $nuspecFilePath = "$(Join-Path $NugetPath.Parent.FullName $_.Name)"
-                        [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $nuspecFilePath, $true)
-
-                        [xml]$XmlDocument = Get-Content $nuspecFilePath
-                        $XmlDocument.package.metadata.version
-                        Remove-Item $nuspecFilePath
-                    }
-                }
-                end{
-                    $zipFile.Dispose()
-                }
-            }
+            }                   
 
             function UploadAssetToStorage {
                 param (
@@ -151,7 +79,6 @@ jobs:
                     #get download link asset
                     $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
                     $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
-                    #$assetJson.FileLocation
 
                     if(Test-Path $destinationNugetFilePath)
                     {
@@ -173,7 +100,6 @@ jobs:
                             if($filenameVersion -eq "")
                             {
                                 Remove-Item $destinationNugetFilePath
-                                #break;
                             }
                         }
                         $destinationNugetFilePath = $newdestinationNugetFilePath
@@ -255,13 +181,48 @@ jobs:
                         $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
                         $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
 
+                        if($FSCVersion -ne "")
+                        {
+                            $versions = New-Object System.Collections.ArrayList
+                            $versionsDefaultFile = "Actions\Helpers\versions.default.json"
+                            $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json
+                            $versionsDefault | ForEach-Object{$versions.Add($_)}
+                            $curVer = $versions.Where({$_.version -eq $FSCVersion})
+                            if(!$curVer)
+                            {
+                                $curVer = (@{version=$FSCVersion;data=@{PlatformVersion='';AppVersion='';retailSDKVersion=''; retailSDKURL=''; ecommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
+                                $versions.Add($curVer)
+                                $curVer = $versions.Where({$_.version -eq $FSCVersion})
+                            }
+                            switch ($AssetName) {
+                                {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.CompilerPackage.".ToLower()) -or
+                                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.".ToLower())} 
+                                {  
+                                    "PlatformVersion"
+                                    $curVer.data.PlatformVersion=$version;
+                                    break;
+                                }
+                                {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
+                                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
+                            {  
+                                "AppVersion"
+                                $curVer.data.AppVersion=$version;
+                                break;
+                            }
+                                Default {}
+                            }
+                            
+                            Set-Content -Path $versionsDefaultFile ($versions | ConvertTo-Json)
+                        }
 
                         Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
                     }
                 }
             }
-
+            $baseFolder = $ENV:GITHUB_WORKSPACE
             Import-Module PowerShellGet
+            $helperPath = Join-Path -Path $baseFolder -ChildPath "Actions\FSC-PS-Helper.ps1" -Resolve
+            . ($helperPath)            
             installModules AZ.Storage,d365fo.tools
 
             $lcsUserName = "${{ secrets.LCS_USERNAME }}"
@@ -274,7 +235,20 @@ jobs:
             $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
             $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
 
-            $assetsList | ForEach-Object {
-                UploadAssetToStorage -AssetId $_.Id -AssetName $_.FileName -ProjectId $lcsProjectId -LCSToken $token
+            $branch = [System.IO.Path]::GetRandomFileName()
+            invoke-git checkout main
+            invoke-git checkout -b $branch main
+            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
+                $fileName = $_.FileName
+                $regex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
+                $fscVersion = $regex.Match($_.Name).Value
+                UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
             }
+            Set-Location 
+            invoke-git commit --allow-empty -m 'Update'
+            invoke-git push
+            invoke-git push -u $url $branch
+            Write-Output "Create PR to the main"
+            $releaseNotes = "No release notes available!"
+            invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base main
 

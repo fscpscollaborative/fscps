@@ -167,6 +167,18 @@ try {
 
 
         Write-Output "::endgroup::"
+
+        #Upload to LCS
+        $assetId = ""
+        if($settings.uploadPackageToLCS)
+        {
+            Write-Output "::group::Upload artifact to the LCS"
+            OutputInfo "======================================== Upload artifact to the LCS"
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+            $assetId = Invoke-D365LcsUpload -FilePath "$packagePath" -FileType "ECommercePackage" -Name "$packageName" -Verbose
+            Write-Output "::endgroup::"
+        }
     }
 }
 catch {
