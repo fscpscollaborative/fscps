@@ -1,5 +1,5 @@
-# :rocket: Action 'Import' 
-Import the existing metadata source code into the current repository 
+# :rocket: Action 'UpdateISVModels' 
+Update the existing ISV metadata 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
 ### artifactsPath (Default: '') 

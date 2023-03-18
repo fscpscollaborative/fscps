@@ -1592,7 +1592,32 @@ function Extract-D365FSCSource
     Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
+function Update-D365FSCISVSource
+{
+    [CmdletBinding()]
+    param (
+        [string]
+        $archivePath,
+        [string]
+        $targetPath
 
+    )
+
+    $tempFolder = "$targetPath\_tmp"
+    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+    Expand-7zipArchive -Path $archivePath -DestinationPath $tempFolder
+
+    $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
+    $metadataPath = $modelPath[0].Parent.Parent.FullName
+    
+    Get-ChildItem -Path $metadataPath | ForEach-Object {
+        $_.Name
+        Remove-Item -Path (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+        Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+    }
+    
+    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+}
 ################################################################################
 # End - Private functions.
 ################################################################################

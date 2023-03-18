@@ -2,6 +2,9 @@
 Read settings for FSC-PS workflows 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
+### get (Default: '') 
+ Specifies which properties to get from the settings file, default is all 
+
 ### environment (Default: '') 
  Merge settings from specific environment 
 
@@ -14,26 +17,23 @@ Read settings for FSC-PS workflows
 ### actor (Default: '${{ github.actor }}') 
  The GitHub actor running the action 
 
-### get (Default: '') 
- Specifies which properties to get from the settings file, default is all 
-
 ## :arrow_up: Outputs 
-### GitHubRunnerJson (Default: '') 
- GitHubRunner in compressed Json format 
-
-### source_branch (Default: '') 
- Source branch 
+### type (Default: '') 
+ Repo type 
 
 ### EnvironmentsJson (Default: '') 
  Environments in compressed Json format 
 
-### type (Default: '') 
- Repo type 
+### SettingsJson (Default: '') 
+ Settings in compressed Json format 
+
+### source_branch (Default: '') 
+ Source branch 
 
 ### VersionsJson (Default: '') 
  Versions in compressed Json format 
 
-### SettingsJson (Default: '') 
- Settings in compressed Json format 
+### GitHubRunnerJson (Default: '') 
+ GitHubRunner in compressed Json format 
 
 
