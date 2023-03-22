@@ -264,9 +264,13 @@ jobs:
             }
             Set-Location $baseFolder
             invoke-git add .
-            invoke-git commit --allow-empty -m 'Update'
-            invoke-git push -u origin $branch
-            Write-Output "Create PR to the main"
-            $releaseNotes = "No release notes available!"
-            invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base main
-
+            
+            $status = invoke-git status --porcelain=v2
+            OutputInfo "Git changes: $($status)"
+            if ($status) {
+                 invoke-git commit --allow-empty -m 'Update'
+                 invoke-git push -u origin $branch
+                 Write-Output "Create PR to the main"
+                 $releaseNotes = "No release notes available!"
+                 invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base main
+            }
