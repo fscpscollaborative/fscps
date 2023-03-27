@@ -250,7 +250,7 @@ jobs:
             Set-Location $baseFolder
             invoke-git add .
             
-            $status = invoke-git status --porcelain=v2
+            $status = invoke-git status --porcelain=v2 -returnValue
             OutputInfo "Git changes: $($status)"
             if ($status) {
                  invoke-git commit --allow-empty -m 'Update'
