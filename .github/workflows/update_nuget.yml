@@ -64,6 +64,7 @@ jobs:
                 $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
                 return $assetsList
             }    
+            
             function UploadAssetToStorage {
                 param (
                     [string]$AssetId,
@@ -97,29 +98,19 @@ jobs:
                         $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
                         $filenameVersion = $regex.Match($AssetName).Value
                         $version = Get-NuGetVersion $destinationNugetFilePath
-                        $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
-                        $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
-                        $destinationNugetFilePath
-                        $version
-                        $AssetName
-
+                        if($filenameVersion -ne "")
+                        {
+                            $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                        }
+                        else { $newdestinationNugetFilePath = $destinationNugetFilePath }
+                        $newdestinationNugetFilePath = ($newdestinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
                         if(-not(Test-Path $newdestinationNugetFilePath))
                         {
                             Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
                         }
-                        else
-                        {
-                            if($filenameVersion -eq "")
-                            {
-                                Remove-Item $destinationNugetFilePath
-                            }
-                        }
                         $destinationNugetFilePath = $newdestinationNugetFilePath
-                        $destinationNugetFilePath
                     }
-
                     $download = (-not(Test-Path $destinationNugetFilePath))
-
                     $upload = $true
 
                     $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
@@ -152,29 +143,23 @@ jobs:
                                 Write-Output "AzCopy found, skipping download.`n"
                             }
                         
-                            & $WantFile copy $assetJson.FileLocation "$destinationNugetFilePath"
+                            & $WantFile copy $assetJson.FileLocation "$destinationNugetFilePath" --output-level quiet
                             if(Test-Path $destinationNugetFilePath)
                             {
                                 $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
                                 $filenameVersion = $regex.Match($AssetName).Value
                                 $version = Get-NuGetVersion $destinationNugetFilePath
-                                $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
-                                $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
-
+                                if($filenameVersion -ne "")
+                                {
+                                    $newdestinationNugetFilePath = ($destinationNugetFilePath).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                                }
+                                else { $newdestinationNugetFilePath = $destinationNugetFilePath }
+                                $newdestinationNugetFilePath = ($newdestinationNugetFilePath).Replace(".nupkg",".$version.nupkg")
                                 if(-not(Test-Path $newdestinationNugetFilePath))
                                 {
                                     Rename-Item -Path $destinationNugetFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationNugetFilePath).FullName -Force -PassThru
                                 }
-                                else
-                                {
-                                    if($filenameVersion -eq "")
-                                    {
-                                        Remove-Item $destinationNugetFilePath
-                                        #break;
-                                    }
-                                }
                                 $destinationNugetFilePath = $newdestinationNugetFilePath
-                                $destinationNugetFilePath
                             }
                             #Invoke-D365AzCopyTransfer $assetJson.FileLocation "$destinationNugetFilePath"
                         }
@@ -191,7 +176,6 @@ jobs:
                         $version = Get-NuGetVersion $destinationNugetFilePath
                         $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
                         $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
-
                         if($FSCVersion -ne "")
                         {
                             $versions = New-Object System.Collections.ArrayList
@@ -209,14 +193,12 @@ jobs:
                                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.CompilerPackage.".ToLower()) -or
                                 $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.".ToLower())} 
                                 {  
-                                    "PlatformVersion"
-                                    $curVer.data.PlatformVersion=$version;
+                                    $curVer.data.PlatformVersion=$version;                 
                                     break;
                                 }
                                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
                                 $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
                                 {  
-                                    "AppVersion"
                                     $curVer.data.AppVersion=$version;
                                     break;
                                 }
@@ -260,7 +242,10 @@ jobs:
                 $fileName = $_.FileName
                 $regex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
                 $fscVersion = $regex.Match($_.Name).Value
-                UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
+                if($fscVersion -gt "10.0.17")
+                {
+                    UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
+                }
             }
             Set-Location $baseFolder
             invoke-git add .
