@@ -168,6 +168,7 @@ jobs:
                     else
                     {
                         $upload = $false
+                        Write-Output "Blob not found"
                     }
 
                     if($upload)
