@@ -79,7 +79,7 @@ jobs:
                     #Just read-only SAS token :)
                     $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
                     $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-                    $header = GetUNHeader -token $token
+                    $header = GetUNHeader -token $LCSToken
                     if(-not(Test-Path $PackageDestination))
                     {
                         [System.IO.Directory]::CreateDirectory($PackageDestination)
@@ -225,13 +225,13 @@ jobs:
             $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
 
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-            $assetsList = GetLCSSharedAssetsList -Token $token -FileType NuGetPackage
+            $lcstoken = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
+            $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType NuGetPackage
 
             Set-Location $baseFolder
             $branch = [System.IO.Path]::GetRandomFileName()
             $githubOwner = "$ENV:GITHUB_ACTOR"
-            
+
             invoke-git config --global user.email "$githubOwner@users.noreply.github.com"
             invoke-git config --global user.name "$githubOwner"
             invoke-git config --global hub.protocol https
@@ -244,18 +244,19 @@ jobs:
                 $fscVersion = $regex.Match($_.Name).Value
                 if($fscVersion -gt "10.0.17")
                 {
-                    UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $token
+                    $fscVersion
+                    UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken
                 }
             }
             Set-Location $baseFolder
             invoke-git add .
-            
+
             $status = invoke-git status --porcelain=v2 -returnValue
             OutputInfo "Git changes: $($status)"
             if ($status) {
-                 invoke-git commit --allow-empty -m 'Update'
-                 invoke-git push -u origin $branch
-                 Write-Output "Create PR to the main"
-                 $releaseNotes = "No release notes available!"
-                 invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base main
+                invoke-git commit --allow-empty -m 'Update'
+                invoke-git push -u origin $branch
+                Write-Output "Create PR to the main"
+                $releaseNotes = "No release notes available!"
+                invoke-gh pr create --fill --head $branch --repo "https://github.com/ciellosinc/FSC-PS.git" --body "$releaseNotes" --base main
             }
