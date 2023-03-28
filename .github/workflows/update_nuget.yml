@@ -84,6 +84,7 @@ jobs:
                     {
                         [System.IO.Directory]::CreateDirectory($PackageDestination)
                     }
+                    Remove-Item -Path $PackageDestination/* -Recurse -Force
                 }
                 process {
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
