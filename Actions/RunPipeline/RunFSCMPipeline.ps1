@@ -319,15 +319,19 @@ try {
                 if($settings.exportModel)
                 {
                     Write-Output "::group::Export axmodel file"
+                    $models
                     if($models.Split(","))
                     {
+                        
                         $models.Split(",") | ForEach-Object{
+                            OutputInfo "Exporting $_ model..."
                             $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $_ -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
                             $modelFile = Get-Item $modelFilePath.File
                             Rename-Item $modelFile.FullName (($_)+($modelFile.Extension)) -Force
                         }
                     }
                     else {
+                        OutputInfo "Exporting $models model..."
                         $modelFilePath = Export-D365Model -Path $artifactDirectory -Model $models -BinDir $msFrameworkDirectory -MetaDataDir $msMetadataDirectory
                         $modelFile = Get-Item $modelFilePath.File
                         Rename-Item $modelFile.FullName (($models)+($modelFile.Extension)) -Force

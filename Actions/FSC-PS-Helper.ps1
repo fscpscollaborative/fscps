@@ -1592,6 +1592,7 @@ function Extract-D365FSCSource
     Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
+
 function Update-D365FSCISVSource
 {
     [CmdletBinding()]
