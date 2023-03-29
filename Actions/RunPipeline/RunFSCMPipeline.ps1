@@ -179,6 +179,7 @@ try {
     }
     ### Prebuild
 
+
     $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($buildPath)\$($settings.metadataPath);$($buildPath)\bin"
     $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
     $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
@@ -189,6 +190,11 @@ try {
     $buidPropsFile = Join-Path $buildPath NewBuild\Build\build.props
     $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
     Set-Content $buidPropsFile $tempFile
+
+    if($workflowName -eq "(UPDATE) Model Version")
+    {
+        Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($github.Payload.inputs.model)+"\Descriptor\*.xml")
+    }
 
     installModules "Invoke-MsBuild"
 
@@ -463,6 +469,7 @@ try {
                                 $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                                 OutputError -message $errorMessagePayload
                             }
+
                             OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
