@@ -23,7 +23,7 @@ try {
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
-
+    $github = (Get-ActionContext)
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $settingsHash = $settings 
@@ -83,7 +83,7 @@ try {
         & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
     }
     ### Prebuild
-    
+
     ### install python
     Set-Location $tempPath
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

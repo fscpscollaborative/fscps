@@ -23,7 +23,7 @@ try {
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
-
+    $github = (Get-ActionContext)
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -165,7 +165,7 @@ try {
         & $postbuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
     }
     ### Postbuild
-    
+
     Write-Output "::endgroup::"
 
      #GeneratePackages
