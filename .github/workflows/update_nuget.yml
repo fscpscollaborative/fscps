@@ -177,6 +177,11 @@ jobs:
                     else
                     {
                         $upload = $false
+                        if($download)
+                        {
+                            $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $AssetName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
+                            $blob.Name
+                        }
                         OutputInfo "Blob was found!"
                     }
 
