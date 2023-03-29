@@ -123,6 +123,7 @@ jobs:
                     OutputInfo "Upload?: $upload"
 
                     $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
+                    $blob
                     if(!$blob)
                     {
                         if($download)
@@ -186,7 +187,7 @@ jobs:
                     $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
                     OutputInfo "FSCVersion:  $FSCVersion"
                     OutputInfo "AssetName:  $AssetName"
-                    
+
                     if($FSCVersion -ne "")
                     {
                         $versions = New-Object System.Collections.ArrayList
