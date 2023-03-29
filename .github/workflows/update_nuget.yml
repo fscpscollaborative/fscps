@@ -176,50 +176,48 @@ jobs:
                     else
                     {
                         $upload = $false
-                        OutputInfo "Blob not found"
+                        OutputInfo "Blob was found!"
                     }
 
-                    if($upload)
-                    {            
-                        $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
-                        $filenameVersion = $regex.Match($AssetName).Value
-                        $version = Get-NuGetVersion $destinationNugetFilePath
-                        $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
-                        $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
-                        if($FSCVersion -ne "")
+                    $regex = [regex] "\b(([0-9]*[0-9])\.){3}(?:[0-9]*[0-9]?)\b"
+                    $filenameVersion = $regex.Match($AssetName).Value
+                    $version = Get-NuGetVersion $destinationNugetFilePath
+                    $AssetName = ($AssetName).Replace(".$filenameVersion.nupkg", ".nupkg") 
+                    $AssetName = ($AssetName).Replace(".nupkg",".$version.nupkg")
+                    OutputInfo "FSCVersion:  $FSCVersion"
+                    OutputInfo "AssetName:  $AssetName"
+                    
+                    if($FSCVersion -ne "")
+                    {
+                        $versions = New-Object System.Collections.ArrayList
+                        $versionsDefaultFile = "Actions\Helpers\versions.default.json"
+                        $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json
+                        $versionsDefault | ForEach-Object{$versions.Add($_)}
+                        $curVer = $versions.Where({$_.version -eq $FSCVersion})
+                        if(!$curVer)
                         {
-                            $versions = New-Object System.Collections.ArrayList
-                            $versionsDefaultFile = "Actions\Helpers\versions.default.json"
-                            $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json
-                            $versionsDefault | ForEach-Object{$versions.Add($_)}
+                            $curVer = (@{version=$FSCVersion;data=@{PlatformVersion='';AppVersion='';retailSDKVersion=''; retailSDKURL=''; ecommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
+                            $versions.Add($curVer)
                             $curVer = $versions.Where({$_.version -eq $FSCVersion})
-                            if(!$curVer)
-                            {
-                                $curVer = (@{version=$FSCVersion;data=@{PlatformVersion='';AppVersion='';retailSDKVersion=''; retailSDKURL=''; ecommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
-                                $versions.Add($curVer)
-                                $curVer = $versions.Where({$_.version -eq $FSCVersion})
-                            }
-                            switch ($AssetName) {
-                                {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.CompilerPackage.".ToLower()) -or
-                                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.".ToLower())} 
-                                {  
-                                    $curVer.data.PlatformVersion=$version;                 
-                                    break;
-                                }
-                                {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
-                                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
-                                {  
-                                    $curVer.data.AppVersion=$version;
-                                    break;
-                                }
-                                    Default {}
-                            }
-                            
-                            Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
                         }
-
-                        Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
-                    }
+                        switch ($AssetName) {
+                            {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.CompilerPackage.".ToLower()) -or
+                            $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.".ToLower())} 
+                            {  
+                                $curVer.data.PlatformVersion=$version;                 
+                                break;
+                            }
+                            {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
+                            $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
+                            {  
+                                $curVer.data.AppVersion=$version;
+                                break;
+                            }
+                                Default {}
+                        }
+                        Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
+                    }   
+                    Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
                 }
             }
             $baseFolder = $ENV:GITHUB_WORKSPACE
@@ -254,7 +252,7 @@ jobs:
                 $fscVersion = $regex.Match($_.Name).Value
                 if($fscVersion -gt "10.0.17")
                 {
-                    $fscVersion
+                    OutputInfo "#################### $fscVersion #####################"
                     UploadAssetToStorage -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken
                 }
             }
