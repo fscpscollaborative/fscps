@@ -11,18 +11,11 @@ on:
         description: Name of this release (Default is generated package name)
         required: true
         default: ''
-      prerelease:
-        description: Prerelease (Y/N)
-        required: false
-        default: 'N'
-      draft:
-        description: Draft (Y/N)
-        required: false
-        default: 'N'
       createReleaseBranch:
-        description: Create Release Branch (Y/N)
+        description: Create Release Branch
         required: false
-        default: 'N'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -84,13 +77,10 @@ jobs:
         with:
           settingsJson: ${{ env.Settings }}
           
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v1.1.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.6.0   
         with:
-          nuget-version: 5.10.x    
+          node-version: '16'
       
       - name: Get Env Vars
         run: |
@@ -113,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: '${{ env.ARTIFACTS_PATH }}'
+          path: '${{ env.PACKAGE_PATH }}'
           
       - name: Publish Release
         id: PublishRelease
@@ -122,11 +112,11 @@ jobs:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-          artifactsPath: '${{ env.ARTIFACTS_PATH }}'
+          artifactsPath: '${{ env.PACKAGE_PATH }}'
 
            
   CreateReleaseBranch:
-    if: ${{ github.event.inputs.createReleaseBranch=='Y' }}
+    if: ${{ github.event.inputs.createReleaseBranch }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization, CreateRelease ]
     steps:
