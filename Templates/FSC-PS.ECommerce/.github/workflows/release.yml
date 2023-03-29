@@ -11,18 +11,11 @@ on:
         description: Name of this release (Default is generated package name)
         required: true
         default: ''
-      prerelease:
-        description: Prerelease (Y/N)
-        required: false
-        default: 'N'
-      draft:
-        description: Draft (Y/N)
-        required: false
-        default: 'N'
       createReleaseBranch:
-        description: Create Release Branch (Y/N)
+        description: Create Release Branch
         required: false
-        default: 'N'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -123,7 +116,7 @@ jobs:
 
            
   CreateReleaseBranch:
-    if: ${{ github.event.inputs.createReleaseBranch=='Y' }}
+    if: ${{ github.event.inputs.createReleaseBranch }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization, CreateRelease ]
     steps:
