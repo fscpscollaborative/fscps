@@ -85,6 +85,11 @@ jobs:
                         [System.IO.Directory]::CreateDirectory($PackageDestination)
                     }
                     Remove-Item -Path $PackageDestination/* -Recurse -Force
+                    OutputInfo "AssetId: $AssetId"
+                    OutputInfo "AssetName: $AssetName"
+                    OutputInfo "ProjectId: $ProjectId"
+                    OutputInfo "LCSToken: $LCSToken"
+                    OutputInfo "PackageDestination: $PackageDestination"
                 }
                 process {
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -113,6 +118,9 @@ jobs:
                     }
                     $download = (-not(Test-Path $destinationNugetFilePath))
                     $upload = $true
+
+                    OutputInfo "Download?: $download"
+                    OutputInfo "Upload?: $upload"
 
                     $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
                     if(!$blob)
@@ -168,7 +176,7 @@ jobs:
                     else
                     {
                         $upload = $false
-                        Write-Output "Blob not found"
+                        OutputInfo "Blob not found"
                     }
 
                     if($upload)
