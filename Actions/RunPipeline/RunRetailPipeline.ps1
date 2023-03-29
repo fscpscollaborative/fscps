@@ -125,6 +125,14 @@ try {
     OutputInfo "======================================== Build solution"
     cd $buildPath
 
+    ### Prebuild
+    $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
+    if(Test-Path $prebuildCustomScript)
+    {
+        & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### Prebuild
+
     installModules "Invoke-MsBuild"
     #& msbuild
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
@@ -150,6 +158,14 @@ try {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
 
+    ### Postbuild
+    $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
+    if(Test-Path $postbuildCustomScript)
+    {
+        & $postbuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### Postbuild
+    
     Write-Output "::endgroup::"
 
      #GeneratePackages
@@ -189,6 +205,11 @@ try {
 
         $packagePath = Join-Path $packagePath $packageName
         Copy-Item $packagePath -Destination $artifactDirectory -Force
+
+
+
+
+
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"

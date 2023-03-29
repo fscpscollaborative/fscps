@@ -76,6 +76,14 @@ try {
     #Build solution
     OutputInfo "======================================== Build solution"
 
+    ### Prebuild
+    $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
+    if(Test-Path $prebuildCustomScript)
+    {
+        & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### Prebuild
+    
     ### install python
     Set-Location $tempPath
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
