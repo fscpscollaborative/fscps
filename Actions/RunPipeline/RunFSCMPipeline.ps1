@@ -191,7 +191,7 @@ try {
     $tempFile = (Get-Content $buidPropsFile).Replace('ReferenceFolders', $msReferenceFolder)
     Set-Content $buidPropsFile $tempFile
 
-    if($workflowName -eq "(UPDATE) Model Version")
+    if($workflowName -eq "(RELEASE)")
     {
         Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($github.Payload.inputs.model)+"\Descriptor\*.xml")
     }
