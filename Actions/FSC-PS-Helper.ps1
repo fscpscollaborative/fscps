@@ -1287,7 +1287,7 @@ function Get-FindResult {
                 $Options.FollowSymbolicLinks -or
                 ($count -eq 1 -and $Options.FollowSpecifiedSymbolicLink)) {
 
-                $childItems = @( Get-DirectoryChildItem -Path $Item.FullName -Force )
+                $childItems = @( Get-ChildItem -Path "$($Item.FullName)/*" -Force )
                 [System.Array]::Reverse($childItems)
                 foreach ($childItem in $childItems) {
                     $stack.Push($childItem)
