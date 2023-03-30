@@ -196,10 +196,10 @@ try {
         {
             if($models.Split(","))
             {
-                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
+                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
             }
             else {
-                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($models+"\Descriptor\*.xml")
+                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($models+"\Descriptor\*.xml")
             }
         }
     }
