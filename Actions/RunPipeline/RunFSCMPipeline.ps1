@@ -179,7 +179,6 @@ try {
     }
     ### Prebuild
 
-
     $msReferenceFolder = "$($buildPath)\$($settings.nugetPackagesPath)\$($app_package)\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$plat_package\ref\net40;$($buildPath)\$($settings.nugetPackagesPath)\$appsuite_package\ref\net40;$($buildPath)\$($settings.metadataPath);$($buildPath)\bin"
     $msBuildTasksDirectory = "$($buildPath)\$($settings.nugetPackagesPath)\$tools_package\DevAlm".Trim()
     $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
@@ -193,7 +192,16 @@ try {
 
     if($workflowName -eq "(RELEASE)")
     {
-        Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($github.Payload.inputs.model)+"\Descriptor\*.xml")
+        if($($github.Payload.inputs.versionNumber) -ne "")
+        {
+            if($models.Split(","))
+            {
+                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
+            }
+            else {
+                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -xppVersion $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($models+"\Descriptor\*.xml")
+            }
+        }
     }
 
     installModules "Invoke-MsBuild"
