@@ -29,7 +29,8 @@ When running a workflow or a local script, the settings are applied by reading o
 | exportModel | FSC specific. Option to generate axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
 | retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
 | retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
-| deployOnlyNew | Deploy environments while schedule only if the related environment branch has changes yongest then latest deploy  | true |
+| deployOnlyNew | FSC/Retail specific. Deploy environments while schedule only if the related environment branch has changes yongest then latest deploy  | true |
+| deploymentScheduler | FSC/Retail specific. Enable/Disable the deployment schedule  | false |
 
 ### NuGet settings
 The custom NuGet repository settings contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library
@@ -69,6 +70,13 @@ These Retail settings should contain the RetailSDK settings. Can be overrided in
 | :-- | :-- | :-- | 
 | retailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 | retailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+
+### ECommerce settings
+The ECommerce settings. Can be overrided in the .FSC-PS\versions.json settings.
+| Name | Description | Default value |
+| :-- | :-- | :-- | 
+| ecommerceMicrosoftRepoUrl | ECommerce specific. The Msdyn365.Commerce.OnlineSDK repo URL what will use to build the ECommerce pacage. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+| ecommerceMicrosoftRepoBranch | ECommerce specific. The Msdyn365.Commerce.OnlineSDK repo branch. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ## Runtime generated settings
 | Name | Description | Default value |
