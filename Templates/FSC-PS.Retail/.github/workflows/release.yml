@@ -77,10 +77,13 @@ jobs:
         with:
           settingsJson: ${{ env.Settings }}
           
-      - name: Setup Node.js
-        uses: actions/setup-node@v3.6.0   
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1.1.1
         with:
-          node-version: '16'
+          nuget-version: 5.10.x    
       
       - name: Get Env Vars
         run: |

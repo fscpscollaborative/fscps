@@ -206,11 +206,6 @@ try {
         $packagePath = Join-Path $packagePath $packageName
         Copy-Item $packagePath -Destination $artifactDirectory -Force
 
-
-
-
-
-
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$packagePath"
