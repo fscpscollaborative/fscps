@@ -838,9 +838,9 @@ function Update-FSCModelVersion {
     
     
     # Discover packages
-    $BuildModuleDirectories = @(Get-ChildItem -Path $BuildMetadataDir -Directory)
-    foreach ($BuildModuleDirectory in $BuildModuleDirectories)
-    {
+    #$BuildModuleDirectories = @(Get-ChildItem -Path $BuildMetadataDir -Directory)
+    #foreach ($BuildModuleDirectory in $BuildModuleDirectories)
+    #{
         $potentialDescriptors = Find-Match -DefaultRoot $xppSourcePath -Pattern $xppDescriptorSearch | Where-Object { (Test-Path -LiteralPath $_ -PathType Leaf) }
         if ($potentialDescriptors.Length -gt 0)
         {
@@ -896,7 +896,7 @@ function Update-FSCModelVersion {
                 }
             }
         }
-    }        
+    #}        
 } 
 ################################################################################
 # Start - Private functions.
