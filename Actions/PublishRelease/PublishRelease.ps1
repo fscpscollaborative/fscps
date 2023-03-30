@@ -71,8 +71,8 @@ try {
         TagName = "$tag"
         Name = "$name"
         ReleaseText = "$name"
-        Draft = "$($github.Payload.inputs.draft)" -eq "Y"
-        PreRelease = "$($github.Payload.inputs.prerelease)" -eq "Y"
+        Draft = $false
+        PreRelease = $false
         RepositoryName = "$($github.Payload.repository.name)"
         RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
     }
