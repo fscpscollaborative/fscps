@@ -335,13 +335,23 @@ try {
                     OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
                 }
                 while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                        
+                       
+                if(($deploymentStatus.OperationStatus -eq "Completed"))
+                {
+                    $lcsConfig = Get-D365LcsApiConfig
+                    Remove-D365LcsAssetFile -ProjectId $lcsConfig.projectid -AssetId "$($assetId.AssetId)" -BearerToken $lcsConfig.bearertoken -LcsApiUri $lcsConfig.lcsapiuri -Verbose
+                    OutputInfo "Asset "$($assetId.AssetId)" was removed."
+                }
+
                 if($PowerState -ne "running")
                 {
                     OutputInfo "======================================== Stop $($EnvironmentName)"
                     Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                 }
                 Write-Output "::endgroup::"
+
+                
+
             }
         }
     }

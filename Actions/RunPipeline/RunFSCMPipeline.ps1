@@ -486,8 +486,9 @@ try {
                         
                         if(($deploymentStatus.OperationStatus -eq "Completed"))
                         {
-                            $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                            OutputError -message $errorMessagePayload
+                            $lcsConfig = Get-D365LcsApiConfig
+                            Remove-D365LcsAssetFile -ProjectId $lcsConfig.projectid -AssetId "$($assetId.AssetId)" -BearerToken $lcsConfig.bearertoken -LcsApiUri $lcsConfig.lcsapiuri -Verbose
+                            OutputInfo "Asset "$($assetId.AssetId)" was removed."
                         }
 
                         if($PowerState -ne "running")
@@ -495,11 +496,7 @@ try {
                             OutputInfo "======================================== Stop $($EnvironmentName)"
                             Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                         }
-
-
-
                         Write-Output "::endgroup::"
-
                     }
                 }
             }

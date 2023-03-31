@@ -787,6 +787,7 @@ function Copy-Filtered {
         Copy-Item $_.FullName $ItemTarget
     }
 }
+
 function Update-FSCModelVersion {
     [CmdletBinding()]
     param(
@@ -898,6 +899,169 @@ function Update-FSCModelVersion {
         }
     #}        
 } 
+
+function Remove-D365LcsAssetFile {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
+    [CmdletBinding()]
+    [OutputType()]
+    param (
+        [int] $ProjectId = $Script:LcsApiProjectId,
+
+        [Parameter(Mandatory = $true)]
+        [string] $AssetId = "",
+        
+        [Alias('Token')]
+        [string] $BearerToken = $Script:LcsApiBearerToken,
+
+        [string] $LcsApiUri = $Script:LcsApiLcsApiUri,
+
+        [Timespan] $RetryTimeout = "00:00:00",
+
+        [switch] $EnableException
+    )
+
+
+    if (-not ($BearerToken.StartsWith("Bearer "))) {
+        $BearerToken = "Bearer $BearerToken"
+    }
+
+    Remove-LcsAssetFile -BearerToken $BearerToken -ProjectId $ProjectId -LcsApiUri $LcsApiUri -RetryTimeout $RetryTimeout -AssetId $AssetId
+
+    if (Test-PSFFunctionInterrupt) { return }
+
+}
+
+function Remove-LcsAssetFile {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
+    [Cmdletbinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [int] $ProjectId,
+
+        [Parameter(Mandatory = $true)]
+        [string] $AssetId,
+
+        [Alias('Token')]
+        [string] $BearerToken,
+        
+        [Parameter(Mandatory = $true)]
+        [string] $LcsApiUri,
+
+        [Timespan] $RetryTimeout = "00:00:00",
+
+        [switch] $EnableException
+    )
+    begin {
+        
+        $headers = @{
+            "Authorization" = "$BearerToken"
+        }
+
+        $parms = @{}
+        $parms.Method = "POST"
+        $parms.Uri = "$LcsApiUri/box/fileasset/DeleteFileAsset/$($ProjectId)?assetId=$($AssetId)"
+        $parms.Headers = $headers
+        $parms.RetryTimeout = $RetryTimeout
+    }
+    process {
+        try {
+            Write-PSFMessage -Level Verbose -Message "Invoke LCS request."
+            Invoke-FSCRequestHandler @parms
+            Write-PSFMessage -Level Verbose -Message "Asset was deleted successfully."
+        }
+        catch [System.Net.WebException] {
+            Write-PSFMessage -Level Host -Message "Error status code <c='em'>$($_.exception.response.statuscode)</c> in request for delete asset from the asset library of LCS. <c='em'>$($_.exception.response.StatusDescription)</c>." -Exception $PSItem.Exception
+            Stop-PSFFunction -Message "Stopping because of errors" -StepsUpward 1
+            return
+        }
+        catch {
+            Write-PSFMessage -Level Host -Message "Something went wrong while working against the LCS API." -Exception $PSItem.Exception
+            Stop-PSFFunction -Message "Stopping because of errors" -StepsUpward 1
+            return
+        }
+    }
+}
+function Invoke-FSCRequestHandler {
+    [CmdletBinding()]
+    param (
+        [Alias("HttpMethod")]
+        [string] $Method,
+
+        [string] $Uri,
+        
+        [string] $ContentType,
+
+        [string] $Payload,
+
+        [Hashtable] $Headers,
+
+        [Timespan] $RetryTimeout = "00:00:00"
+    )
+    
+    begin {
+        $parms = @{}
+        $parms.Method = $Method
+        $parms.Uri = $Uri
+        $parms.Headers = $Headers
+        $parms.ContentType = $ContentType
+
+        if ($Payload) {
+            $parms.Body = $Payload
+        }
+
+        $start = (Get-Date)
+        $handleTimeout = $false
+
+        if ($RetryTimeout.Ticks -gt 0) {
+            $handleTimeout = $true
+        }
+    }
+    
+    process {
+        $429Attempts = 0
+
+        do {
+            $429Retry = $false
+
+            try {
+                Invoke-RestMethod @parms
+            }
+            catch [System.Net.WebException] {
+                if ($_.exception.response.statuscode -eq 429) {
+                    $429Retry = $true
+                    
+                    $retryWaitSec = $_.exception.response.Headers["Retry-After"]
+
+                    if (-not ($retryWaitSec -gt 0)) {
+                        $retryWaitSec = 10
+                    }
+
+                    if ($handleTimeout) {
+                        $timeSinceStart = New-TimeSpan -End $(Get-Date) -Start $start
+                        $timeWithWait = $timeSinceStart.Add([timespan]::FromSeconds($retryWaitSec))
+                        
+                        $temp = $RetryTimeout - $timeWithWait
+
+                        if ($temp.Ticks -lt 0) {
+                            #We will be exceeding the timeout limit
+                            $messageString = "The timeout value suggested from the endpoint will exceed the RetryTimeout (<c='em'>$RetryTimeout</c>) threshold."
+                            Write-PSFMessage -Level Host -Message $messageString -Exception $PSItem.Exception -Target $entity
+                            Stop-PSFFunction -Message "Stopping because of errors." -Exception $([System.Exception]::new($($messageString -replace '<[^>]+>', ''))) -ErrorRecord $_ -StepsUpward 1
+                            return
+                        }
+                    }
+
+                    Write-PSFMessage -Level Host -Message "Hit a 429 status code. Will wait for: <c='em'>$retryWaitSec</c> seconds before trying again. Attempt (<c='em'>$429Attempts</c>)"
+                    Start-Sleep -Seconds $retryWaitSec
+                    $429Attempts++
+                }
+                else {
+                    Throw
+                }
+            }
+        } while ($429Retry)
+    }
+}
 ################################################################################
 # Start - Private functions.
 ################################################################################
