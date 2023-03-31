@@ -117,7 +117,7 @@ jobs:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-          artifactsPath: '${{ env.PACKAGE_PATH }}'
+          artifactsPath: '${{ env.ARTIFACTS_PATH }}'
 
            
   CreateReleaseBranch:

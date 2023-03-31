@@ -455,6 +455,7 @@ try {
                         $WaitForCompletion = $true
                         $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
                         $errorCnt = 0
+                        $deploymentStatus = ""
                         do {
                             Start-Sleep -Seconds 60
                             $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
@@ -482,12 +483,23 @@ try {
                         }
                         while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                         
+                        
+                        if(($deploymentStatus.OperationStatus -eq "Completed"))
+                        {
+                            $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
+                            OutputError -message $errorMessagePayload
+                        }
+
                         if($PowerState -ne "running")
                         {
                             OutputInfo "======================================== Stop $($EnvironmentName)"
                             Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                         }
+
+
+
                         Write-Output "::endgroup::"
+
                     }
                 }
             }
