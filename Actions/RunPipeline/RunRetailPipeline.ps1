@@ -110,14 +110,16 @@ try {
    
     Write-Output "::endgroup::"
 
-    #Write-Output "::group::Nuget install packages"
-    #OutputInfo "======================================== Nuget install packages"
+    <#
+    Write-Output "::group::Nuget install packages"
+    OutputInfo "======================================== Nuget install packages"
 
-    #cd $buildPath
+    cd $buildPath
 
     #Nuget install packages
-    #nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
-    #Write-Output "::endgroup::"
+    nuget restore dirs.proj -PackagesDirectory $settings.nugetPackagesPath
+    Write-Output "::endgroup::"
+    #>
 
 
     Write-Output "::group::Build solution"
