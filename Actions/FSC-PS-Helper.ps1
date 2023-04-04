@@ -298,6 +298,9 @@ function ReadSettings {
         "deploy"                                 = $false
         "deployOnlyNew"                          = $true
         "deploymentScheduler"                    = $true        
+        "fscFinalQualityUpdatePackageId"         = ""    
+        "fscPreviewVersionPackageId"             = ""    
+        "fscServiseUpdatePackageId"              = ""  
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
     }
 
