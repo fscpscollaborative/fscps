@@ -374,7 +374,7 @@ jobs:
             $status = invoke-git status --porcelain=v2 -returnValue
             OutputInfo "Git changes: $($status)"
             if ($status) {
-                invoke-git commit --allow-empty -m 'Update'
+                invoke-git commit --allow-empty -m 'Update versions.'
                 invoke-git push -u origin $branch
                 Write-Output "Create PR to the main"
                 $releaseNotes = "No release notes available!"
