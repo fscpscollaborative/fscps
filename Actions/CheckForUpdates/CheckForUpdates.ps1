@@ -123,7 +123,8 @@ try {
     }
 
     $headers = @{
-        "Accept" = "application/vnd.github.baptiste-preview+json"
+        "Accept" = "application/vnd.github.baptiste-preview+json",
+        "Authorization: token $token"
     }
 
     if ($templateUrl -ne "") {
@@ -151,7 +152,8 @@ try {
     OutputInfo "Using template from $templateUrl@$templateBranch"
 
     $headers = @{             
-        "Accept" = "application/vnd.github.baptiste-preview+json"
+        "Accept" = "application/vnd.github.baptiste-preview+json",
+        "Authorization: token $token"
     }
     $archiveUrl = $templateInfo.archive_url.Replace('{archive_format}','zipball').replace('{/ref}',"/$templateBranch")
     $tempName = Join-Path $env:TEMP ([Guid]::NewGuid().ToString())
