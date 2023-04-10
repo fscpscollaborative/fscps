@@ -6,6 +6,10 @@ $gitHubHelperPath = Join-Path $PSScriptRoot 'Helpers\Github-Helper.psm1'
 if (Test-Path $gitHubHelperPath) {
     Import-Module $gitHubHelperPath
 }
+$lcsHelperPath = Join-Path $PSScriptRoot 'Helpers\LCS-Helper.psm1'
+if (Test-Path $lcsHelperPath) {
+    Import-Module $lcsHelperPath
+}
 enum LcsAssetFileType {
     Model = 1
     ProcessDataPackage = 4
@@ -104,7 +108,36 @@ function OutputDebug {
         Write-Host "::Debug::$message"
     }
 }
+function Compress-7zipArchive {
+    Param (
+        [Parameter(Mandatory = $true)]
+        [string] $Path,
+        [string] $DestinationPath
+    )
 
+    $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
+
+    $use7zip = $false
+    if (Test-Path -Path $7zipPath -PathType Leaf) {
+        try {
+            $use7zip = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($7zipPath).FileMajorPart -ge 19
+        }
+        catch {
+            $use7zip = $false
+        }
+    }
+
+    if ($use7zip) {
+        OutputDebug -message "Using 7zip"
+        Set-Alias -Name 7z -Value $7zipPath
+        $command = '7z a -t7z "{0}" "{1}"' -f $DestinationPath, $Path
+        Invoke-Expression -Command $command | Out-Null
+    }
+    else {
+        OutputDebug -message "Using Compress-Archive"
+        Compress-Archive -Path $Path -DestinationPath "$DestinationPath" -Force
+    }
+}
 function Expand-7zipArchive {
     Param (
         [Parameter(Mandatory = $true)]
@@ -902,7 +935,6 @@ function Update-FSCModelVersion {
         }
     #}        
 } 
-
 function Remove-D365LcsAssetFile {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     [CmdletBinding()]
@@ -933,7 +965,6 @@ function Remove-D365LcsAssetFile {
     if (Test-PSFFunctionInterrupt) { return }
 
 }
-
 function Remove-LcsAssetFile {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     [Cmdletbinding()]
