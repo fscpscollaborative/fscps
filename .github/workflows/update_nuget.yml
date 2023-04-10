@@ -249,19 +249,17 @@ jobs:
                     OutputInfo "AssetId: $AssetId"
                     OutputInfo "AssetName: $AssetName"
                     OutputInfo "ProjectId: $ProjectId"
-                    OutputInfo "LCSToken: $LCSToken"
                     OutputInfo "PackageDestination: $PackageDestination"
                 }
                 process {
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                    $destinationFilePath = Join-Path $PackageDestination $AssetName  
+                    $destinationFilePath = Join-Path $PackageDestination ($AssetName+".zip")  
 
                     #get download link asset
                     $uri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
                     $assetJson = (Invoke-RestMethod -Method Get -Uri $uri -Headers $header)
 
                     OutputInfo "FSCVersion:  $FSCVersion"
-                    OutputInfo "AssetName:  $AssetName"
 
                     if($FSCVersion -ne "")
                     {
@@ -295,6 +293,12 @@ jobs:
                         {
                             $curVer.data | Add-Member -MemberType NoteProperty -name "fscFinalQualityUpdatePackageId" -value ""
                         }
+                        $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
+                        $download = $false
+                        if(!$blob)
+                        {
+                            $download = $true
+                        }
                         switch ($AssetName) {
                             {$AssetName.ToLower().StartsWith("Service Update".ToLower())} 
                             {  
@@ -314,8 +318,101 @@ jobs:
                                 Default {}
                         }
                         Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
-                    }
+                        if($download)
+                        {
+                            # Test if AzCopy.exe exists in current folder
+                            $WantFile = "c:\temp\azcopy.exe"
+                            $AzCopyExists = Test-Path $WantFile
+                            Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
 
+                            # Download AzCopy if it doesn't exist
+                            If ($AzCopyExists -eq $False)
+                            {
+                                Write-Output "AzCopy not found. Downloading..."
+
+                                #Download AzCopy
+                                Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile c:\temp\AzCopy.zip -UseBasicParsing
+
+                                #Expand Archive
+                                Write-Output "Expanding archive...`n"
+                                Expand-Archive c:\temp\AzCopy.zip c:\temp\AzCopy -Force
+
+                                # Copy AzCopy to current dir
+                                Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
+                            }
+                            else
+                            {
+                                Write-Output "AzCopy found, skipping download.`n"
+                            }
+                            if(-not (Test-Path $destinationFilePath))
+                            {
+                                Write-Output "Downloading package from the LCS..."
+                                & $WantFile copy $assetJson.FileLocation "$destinationFilePath" --output-level quiet
+                            }
+                            Write-Output "Uploading package to the Azure..."
+                            Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationFilePath" -ConcurrentTaskCount 10 -Force
+                            $archDestinationPath = $destinationFilePath.Replace(".zip", "")
+                            Expand-7zipArchive $destinationFilePath -DestinationPath $archDestinationPath
+                            $retailSDKPath = Join-Path $archDestinationPath "RetailSDK\Code"
+                            $retailsdkVersion = Get-Content $retailSDKPath\"Microsoft-version.txt"
+                            $retailSDKDestinationPath = Join-Path C:\Temp ("RetailSDK."+$retailsdkVersion+".7z")
+                            Compress-7zipArchive -Path $retailSDKPath\* -DestinationPath $retailSDKDestinationPath
+                            ProcessingRSDK -PackageName ("RetailSDK."+$retailsdkVersion+".7z") -PackageDestination $retailSDKDestinationPath -SDKVersion $retailsdkVersion
+                        }
+                        if(Test-Path $destinationFilePath)
+                        {
+                            Remove-Item $destinationFilePath -Force
+                        }
+                        
+                    }
+                }
+            }
+            function ProcessingRSDK {
+                param (
+                    [string]$PackageName,
+                    [string]$SDKVersion,
+                    [string]$PackageDestination
+                )
+                Begin{
+                    $storageAccountName = 'ciellosarchive'
+                    $storageContainer = 'retailsdk'
+                    #Just read-only SAS token :)
+                    $StorageSAStoken = '${{ secrets.NUGET_STORAGE_SAS_TOKEN }}'
+                    $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
+                    $header = GetUNHeader -token $LCSToken
+                    OutputInfo "PackageName: $PackageName"
+                    OutputInfo "PackageDestination: $PackageDestination"
+                }
+                process {
+                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+                    OutputInfo "SDKVersion:  $SDKVersion"
+                    OutputInfo "PackageName:  $PackageName"
+
+                    if($SDKVersion -ne "")
+                    {
+                        $versions = New-Object System.Collections.ArrayList
+                        $versionsDefaultFile = "Actions\Helpers\versions.default.json"
+                        $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json
+                        $versionsDefault | ForEach-Object{$versions.Add($_)}
+                        $curVer = $versions.Where({$_.version -eq $FSCVersion})
+                        
+                        $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $PackageName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
+                        $upload = $false
+                        if(!$blob)
+                        {
+                            $upload = $true
+                        }
+                        $curVer.data.retailSDKVersion=$SDKVersion; 
+                        Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
+                        if($upload)
+                        {
+                            Write-Output "Uploading package to the Azure..."
+                            Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$PackageName" -File "$PackageDestination" -ConcurrentTaskCount 10 -Force
+                        }
+                        
+                        Remove-Item $PackageDestination -Force
+                    }
                 }
             }
 
