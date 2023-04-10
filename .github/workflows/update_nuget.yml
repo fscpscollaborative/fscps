@@ -70,7 +70,7 @@ jobs:
                 $fileName = $_.Name
                 $regex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
                 $fscVersion = $regex.Match($_.Name).Value
-                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -not $fileName.StartedWith("AX2012",""))
+                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartedWith("AX2012",""))
                 {
                     OutputInfo "#################### $fscVersion #####################"
                     ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
