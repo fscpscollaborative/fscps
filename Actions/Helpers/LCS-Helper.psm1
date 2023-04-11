@@ -252,9 +252,9 @@ function ProcessingSDP {
             {
                 $curVer.data | Add-Member -MemberType NoteProperty -name "fscPreviewVersionPackageId" -value ""
             }
-            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "fscFinalQualityUpdatePackageId"}))
+            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "fscLatestQualityUpdatePackageId"}))
             {
-                $curVer.data | Add-Member -MemberType NoteProperty -name "fscFinalQualityUpdatePackageId" -value ""
+                $curVer.data | Add-Member -MemberType NoteProperty -name "fscLatestQualityUpdatePackageId" -value ""
             }
             $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
             $download = $false
@@ -273,9 +273,9 @@ function ProcessingSDP {
                     $curVer.data.fscPreviewVersionPackageId=$AssetId;
                     break;
                 }
-                {$AssetName.ToLower().StartsWith("Final Quality Update".ToLower())} 
+                {$AssetName.ToLower().StartsWith("Final Quality Update".ToLower()) -or $AssetName.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
                 {  
-                    $curVer.data.fscFinalQualityUpdatePackageId=$AssetId;
+                    $curVer.data.fscLatestQualityUpdatePackageId=$AssetId;
                     break;
                 }
                     Default {}
