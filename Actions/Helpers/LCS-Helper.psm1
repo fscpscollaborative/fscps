@@ -91,11 +91,8 @@ function ProcessingNuGet {
         $download = (-not(Test-Path $destinationNugetFilePath))
         $upload = $true
 
-        OutputInfo "Download?: $download"
-        OutputInfo "Upload?: $upload"
-
         $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
-        $blob
+       
         if(!$blob)
         {
             if($download)
@@ -103,8 +100,7 @@ function ProcessingNuGet {
                 # Test if AzCopy.exe exists in current folder
                 $WantFile = "c:\temp\azcopy.exe"
                 $AzCopyExists = Test-Path $WantFile
-                Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
-
+                
                 # Download AzCopy if it doesn't exist
                 If ($AzCopyExists -eq $False)
                 {
@@ -119,10 +115,6 @@ function ProcessingNuGet {
 
                     # Copy AzCopy to current dir
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
-                }
-                else
-                {
-                    Write-Output "AzCopy found, skipping download.`n"
                 }
             
                 & $WantFile copy $assetJson.FileLocation "$destinationNugetFilePath" --output-level quiet
@@ -294,8 +286,7 @@ function ProcessingSDP {
                 # Test if AzCopy.exe exists in current folder
                 $WantFile = "c:\temp\azcopy.exe"
                 $AzCopyExists = Test-Path $WantFile
-                Write-Output ("AzCopy exists: {0}" -f $AzCopyExists)
-
+                
                 # Download AzCopy if it doesn't exist
                 If ($AzCopyExists -eq $False)
                 {
@@ -311,17 +302,14 @@ function ProcessingSDP {
                     # Copy AzCopy to current dir
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
                 }
-                else
-                {
-                    Write-Output "AzCopy found, skipping download.`n"
-                }
+
                 if(-not (Test-Path $destinationFilePath))
                 {
                     Write-Output "Downloading package from the LCS..."
                     & $WantFile copy $assetJson.FileLocation "$destinationFilePath" --output-level quiet
                 }
-                Write-Output "Uploading package to the Azure..."
-                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationFilePath" -ConcurrentTaskCount 10 -Force
+                Write-Output "Uploading package to the Azure... $destinationFilePath"
+                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -ConcurrentTaskCount 10 -Force
                 $archDestinationPath = $destinationFilePath.Replace(".zip", "")
                 Expand-7zipArchive $destinationFilePath -DestinationPath $archDestinationPath
                 $retailSDKPath = Join-Path $archDestinationPath "RetailSDK\Code"
