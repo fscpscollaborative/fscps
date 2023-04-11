@@ -303,16 +303,15 @@ function ProcessingSDP {
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
                 }
 
-                $newdestinationFilePath = ($destinationFilePath).Replace(":",".")
-                if(-not (Test-Path $newdestinationFilePath))
-                {
-                    Rename-Item -Path $destinationFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationFilePath).FullName -Force -PassThru
-                }
-
                 if(-not (Test-Path $destinationFilePath))
                 {
                     Write-Output "Downloading package from the LCS..."
                     & $WantFile copy $assetJson.FileLocation "$destinationFilePath" --output-level quiet
+                }
+                $newdestinationFilePath = ($destinationFilePath).Replace(":",".")
+                if(-not (Test-Path $newdestinationFilePath))
+                {
+                    Rename-Item -Path $destinationFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationFilePath).FullName -Force -PassThru
                 }
                 Write-Output "Uploading package to the Azure... $destinationFilePath"
                 Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -ConcurrentTaskCount 10 -Force
