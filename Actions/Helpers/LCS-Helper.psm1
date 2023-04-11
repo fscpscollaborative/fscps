@@ -302,18 +302,13 @@ function ProcessingSDP {
                     # Copy AzCopy to current dir
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
                 }
-
+                $destinationFilePath = Join-Path $PackageDestination ($AssetName.Replace(":",".")+".zip")
                 if(-not (Test-Path $destinationFilePath))
                 {
                     Write-Output "Downloading package from the LCS..."
                     & $WantFile copy $assetJson.FileLocation "$destinationFilePath" --output-level quiet
                 }
-                $destinationFilePath = "C:\temp\deployablepackages\Final Quality Update: 10.0.18.zip"
-                $newdestinationFilePath = Join-Path $PackageDestination ($AssetName.Replace(":",".")+".zip")
-                if(-not (Test-Path $newdestinationFilePath))
-                {
-                    Rename-Item -Path $destinationFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationFilePath).FullName -Force -PassThru
-                }
+                
                 Write-Output "Uploading package to the Azure... $destinationFilePath"
                 Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -ConcurrentTaskCount 10 -Force
                 $archDestinationPath = $destinationFilePath.Replace(".zip", "")
