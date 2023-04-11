@@ -303,6 +303,12 @@ function ProcessingSDP {
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination "c:\temp\azcopy.exe"
                 }
 
+                $newdestinationFilePath = ($destinationFilePath).Replace(":",".")
+                if(-not (Test-Path $newdestinationFilePath))
+                {
+                    Rename-Item -Path $destinationFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationFilePath).FullName -Force -PassThru
+                }
+
                 if(-not (Test-Path $destinationFilePath))
                 {
                     Write-Output "Downloading package from the LCS..."
