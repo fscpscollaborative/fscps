@@ -308,7 +308,8 @@ function ProcessingSDP {
                     Write-Output "Downloading package from the LCS..."
                     & $WantFile copy $assetJson.FileLocation "$destinationFilePath" --output-level quiet
                 }
-                $newdestinationFilePath = ($destinationFilePath).Replace(":",".")
+                $destinationFilePath = "C:\temp\deployablepackages\Final Quality Update: 10.0.18.zip"
+                $newdestinationFilePath = Join-Path $PackageDestination ($AssetName.Replace(":",".")+".zip")
                 if(-not (Test-Path $newdestinationFilePath))
                 {
                     Rename-Item -Path $destinationFilePath -NewName ([System.IO.DirectoryInfo]$newdestinationFilePath).FullName -Force -PassThru
