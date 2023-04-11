@@ -47,7 +47,7 @@ jobs:
             $branch = [System.IO.Path]::GetRandomFileName()
             $githubOwner = "$ENV:GITHUB_ACTOR"
             $minimumfscversion = "10.0.17"
-            $fscVersionRegex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
+            $fscVersionRegex = [regex] "(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)"
 
             invoke-git config --global user.email "$githubOwner@users.noreply.github.com"
             invoke-git config --global user.name "$githubOwner"
@@ -55,23 +55,21 @@ jobs:
             invoke-git config --global core.autocrlf true
 
             invoke-git checkout -b $branch main
-            <#
+            
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
-                $regex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
-                $fscVersion = $regex.Match($_.Name).Value
+                $fscVersion = $fscVersionRegex.Match($_.Name).Value
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6)
                 {
                     OutputInfo "#################### $fscVersion #####################"
                     ProcessingNuGet -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
                 }
             }
-            #>
+            
             $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType SoftwareDeployablePackage
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.Name
-                $regex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
-                $fscVersion = $regex.Match($_.Name).Value
+                $fscVersion = $fscVersionRegex.Match($_.Name).Value
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
                 {
                     OutputInfo "#################### $fscVersion #####################"
