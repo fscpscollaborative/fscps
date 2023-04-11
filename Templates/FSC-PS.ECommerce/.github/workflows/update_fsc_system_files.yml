@@ -8,9 +8,10 @@ on:
         required: false
         default: ''
       directCommit:
-        description: Direct COMMIT (Y/N)
+        description: Direct COMMIT
         required: false
-        default: 'N'
+        type: boolean
+        default: false
         
 permissions:
   contents: write
@@ -66,8 +67,8 @@ jobs:
           $directCommit = $ENV:directCommit
           Write-Host $ENV:eventName
           if ($ENV:eventName -eq 'schedule') {
-            Write-Host "Running Update System Files on a schedule. Setting DirectCommit = Y"
-            $directCommit = 'Y'
+            Write-Host "Running Update System Files on a schedule. Setting DirectCommit = True"
+            $directCommit = $true
           }
           Add-Content -Path $env:GITHUB_ENV -Value "DirectCommit=$directCommit"
 

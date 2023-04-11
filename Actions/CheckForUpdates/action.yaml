@@ -34,9 +34,9 @@ inputs:
     required: false
     default: 'N'
   directCommit:
-    description: Direct Commit (Y/N)
+    description: Direct Commit
     required: false
-    default: 'N'
+    default: ''
   type:
     description: Repo type
     required: true
@@ -56,7 +56,7 @@ runs:
         _secretsJson: ${{ inputs.secretsJson }}
         _update: ${{ inputs.update }}
         _directCommit: ${{ inputs.directCommit }}
-      run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -type $ENV:_type -actor $ENV:_actor -token $ENV:_token -settingsJson $ENV:_settingsJson -secretsJson $ENV:_secretsJson -templateUrl $ENV:_templateUrl -templateBranch $ENV:_templateBranch -update ($ENV:_update -eq 'Y') -directCommit ($ENV:_directCommit -eq 'Y') } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message.Replace("`r",'').Replace("`n",' ')))"; exit 1 }
+      run: try { ${{ github.action_path }}/CheckForUpdates.ps1 -type $ENV:_type -actor $ENV:_actor -token $ENV:_token -settingsJson $ENV:_settingsJson -secretsJson $ENV:_secretsJson -templateUrl $ENV:_templateUrl -templateBranch $ENV:_templateBranch -update ($ENV:_update -eq 'Y') -directCommit ($ENV:_directCommit -eq true) } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message.Replace("`r",'').Replace("`n",' ')))"; exit 1 }
 branding:
   icon: terminal
   color: blue
