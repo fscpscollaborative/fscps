@@ -167,7 +167,11 @@ try {
             
             if($check)
             {
-                $_.Name
+                $currentGitHubStatus = Get-LatestDeploymentState -token $ghToken -repoName "$($github.Payload.repository.name)" -environmentName $_.Name
+                if(-not ($currentGitHubStatus -eq "PENDING" -or $currentGitHubStatus -eq "IN_PROGRESS"))
+                {
+                    $_.Name
+                }
             }
         })
 

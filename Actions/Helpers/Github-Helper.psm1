@@ -486,7 +486,54 @@ $query = @"
         $data = Invoke-RestMethod @graphQL
 
         $result = ""
-        $data.data.repository.deployments.nodes | Where-Object { $_.state -eq "ACTIVE"} | ForEach-Object { $result = ($_.createdAt) }
+        $data.data.repository.deployments.nodes | Sort-Object { $_.createdAt } | Where-Object { $_.state -eq "ACTIVE" } | ForEach-Object { $result = ($_.createdAt) }
+
+        return $result
+    }
+    end{}
+}
+function Get-LatestDeploymentState
+{
+    Param(
+        [string] $token,
+        [string] $repoName = "$env:GITHUB_REPOSITORY",
+        [string] $repoOwner = "$Env:GITHUB_REPOSITORY_OWNER",
+        [string] $environmentName = ""
+    )
+    begin{
+$query = @"
+{
+    repository(name: "$($repoName)", owner: "$($repoOwner)") {
+        deployments(environments: "$($environmentName)", orderBy: {field: CREATED_AT, direction: DESC}, first: 100) {
+        nodes {
+            state
+            commitOid
+            createdAt
+            environment
+            commit {
+            abbreviatedOid
+            }
+        }
+        }
+    }
+    }
+"@
+    }
+    process{
+        $body = @{query=$query} | ConvertTo-Json
+
+        $graphQL = @{
+            Uri     = "https://api.github.com/graphql"
+            Headers = @{
+                Authorization = "Token $token"
+            }
+            Method = "POST"
+            Body = $body
+        }
+        $data = Invoke-RestMethod @graphQL
+
+        $result = ""
+        $data.data.repository.deployments.nodes | Sort-Object { $_.createdAt} | ForEach-Object { $result = ($_.state) }
 
         return $result
     }
