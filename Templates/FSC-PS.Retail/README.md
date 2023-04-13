@@ -24,7 +24,7 @@
 ~~~javascript
 $GitGlobalUserName  = "Oleksandr Nikolaiev"
 $GitGlobalEmail     = "Oleksandr.Nikolaiev@contosoinc.com"
-$GitFnORepoURL      = "https://github.com/ContosoInc/ContesoExt-dynamics-365-FO.git"
+$GitCommerceRepoURL      = "https://github.com/ContosoInc/ContesoExt-dynamics-365-FO.git"
 $RetailExtensionFolderName = "ContosoRetailSDK"
 #
 # Retrieve the Commerce deployment location 
