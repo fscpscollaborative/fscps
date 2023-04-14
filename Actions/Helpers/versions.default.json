@@ -198,11 +198,11 @@
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.48",
+                     "AppVersion":  "10.0.1549.51",
                      "PlatformVersion":  "7.0.6861.30",
-                     "retailSDKVersion":  "10.0.1549.14",
+                     "retailSDKVersion":  "10.0.1549.38",
                      "retailSDKURL":  "",
-                     "fscServiseUpdatePackageId":  "",
+                     "fscServiseUpdatePackageId":  "b38714c1-2193-4fd5-8f81-b54214fe8f69",
                      "fscPreviewVersionPackageId":  "edda380c-049a-4ad8-817a-03adfd16672c",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
