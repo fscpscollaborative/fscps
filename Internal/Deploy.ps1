@@ -321,7 +321,7 @@ try {
             
             invoke-git add .
             invoke-git commit --allow-empty -m 'checkout'
-            invoke-git push $serverUrl
+            invoke-git push #$serverUrl
 
             try{
                 Write-Output "Repo: $($config.githubOwner)/$($repo.git)"
