@@ -325,8 +325,8 @@ try {
 
             try{
                 $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo.git)
-
-                if($latestRelease)
+                $latestRelease
+                if($latestRelease.id)
                 {
                     Remove-Release -token $token
                     $release = @{
