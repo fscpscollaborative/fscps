@@ -321,12 +321,10 @@ try {
             
             invoke-git add .
             invoke-git commit --allow-empty -m 'checkout'
-            Write-Output "Repo: $($config.githubOwner)/$($repo.git)"
-            invoke-git push #$serverUrl
+            invoke-git push $serverUrl
 
             try{
-                Write-Output "Repo: $($config.githubOwner)/$($repo.git)"
-                $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo.git)
+                $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo)
                 $latestRelease
                 if($latestRelease.id)
                 {
@@ -338,7 +336,7 @@ try {
                         ReleaseText = ""
                         Draft = $false
                         PreRelease = $false
-                        RepositoryName = "$($repo.git)"
+                        RepositoryName = "$($repo)"
                         RepositoryOwner = "$($config.githubOwner)"
                     }
                     Write-Output "Release: $release"
