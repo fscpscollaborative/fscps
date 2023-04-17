@@ -324,9 +324,10 @@ try {
             invoke-git push $serverUrl
 
             try{
+                Write-Output "Repo: $($config.githubOwner)/$($repo)"
                 $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo)
                 $latestRelease
-                if($latestRelease.id)
+                if($latestRelease)
                 {
                     Remove-Release -token $token
                     $release = @{
