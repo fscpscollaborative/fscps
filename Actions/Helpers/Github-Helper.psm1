@@ -591,8 +591,9 @@ function Remove-Release {
         {
             $release = (Get-LatestRelease -token $token -repository $repository -api_url $api_url)
         }
-        InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/git/refs/tags/$($release.tag_name)" -ignoreErrors | ConvertFrom-Json
+
         InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/releases/$release_id" -ignoreErrors | ConvertFrom-Json
+        InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/git/refs/tags/$($release.tag_name)" -ignoreErrors | ConvertFrom-Json
 
     }
     catch {

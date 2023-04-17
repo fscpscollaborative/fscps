@@ -335,7 +335,7 @@ try {
                         AccessToken = "$token"
                         TagName = "$($latestRelease.tag_name)"
                         Name = "$($latestRelease.name)"
-                        ReleaseText = ""
+                        ReleaseText = "$($latestRelease.tag_name)"
                         Draft = $false
                         PreRelease = $false
                         RepositoryName = "$($repo)"
