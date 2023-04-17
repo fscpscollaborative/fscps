@@ -324,6 +324,7 @@ try {
             invoke-git push $serverUrl
 
             try{
+                Write-Output "Repo: $($config.githubOwner)/$($repo.git)"
                 $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo.git)
                 $latestRelease
                 if($latestRelease.id)
