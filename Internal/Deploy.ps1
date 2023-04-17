@@ -325,7 +325,7 @@ try {
 
             try{
                 Write-Output "Repo: $($config.githubOwner)/$($repo)"
-                $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo)
+                $latestRelease = Get-LatestRelease -token $token -repository "$($config.githubOwner)/$($repo)" -api_url "https://api.github.com"
                 $latestRelease
                 if($latestRelease)
                 {
