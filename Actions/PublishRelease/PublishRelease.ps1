@@ -80,6 +80,7 @@ try {
         RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
     }
     Write-Output "Release: "
+    
     $release 
     Write-Output "Artifacts path: $artifactsPath"
 
