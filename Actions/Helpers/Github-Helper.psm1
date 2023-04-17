@@ -576,7 +576,30 @@ function Get-LatestRelease {
         return $null
     }
 }
+function Remove-Release {
+    Param(
+        [string] $token,
+        [string] $release_id = 0,
+        [string] $api_url = $ENV:GITHUB_API_URL,
+        [string] $repository = $ENV:GITHUB_REPOSITORY
+    )
+    
+    Write-Host "Remove the release with id $release_id from $api_url/repos/$repository/releases/$release_id"
+    try {
+        $release = ""
+        if($release_id -eq 0)
+        {
+            $release = (Get-LatestRelease -token $token -repository $repository -api_url $api_url)
+        }
+        InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/git/refs/tags/$($release.tag_name)" -ignoreErrors -silent
 
+        InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/releases/$release_id" -ignoreErrors | ConvertFrom-Json
+
+    }
+    catch {
+        return $null
+    }
+}
 function DownloadRelease {
     Param(
         [string] $token,

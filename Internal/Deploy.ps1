@@ -254,14 +254,17 @@ try {
 
             try {
                 if ($github) {
-                    $serverUrl = "https://$($user.login):$token@github.com/$($config.githubOwner)/$repo.git"
+                    $serverUrl = "https://$($user.login):$token@github.com/$($config.githubOwner)/$($repo.git)"
                 }
                 else {
-                    $serverUrl = "https://github.com/$($config.githubOwner)/$repo.git"
+                    $serverUrl = "https://github.com/$($config.githubOwner)/$($repo.git)"
                 }
                 if (Test-Path $repo) {
                     Remove-Item $repo -Recurse -Force
                 }
+
+
+
                 invoke-git clone --quiet $serverUrl
                 Set-Location $repo
                 try {
@@ -319,6 +322,31 @@ try {
             invoke-git add .
             invoke-git commit --allow-empty -m 'checkout'
             invoke-git push $serverUrl
+
+            try{
+                $latestRelease = Get-LatestRelease -token $token -repository $($config.githubOwner)/$($repo.git)
+
+                if($latestRelease)
+                {
+                    Remove-Release -token $token
+                    $release = @{
+                        AccessToken = "$token"
+                        TagName = "$($latestRelease.tag_name)"
+                        Name = "$($latestRelease.name)"
+                        ReleaseText = ""
+                        Draft = $false
+                        PreRelease = $false
+                        RepositoryName = "$($repo.git)"
+                        RepositoryOwner = "$($config.githubOwner)"
+                    }
+                    Write-Output "Release: $release"
+                    Publish-GithubRelease @release
+                }
+            }
+            catch {
+
+            }
+
         }
     }
 }
