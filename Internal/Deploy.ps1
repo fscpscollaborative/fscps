@@ -254,10 +254,10 @@ try {
 
             try {
                 if ($github) {
-                    $serverUrl = "https://$($user.login):$token@github.com/$($config.githubOwner)/$($repo.git)"
+                    $serverUrl = "https://$($user.login):$token@github.com/$($config.githubOwner)/$repo.git"
                 }
                 else {
-                    $serverUrl = "https://github.com/$($config.githubOwner)/$($repo.git)"
+                    $serverUrl = "https://github.com/$($config.githubOwner)/$repo.git"
                 }
                 if (Test-Path $repo) {
                     Remove-Item $repo -Recurse -Force
