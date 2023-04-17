@@ -539,7 +539,7 @@ $query = @"
     }
     end{}
 }
-function GetReleaseNotes {
+function Get-ReleaseNotes {
     Param(
         [string] $token,
         [string] $repository = $ENV:GITHUB_REPOSITORY,
@@ -561,7 +561,7 @@ function GetReleaseNotes {
     InvokeWebRequest -Headers (GetHeader -token $token) -Method POST -Body ($postParams | ConvertTo-Json) -Uri "$api_url/repos/$repository/releases/generate-notes" 
 }
 
-function GetLatestRelease {
+function Get-LatestRelease {
     Param(
         [string] $token,
         [string] $api_url = $ENV:GITHUB_API_URL,

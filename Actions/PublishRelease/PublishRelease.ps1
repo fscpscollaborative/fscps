@@ -65,12 +65,15 @@ try {
 
     Write-Output "Tag is : $tag"
 
+    $latestRelease = Get-LatestRelease -token $token
+    $releaseNote = Get-ReleaseNotes -token $token -tag_name "$tag" -previous_tag_name $($latestRelease.tag_name)
 
+    
     $release = @{
         AccessToken = "$repoTokenSecretName"
         TagName = "$tag"
         Name = "$name"
-        ReleaseText = "$name"
+        ReleaseText = "$(($releaseNote.Content | ConvertFrom-Json ).body)"
         Draft = $false
         PreRelease = $false
         RepositoryName = "$($github.Payload.repository.name)"
