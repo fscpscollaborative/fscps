@@ -329,7 +329,8 @@ try {
                 $latestRelease
                 if($latestRelease)
                 {
-                    Remove-Release -token $token
+                    Remove-Release -token $token -repository "$($config.githubOwner)/$($repo)" -api_url "https://api.github.com"
+
                     $release = @{
                         AccessToken = "$token"
                         TagName = "$($latestRelease.tag_name)"
@@ -340,6 +341,7 @@ try {
                         RepositoryName = "$($repo)"
                         RepositoryOwner = "$($config.githubOwner)"
                     }
+                    
                     Write-Output "Release: $release"
                     Publish-GithubRelease @release
                 }
