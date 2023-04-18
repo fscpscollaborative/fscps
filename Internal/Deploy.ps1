@@ -334,7 +334,7 @@ try {
                     $release = @{
                         AccessToken = "$token"
                         TagName = "$($latestRelease.tag_name)"
-                        Name = "$($latestRelease.name)"
+                        Name = "$($latestRelease.tag_name)"
                         ReleaseText = "$($latestRelease.tag_name)"
                         Draft = $false
                         PreRelease = $false
