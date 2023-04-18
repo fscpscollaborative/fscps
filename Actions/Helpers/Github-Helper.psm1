@@ -584,15 +584,17 @@ function Remove-Release {
         [string] $repository = $ENV:GITHUB_REPOSITORY
     )
     
-    Write-Host "Remove the release with id $release_id from $api_url/repos/$repository/releases/$release_id"
+    
     try {
         $release = ""
         if($release_id -eq 0)
         {
             $release = (Get-LatestRelease -token $token -repository $repository -api_url $api_url)
+            $release_id = $release.id
         }
-
+        Write-Host "Remove the release with id $release_id from $api_url/repos/$repository/releases/$release_id"
         InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/releases/$release_id" -ignoreErrors | ConvertFrom-Json
+        Write-Host "Remove the tag with name $($release.tag_name) from $api_url/repos/$repository/git/refs/tags/$($release.tag_name)"
         InvokeWebRequest -method DELETE -Headers (GetHeader -token $token) -Uri "$api_url/repos/$repository/git/refs/tags/$($release.tag_name)" -ignoreErrors | ConvertFrom-Json
 
     }
