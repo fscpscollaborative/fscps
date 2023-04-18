@@ -131,7 +131,7 @@ jobs:
 
            
   CreateReleaseBranch:
-    if: ${{ github.event.inputs.createReleaseBranch }}
+    if: ${{ github.event.inputs.createReleaseBranch == true }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization, CreateRelease ]
     steps:
