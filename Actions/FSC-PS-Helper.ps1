@@ -955,9 +955,17 @@ function Find-Match {
             $MatchOptions = New-MatchOptions -Dot -NoBrace -NoCase
         }
 
-
-        Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
-
+        Install-Package Minimatch -RequiredVersion 1.1.0 -Force  -Confirm:$false
+        #Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
+        $package = Get-Package Minimatch
+        $zip = [System.IO.Compression.ZipFile]::Open($package.Source,"Read")
+        $memStream = [System.IO.MemoryStream]::new()
+        $reader = [System.IO.StreamReader]($zip.entries[2]).Open()
+        $reader.BaseStream.CopyTo($memStream)
+        [byte[]]$bytes = $memStream.ToArray()
+        $reader.Close()
+        $zip.dispose()
+        [System.Reflection.Assembly]::Load($bytes)
         # Normalize slashes for root dir.
         $DefaultRoot = ConvertTo-NormalizedSeparators -Path $DefaultRoot
 
