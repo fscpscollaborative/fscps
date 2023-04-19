@@ -954,7 +954,7 @@ function Find-Match {
         }
 
                
-        $code = Get-Content "$PSScriptRoot\Helpers\Minimatch.cs"
+        [string]$code = Get-Content "$PSScriptRoot\Helpers\Minimatch.cs" -Raw
         Add-Type -TypeDefinition $code -Language CSharp 
 
         <#
