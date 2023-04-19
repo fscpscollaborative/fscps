@@ -955,7 +955,12 @@ function Find-Match {
 
         
         #Unblock-File -Path "$PSScriptRoot\Helpers\Minimatch.dll"
-        [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\Helpers\Minimatch.dll")
+        try {
+            [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\Helpers\Minimatch.dll")
+        }
+        catch {
+        }
+        
 
         <#
         Install-Package Minimatch -RequiredVersion 2.0.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
