@@ -959,6 +959,7 @@ function Find-Match {
             [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\Helpers\Minimatch.dll")
         }
         catch {
+            $_.Exception.Message
         }
         
 
