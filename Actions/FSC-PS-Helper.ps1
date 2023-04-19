@@ -943,8 +943,6 @@ function Find-Match {
     try {
         $ErrorActionPreference = 'Stop'
 
-
-
         Write-Verbose "DefaultRoot: '$DefaultRoot'"
         if (!$FindOptions) {
             $FindOptions = New-FindOptions -FollowSpecifiedSymbolicLink -FollowSymbolicLinks
@@ -955,8 +953,12 @@ function Find-Match {
             $MatchOptions = New-MatchOptions -Dot -NoBrace -NoCase
         }
 
+        
+        "$PSScriptRoot\Helpers\Minimatch.dll" | Unblock-File
+        Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
+
+        <#
         Install-Package Minimatch -RequiredVersion 1.1.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
-        #Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
         $package = Get-Package Minimatch
         $zip = [System.IO.Compression.ZipFile]::Open($package.Source,"Read")
         $memStream = [System.IO.MemoryStream]::new()
@@ -965,7 +967,7 @@ function Find-Match {
         [byte[]]$bytes = $memStream.ToArray()
         $reader.Close()
         $zip.dispose()
-        [System.Reflection.Assembly]::Load($bytes)
+        [System.Reflection.Assembly]::Load($bytes)#>
         # Normalize slashes for root dir.
         $DefaultRoot = ConvertTo-NormalizedSeparators -Path $DefaultRoot
 
