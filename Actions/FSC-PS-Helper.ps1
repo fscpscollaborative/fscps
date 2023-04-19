@@ -954,11 +954,11 @@ function Find-Match {
         }
 
         
-        Unblock-File -Path "$PSScriptRoot\Helpers\Minimatch.dll"
-        Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
+        #Unblock-File -Path "$PSScriptRoot\Helpers\Minimatch.dll"
+        [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\Helpers\Minimatch.dll")
 
         <#
-        Install-Package Minimatch -RequiredVersion 1.1.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
+        Install-Package Minimatch -RequiredVersion 2.0.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
         $package = Get-Package Minimatch
         $zip = [System.IO.Compression.ZipFile]::Open($package.Source,"Read")
         $memStream = [System.IO.MemoryStream]::new()
