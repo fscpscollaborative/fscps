@@ -953,15 +953,9 @@ function Find-Match {
             $MatchOptions = New-MatchOptions -Dot -NoBrace -NoCase
         }
 
-        
-        #Unblock-File -Path "$PSScriptRoot\Helpers\Minimatch.dll"
-        try {
-            [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot\Helpers\Minimatch.dll")
-        }
-        catch {
-            $_.Exception.Message
-        }
-        
+               
+        $code = Get-Content "$PSScriptRoot\Helpers\Minimatch.cs"
+        Add-Type -TypeDefinition $code -Language CSharp 
 
         <#
         Install-Package Minimatch -RequiredVersion 2.0.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
@@ -1772,6 +1766,7 @@ function Update-D365FSCISVSource
     
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
+
 ################################################################################
 # End - Private functions.
 ################################################################################

@@ -203,7 +203,6 @@ try {
             }
         }
     }
-    Update-FSCModelVersion -xppSourcePath "d" -xppLayer "ISV" -versionNumber "1.2.3.4" -xppDescriptorSearch "."
     installModules "Invoke-MsBuild"
 
     $msbuildresult = Invoke-MsBuild -Path "NewBuild\Build\Build.sln" -P "/p:BuildTasksDirectory=$msBuildTasksDirectory /p:MetadataDirectory=$msMetadataDirectory /p:FrameworkDirectory=$msFrameworkDirectory /p:ReferencePath=$msReferencePath /p:OutputDirectory=$msOutputDirectory" -ShowBuildOutputInCurrentWindow
