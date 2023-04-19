@@ -344,6 +344,7 @@ try {
 
                     Write-Output "Release: "
                     $release
+                    Start-Sleep -Seconds 5
                     Publish-GithubRelease @release
                 }
             }
