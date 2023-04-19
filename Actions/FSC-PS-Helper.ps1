@@ -954,7 +954,7 @@ function Find-Match {
         }
 
         
-        "$PSScriptRoot\Helpers\Minimatch.dll" | Unblock-File
+        Unblock-File -Path "$PSScriptRoot\Helpers\Minimatch.dll"
         Add-Type -LiteralPath $PSScriptRoot\Helpers\Minimatch.dll
 
         <#
