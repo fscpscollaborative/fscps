@@ -957,17 +957,6 @@ function Find-Match {
         [string]$code = Get-Content "$PSScriptRoot\Helpers\Minimatch.cs" -Raw
         Add-Type -TypeDefinition $code -Language CSharp 
 
-        <#
-        Install-Package Minimatch -RequiredVersion 2.0.0 -Force  -Confirm:$false -Source https://www.nuget.org/api/v2
-        $package = Get-Package Minimatch
-        $zip = [System.IO.Compression.ZipFile]::Open($package.Source,"Read")
-        $memStream = [System.IO.MemoryStream]::new()
-        $reader = [System.IO.StreamReader]($zip.entries[2]).Open()
-        $reader.BaseStream.CopyTo($memStream)
-        [byte[]]$bytes = $memStream.ToArray()
-        $reader.Close()
-        $zip.dispose()
-        [System.Reflection.Assembly]::Load($bytes)#>
         # Normalize slashes for root dir.
         $DefaultRoot = ConvertTo-NormalizedSeparators -Path $DefaultRoot
 
