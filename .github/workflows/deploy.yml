@@ -11,6 +11,8 @@ on:
         description: Additionally deploy templates to main+preview branch? (Y/N)
         required: false
         default: 'N'
+  schedule:
+   - cron: '0 23 * * *'
 
 defaults:
   run:
