@@ -495,7 +495,7 @@ function GenerateSolution {
         [string]$MetadataPath
     )
 
-    cd $PSScriptRoot\Build\Build
+    Set-Location $PSScriptRoot\Build\Build
 
     OutputDebug "MetadataPath: $MetadataPath"
 
@@ -572,7 +572,7 @@ function GenerateSolution {
         GenerateProjectFile -ModelName $project.Name -ProjectGuid $project.Value -MetadataPath $MetadataPath 
     }
 
-    cd $PSScriptRoot\Build
+    Set-Location $PSScriptRoot\Build
     #generate nuget.config
     $NugetConfigFileName = 'nuget.config'
     $NewNugetFile = Join-Path $NugetFolderPath $NugetConfigFileName
@@ -601,7 +601,7 @@ function GenerateSolution {
     $tempFile = (Get-Content $PackagesConfigFileName).Replace('PlatformVersion', $PlatformVersion).Replace('ApplicationVersion', $ApplicationVersion)
     Set-Content $NewPackagesFile $tempFile
 
-    cd $PSScriptRoot
+    Set-Location $PSScriptRoot
 }
 function Update-RetailSDK
 {
@@ -1552,7 +1552,7 @@ function Get-DirectoryChildItem {
                 }
             }
         } finally {
-            if ($handle -ne $null) { $handle.Dispose() }
+            if ($null -ne $handle) { $handle.Dispose() }
         }
 
         # If recursive and non-default filter, queue child directories.
@@ -1597,7 +1597,7 @@ function Get-DirectoryChildItem {
                     }
                 }
             } finally {
-                if ($handle -ne $null) { $handle.Dispose() }
+                if ($null -ne $handle) { $handle.Dispose() }
             }
         }
 
@@ -1696,7 +1696,7 @@ function ConvertTo-OrderedDictionary
     }
 }
 
-function Extract-D365FSCSource
+function Import-D365FSCSource
 {
     [CmdletBinding()]
     param (

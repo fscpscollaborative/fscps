@@ -88,7 +88,7 @@ try {
     $archivePath = "$baseFolder\temp.zip"
     Invoke-WebRequest -Uri $artifactsPath -OutFile $archivePath
     Set-Location -Path $baseFolder
-    Extract-D365FSCSource -archivePath $archivePath -targetPath $baseFolder
+    Import-D365FSCSource -archivePath $archivePath -targetPath $baseFolder
 
     Remove-Item $archivePath -Force
 

@@ -169,7 +169,6 @@ function ProcessingNuGet {
             $destinationNugetFilePath = $newdestinationNugetFilePath
         }
         $download = (-not(Test-Path $destinationNugetFilePath))
-        $upload = $true
 
         $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
        
@@ -220,7 +219,6 @@ function ProcessingNuGet {
         }
         else
         {
-            $upload = $false
             if($download)
             {
                 $blob = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob $AssetName -Destination $destinationNugetFilePath -ConcurrentTaskCount 10 -Force
@@ -418,7 +416,6 @@ function ProcessingRSDK {
         $storageAccountName = 'ciellosarchive'
         $storageContainer = 'retailsdk'
         $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-        $header = GetUNHeader -token $LCSToken
         OutputInfo "PackageName: $PackageName"
         OutputInfo "PackageDestination: $PackageDestination"
     }
