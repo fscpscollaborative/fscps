@@ -98,7 +98,7 @@ try {
         }
     }
     ###
-    Publish-GithubRelease @release -Artifact "$artifactsPath"
+    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit $settings.sourceBranch
 }
 catch {
     OutputError -message $_.Exception.Message
