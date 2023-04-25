@@ -256,7 +256,7 @@ function ProcessingNuGet {
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
-                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.")} 
+                $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.".ToLower())} 
                 {  
                     $curVer.data.AppVersion=$version;
                     break;
@@ -529,5 +529,28 @@ function Remove-LcsAssetFile {
             Stop-PSFFunction -Message "Stopping because of errors" -StepsUpward 1
             return
         }
+    }
+}
+
+function Get-FSCVersionFromPackageName
+{
+    param (
+        [string]$PackageName
+    )
+    begin{
+        $fscVersionRegex = [regex] "\b(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)\b"
+        $platUpdateRegex = [regex] "(?:[0-9]*[0-9])"
+    }
+    process{
+        $fscVersion = $fscVersionRegex.Match($PackageName).Value
+        if(-not $fscVersion)
+        {
+            if($PackageName.Contains("Plat Update"))
+            {
+                $platVersion = $platUpdateRegex.Match($PackageName).Value
+                $fscVersion = "10.0." + ($platVersion - 24)
+            }
+        }
+        return $fscVersion
     }
 }

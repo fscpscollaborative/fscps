@@ -58,7 +58,7 @@ jobs:
             
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
-                $fscVersion = $fscVersionRegex.Match($_.Name).Value
+                $fscVersion = Get-FSCVersionFromPackageName $_.Name
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6)
                 {
                     OutputInfo "#################### $fscVersion #####################"
@@ -77,7 +77,7 @@ jobs:
             $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType SoftwareDeployablePackage
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.Name
-                $fscVersion = $fscVersionRegex.Match($_.Name).Value
+                $fscVersion = Get-FSCVersionFromPackageName $_.Name
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
                 {
                     OutputInfo "#################### $fscVersion #####################"
