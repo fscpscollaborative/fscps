@@ -57,6 +57,7 @@ try {
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
+    $settings
     Write-Output "::endgroup::"
     
     $name = "$($github.Payload.inputs.name)" -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
@@ -98,7 +99,7 @@ try {
         }
     }
     ###
-    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit $settings.sourceBranch
+    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit "$($settings.sourceBranch.ToLower())"
 }
 catch {
     OutputError -message $_.Exception.Message
