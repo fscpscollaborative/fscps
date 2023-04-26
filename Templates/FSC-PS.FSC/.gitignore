@@ -1,9 +1,4 @@
-﻿# Ignore everything
-/*
-/*/*
-/*/*/*
-/*/*/bin/*
-/*/*.xml
+﻿# Ignore standard files
 *.log
 *.xref
 *.cache
@@ -26,11 +21,12 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-# Visual Studio 2015 cache/options directory
+# Visual Studio cache/options directory
 .vs/
 
-#github workflow
-.github/
+# NOT github workflow
+!.github/
+!.FSC-PS/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -58,21 +54,183 @@ $tf/
 # NuGet v3's project.json files produces more ignorable files
 *.nuget.props
 *.nuget.targets
+# Ignore AosService standard folders
+/**/ClickOncePackageDirectory
+/**/DeltaSync
+/**/WebRoot
 
-# But descend into directories
-!/VSProjects
-!/VSProjects/**
-!/PackagesLocalDirectory
-!/PackagesLocalDirectory/**
-!.gitignore
-/PackagesLocalDirectory/Readme.txt
-!.github
-!.github/*
-!.github/workflows/*
-!.FSC-PS
-!.FSC-PS/*
-*.testlog
-*.manifest
+# Metadata folders
+/**/XppMetadata
+/**/Reports
+/**/Resources
 
-#system tests
-!/tests/pom.xml
+# BuildArtifacts
+BuildModelResult.xml
+BuildModelResult.err.xml
+BuildProjectResult.xml
+BuildProjectResult.err.xml
+CompileLabels.xml
+
+# Standard Models
+/**/AccountsPayableMobile
+/**/ApplicationCommon
+/**/ApplicationFoundation
+/**/ApplicationFoundationFormAdaptor
+/**/ApplicationPlatform
+/**/ApplicationPlatformFormAdaptor
+/**/ApplicationSuite
+/**/ApplicationSuiteFormAdaptor
+/**/ApplicationWorkspaces
+/**/ApplicationWorkspacesFormAdaptor
+/**/AppTroubleshooting
+/**/AppTroubleshootingCore
+/**/ArchiveService
+/**/AssetLeasing
+/**/ATLApplicationSuite
+/**/AtlCoreFinancial
+/**/AtlCostAccounting
+/**/AtlFoundation
+/**/AtlMaterialhandling
+/**/AtlPersonnel
+/**/AtlSampleTests
+/**/BankTypes
+/**/BenefitsManagement
+/**/bin
+/**/BusinessIntelligence
+/**/BusinessProcess
+/**/Calendar
+/**/CaseManagement
+/**/CDSVirtualEntity
+/**/CommunityDrivenEngineeringTests
+/**/ContactPerson
+/**/Contoso
+/**/ContosoExtension
+/**/ContosoTestEssentials
+/**/CostAccounting
+/**/CostAccountingAX
+/**/CostAccountingService
+/**/CreditManagement
+/**/Currency
+/**/CustomFields
+/**/DataExpansionTool
+/**/DataFeeds
+/**/DataImpExpApplication
+/**/DataMaintenance
+/**/DataMaintenanceTypes
+/**/DataSharing
+/**/DataStack
+/**/DataUpgrade
+/**/DataUpgradePlatform
+/**/DemoDataSuite
+/**/DemoDataWellKnownValues
+/**/Dimensions
+/**/Directory
+/**/DirectoryUpgrade
+/**/DOM
+/**/ElectronicReporting
+/**/ElectronicReportingAppSuiteIntegration
+/**/ElectronicReportingBusinessDoc
+/**/ElectronicReportingCore
+/**/ElectronicReportingDotNetUtils
+/**/ElectronicReportingForAx
+/**/ElectronicReportingForRetail
+/**/ElectronicReportingInternal
+/**/ElectronicReportingMapping
+/**/EngineeringChangeManagement
+/**/EntAssetManufacturingExecution
+/**/EntAssetManufacturingExecutionBackoffice
+/**/EntAssetManufacturingExecutionInterface
+/**/EnterpriseAssetManagementAppSuite
+/**/EnterpriseAssetManagementIot
+/**/EnterpriseAssetManagementMobile
+/**/ExpenseManagement
+/**/ExpenseMobile
+/**/ExportControl
+/**/FinanceInsightsContracts
+/**/FinancialDimensionService
+/**/FinancialReporting
+/**/FinancialReportingEntityStore
+/**/FinTag
+/**/FiscalBooks
+/**/FiscalBooksFormAdaptor
+/**/FleetManagement
+/**/FleetManagementExtension
+/**/FleetManagementUnitTests
+/**/GeneralLedger
+/**/GeneralLedgerFormAdaptor
+/**/GlobalizationLTM
+/**/GlobalUnifiedPricing
+/**/HRPlatform
+/**/InboundTransportationManagement
+/**/InstallationRecords
+/**/InventoryDimensionConversion
+/**/IoTIntelligenceCore
+/**/IoTIntelligenceManufacturing
+/**/Kitting
+/**/Leave
+/**/Ledger
+/**/ManufacturingExecution
+/**/ManufacturingExecutionBackoffice
+/**/ManufacturingExecutionCommon
+/**/ManufacturingExecutionInterface
+/**/ManufacturingExecutionThirdParty
+/**/MasterPlanningService
+/**/MaterialHandlingEquipmentInterface
+/**/Measurement
+/**/MessageProcessor
+/**/MetadataExport
+/**/Microservices
+/**/MixedRealityCore
+/**/MixedRealityManufacturing
+/**/MonitoringAndTelemetry
+/**/OperationalInsights
+/**/PaymentPredictor
+/**/Personnel
+/**/PersonnelBusinessProcess
+/**/PersonnelCore
+/**/PersonnelManagement
+/**/PersonnelMobile
+/**/PersonnelUpgrade
+/**/Plugins
+/**/Policy
+/**/ProcessAutomation
+/**/ProcessGuide
+/**/Project
+/**/ProjectMobile
+/**/ProjectOperations
+/**/PublicSector
+/**/PublicSectorFormAdaptor
+/**/RebatesAndDeductions
+/**/Recruitment
+/**/RegulatoryServices
+/**/Retail
+/**/RetailEod
+/**/RetailFormAdaptor
+/**/RetailTeamsIntegration
+/**/RevenueRecognition
+/**/ScaleUnitDatapipeline
+/**/ScaleUnitManagement
+/**/SCMInsights
+/**/SCMMobile
+/**/SelfHealing
+/**/SelfHealingRules
+/**/SourceDocumentation
+/**/SourceDocumentationTypes
+/**/StaticMetadata
+/**/Subledger
+/**/SubscriptionBilling
+/**/SupplyChainPlanning
+/**/SystemHealth
+/**/Tax
+/**/TaxEngine
+/**/TestEssentials
+/**/TestResults
+/**/TimesheetMobile
+/**/Tutorial
+/**/UnitOfMeasure
+/**/WarehouseExecutionWorkload
+/**/WarehouseExecutionWorkloadBackoffice
+/**/WarehousePlanning
+/**/WHSAppTaskValidator
+/**/WMSAdvancedMigration
+/**/WorkloadCommon
