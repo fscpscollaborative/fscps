@@ -99,7 +99,7 @@ try {
         }
     }
     ###
-    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit "$($settings.sourceBranch.ToLower())"
+    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit "$($github.Payload.ref)"
 }
 catch {
     OutputError -message $_.Exception.Message
