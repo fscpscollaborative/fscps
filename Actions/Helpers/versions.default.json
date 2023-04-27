@@ -184,8 +184,8 @@
     {
         "version":  "10.0.32",
         "data":  {
-                     "PlatformVersion":  "7.0.6801.74",
-                     "AppVersion":  "10.0.1515.97",
+                     "PlatformVersion":  "7.0.6801.75",
+                     "AppVersion":  "10.0.1515.99",
                      "retailSDKVersion":  "10.0.1515.74",
                      "retailSDKURL":  "",
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.32",
@@ -198,7 +198,7 @@
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.63",
+                     "AppVersion":  "10.0.1549.64",
                      "PlatformVersion":  "7.0.6861.56",
                      "retailSDKVersion":  "10.0.1549.38",
                      "retailSDKURL":  "",
