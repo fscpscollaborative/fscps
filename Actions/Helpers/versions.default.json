@@ -184,27 +184,27 @@
     {
         "version":  "10.0.32",
         "data":  {
-                     "PlatformVersion":  "7.0.6801.82",
+                     "PlatformVersion":  "7.0.6801.85",
                      "AppVersion":  "10.0.1515.99",
                      "retailSDKVersion":  "10.0.1515.74",
                      "retailSDKURL":  "",
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.32",
                      "fscServiseUpdatePackageId":  "6648e815-76dc-4c8d-bf57-ffc507c5e7ce",
                      "fscPreviewVersionPackageId":  "db51cfda-8f17-488c-b699-26d5f428dc2a",
-                     "fscLatestQualityUpdatePackageId":  "be5c9c1f-2f7f-4c11-8b55-b21075510982"
+                     "fscLatestQualityUpdatePackageId":  "d85ec8bb-cb42-4bda-a64b-8711e7297ecd"
                  }
     },
     {
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.70",
-                     "PlatformVersion":  "7.0.6861.64",
-                     "retailSDKVersion":  "10.0.1549.38",
+                     "AppVersion":  "10.0.1549.72",
+                     "PlatformVersion":  "7.0.6861.66",
+                     "retailSDKVersion":  "10.0.1549.63",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "b38714c1-2193-4fd5-8f81-b54214fe8f69",
                      "fscPreviewVersionPackageId":  "edda380c-049a-4ad8-817a-03adfd16672c",
-                     "fscLatestQualityUpdatePackageId":  ""
+                     "fscLatestQualityUpdatePackageId":  "2d9a1ed1-6654-4789-a96d-bfbb0d2f2522"
                  }
     },
     {
