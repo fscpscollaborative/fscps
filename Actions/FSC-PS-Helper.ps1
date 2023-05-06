@@ -53,7 +53,7 @@ function OutputError {
         throw $message
     }
     else {
-        Write-Host "::Error::$message"
+        Write-Error "::Error::$message"
         $host.SetShouldExit(1)
     }
 }
