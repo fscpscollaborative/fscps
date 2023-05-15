@@ -198,7 +198,7 @@
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.78",
+                     "AppVersion":  "10.0.1549.79",
                      "PlatformVersion":  "7.0.6861.71",
                      "retailSDKVersion":  "10.0.1549.63",
                      "retailSDKURL":  "",
@@ -210,7 +210,7 @@
     {
         "version":  "10.0.34",
         "data":  {
-                     "AppVersion":  "10.0.1591.44",
+                     "AppVersion":  "10.0.1591.45",
                      "fscPreviewVersionPackageId":  "82a79a39-21c3-4333-a663-6094659ad03d",
                      "PlatformVersion":  "7.0.6931.52",
                      "retailSDKVersion":  "10.0.1591.23",
