@@ -24,7 +24,7 @@ jobs:
     name: Gated Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.5.2
         with:
           path: ${{ github.sha }}
 

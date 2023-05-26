@@ -32,10 +32,10 @@ jobs:
         shell: powershell
         run:  Remove-Item ${{ github.workspace }}\* -Recurse -Force
          
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.2
         with:
           path: ${{ github.sha }}
-          
+
       - uses: ciellosinc/d365fo-update-model-version@v0.1.3
         with:
          xppSourcePath: ${{ github.workspace }}\${{ env.metadata_path }}
