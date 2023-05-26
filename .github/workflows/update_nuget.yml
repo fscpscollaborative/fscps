@@ -13,7 +13,9 @@ jobs:
   Update:
     runs-on: [ windows-latest ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          path: ${{ github.sha }}
 
       - name: CheckUser
         run: |

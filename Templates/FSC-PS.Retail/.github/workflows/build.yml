@@ -33,6 +33,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          path: ${{ github.sha }}
 
       - name: Initialize the workflow
         uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.2
@@ -65,7 +67,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+        with:
+          path: ${{ github.sha }}
+
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
         with:
@@ -111,7 +115,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
+        with:
+          path: ${{ github.sha }}
+            
       - name: Read settings
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
