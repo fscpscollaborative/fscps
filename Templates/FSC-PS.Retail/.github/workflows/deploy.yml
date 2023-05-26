@@ -30,8 +30,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-        with:
-          path: ${{ github.sha }}
 
       - name: Initialize the workflow
         uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.2
@@ -68,7 +66,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
         with:
-          path: ${{ github.sha }}
           ref: ${{ needs.Initialization.outputs.source_branch }}
          
       - name: Read settings
@@ -81,7 +78,6 @@ jobs:
         if: steps.ReadSettings.outputs.SOURCE_BRANCH != needs.Initialization.outputs.source_branch
         uses: actions/checkout@v3.5.2
         with:
-          path: ${{ github.sha }}
           ref: ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
          
       - name: Read secrets
@@ -117,8 +113,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-        with:
-          path: ${{ github.sha }}
 
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
