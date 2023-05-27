@@ -105,6 +105,9 @@ try {
             Invoke-RestMethod @runsDeleteParam
         }
     }
+    #Cleanup workspace folder
+    $baseFolder = $ENV:GITHUB_WORKSPACE
+    Remove-Item "$baseFolder/*" -Recurse -Force -ErrorAction SilentlyContinue
 }
 catch {
     OutputError -message $_.Exception.Message
