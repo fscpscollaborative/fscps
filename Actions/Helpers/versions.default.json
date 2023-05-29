@@ -198,7 +198,7 @@
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.91",
+                     "AppVersion":  "10.0.1549.92",
                      "PlatformVersion":  "7.0.6861.86",
                      "retailSDKVersion":  "10.0.1549.63",
                      "retailSDKURL":  "",
@@ -210,7 +210,7 @@
     {
         "version":  "10.0.34",
         "data":  {
-                     "AppVersion":  "10.0.1591.57",
+                     "AppVersion":  "10.0.1591.58",
                      "fscPreviewVersionPackageId":  "82a79a39-21c3-4333-a663-6094659ad03d",
                      "PlatformVersion":  "7.0.6931.70",
                      "retailSDKVersion":  "10.0.1591.23",
@@ -227,7 +227,7 @@
                      "AppVersion":  "",
                      "fscPreviewVersionPackageId":  "a7e79521-c24f-4ec1-8023-1b12c36fbe51",
                      "PlatformVersion":  "",
-                     "retailSDKVersion":  "",
+                     "retailSDKVersion":  "10.0.1627.15",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
