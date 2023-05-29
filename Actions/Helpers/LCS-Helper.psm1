@@ -266,7 +266,7 @@ function ProcessingNuGet {
             }
             Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
         }   
-        Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -ConcurrentTaskCount 10 -Force
+        Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File "$destinationNugetFilePath" -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
     }
 }
 function ProcessingSDP {
@@ -389,7 +389,7 @@ function ProcessingSDP {
                 }
                 
                 Write-Output "Uploading package to the Azure... $destinationFilePath"
-                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -ConcurrentTaskCount 10 -Force
+                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
                 $archDestinationPath = $destinationFilePath.Replace(".zip", "")
                 Expand-7zipArchive $destinationFilePath -DestinationPath $archDestinationPath
                 $retailSDKPath = Join-Path $archDestinationPath "RetailSDK\Code"
@@ -445,7 +445,7 @@ function ProcessingRSDK {
             if($upload)
             {
                 Write-Output "Uploading package to the Azure..."
-                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$PackageName" -File "$PackageDestination" -ConcurrentTaskCount 10 -Force
+                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$PackageName" -File "$PackageDestination" -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
             }
             
             Remove-Item $PackageDestination -Force
