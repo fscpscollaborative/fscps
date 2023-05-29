@@ -154,7 +154,7 @@ try {
                     }
                 }
                 catch { 
-                    
+                    OutputInfo -message "Environment history check issue: $($_.Exception.Message)"
                 }
             }
             if($check)
