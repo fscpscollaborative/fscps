@@ -217,7 +217,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
-                     "ecommerceMicrosoftRepoBranch":  "master",
+                     "ecommerceMicrosoftRepoBranch":  "10.0.34",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
     },
@@ -231,7 +231,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
-                     "ecommerceMicrosoftRepoBranch":  "",
+                     "ecommerceMicrosoftRepoBranch":  "master",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
     }
