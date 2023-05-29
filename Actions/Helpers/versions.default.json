@@ -184,7 +184,7 @@
     {
         "version":  "10.0.32",
         "data":  {
-                     "PlatformVersion":  "7.0.6801.87",
+                     "PlatformVersion":  "7.0.6801.88",
                      "AppVersion":  "10.0.1515.99",
                      "retailSDKVersion":  "10.0.1515.74",
                      "retailSDKURL":  "",
@@ -198,8 +198,8 @@
         "version":  "10.0.33",
         "data":  {
                      "ecommerceMicrosoftRepoBranch":  "RS/10.0.33",
-                     "AppVersion":  "10.0.1549.87",
-                     "PlatformVersion":  "7.0.6861.78",
+                     "AppVersion":  "10.0.1549.91",
+                     "PlatformVersion":  "7.0.6861.86",
                      "retailSDKVersion":  "10.0.1549.63",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "b38714c1-2193-4fd5-8f81-b54214fe8f69",
@@ -210,14 +210,28 @@
     {
         "version":  "10.0.34",
         "data":  {
-                     "AppVersion":  "10.0.1591.54",
+                     "AppVersion":  "10.0.1591.57",
                      "fscPreviewVersionPackageId":  "82a79a39-21c3-4333-a663-6094659ad03d",
-                     "PlatformVersion":  "7.0.6931.63",
+                     "PlatformVersion":  "7.0.6931.70",
                      "retailSDKVersion":  "10.0.1591.23",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
                      "ecommerceMicrosoftRepoBranch":  "master",
+                     "fscLatestQualityUpdatePackageId":  ""
+                 }
+    },
+    {
+        "version":  "10.0.35",
+        "data":  {
+                     "AppVersion":  "",
+                     "fscPreviewVersionPackageId":  "a7e79521-c24f-4ec1-8023-1b12c36fbe51",
+                     "PlatformVersion":  "",
+                     "retailSDKVersion":  "",
+                     "retailSDKURL":  "",
+                     "fscServiseUpdatePackageId":  "",
+                     "fscFinalQualityUpdatePackageId":  "",
+                     "ecommerceMicrosoftRepoBranch":  "",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
     }
