@@ -63,6 +63,7 @@ $tf/
 /**/XppMetadata
 /**/Reports
 /**/Resources
+/**/GeneratedXppSource
 
 # BuildArtifacts
 BuildModelResult.xml
@@ -70,6 +71,7 @@ BuildModelResult.err.xml
 BuildProjectResult.xml
 BuildProjectResult.err.xml
 CompileLabels.xml
+DBSynchronization.xml
 
 # Standard Models
 /**/AccountsPayableMobile
@@ -93,9 +95,11 @@ CompileLabels.xml
 /**/AtlMaterialhandling
 /**/AtlPersonnel
 /**/AtlSampleTests
+/**/ATLTestCaseCommon
 /**/BankTypes
 /**/BenefitsManagement
 /**/bin
+/**/Bundle
 /**/BusinessIntelligence
 /**/BusinessProcess
 /**/Calendar
@@ -232,5 +236,6 @@ CompileLabels.xml
 /**/WarehouseExecutionWorkloadBackoffice
 /**/WarehousePlanning
 /**/WHSAppTaskValidator
+/**/WHSTests
 /**/WMSAdvancedMigration
 /**/WorkloadCommon

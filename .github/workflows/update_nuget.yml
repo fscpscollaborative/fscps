@@ -44,7 +44,7 @@ jobs:
             $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType NuGetPackage
 
             Set-Location $baseFolder
-            $branch = [System.IO.Path]::GetRandomFileName()
+            $branch = main #[System.IO.Path]::GetRandomFileName()
             $githubOwner = "$ENV:GITHUB_ACTOR"
             $minimumfscversion = "10.0.32"
             $fscVersionRegex = [regex] "(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)"
@@ -54,8 +54,9 @@ jobs:
             invoke-git config --global hub.protocol https
             invoke-git config --global core.autocrlf true
 
-            invoke-git checkout -b $branch main
-            
+            #invoke-git checkout -b $branch main
+            invoke-git checkout $branch
+
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
                 $fscVersion = Get-FSCVersionFromPackageName $_.Name
@@ -93,7 +94,7 @@ jobs:
             if ($status) {
                 invoke-git commit --allow-empty -m 'Update versions.'
                 invoke-git push -u origin $branch
-                Write-Output "Create PR to the main"
-                $releaseNotes = "No release notes available!"
-                invoke-gh pr create --fill --head $branch --repo "https://github.com/ciellosinc/FSC-PS.git" --body "$releaseNotes" --base main
+                #Write-Output "Create PR to the main"
+                #$releaseNotes = "No release notes available!"
+                #invoke-gh pr create --fill --head $branch --repo "https://github.com/ciellosinc/FSC-PS.git" --body "$releaseNotes" --base main
             }
