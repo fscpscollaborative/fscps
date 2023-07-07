@@ -110,7 +110,7 @@ function OutputDebug {
 }
 function Update-7ZipInstallation
 {
-    choco install 7zip
+    choco install 7zip --force
 }
 function Compress-7zipArchive {
     Param (
