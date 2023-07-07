@@ -116,19 +116,11 @@ function Compress-7zipArchive {
     )
     $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
 
-    $use7zip = (Test-Path -Path $7zipPath -PathType Leaf)
+    OutputDebug -message "Using 7zip"
+    Set-Alias -Name 7z -Value $7zipPath
+    $command = '7z a -t7z "{0}" "{1}"' -f $DestinationPath, $Path
+    Invoke-Expression -Command $command | Out-Null
 
-
-    if ($use7zip) {
-        OutputDebug -message "Using 7zip"
-        Set-Alias -Name 7z -Value $7zipPath
-        $command = '7z a -t7z "{0}" "{1}"' -f $DestinationPath, $Path
-        Invoke-Expression -Command $command | Out-Null
-    }
-    else {
-        OutputInfo -message "Using Compress-Archive"
-        Compress-Archive -Path $Path -DestinationPath "$DestinationPath" -Force
-    }
 }
 function Expand-7zipArchive {
     Param (
@@ -138,18 +130,11 @@ function Expand-7zipArchive {
     )
     $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
 
-    $use7zip = (Test-Path -Path $7zipPath -PathType Leaf)
+    OutputDebug -message "Using 7zip"
+    Set-Alias -Name 7z -Value $7zipPath
+    $command = '7z x "{0}" -o"{1}" -aoa -r' -f $Path, $DestinationPath
+    Invoke-Expression -Command $command | Out-Null
 
-    if ($use7zip) {
-        OutputDebug -message "Using 7zip"
-        Set-Alias -Name 7z -Value $7zipPath
-        $command = '7z x "{0}" -o"{1}" -aoa -r' -f $Path, $DestinationPath
-        Invoke-Expression -Command $command | Out-Null
-    }
-    else {
-        OutputDebug -message "Using Expand-Archive"
-        Expand-Archive -Path $Path -DestinationPath "$DestinationPath" -Force
-    }
 }
 function MergeCustomObjectIntoOrderedDictionary {
     Param(
