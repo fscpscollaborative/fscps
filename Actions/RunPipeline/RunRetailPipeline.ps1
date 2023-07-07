@@ -69,7 +69,12 @@ try {
     $baseFolder = $ENV:GITHUB_WORKSPACE
     $workflowName = $env:GITHUB_WORKFLOW
     $sdkPath = ($settings.retailSDKZipPath)
-    
+    if (!(Test-Path -Path $sdkPath))
+        {
+            # The reason to use System.IO.Directory.CreateDirectory is it creates any directories missing in the whole path
+            # whereas New-Item would only create the top level directory
+            [System.IO.Directory]::CreateDirectory($sdkPath)
+        }
     $buildPath = $settings.retailSDKBuildPath
     Write-Output "::endgroup::"
 
