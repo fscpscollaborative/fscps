@@ -108,29 +108,16 @@ function OutputDebug {
         Write-Host "::Debug::$message"
     }
 }
-function Update-7ZipInstallation
-{
-    choco install 7zip --force
-}
 function Compress-7zipArchive {
     Param (
         [Parameter(Mandatory = $true)]
         [string] $Path,
         [string] $DestinationPath
     )
-
-    Update-7ZipInstallation
     $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
 
-    $use7zip = $false
-    if (Test-Path -Path $7zipPath -PathType Leaf) {
-        try {
-            $use7zip = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($7zipPath).FileMajorPart -ge 19
-        }
-        catch {
-            $use7zip = $false
-        }
-    }
+    $use7zip = (Test-Path -Path $7zipPath -PathType Leaf)
+
 
     if ($use7zip) {
         OutputDebug -message "Using 7zip"
@@ -139,7 +126,7 @@ function Compress-7zipArchive {
         Invoke-Expression -Command $command | Out-Null
     }
     else {
-        OutputDebug -message "Using Compress-Archive"
+        OutputInfo -message "Using Compress-Archive"
         Compress-Archive -Path $Path -DestinationPath "$DestinationPath" -Force
     }
 }
@@ -149,18 +136,9 @@ function Expand-7zipArchive {
         [string] $Path,
         [string] $DestinationPath
     )
-    Update-7ZipInstallation
     $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
 
-    $use7zip = $false
-    if (Test-Path -Path $7zipPath -PathType Leaf) {
-        try {
-            $use7zip = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($7zipPath).FileMajorPart -ge 19
-        }
-        catch {
-            $use7zip = $false
-        }
-    }
+    $use7zip = (Test-Path -Path $7zipPath -PathType Leaf)
 
     if ($use7zip) {
         OutputDebug -message "Using 7zip"
