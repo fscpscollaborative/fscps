@@ -137,24 +137,27 @@ try {
             {
                 $check = $_.settings.deploy
             }
-            if($settings.deployOnlyNew)
-            {
-                try {
-                    $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
-                    $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
-                    if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
-                    {
-                        $check = $true
-                    }
-                    else {
-                        if(($github.EventName -eq "schedule") -or ($dynamicsEnvironment -eq "*"))
+            if($check)
+            {                
+                if($settings.deployOnlyNew)
+                {
+                    try {
+                        $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
+                        $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
+                        if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
                         {
-                            $check = $false
+                            $check = $true
+                        }
+                        else {
+                            if(($github.EventName -eq "schedule") -or ($dynamicsEnvironment -eq "*"))
+                            {
+                                $check = $false
+                            }
                         }
                     }
-                }
-                catch { 
-                    OutputInfo -message "Environment history check issue: $($_.Exception.Message)"
+                    catch { 
+                        OutputInfo -message "Environment history check issue: $($_.Exception.Message)"
+                    }
                 }
             }
             if($check)
