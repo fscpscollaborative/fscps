@@ -204,7 +204,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "b38714c1-2193-4fd5-8f81-b54214fe8f69",
                      "fscPreviewVersionPackageId":  "edda380c-049a-4ad8-817a-03adfd16672c",
-                     "fscLatestQualityUpdatePackageId":  "b6741b44-5369-4d39-b6ea-810e6cd8b835"
+                     "fscLatestQualityUpdatePackageId":  "31a2e4d1-7e24-407f-b705-c1489f32dd5f"
                  }
     },
     {
@@ -226,7 +226,7 @@
         "data":  {
                      "AppVersion":  "10.0.1627.64",
                      "fscPreviewVersionPackageId":  "8bd95454-c206-4ce9-a213-eab778d3deda",
-                     "PlatformVersion":  "7.0.6972.84",
+                     "PlatformVersion":  "7.0.6972.86",
                      "retailSDKVersion":  "10.0.1627.38",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "be0f0737-2d01-4ded-89dd-281af45e25ed",
