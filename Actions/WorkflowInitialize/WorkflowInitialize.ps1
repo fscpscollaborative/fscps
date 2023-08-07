@@ -27,7 +27,7 @@ try {
      }
 
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
-    installModules @("AZ.Storage","Azure.Storage","d365fo.tools")
+    installModules @("AZ.Storage","d365fo.tools")
 }
 catch {
     OutputError -message $_.Exception.Message

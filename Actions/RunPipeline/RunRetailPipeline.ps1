@@ -59,7 +59,7 @@ try {
     $version
 
     #check nuget instalation
-    installModules @("AZ","Azure.Storage","d365fo.tools")
+    installModules @("AZ.Storage","d365fo.tools")
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 

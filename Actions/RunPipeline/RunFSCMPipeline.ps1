@@ -55,7 +55,7 @@ try {
         $DynamicsVersion = $settings.buildVersion
     }
 
-    installModules @("AZ.Storage","Azure.Storage","d365fo.tools")
+    installModules @("AZ.Storage","d365fo.tools")
 
     $version = Get-VersionData -sdkVersion $DynamicsVersion
 
