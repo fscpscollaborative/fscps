@@ -135,7 +135,7 @@ try {
             $check = $true
             if($_.settings.PSobject.Properties.name -match "deploy")
             {
-                $check = $_.settings.deploy
+                #$check = $_.settings.deploy
             }
             if($check)
             {                
