@@ -60,7 +60,7 @@ try {
                 OutputInfo "Environment $($_.Name). Latest branch commit at: $($lastCommitedDate)"
                 $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
                 OutputInfo "Environment $($_.Name). Latest deployed commit at: $($deployedDate)"
-                if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
+                if((New-TimeSpan -Start $($deployedDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK")) -End $($lastCommitedDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK"))).Ticks -gt 0)
                 {
                     OutputInfo "Deploy $($_.Name)"
                 }
