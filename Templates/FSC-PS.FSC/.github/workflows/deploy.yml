@@ -53,7 +53,7 @@ jobs:
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
    Deploy:
     needs: [ Initialization ]
     if: needs.Initialization.outputs.environments != ''

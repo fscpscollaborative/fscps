@@ -142,9 +142,9 @@ try {
                 if($settings.deployOnlyNew)
                 {
                     try {
-                        $lastCommitedDate = (Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))
-                        $deployedDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
-                        if((New-TimeSpan -Start $deployedDate -End $lastCommitedDate).Ticks -gt 0)
+                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))).ToUniversalTime()
+                        [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
+                        if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)
                         {
                             $check = $true
                         }
