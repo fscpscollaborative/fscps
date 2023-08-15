@@ -177,7 +177,7 @@ try {
                 }
             }
         })
-
+        Write-Host "Envs: $environments"
         if($environments.Count -eq 1)
         {
             $environmentsJson = '["'+$($environments[0]).ToString()+'"]'
