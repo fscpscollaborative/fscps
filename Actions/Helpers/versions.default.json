@@ -217,7 +217,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "c1dc249a-64c3-472c-9512-d9d2ae352408",
                      "fscFinalQualityUpdatePackageId":  "",
-                     "ecommerceMicrosoftRepoBranch":  "10.0.34",
+                     "ecommerceMicrosoftRepoBranch":  "RS/10.0.34",
                      "fscLatestQualityUpdatePackageId":  "2b4346c4-91f8-4ae6-a0bb-f6ab2c253621"
                  }
     },
@@ -231,7 +231,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "be0f0737-2d01-4ded-89dd-281af45e25ed",
                      "fscFinalQualityUpdatePackageId":  "",
-                     "ecommerceMicrosoftRepoBranch":  "master",
+                     "ecommerceMicrosoftRepoBranch":  "RS/10.0.35",
                      "fscLatestQualityUpdatePackageId":  "5af997aa-d757-4237-a51d-31e05543d79e"
                  }
     },
@@ -245,7 +245,7 @@
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
-                     "ecommerceMicrosoftRepoBranch":  "",
+                     "ecommerceMicrosoftRepoBranch":  "master",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
     }
