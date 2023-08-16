@@ -56,7 +56,7 @@ try {
         invoke-git fetch --all -silent
         @($envsFile | ForEach-Object { 
             try {
-                OutputInfo "Environment $($_.Name)."
+                OutputInfo "Environment ====================== $($_.Name)."
                 $check = $true
                 if($github.EventName -eq "schedule")
                 {
@@ -83,14 +83,8 @@ try {
                         }
                     }
                 }
-                if($check)
-                {
-                    OutputInfo "Deploy $($_.Name)"
-                }
-                else {
-                    OutputInfo "Do not deploy $($_.Name)"
-                    
-                }
+
+                OutputInfo "Deploy: $check"
             }
             catch { 
                 OutputInfo $_.Exception.ToString()
