@@ -56,16 +56,40 @@ try {
         invoke-git fetch --all -silent
         @($envsFile | ForEach-Object { 
             try {
-                [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))).ToUniversalTime()
-                OutputInfo "Environment $($_.Name). Latest branch commit at: $($lastCommitedDate)"
-                [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
-                OutputInfo "Environment $($_.Name). Latest deployed commit at: $($deployedDate)"
-                if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)
+                OutputInfo "Environment $($_.Name)."
+                $check = $true
+                if($github.EventName -eq "schedule")
+                {
+                     $check = Test-CronExpression -Expression $_.settings.cron -DateTime ([DateTime]::Now) -WithDelayMinutes 29
+                     OutputInfo "Schedule time: $check"
+                }
+                if($check)
+                {                
+                    if($settings.deployOnlyNew)
+                    {
+                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))).ToUniversalTime()
+                        OutputInfo "Latest branch commit at: $($lastCommitedDate)"
+                        [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
+                        OutputInfo "Latest deployed commit at: $($deployedDate)"
+                        if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)
+                        {
+                            $check = $true
+                        }
+                        else {
+                            if(($github.EventName -eq "schedule") -or ($dynamicsEnvironment -eq "*"))
+                            {
+                                $check = $false
+                            }
+                        }
+                    }
+                }
+                if($check)
                 {
                     OutputInfo "Deploy $($_.Name)"
                 }
                 else {
                     OutputInfo "Do not deploy $($_.Name)"
+                    
                 }
             }
             catch { 
