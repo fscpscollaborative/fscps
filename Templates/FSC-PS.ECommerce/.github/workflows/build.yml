@@ -99,7 +99,7 @@ jobs:
           path: ${{ env.PACKAGE_PATH }}
           
    PostProcess: 
-    if: always()
+    if: !cancelled()
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Build ]
     steps:

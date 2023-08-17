@@ -105,7 +105,7 @@ jobs:
           path: ${{ env.ARTIFACTS_PATH }}
           
    PostProcess: 
-    if: always()
+    if: !cancelled()
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Build ]
     steps:

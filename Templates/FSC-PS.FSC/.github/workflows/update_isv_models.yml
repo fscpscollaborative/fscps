@@ -70,7 +70,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
           
    PostProcess: 
-    if: always()
+    if: !cancelled()
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Build ]
     steps:

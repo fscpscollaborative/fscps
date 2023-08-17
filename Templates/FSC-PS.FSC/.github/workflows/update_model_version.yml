@@ -27,7 +27,7 @@ jobs:
         run: git config --system core.longpaths true
         
       - name: Cleanup folder
-        if: always()
+        
         continue-on-error: true
         shell: powershell
         run:  Remove-Item ${{ github.workspace }}\* -Recurse -Force
