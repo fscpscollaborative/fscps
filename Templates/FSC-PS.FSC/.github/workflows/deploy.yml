@@ -107,7 +107,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
               
    PostProcess: 
-    if: !cancelled()
+    if: ${{ !cancelled() }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Deploy ]
     steps:
