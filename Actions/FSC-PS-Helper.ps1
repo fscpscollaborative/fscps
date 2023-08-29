@@ -295,7 +295,7 @@ function Get-AXReferencedTestModel
                 {
                     if(-not $testModelsList.Contains("$mdlName"))
                     {
-                        $testModelsList += ($mdlName)
+                        $testModelsList += ("$mdlName")
                     }
                 }
             }
