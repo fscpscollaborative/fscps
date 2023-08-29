@@ -67,7 +67,7 @@ try {
     $version
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
-
+    $buildPath = Join-Path "C:\Temp" $settings.buildPath
     $PlatformVersion = $version.PlatformVersion
     $ApplicationVersion = $version.AppVersion
 
@@ -106,7 +106,7 @@ try {
 
 
     
-    $buildPath = Join-Path "C:\Temp" $settings.buildPath
+    
     Write-Output "::endgroup::"
     #Generate solution folder
     Write-Output "::group::Generate solution folder"
