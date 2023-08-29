@@ -80,6 +80,7 @@ try {
     # GetModels
     if($($settings.specifyModelsManually) -eq "true")
     {
+        $mtdtdPath = ("$($buildPath)\$($settings.metadataPath)".Trim())
         $mdls = $($settings.models).Split(",")
         if($($settings.includeTestModel) -eq "true")
         {
@@ -87,8 +88,8 @@ try {
             foreach($m in $testModels){
                 $mdl = $m
                 Write-Output "mdl $mdl"
-                foreach($tst in (Get-AXReferencedTestModel -modelName $mdl -metadataPath ("$($buildPath)\$($settings.metadataPath)".Trim())).Split(","))
-                {
+                (Get-AXReferencedTestModel -modelName $mdl -metadataPath $mtdtdPath).Split(",") | ForEach-Object {
+                    $tst = $_
                     Write-Output "tstmdl $tst"
                     if(-not $mdls.Contains("$tst"))
                     {
