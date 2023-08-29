@@ -102,11 +102,9 @@ try {
         $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true') -all
     }
     
+    Write-Output "Models: $models"
+    Write-Output "Models to package: $modelsToPackage"
 
-
-
-    
-    
     Write-Output "::endgroup::"
     #Generate solution folder
     Write-Output "::group::Generate solution folder"
