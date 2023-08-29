@@ -267,7 +267,7 @@ function Get-AXModelReferences
     {
         [xml]$xmlData = Get-Content $descriptorPath
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/ModuleReferences")
-        return $modelDisplayName.GetEnumerator() | ForEach-Object { $_ }
+        return $modelDisplayName.string
     }
 }
 
