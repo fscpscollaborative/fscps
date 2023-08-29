@@ -76,15 +76,35 @@ try {
     $app_package =  'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.' + $ApplicationVersion
     $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
 
-    if(($settings.includeTestModel -eq 'true'))
+
+    # GetModels
+    if($($settings.specifyModelsManually) -eq "true")
     {
-        $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest
-        $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest -all
+        $mdls = $($settings.models).Split(",")
+        if($($settings.includeTestModel) -eq "true")
+        {
+            $testModels = $mdls
+            foreach($m in $testModels){
+                $mdl = $m
+                (Get-AXReferencedTestModel -modelName $mdl -metadataPath ("$($buildPath)\$($settings.metadataPath)".Trim())).Split(",") | ForEach-Object {
+                    if(-not $mdls.Contains($_))
+                    {
+                        $mdls += $_
+                    }
+                }
+            }
+        }
+        $models = $mdls -join ","
+        $modelsToPackage = $models
     }
     else {
-        $models = Get-FSCModels -metadataPath $settings.metadataPath
-        $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -all
+        $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true')
+        $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true') -all
     }
+    
+
+
+
     
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     Write-Output "::endgroup::"

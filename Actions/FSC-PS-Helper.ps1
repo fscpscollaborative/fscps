@@ -256,10 +256,61 @@ function MergeCustomObjectIntoOrderedDictionary {
         }
     }
 }
+function Get-AXModelReferences
+{
+    [CmdletBinding()]
+    param (
+        [string]
+        $descriptorPath
+    )
+    if(Test-Path "$descriptorPath")
+    {
+        [xml]$xmlData = Get-Content $descriptorPath
+        $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/ModuleReferences")
+        return $modelDisplayName.GetEnumerator() | ForEach-Object {$_.string}
+    }
+}
+
+function Get-AXReferencedTestModel
+{
+    [CmdletBinding()]
+    param (
+        [string]
+        $modelName,
+        [string]
+        $metadataPath
+    )
+    $testModelsList = @()
+    Get-ChildItem -Directory -Path $metadataPath | ForEach-Object { 
+        $mdlName = $_.BaseName
+        if(-not $mdlName.Contains("Test")){ return;}
+        $descriptorSearchPath = (Join-Path $_.FullName  "Descriptor")
+        $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
+        
+        if($descriptor)
+        {
+            foreach($ref in (Get-AXModelReferences -descriptorPath $descriptor.FullName))
+            {
+                if($modelName -eq $ref)
+                {
+                    if(-not $testModelsList.Contains("$mdlName"))
+                    {
+                        $testModelsList += ($mdlName)
+                    }
+                }
+            }
+        }
+    }
+    return $testModelsList -join ","
+}
+
+
 function Get-FSCModels
 {
     [CmdletBinding()]
     param (
+        [string]
+        $models = "",
         [string]
         $metadataPath,
         [switch]
@@ -271,9 +322,8 @@ function Get-FSCModels
     if(Test-Path "$metadataPath")
     {
         $modelsList = @()
-        $models = Get-ChildItem -Directory "$metadataPath"
 
-        $models | ForEach-Object {
+        (Get-ChildItem -Directory "$metadataPath") | ForEach-Object {
 
             $testModel = ($_.BaseName -match "Test")
 
@@ -287,7 +337,7 @@ function Get-FSCModels
                 $modelsList += ($_.BaseName)
             }
         }
-        $modelsList -join ","
+        return $modelsList -join ","
     }
     else 
     {
@@ -319,6 +369,8 @@ function ReadSettings {
         "buildVersion"                           = ""
         "exportModel"                            = $false
         "uploadPackageToLCS"                     = $false
+        "models"                                 = ""    
+        "specifyModelsManually"                  = $false
         "includeTestModel"                       = $false
         "codeSignCertificateUrlSecretName"       = ""
         "codeSignCertificatePasswordSecretName"  = ""
