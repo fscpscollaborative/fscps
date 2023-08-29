@@ -289,7 +289,9 @@ function Get-AXReferencedTestModel
         
         if($descriptor)
         {
-            foreach($ref in (Get-AXModelReferences -descriptorPath $descriptor.FullName))
+            $refmodels = (Get-AXModelReferences -descriptorPath $descriptor.FullName)
+            Write-Host "RefModels: $refmodels"
+            foreach($ref in $refmodels)
             {
                 if($modelName -eq $ref)
                 {
