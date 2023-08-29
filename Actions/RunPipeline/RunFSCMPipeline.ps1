@@ -90,9 +90,9 @@ try {
                 foreach($tst in (Get-AXReferencedTestModel -modelName $mdl -metadataPath ("$($buildPath)\$($settings.metadataPath)".Trim())).Split(","))
                 {
                     Write-Output "tstmdl $tst"
-                    if(-not $mdls.Contains($tst))
+                    if(-not $mdls.Contains("$tst"))
                     {
-                        $mdls += $tst
+                        $mdls += "$tst"
                     }
                 }
             }
