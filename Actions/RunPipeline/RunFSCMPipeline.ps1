@@ -87,11 +87,12 @@ try {
             foreach($m in $testModels){
                 $mdl = $m
                 Write-Output "mdl $mdl"
-                (Get-AXReferencedTestModel -modelName $mdl -metadataPath ("$($buildPath)\$($settings.metadataPath)".Trim())).Split(",") | ForEach-Object {
-                    Write-Output "tstmdl $_"
-                    if(-not $mdls.Contains($_))
+                foreach($tst in (Get-AXReferencedTestModel -modelName $mdl -metadataPath ("$($buildPath)\$($settings.metadataPath)".Trim())).Split(","))
+                {
+                    Write-Output "tstmdl $tst"
+                    if(-not $mdls.Contains($tst))
                     {
-                        $mdls += $_
+                        $mdls += $tst
                     }
                 }
             }
