@@ -304,7 +304,6 @@ function Get-AXReferencedTestModel
     return $testModelsList -join ","
 }
 
-
 function Get-FSCModels
 {
     [CmdletBinding()]
