@@ -281,7 +281,8 @@ function Get-AXReferencedTestModel
         $metadataPath
     )
     $testModelsList = @()
-    foreach($dr in (Get-ChildItem -Directory -Path $metadataPath))
+    $drdr = (Get-ChildItem -Directory -Path $metadataPath)
+    foreach($dr in $drdr)
     { 
         $mdlName = $dr.BaseName
         if(-not $mdlName.Contains("Test")){ return;}
