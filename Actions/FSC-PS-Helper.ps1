@@ -276,30 +276,33 @@ function Get-AXReferencedTestModel
     [CmdletBinding()]
     param (
         [string]
-        $modelName,
+        $modelNames,
         [string]
         $metadataPath
     )
     $testModelsList = @()
-    (Get-ChildItem -Path $metadataPath -Directory) | ForEach-Object{ 
-        $mdlName = $_.BaseName        
-        if($mdlName -eq $modelName){ return; } 
-        Write-Host "ModelName: $mdlName"
-        $checkTest = $($mdlName.Contains("Test"))
-        if(-not $checkTest){ return; }        
-        $descriptorSearchPath = (Join-Path $_.FullName "Descriptor")
-        $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
-        if($descriptor)
-        {
-            $refmodels = (Get-AXModelReferences -descriptorPath $descriptor.FullName)
-            Write-Host "RefModels: $refmodels"
-            foreach($ref in $refmodels)
+    $modelNames.Split(",") | ForEach-Object {
+        $modelName = $_
+        (Get-ChildItem -Path $metadataPath -Directory) | ForEach-Object{ 
+            $mdlName = $_.BaseName        
+            if($mdlName -eq $modelName){ return; } 
+            $checkTest = $($mdlName.Contains("Test"))
+            if(-not $checkTest){ return; }        
+            Write-Host "ModelName: $mdlName"
+            $descriptorSearchPath = (Join-Path $_.FullName "Descriptor")
+            $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
+            if($descriptor)
             {
-                if($modelName -eq $ref)
+                $refmodels = (Get-AXModelReferences -descriptorPath $descriptor.FullName)
+                Write-Host "RefModels: $refmodels"
+                foreach($ref in $refmodels)
                 {
-                    if(-not $testModelsList.Contains("$mdlName"))
+                    if($modelName -eq $ref)
                     {
-                        $testModelsList += ("$mdlName")
+                        if(-not $testModelsList.Contains("$mdlName"))
+                        {
+                            $testModelsList += ("$mdlName")
+                        }
                     }
                 }
             }

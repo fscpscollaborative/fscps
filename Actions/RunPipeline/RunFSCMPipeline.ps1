@@ -84,19 +84,8 @@ try {
         $mdls = $($settings.models).Split(",")
         if($($settings.includeTestModel) -eq "true")
         {
-            $testModels = $mdls
-            foreach($m in $testModels){
-                $mdl = $m
-                Write-Output "mdl $mdl"
-                (Get-AXReferencedTestModel -modelName $mdl -metadataPath $mtdtdPath).Split(",") | ForEach-Object {
-                    $tst = $_
-                    Write-Output "tstmdl $tst"
-                    if(-not $mdls.Contains("$tst"))
-                    {
-                        $mdls += "$tst"
-                    }
-                }
-            }
+            $testModels = Get-AXReferencedTestModel -modelName $mdls -metadataPath $mtdtdPath
+            ($testModels.Split(",").ForEach({$mdls+=($_)}))
         }
         $models = $mdls -join ","
         $modelsToPackage = $models
