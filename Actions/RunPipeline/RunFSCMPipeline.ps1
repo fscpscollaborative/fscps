@@ -84,7 +84,7 @@ try {
         $mdls = $($settings.models).Split(",")
         if($($settings.includeTestModel) -eq "true")
         {
-            $testModels = Get-AXReferencedTestModel -modelNames $mdls -metadataPath $mtdtdPath
+            $testModels = Get-AXReferencedTestModel -modelNames $($mdls -join ",") -metadataPath $mtdtdPath
             ($testModels.Split(",").ForEach({$mdls+=($_)}))
         }
         $models = $mdls -join ","

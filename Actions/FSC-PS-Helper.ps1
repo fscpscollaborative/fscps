@@ -267,7 +267,7 @@ function Get-AXModelReferences
     {
         [xml]$xmlData = Get-Content $descriptorPath
         $modelDisplayName = $xmlData.SelectNodes("//AxModelInfo/ModuleReferences")
-        return $modelDisplayName.string
+        return $modelDisplayName.string 
     }
 }
 
@@ -310,7 +310,6 @@ function Get-AXReferencedTestModel
     }
     return $testModelsList -join ","
 }
-
 function Get-FSCModels
 {
     [CmdletBinding()]

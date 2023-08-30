@@ -67,7 +67,14 @@ try {
                 {                
                     if($settings.deployOnlyNew)
                     {
-                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))).ToUniversalTime()
+                        try {
+                            $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+                        }
+                        catch {
+                            $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
+                        }
+                        
+                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($orTime))).ToUniversalTime()
                         OutputInfo "Latest branch commit at: $($lastCommitedDate)"
                         [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
                         OutputInfo "Latest deployed commit at: $($deployedDate)"
@@ -160,7 +167,13 @@ try {
                 if($settings.deployOnlyNew)
                 {
                     try {
-                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")))).ToUniversalTime()
+                        try {
+                            $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+                        }
+                        catch {
+                            $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
+                        }
+                        [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($orTime))).ToUniversalTime()
                         [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
                         if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)
                         {
