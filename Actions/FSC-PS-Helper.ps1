@@ -282,7 +282,8 @@ function Get-AXReferencedTestModel
     )
     $testModelsList = @()
     (Get-ChildItem -Path $metadataPath -Directory) | ForEach-Object{ 
-        $mdlName = $_.BaseName
+        $mdlName = $_.BaseName        
+        if($mdlName -eq $modelName){ return; } 
         Write-Host "ModelName: $mdlName"
         $checkTest = $($mdlName.Contains("Test"))
         if(-not $checkTest){ return; }        
@@ -306,7 +307,7 @@ function Get-AXReferencedTestModel
     }
     return $testModelsList -join ","
 }
-#Get-AXReferencedTestModel -metadataPath "C:\temp\PackagesLocalDirectory" -modelName "Vertex"
+
 function Get-FSCModels
 {
     [CmdletBinding()]
