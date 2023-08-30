@@ -281,18 +281,13 @@ function Get-AXReferencedTestModel
         $metadataPath
     )
     $testModelsList = @()
-    (Get-ChildItem -Path $metadataPath) | ForEach-Object
-    { 
+    (Get-ChildItem -Path $metadataPath -Directory) | ForEach-Object{ 
         $mdlName = $_.BaseName
         Write-Host "ModelName: $mdlName"
-        $checkTest = $($mdlName -contains "Test")
-        Write-Host "Contains test: $checkTest"
-        if(-not $checkTest){ return; }
-        
+        $checkTest = $($mdlName.Contains("Test"))
+        if(-not $checkTest){ return; }        
         $descriptorSearchPath = (Join-Path $_.FullName "Descriptor")
-        Write-Host "DescriptorSearchPath: $descriptorSearchPath"
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
-        Write-Host "Descriptor: $descriptor"
         if($descriptor)
         {
             $refmodels = (Get-AXModelReferences -descriptorPath $descriptor.FullName)
@@ -309,10 +304,9 @@ function Get-AXReferencedTestModel
             }
         }
     }
-
     return $testModelsList -join ","
 }
-
+#Get-AXReferencedTestModel -metadataPath "C:\temp\PackagesLocalDirectory" -modelName "Vertex"
 function Get-FSCModels
 {
     [CmdletBinding()]
