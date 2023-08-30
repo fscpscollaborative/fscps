@@ -286,7 +286,7 @@ function Get-AXReferencedTestModel
     { 
         $mdlName = $dr.BaseName
         Write-Host "ModelName: $mdlName"
-        $checkTest = $($mdlName -contains ("Test"))
+        $checkTest = $($mdlName -contains "Test")
         if(-not $checkTest){ return; }
         Write-Host "Contains test: $checkTest"
         $descriptorSearchPath = (Join-Path $dr.FullName "Descriptor")
