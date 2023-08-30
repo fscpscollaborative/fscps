@@ -281,15 +281,15 @@ function Get-AXReferencedTestModel
         $metadataPath
     )
     $testModelsList = @()
-    foreach($dr in (Get-ChildItem -Path $metadataPath))
+    (Get-ChildItem -Path $metadataPath) | ForEach-Object
     { 
-        $mdlName = $dr.BaseName
+        $mdlName = $_.BaseName
         Write-Host "ModelName: $mdlName"
         $checkTest = $($mdlName -contains "Test")
         Write-Host "Contains test: $checkTest"
         if(-not $checkTest){ return; }
         
-        $descriptorSearchPath = (Join-Path $dr.FullName "Descriptor")
+        $descriptorSearchPath = (Join-Path $_.FullName "Descriptor")
         Write-Host "DescriptorSearchPath: $descriptorSearchPath"
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         Write-Host "Descriptor: $descriptor"
