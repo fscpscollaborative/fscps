@@ -286,8 +286,9 @@ function Get-AXReferencedTestModel
     { 
         $mdlName = $dr.BaseName
         Write-Host "ModelName: $mdlName"
-        if(-not $mdlName.Contains("Test")){ return;}
+        if(-not ($mdlName.Contains("Test"))){ return;}
         $descriptorSearchPath = (Join-Path $dr.FullName "Descriptor")
+        Write-Host "DescriptorSearchPath: $descriptorSearchPath"
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
         Write-Host "Descriptor: $descriptor"
         if($descriptor)
