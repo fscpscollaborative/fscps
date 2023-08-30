@@ -56,6 +56,12 @@ try {
         invoke-git fetch --all -silent
         @($envsFile | ForEach-Object { 
             try {
+                $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+            }
+            catch {
+                $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
+            }
+            try {
                 OutputInfo "Environment ====================== $($_.Name)."
                 $check = $true
                 if($github.EventName -eq "schedule")
@@ -67,13 +73,6 @@ try {
                 {                
                     if($settings.deployOnlyNew)
                     {
-                        try {
-                            $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
-                        }
-                        catch {
-                            $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
-                        }
-                        
                         [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($orTime))).ToUniversalTime()
                         OutputInfo "Latest branch commit at: $($lastCommitedDate)"
                         [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
@@ -167,12 +166,12 @@ try {
                 if($settings.deployOnlyNew)
                 {
                     try {
-                        try {
-                            $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
-                        }
-                        catch {
-                            $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
-                        }
+                        $orTime = $(git log -1 --format=%ct "origin/$($_.settings.sourceBranch)")
+                    }
+                    catch {
+                        $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
+                    }
+                    try {
                         [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($orTime))).ToUniversalTime()
                         [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
                         if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)

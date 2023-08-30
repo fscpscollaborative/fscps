@@ -283,7 +283,7 @@ function Get-AXReferencedTestModel
     $testModelsList = @()
     $modelNames.Split(",") | ForEach-Object {
         $modelName = $_
-        (Get-ChildItem -Path $metadataPath -Directory) | ForEach-Object{ 
+        (Get-ChildItem -Path $metadataPath) | ForEach-Object{ 
             $mdlName = $_.BaseName        
             if($mdlName -eq $modelName){ return; } 
             $checkTest = $($mdlName.Contains("Test"))
