@@ -288,7 +288,7 @@ function Get-AXReferencedTestModel
         if(-not $mdlName.Contains("Test")){ return;}
         $descriptorSearchPath = (Join-Path $dr.FullName "Descriptor")
         $descriptor = (Get-ChildItem -Path $descriptorSearchPath -Filter '*.xml')
-        
+        Write-Host "Descriptor: $descriptor"
         if($descriptor)
         {
             $refmodels = (Get-AXModelReferences -descriptorPath $descriptor.FullName)
@@ -305,6 +305,7 @@ function Get-AXReferencedTestModel
             }
         }
     }
+
     return $testModelsList -join ","
 }
 
