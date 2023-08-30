@@ -281,8 +281,7 @@ function Get-AXReferencedTestModel
         $metadataPath
     )
     $testModelsList = @()
-    $drdr = (Get-ChildItem -Directory -Path $metadataPath)
-    foreach($dr in $drdr)
+    foreach($dr in (Get-ChildItem -Path $metadataPath))
     { 
         $mdlName = $dr.BaseName
         Write-Host "ModelName: $mdlName"
