@@ -30,7 +30,9 @@ When running a workflow or a local script, the settings are applied by reading o
 | retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
 | retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
 | deployOnlyNew | FSC/Retail specific. Deploy environments while schedule only if the related environment branch has changes yongest then latest deploy  | true |
-| deploymentScheduler | FSC/Retail specific. Enable/Disable the deployment schedule  | false |
+| specifyModelsManually | FSC specific. If you want to build/deploy only specific models, set to true  | false |
+| models | FSC specific. Comma delimited array of models.  | "" |
+| deploymentScheduler | FSC/Retail specific. Enable/Disable the deployment schedule  | true |
 
 ### NuGet settings
 The custom NuGet repository settings contains the D365 FSC nuget packages for build. The packages can be downloaded from the LCS Shared Asset Library

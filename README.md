@@ -18,6 +18,8 @@ Usage scenarios:
 5. [Update FSC-PS files](Scenarios/UpdateFSC-PS.md)
 6. [Add environment from the different tenant](Scenarios/AddEnvironmentFromTheDifferentTenant.md)
 7. [D365FSC. Include Test model into the deployable package ](Scenarios/IncludeTestModel.md)
+8. [D365FSC. Build a specific model(`s) ](Scenarios/DeploySpecificModel.md)
+9. [D365FSC. Deploy the code to the environment ](Scenarios/DeployCode.md)
 
 **Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
 # This project

@@ -1,4 +1,4 @@
-# #5 D365FSC. Include Test model into the deployable package
+# #7 D365FSC. Include Test model into the deployable package
 *Prerequisites:* 
 - A GitHub account.
 If you need to always deploy your test model to the specific environment do the next:
