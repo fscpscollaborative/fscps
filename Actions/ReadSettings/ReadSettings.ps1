@@ -186,7 +186,8 @@ try {
                         }
                     }
                     catch { 
-                        OutputInfo -message "Environment history check issue: $($_.Exception.Message)"
+                        $check = $false
+                        #OutputInfo -message "Environment history check issue: $($_.Exception.Message)"
                     }
                 }
             }
