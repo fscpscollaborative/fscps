@@ -1806,11 +1806,19 @@ function Import-D365FSCSource
             Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
         #}
     }
-    
-    $solutionPath = Get-ChildItem -Path $tempFolder -Filter *.sln -Recurse -ErrorAction SilentlyContinue -Force
-    $projectsPath = $solutionPath[0].Directory.Parent.FullName
-    $projectsPath
-    Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
+    try {
+        $solutionPath = Get-ChildItem -Path $tempFolder -Filter *.sln -Recurse -ErrorAction SilentlyContinue -Force
+        $projectsPath = $solutionPath[0].Directory.Parent.FullName
+        $projectsPath
+        if(Test-Path (Join-Path $targetPath "VSProjects"))
+        {
+            Copy-Item -Path "$projectsPath\" -Destination (Join-Path $targetPath "VSProjects") -Recurse -Force
+        }
+    }
+    catch {
+        Write-Output "Solution files were not found!"
+    }
+
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
 
