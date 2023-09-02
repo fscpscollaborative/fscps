@@ -238,14 +238,28 @@
     {
         "version":  "10.0.36",
         "data":  {
-                     "AppVersion":  "10.0.1695.47",
+                     "AppVersion":  "10.0.1695.50",
                      "fscPreviewVersionPackageId":  "0b06054d-4d26-4dff-bc74-8ffaee5a5d40",
-                     "PlatformVersion":  "7.0.7036.59",
+                     "PlatformVersion":  "7.0.7036.60",
                      "retailSDKVersion":  "10.0.1695.15",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
                      "fscFinalQualityUpdatePackageId":  "",
                      "ecommerceMicrosoftRepoBranch":  "master",
+                     "fscLatestQualityUpdatePackageId":  ""
+                 }
+    },
+    {
+        "version":  "10.0.37",
+        "data":  {
+                     "AppVersion":  "",
+                     "fscPreviewVersionPackageId":  "90623f08-0140-4753-91cc-fb1c1ec59e41",
+                     "PlatformVersion":  "",
+                     "retailSDKVersion":  "",
+                     "retailSDKURL":  "",
+                     "fscServiseUpdatePackageId":  "",
+                     "fscFinalQualityUpdatePackageId":  "",
+                     "ecommerceMicrosoftRepoBranch":  "",
                      "fscLatestQualityUpdatePackageId":  ""
                  }
     }
