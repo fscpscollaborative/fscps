@@ -88,7 +88,7 @@ try {
     }
     Set-Location $baseFolder
 
-    $config.actionsRepo, $config.fscTemplateRepo, $config.retailTemplateRepo, $config.ecommerceTemplateRepo | ForEach-Object {
+    $config.actionsRepo, $config.fscTemplateRepo, $config.retailTemplateRepo, $config.commerceTemplateRepo, $config.ecommerceTemplateRepo | ForEach-Object {
         if (Test-Path $_) {
             Set-Location $_
             if ($collect) {
