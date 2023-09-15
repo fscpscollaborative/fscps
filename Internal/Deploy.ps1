@@ -16,7 +16,6 @@ Set-StrictMode -Version 2.0
 
 $oldPath = Get-Location
 try {
-    Update-Readme
     if ($github) {
         if (!$githubOwner -or !$token) { throw "When running deploy in a workflow, you need to set githubOwner and token" }
 
@@ -268,8 +267,6 @@ try {
                 if (Test-Path $repo) {
                     Remove-Item $repo -Recurse -Force
                 }
-
-
 
                 invoke-git clone --quiet $serverUrl
                 Set-Location $repo
