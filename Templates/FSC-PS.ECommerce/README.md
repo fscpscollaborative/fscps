@@ -25,7 +25,10 @@
 $GitGlobalUserName  = "Oleksandr Nikolaiev"
 $GitGlobalEmail     = "Oleksandr.Nikolaiev@contosoinc.com"
 $GitCommerceRepoURL      = "https://github.com/ContosoInc/ContesoExt-dynamics-365-Ecommerce.git"
-$eCommerceExtensionFolderName = "ContosoEComm"
+$microsofteCommerceRepoUrl = "https://github.com/microsoft/Msdyn365.Commerce.Online.git"
+$tempPath                  = "C:\temp"
+$fscmVersion               = "10.0.35"
+$ecommerceFolder           = "VTXeComm"
 #
 # Retrieve the Commerce deployment location 
 #
@@ -62,22 +65,48 @@ if(-Not ([System.String]$env:Path -like "*" + $GitPath + "*"))
 }
 
 $LocalCommerceDeploymentFolder = Get-CommerceDeploymentFolder
-cd $LocalCommerceDeploymentFolder
 
-if( -Not (Test-Path  "$eCommerceExtensionFolderName\.git"))
-{
-    New-Item -ItemType Directory -Force -Path $eCommerceExtensionFolderName
-    Set-Location $eCommerceExtensionFolderName
-    Copy-Item -Path $LocalCommerceDeploymentFolder\RetailSDK\* -Destination $LocalCommerceDeploymentFolder\$eCommerceExtensionFolderName -recurse -Force
-    git clone -b main $GitCommerceRepoURL tmp
-    mv tmp/.git $LocalCommerceDeploymentFolder\$RetailExtensionFolderName
-    rmdir tmp -Recurse
-    git config --global user.name $GitGlobalUserName
-    git config --global user.email $GitGlobalEmail
-    git reset --hard HEAD
-    git fetch 
-    git pull
-}
+#map eCommerce
+Set-Location $LocalCommerceDeploymentFolder 
+if( -Not (Test-Path  "VTXeComm\.git")) 
+{ 
+    ### install python
+    Set-Location $tempPath
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe" -OutFile "$tempPath\python-3.7.0.exe"
+    .\python-3.7.0.exe /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
+
+    ###install yarn 
+    npm install --global yarn
+
+    ### clone msdyn365 repo
+    Set-Location $tempPath
+    Remove-Item $tempPath\Msdyn365.Commerce.Online\* -Recurse -Force -ErrorAction SilentlyContinue
+    git clone --quiet $microsofteCommerceRepoUrl
+    Set-Location $tempPath\Msdyn365.Commerce.Online\
+    git fetch --all
+    git checkout RS/$fscmVersion --quiet
+
+    ##copy to the destination
+    Set-Location $LocalCommerceDeploymentFolder
+    if(!(Test-Path $ecommerceFolder))
+    {
+        New-Item -ItemType Directory -Path $ecommerceFolder -Force
+    }
+    Remove-Item $tempPath\Msdyn365.Commerce.Online\.git -Recurse -Force -ErrorAction SilentlyContinue
+    Copy-Item $tempPath\Msdyn365.Commerce.Online\* -Destination $ecommerceFolder -Recurse -Force
+
+    
+    Set-Location $LocalCommerceDeploymentFolder\$ecommerceFolder
+    git clone -b main $GitECommerceRepoURL tmp --quiet 
+    mv tmp/.git $LocalCommerceDeploymentFolder\$ecommerceFolder 
+    rmdir tmp -Recurse 
+    git config --global user.name $GitGlobalUserName 
+    git config --global user.email $GitGlobalEmail 
+    git reset --hard HEAD 
+    git fetch  
+    git pull 
+}  
 
 
 ~~~
