@@ -1,0 +1,7 @@
+{
+    "type":"Commerce",
+    "packageName": "ContosoExtension",
+    "ciBranches": "main,release",
+    "buildVersion": "10.0.34",
+    "deploymentScheduler":false
+}

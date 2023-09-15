@@ -53,17 +53,17 @@ jobs:
         uses: actions/checkout@v3.5.2
 
       - name: Initialize the workflow
-        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.2
+        uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.3
         id: init
         env:
           secrets: ${{ toJson(secrets) }}    
 
       - name: Read settings
         id: ReadSettings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
                 
       - name: Check for updates to FSC-PS system files
-        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.2
+        uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.3
         continue-on-error: true
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
@@ -80,17 +80,17 @@ jobs:
         uses: actions/checkout@v3.5.2
 
       - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
           
       - name: Read secrets
-        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.3
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ env.Settings }}
           
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.2
+        uses: microsoft/setup-msbuild@v1.3
 
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1.1.1
@@ -107,7 +107,7 @@ jobs:
           }
           
       - name: Run pipeline
-        uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.2
+        uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.3
         id: runpipeline
         with:
           type: ${{ needs.Initialization.outputs.type}}
@@ -122,7 +122,7 @@ jobs:
           
       - name: Publish Release
         id: PublishRelease
-        uses: ciellosinc/FSC-PS-Actions/PublishRelease@v1.2   
+        uses: ciellosinc/FSC-PS-Actions/PublishRelease@v1.3   
         with:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
@@ -139,7 +139,7 @@ jobs:
         uses: actions/checkout@v3.5.2
 
       - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
 
       - name: Create Release Branch
         run: |
@@ -159,10 +159,10 @@ jobs:
         uses: actions/checkout@v3.5.2
 
       - name: Read settings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
 
       - name: Read secrets
-        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.2
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.3
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
@@ -170,7 +170,7 @@ jobs:
           
       - name: Finalize the workflow
         id: PostProcess
-        uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.2
+        uses: ciellosinc/FSC-PS-Actions/WorkflowPostProcess@v1.3
         with:
           remove_current: ${{ needs.Initialization.outputs.environments == '' }}
           settingsJson: ${{ env.Settings }}

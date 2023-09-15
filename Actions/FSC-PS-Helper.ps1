@@ -364,7 +364,7 @@ function ReadSettings {
     # Read Settings file
     $settings = [ordered]@{
         "companyName"                            = ""
-        "fscPsVer"                               = "v1.2"
+        "fscPsVer"                               = "v1.3"
         "currentBranch"                          = $branchName
         "sourceBranch"                           = ""
         "repoName"                               = $repoName
@@ -1849,6 +1849,46 @@ function Update-D365FSCISVSource
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
 
+function Update-Readme
+{
+    Install-Module PowerShell-yaml
+    Get-ChildItem Actions -Directory | ForEach-Object{
+        $yamlFile = (Join-Path $_.FullName action.yaml)
+        if(Test-Path -Path $yamlFile)
+        {
+            $readmeContent = ''
+            $yaml = Get-Content $yamlFile | ConvertFrom-Yaml
+            $readmeContent += "# :rocket: Action '$($_.BaseName)' `n"
+            $readmeContent += "$($yaml.name) `n"
+            $readmeContent += "## :wrench: Parameters `n"
+            
+            if($yaml.inputs)
+            {
+                $readmeContent += "## :arrow_down: Inputs `n"
+                $yaml.inputs.GetEnumerator() | ForEach-Object{
+                    
+                    $readmeContent += "### $($_.Key) (Default: '$($_.Value.Default)') `n"
+                    $readmeContent += " $($_.Value.Description) `n"
+                    $readmeContent += "`n"
+                }
+                
+            }
+            
+            if($yaml.outputs)
+            {
+                $readmeContent += "## :arrow_up: Outputs `n"
+                $yaml.outputs.GetEnumerator() | ForEach-Object{
+                    
+                    $readmeContent += "### $($_.Key) (Default: '$($_.Value.Default)') `n"
+                    $readmeContent += " $($_.Value.Description) `n"
+                    $readmeContent += "`n"
+                }
+                
+            }
+            Set-Content -Path (Join-Path $_.FullName README.md) -Value $readmeContent
+        }
+    }
+}
 ################################################################################
 # End - Private functions.
 ################################################################################

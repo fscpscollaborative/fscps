@@ -1,35 +1,25 @@
-name: (RELEASE)
+name: (DEPLOY)
 
 on:
   workflow_dispatch:
-    inputs:
-      versionNumber:
-        description: Release version number
-        required: true
-        default: '1.0.0.0'
-      name:
-        description: Name of this release (Default is generated package name)
-        required: true
-        default: ''
-      createReleaseBranch:
-        description: Create Release Branch
+   inputs:
+      environment:
+        description: 'Select FSCM Environment'
         required: false
-        type: boolean
-        default: false
+        default: ''
+        type: choice
+        options:
+        - "*"
 
 permissions:
   contents: write
-  pull-requests: write
-  actions: read
-
-concurrency: release
 
 defaults:
   run:
     shell: PowerShell
 
 jobs:
-  Initialization:
+   Initialization:
     runs-on: [ windows-latest ]
     outputs:
       type: ${{ steps.ReadSettings.outputs.type }}
@@ -50,7 +40,10 @@ jobs:
       - name: Read settings
         id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
-                
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+          environment: ${{ inputs.environment }}
+
       - name: Check for updates to FSC-PS system files
         uses: ciellosinc/FSC-PS-Actions/CheckForUpdates@v1.3
         continue-on-error: true
@@ -58,94 +51,65 @@ jobs:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-                   
-  CreateRelease:
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+
+   Deploy:
     needs: [ Initialization ]
-    outputs:
-      artifact_name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
+    if: needs.Initialization.outputs.environments != ''
+    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    environment: ${{ matrix.environment }}
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.Initialization.outputs.environments) }}
+      fail-fast: false
+    name: Deploy ${{ matrix.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-
+        with:
+          ref: ${{ needs.Initialization.outputs.source_branch }}
+         
       - name: Read settings
+        id: ReadSettings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
+        with:
+          environment: ${{ matrix.environment }}
           
+      - name: Checkout ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
+        if: steps.ReadSettings.outputs.SOURCE_BRANCH != needs.Initialization.outputs.source_branch
+        uses: actions/checkout@v3.5.2
+        with:
+          ref: ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
+         
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.3
         env:
           secrets: ${{ toJson(secrets) }}    
         with:
           settingsJson: ${{ env.Settings }}
-              
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3
         with:
          vs-version: '[15.9,16.11)'
-        
+
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1.1.1
         with:
           nuget-version: 5.10.x    
-      
-      - name: Get Env Vars
-        run: |
-          $settingsJson = '${{ env.Settings }}'
-          $settings = $settingsJson | ConvertFrom-Json
-          if ($settings) {
-            Write-Host "Repo type is: $($settings.type)"
-            Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
-          }
           
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.3
         id: runpipeline
         with:
           type: ${{ needs.Initialization.outputs.type}}
-          settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
-
-      - name: Publish artifacts  
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: ${{ env.PACKAGE_NAME }}
-          path: '${{ env.PACKAGE_PATH }}'
-          
-      - name: Publish Release
-        id: PublishRelease
-        uses: ciellosinc/FSC-PS-Actions/PublishRelease@v1.3   
-        with:
-          type: ${{ needs.Initialization.outputs.type}}
+          environment_name: ${{ matrix.environment }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-          artifactsPath: '${{ env.ARTIFACTS_PATH }}'
-
-           
-  CreateReleaseBranch:
-    if: ${{ github.event.inputs.createReleaseBranch == true }}
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, CreateRelease ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3.5.2
-
-      - name: Read settings
-        id: ReadSettings
-        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
-
-      - name: Create Release Branch
-        run: |
-          git checkout -b "releases/${{ github.event.inputs.versionNumber }}"
-          git config user.name ${{ github.actor }}
-          git config user.email ${{ github.actor }}@users.noreply.github.com
-          git commit --allow-empty -m "Release branch ${{ github.event.inputs.versionNumber }}"
-          git push origin "releases/${{ github.event.inputs.versionNumber }}"   
-
-
-  PostProcess:
+                
+   PostProcess: 
     if: ${{ !cancelled() }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, CreateRelease, CreateReleaseBranch ]
+    needs: [ Initialization,  Deploy ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
@@ -166,4 +130,4 @@ jobs:
         with:
           remove_current: ${{ needs.Initialization.outputs.environments == '' }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}

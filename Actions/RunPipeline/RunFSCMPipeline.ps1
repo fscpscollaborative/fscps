@@ -162,8 +162,8 @@ try {
         OutputInfo "Not Found packages.config file at path: $packagesFilePath "
     }
     
-    cd $buildPath
-    cd NewBuild
+    Set-Location $buildPath
+    Set-Location NewBuild
     #Nuget install packages
     nuget restore -PackagesDirectory ..\NuGets
     Write-Output "::endgroup::"
@@ -180,7 +180,7 @@ try {
     Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
-    cd $buildPath
+    Set-Location $buildPath
     
     ### Prebuild
     $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'

@@ -8,14 +8,14 @@ Read settings for FSC-PS workflows
 ### environment (Default: '') 
  Merge settings from specific environment 
 
+### actor (Default: '${{ github.actor }}') 
+ The GitHub actor running the action 
+
 ### token (Default: '${{ github.token }}') 
  The GitHub token running the action 
 
 ### version (Default: '') 
  The Dynamics Application Version 
-
-### actor (Default: '${{ github.actor }}') 
- The GitHub actor running the action 
 
 ## :arrow_up: Outputs 
 ### type (Default: '') 
@@ -24,8 +24,8 @@ Read settings for FSC-PS workflows
 ### EnvironmentsJson (Default: '') 
  Environments in compressed Json format 
 
-### SettingsJson (Default: '') 
- Settings in compressed Json format 
+### GitHubRunnerJson (Default: '') 
+ GitHubRunner in compressed Json format 
 
 ### source_branch (Default: '') 
  Source branch 
@@ -33,7 +33,7 @@ Read settings for FSC-PS workflows
 ### VersionsJson (Default: '') 
  Versions in compressed Json format 
 
-### GitHubRunnerJson (Default: '') 
- GitHubRunner in compressed Json format 
+### SettingsJson (Default: '') 
+ Settings in compressed Json format 
 
 

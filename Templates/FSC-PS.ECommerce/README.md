@@ -22,13 +22,13 @@
 - Change the variables values and execute the folowing powershell code.
 
 ~~~javascript
-$GitGlobalUserName  = "Oleksandr Nikolaiev"
-$GitGlobalEmail     = "Oleksandr.Nikolaiev@contosoinc.com"
-$GitCommerceRepoURL      = "https://github.com/ContosoInc/ContesoExt-dynamics-365-Ecommerce.git"
-$microsofteCommerceRepoUrl = "https://github.com/microsoft/Msdyn365.Commerce.Online.git"
-$tempPath                  = "C:\temp"
-$fscmVersion               = "10.0.35"
-$ecommerceFolder           = "VTXeComm"
+$GitGlobalUserName          = "Oleksandr Nikolaiev"
+$GitGlobalEmail             = "Oleksandr.Nikolaiev@contosoinc.com"
+$GitECommerceRepoURL        = "https://github.com/ContosoInc/ContesoExt-dynamics-365-Ecommerce.git"
+$microsofteCommerceRepoUrl  = "https://github.com/microsoft/Msdyn365.Commerce.Online.git"
+$tempPath                   = "C:\temp"
+$fscmVersion                = "10.0.35"
+$ecommerceFolder            = "ConteComm"
 #
 # Retrieve the Commerce deployment location 
 #
@@ -68,7 +68,7 @@ $LocalCommerceDeploymentFolder = Get-CommerceDeploymentFolder
 
 #map eCommerce
 Set-Location $LocalCommerceDeploymentFolder 
-if( -Not (Test-Path  "VTXeComm\.git")) 
+if( -Not (Test-Path  "$ecommerceFolder\.git")) 
 { 
     ### install python
     Set-Location $tempPath

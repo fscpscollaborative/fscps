@@ -1,0 +1,67 @@
+﻿# Ignore everything
+/*
+/*/*
+/*/*/*
+/*/*/bin/*
+/*/*.xml
+*.log
+*.xref
+*.cache
+!.github
+# User-specific files
+*.suo
+*.user
+
+!readme.md
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+/Projects/**/[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio 2015 cache/options directory
+.vs/
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+
+#github workflow
+.github/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# TFS 2012 Local Workspace
+$tf/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+# But descend into directories
+!.gitignore
+!.github
+!.github/*
+!.github/workflows/*
+!.FSC-PS
+!.FSC-PS/*
+*.testlog
+*.manifest
+
+#system tests
+!/tests/pom.xml

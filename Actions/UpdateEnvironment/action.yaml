@@ -1,0 +1,62 @@
+name: Update the existing LCS environment
+author: Oleksandr Nikolaiev
+permissions:
+  contents: write
+  pull-requests: write
+  workflows: write
+inputs:
+  actor:
+    description: The GitHub actor running the action
+    required: false
+    default: ${{ github.actor }}
+  token:
+    description: The GitHub token running the action
+    required: false
+    default: ${{ github.token }}
+  settingsJson:
+    description: Settings from repository in compressed Json format
+    required: false
+    default: ''
+  secretsJson:
+    description: Secrets from repository in compressed Json format
+    required: false
+    default: ''
+  environmentName:
+    description: Name of the environment
+    required: false
+    default: ''
+  updatePackageType:
+    description: The type of the update package
+    required: false
+    default: 'ServiseUpdate'
+  targetVersion:
+    description: Target FSC version
+    required: false
+    default: ''
+  skipWaiting:
+    description: Do not wait a finish of the deployment
+    required: false
+    default: 'true'
+  type:
+    description: Repo type
+    required: true
+    default: 'FSCM'
+runs:
+  using: composite
+  steps:
+    - name: run
+      shell: PowerShell
+      env:
+        _actor: ${{ inputs.actor }}
+        _type: ${{ inputs.type }}
+        _token: ${{ inputs.token }}
+        _settingsJson: ${{ inputs.settingsJson }}
+        _environmentName: ${{ inputs.environmentName }}
+        _updatePackageType: ${{ inputs.updatePackageType }}
+        _targetVersion: ${{ inputs.targetVersion }}
+        _skipWaiting: ${{ inputs.skipWaiting }}
+        _secretsJson: ${{ inputs.secretsJson }}
+      run: try { ${{ github.action_path }}/UpdateEnvironment.ps1 -skipWaiting $ENV:_skipWaiting -targetVersion $ENV:_targetVersion -updatePackageType $ENV:_updatePackageType -environmentName $ENV:_environmentName -type $ENV:_type -artifactsPath $ENV:_artifactsPath -actor $ENV:_actor -token $ENV:_token -settingsJson $ENV:_settingsJson -secretsJson $ENV:_secretsJson  } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message.Replace("`r",'').Replace("`n",' ')))"; exit 1 }
+branding:
+  icon: terminal
+  color: blue

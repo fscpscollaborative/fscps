@@ -2,41 +2,41 @@
 Run pipeline in FSC-PS repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
-### settingsJson (Default: '') 
- Settings from repository in compressed Json format 
-
-### token (Default: '${{ github.token }}') 
- The GitHub token running the action 
+### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}') 
+ Secrets from repository in compressed Json format 
 
 ### environment_name (Default: '') 
  The Dynamics Environment Name 
 
+### type (Default: 'FSCM') 
+ The application type. FSCM/Retail/ECommerce 
+
 ### version (Default: '') 
  The Dynamics Application Version 
 
-### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}') 
- Secrets from repository in compressed Json format 
+### token (Default: '${{ github.token }}') 
+ The GitHub token running the action 
 
 ### actor (Default: '${{ github.actor }}') 
  The GitHub actor running the action 
 
-### type (Default: 'FSCM') 
- The application type. FSCM/Retail/ECommerce 
+### settingsJson (Default: '') 
+ Settings from repository in compressed Json format 
 
 ## :arrow_up: Outputs 
+### modelfile_path (Default: '') 
+ Modelfile path 
+
 ### package_path (Default: '') 
  Package path 
 
-### artifacts_path (Default: '') 
- Artifacts folder path 
+### package_name (Default: '') 
+ Package name 
 
 ### artifacts_list (Default: '') 
  Artifacts folder path 
 
-### modelfile_path (Default: '') 
- Modelfile path 
-
-### package_name (Default: '') 
- Package name 
+### artifacts_path (Default: '') 
+ Artifacts folder path 
 
 
