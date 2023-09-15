@@ -387,6 +387,7 @@ function ReadSettings {
         "nugetPackagesPath"                      = "NuGets"
         "useLocalNuGetStorage"                   = $true
         "githubSecrets"                          = ""
+        "githubAgentName"                        = ""
         "buildPath"                              = "_bld"
         "metadataPath"                           = "PackagesLocalDirectory"
         "lcsEnvironmentId"                       = ""

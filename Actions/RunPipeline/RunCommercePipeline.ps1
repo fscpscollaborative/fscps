@@ -86,8 +86,8 @@ try {
     #Cleanup Build folder
     Remove-Item $buildPath -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item $sdkPath -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "::endgroup::"  
-
+    Write-Output "::endgroup::"
+  
     Write-Output "::group::Copy branch files"
     OutputInfo "======================================== Copy branch files"
     #Copy branch files
@@ -156,14 +156,6 @@ try {
 
     Write-Output "::endgroup::"
 
-
-
-
-
-
-
-
-    
 }
 catch {
     OutputError -message $_.Exception.Message
