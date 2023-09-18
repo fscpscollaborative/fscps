@@ -34,7 +34,7 @@ function GetLCSSharedAssetsList {
     )
     $header = GetUNHeader -token $token
     $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
-    $assetsList = Invoke-RestMethod -Method Get -Uri $url  -Headers $header
+    $assetsList = Invoke-RestMethod -Method Get -Uri $url -Headers $header | ForEach-Object {[pscustomobject]@{Name=$_.Name;FullName=$_.FullName;Id=$_.Id}}
     return $assetsList
 }    
 function Invoke-FSCRequestHandler {
