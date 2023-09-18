@@ -96,7 +96,12 @@ jobs:
             Write-Host "Repo type is: $($settings.type)"
             Add-Content -Path $env:GITHUB_ENV -Value "type=$($settings.type)"
           }
-          
+  
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.6.0   
+        with:
+          node-version: '16'  
+                    
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.3
         id: runpipeline

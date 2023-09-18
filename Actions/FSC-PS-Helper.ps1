@@ -372,6 +372,7 @@ function ReadSettings {
         "templateBranch"                         = "main"
         "githubRunner"                           = "windows-latest"
         "buildVersion"                           = ""
+        "solutionName"                           = ""
         "exportModel"                            = $false
         "uploadPackageToLCS"                     = $false
         "models"                                 = ""    

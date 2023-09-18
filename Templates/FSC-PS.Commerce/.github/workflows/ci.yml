@@ -60,7 +60,12 @@ jobs:
         uses: nuget/setup-nuget@v1.1.1
         with:
           nuget-version: 5.10.x    
-          
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.6.0   
+        with:
+          node-version: '16' 
+                      
       - name: Run pipeline
         uses: ciellosinc/FSC-PS-Actions/RunPipeline@v1.3
         id: runpipeline

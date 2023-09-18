@@ -120,20 +120,20 @@ try {
         & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
     }
     ### Prebuild
-    
-    dotnet build /property:Configuration=Debug /property:NuGetInteractive=true
+
+    #dotnet build /property:Configuration=Debug /property:NuGetInteractive=true
     
     #& msbuild
     installModules "Invoke-MsBuild"
-    <#$msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
+    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path ScaleUnit.sln -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/property:Configuration=Debug /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
-        $msbuildresult = Invoke-MsBuild -Path ScaleUnit.sln -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/property:Configuration=Debug /property:NuGetInteractive=true" -ShowBuildOutputInCurrentWindow 
     }
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
@@ -147,7 +147,7 @@ try {
     {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
-#>
+
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
     if(Test-Path $postbuildCustomScript)
