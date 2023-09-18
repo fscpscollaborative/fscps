@@ -120,10 +120,12 @@ try {
         & $prebuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
     }
     ### Prebuild
-
-    installModules "Invoke-MsBuild"
+    
+    dotnet build /property:Configuration=Debug /property:NuGetInteractive=true
+    
     #& msbuild
-    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
+    installModules "Invoke-MsBuild"
+    <#$msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath  -version "[15.9,16.11)"
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
@@ -145,7 +147,7 @@ try {
     {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
-
+#>
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
     if(Test-Path $postbuildCustomScript)
