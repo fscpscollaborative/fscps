@@ -218,16 +218,24 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
         #>
         $packageNamePattern = $settings.packageNamePattern;
-        $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", "")
+        if($settings.deploy)
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $EnvironmentName)
+        }
+        else
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $settings.packageName)
+        }
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
         $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
         $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
         $packageName = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
 
+        
         Set-Location $buildPath
         Copy-ToDestination -RelativePath "$buildPath\ScaleUnit\bin\Release\netstandard2.0\" -File "CloudScaleUnitExtensionPackage.zip" -DestinationFullName "$($artifactDirectory)\CloudScaleUnitExtensionPackage.$($packageName).zip"
-
-
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
+        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
         
