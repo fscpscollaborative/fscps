@@ -28,6 +28,9 @@ jobs:
       environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
       githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
@@ -64,6 +67,9 @@ jobs:
       fail-fast: false
     name: Deploy ${{ matrix.environment }}
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
         with:
@@ -115,6 +121,9 @@ jobs:
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization,  Deploy ]
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 

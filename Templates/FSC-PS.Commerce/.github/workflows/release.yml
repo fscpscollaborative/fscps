@@ -38,6 +38,9 @@ jobs:
       environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
       githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
@@ -65,6 +68,9 @@ jobs:
     outputs:
       artifact_name: ${{ steps.runpipeline.outputs.PACKAGE_NAME }}
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
@@ -129,6 +135,9 @@ jobs:
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization, CreateRelease ]
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
@@ -150,6 +159,9 @@ jobs:
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
     needs: [ Initialization, CreateRelease, CreateReleaseBranch ]
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 

@@ -23,6 +23,9 @@ jobs:
     runs-on: [ windows-latest ]
     name: Gated Build
     steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
