@@ -58,12 +58,11 @@ jobs:
    Deploy:
     needs: [ Initialization ]
     if: needs.Initialization.outputs.environments != ''
-    runs-on: ${{ matrix.githubRunner }}
+    runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     strategy:
       matrix:
         environment: ${{ fromJson(needs.Initialization.outputs.environments) }}
-        githubRunner: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
       fail-fast: false
     name: Deploy ${{ matrix.environment }}
     steps:
