@@ -121,6 +121,7 @@ try {
     }
     
     Set-Location $buildPath
+    Get-ChildItem $buildPath
     #Nuget install packages
     nuget restore $packagesFilePath
     Write-Output "::endgroup::"
