@@ -80,8 +80,6 @@ jobs:
               
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3
-        with:
-         vs-version: '[15.9,16.11)'
         
       - name: Setup NuGet
         uses: nuget/setup-nuget@v1.1.1
