@@ -108,6 +108,23 @@ try {
    
     Write-Output "::endgroup::"
 
+    Write-Output "::group::Nuget install packages"
+    OutputInfo "======================================== Nuget install packages"
+    $packagesFilePath = Join-Path $buildPath packages.config
+    if(Test-Path $packagesFilePath)
+    {
+        OutputInfo "Found packages.config file at path: $packagesFilePath "
+    }
+    else
+    {
+        OutputInfo "Not Found packages.config file at path: $packagesFilePath "
+    }
+    
+    Set-Location $buildPath
+    #Nuget install packages
+    nuget restore $packagesFilePath
+    Write-Output "::endgroup::"
+
     Write-Output "::group::Build solution"
     #Build solution
     OutputInfo "======================================== Build solution"
