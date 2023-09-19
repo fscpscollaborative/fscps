@@ -114,16 +114,18 @@ try {
     if(Test-Path $packagesFilePath)
     {
         OutputInfo "Found packages.config file at path: $packagesFilePath "
+        nuget restore $packagesFilePath
     }
     else
     {
         OutputInfo "Not Found packages.config file at path: $packagesFilePath "
+        nuget restore $settings.solutionName
     }
     
     Set-Location $buildPath
     Get-ChildItem $buildPath
     #Nuget install packages
-    nuget restore $packagesFilePath
+    
     Write-Output "::endgroup::"
 
     Write-Output "::group::Build solution"
@@ -143,7 +145,7 @@ try {
     
     #& msbuild
     installModules "Invoke-MsBuild"
-    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -version "[16.12,17.11)"
+    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest <#-version "[16.12,17.11)"#>
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
