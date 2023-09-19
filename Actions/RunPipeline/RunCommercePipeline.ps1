@@ -69,8 +69,6 @@ try {
     $PlatformVersion = $version.PlatformVersion
     $ApplicationVersion = $version.AppVersion
 
-
-
     $sdkPath = ($settings.retailSDKZipPath)
     if (!(Test-Path -Path $sdkPath))
         {
@@ -149,11 +147,11 @@ try {
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,build /property:Configuration=Debug /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,build /property:Configuration=Release /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,build /property:Configuration=Debug /property:NuGetInteractive=true" -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,build /property:Configuration=Release /property:NuGetInteractive=true" -ShowBuildOutputInCurrentWindow 
     }
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
@@ -178,6 +176,82 @@ try {
 
     Write-Output "::endgroup::"
 
+    #GeneratePackages
+    if($settings.generatePackages)
+    {
+        $artifactDirectory = (Join-Path $buildPath $($settings.artifactsPath))
+        Write-Output "Artifacts directory: $artifactDirectory" 
+        if (!(Test-Path -Path $artifactDirectory))
+        {
+            [System.IO.Directory]::CreateDirectory($artifactDirectory)
+        }
+
+        Write-Output "::group::Generate packages"
+        OutputInfo "======================================== Generate packages"
+        <#
+        $packageNamePattern = $settings.packageNamePattern;
+        $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
+
+        if($settings.deploy)
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $EnvironmentName)
+        }
+        else
+        {
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $settings.packageName)
+        }
+
+        $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
+        $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
+        $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+        $packageName = $packageNamePattern + ".zip"
+
+        $packagePath = Join-Path $buildPath "\Packages\RetailDeployablePackage\"
+        Rename-Item -Path (Join-Path $packagePath "RetailDeployablePackage.zip") -NewName $packageName
+
+        $packagePath = Join-Path $packagePath $packageName
+        Copy-Item $packagePath -Destination $artifactDirectory -Force
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
+        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$packagePath"
+        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$packagePath"
+        #>
+        $packageNamePattern = $settings.packageNamePattern;
+        $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", "")
+        $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
+        $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
+        $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
+        $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+
+        Set-Location $buildPath
+        Copy-ToDestination -RelativePath "$buildPath\ScaleUnit\bin\Release\netstandard2.0\" -File "CloudScaleUnitExtensionPackage.zip" -DestinationFullName "$($artifactDirectory)\CloudScaleUnitExtensionPackage.$($packageNamePattern).zip"
+
+
+
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
+        
+        $artifacts = Get-ChildItem $artifactDirectory
+        $artifactsList = $artifacts.FullName -join ","
+
+        if($artifactsList.Contains(','))
+        {
+            $artifacts = $artifactsList.Split(',') | ConvertTo-Json -compress
+        }
+        else
+        {
+            $artifacts = '["'+$($artifactsList).ToString()+'"]'
+
+        }
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
+
+        Write-Output "::endgroup::"
+    }
+
 }
 catch {
     OutputError -message $_.Exception.Message
@@ -186,4 +260,3 @@ finally
 {
     OutputInfo "Execution is done."
 }
-

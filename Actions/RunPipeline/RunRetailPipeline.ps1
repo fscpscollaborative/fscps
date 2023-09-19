@@ -163,7 +163,7 @@ try {
 
     Write-Output "::endgroup::"
 
-     #GeneratePackages
+    #GeneratePackages
     if($settings.generatePackages)
     {
         $artifactDirectory = (Join-Path $buildPath $($settings.artifactsPath))
