@@ -125,10 +125,10 @@ try {
     
     #& msbuild
     installModules "Invoke-MsBuild"
-    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest <#-version "[15.9,16.11)"#>
+    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -version "[16.12,17.11)"
     if($msbuildpath -ne "")
     {
-        $msbuildexepath = Join-Path $msbuildpath "MSBuild\15.0\Bin\MSBuild.exe"
+        $msbuildexepath = Join-Path $msbuildpath "MSBuild\17.0\Bin\MSBuild.exe"
         $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/property:Configuration=Debug /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
