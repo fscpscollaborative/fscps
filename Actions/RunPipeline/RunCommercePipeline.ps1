@@ -121,7 +121,7 @@ try {
     }
     
     Set-Location $buildPath
-    Get-ChildItem $buildPath
+    Get-ChildItem $buildPath | Format-Table
     #Nuget install packages
     
     Write-Output "::endgroup::"
@@ -232,7 +232,7 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
         
         $artifacts = Get-ChildItem $artifactDirectory
-        $artifacts
+        $artifacts | Format-Table
         $artifactsList = $artifacts.FullName -join ","
 
         if($artifactsList.Contains(','))
