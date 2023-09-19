@@ -179,6 +179,8 @@ try {
     #GeneratePackages
     if($settings.generatePackages)
     {
+        Write-Output "::group::Generate packages"
+        OutputInfo "======================================== Generate packages"
         $artifactDirectory = (Join-Path $buildPath $($settings.artifactsPath))
         Write-Output "Artifacts directory: $artifactDirectory" 
         if (!(Test-Path -Path $artifactDirectory))
@@ -186,8 +188,6 @@ try {
             [System.IO.Directory]::CreateDirectory($artifactDirectory)
         }
 
-        Write-Output "::group::Generate packages"
-        OutputInfo "======================================== Generate packages"
         <#
         $packageNamePattern = $settings.packageNamePattern;
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
@@ -222,18 +222,17 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
         $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
         $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
-        $packageNamePattern = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
+        $packageName = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
 
         Set-Location $buildPath
-        Copy-ToDestination -RelativePath "$buildPath\ScaleUnit\bin\Release\netstandard2.0\" -File "CloudScaleUnitExtensionPackage.zip" -DestinationFullName "$($artifactDirectory)\CloudScaleUnitExtensionPackage.$($packageNamePattern).zip"
-
-
+        Copy-ToDestination -RelativePath "$buildPath\ScaleUnit\bin\Release\netstandard2.0\" -File "CloudScaleUnitExtensionPackage.zip" -DestinationFullName "$($artifactDirectory)\CloudScaleUnitExtensionPackage.$($packageName).zip"
 
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
         
         $artifacts = Get-ChildItem $artifactDirectory
+        $artifacts
         $artifactsList = $artifacts.FullName -join ","
 
         if($artifactsList.Contains(','))
