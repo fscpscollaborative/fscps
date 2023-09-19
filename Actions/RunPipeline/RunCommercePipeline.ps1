@@ -187,7 +187,7 @@ try {
         {
             [System.IO.Directory]::CreateDirectory($artifactDirectory)
         }
-
+ 
         <#
         $packageNamePattern = $settings.packageNamePattern;
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
