@@ -105,7 +105,7 @@ try {
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
    
     Write-Output "::endgroup::"
-
+<#
     Write-Output "::group::Nuget install packages"
     OutputInfo "======================================== Nuget install packages"
     $packagesFilePath = Join-Path $buildPath packages.config
@@ -120,16 +120,16 @@ try {
         nuget restore $settings.solutionName
     }
     
-    Set-Location $buildPath
-    Get-ChildItem $buildPath | Format-Table
     #Nuget install packages
     
     Write-Output "::endgroup::"
-
+#>
     Write-Output "::group::Build solution"
+
     #Build solution
     OutputInfo "======================================== Build solution"
     Set-Location $buildPath
+    Get-ChildItem $buildPath | Format-Table
 
     ### Prebuild
     $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
