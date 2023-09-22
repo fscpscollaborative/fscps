@@ -139,19 +139,19 @@ try {
     }
     ### Prebuild
 
-    #dotnet build /property:Configuration=Debug /property:NuGetInteractive=true
+    dotnet build $settings.solutionName /property:Configuration=Debug /property:NuGetInteractive=true
     
     #& msbuild
-    installModules "Invoke-MsBuild"
-    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest <#-version "[16.12,17.11)"#>
+    <#installModules "Invoke-MsBuild"
+    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildProjectReferences=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildProjectReferences=true" -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true" -ShowBuildOutputInCurrentWindow 
     }
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
@@ -165,6 +165,7 @@ try {
     {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
+    #>
 
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
