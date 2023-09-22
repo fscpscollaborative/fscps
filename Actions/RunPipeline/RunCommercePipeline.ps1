@@ -256,8 +256,15 @@ try {
             Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).zip"
         }
 
+        #sign files with DigiCert
+        Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -eq ".exe"} | ForEach-Object{
+            Sign-BinaryFile -SM_API_KEY "$codeSignCertificateAPISecretName" `
+                            -SM_CLIENT_CERT_FILE_URL "$codeSignCertificateUrlSecretName" `
+                            -SM_CLIENT_CERT_PASSWORD "$codeSignCertificatePasswordSecretName" `
+                            -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignCertificateHashSecretName" `
+                            -FILE $_.FullName
+        }
 
-        
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
