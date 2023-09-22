@@ -483,7 +483,7 @@ try {
                                 }
                             }
                             #if deployment is failed throw anyway
-                            if(($deploymentStatus.OperationStatus -eq "Failed"))
+                            if(($deploymentStatus.OperationStatus -eq "Failed") -or [string]::IsNullOrEmpty($deploymentStatus.OperationStatus))
                             {
                                 $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                                 OutputError -message $errorMessagePayload

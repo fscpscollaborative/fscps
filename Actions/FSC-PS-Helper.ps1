@@ -1907,6 +1907,12 @@ function Copy-ToDestination
         Copy-Item $searchFile.FullName -Destination "$DestinationFullName"
     }
 }
+function ClearExtension {
+    param (
+        [System.IO.DirectoryInfo]$filePath
+    )
+    Write-Output ($filePath.BaseName.Replace($filePath.Extension,""))
+}
 ################################################################################
 # End - Private functions.
 ################################################################################

@@ -233,7 +233,31 @@ try {
 
         
         Set-Location $buildPath
-        Copy-ToDestination -RelativePath "$buildPath\ScaleUnit\bin\Release\netstandard2.0\" -File "CloudScaleUnitExtensionPackage.zip" -DestinationFullName "$($artifactDirectory)\CloudScaleUnitExtensionPackage.$($packageName).zip"
+
+
+        [System.IO.DirectoryInfo]$csuZipPackagePath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.zip$"} | ForEach-Object {$_.FullName}
+        [System.IO.DirectoryInfo]$hWSInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*HardwareStation.*.exe$"} | ForEach-Object {$_.FullName}
+        [System.IO.DirectoryInfo]$sCInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*StoreCommerce.*.exe$"} | ForEach-Object {$_.FullName}
+        [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.exe$"} | ForEach-Object {$_.FullName}
+        if($csuZipPackagePath)
+        {    
+            Copy-ToDestination -RelativePath $csuZipPackagePath.Parent.FullName -File $csuZipPackagePath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($csuZipPackagePath)).$($packageName).zip"
+        }
+        if($hWSInstallerPath)
+        {    
+            Copy-ToDestination -RelativePath $hWSInstallerPath.Parent.FullName -File $hWSInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($hWSInstallerPath)).$($packageName).zip"
+        }
+        if($sCInstallerPath)
+        {    
+            Copy-ToDestination -RelativePath $sCInstallerPath.Parent.FullName -File $sCInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sCInstallerPath)).$($packageName).zip"
+        }
+        if($sUInstallerPath)
+        {    
+            Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).zip"
+        }
+
+
+        
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
@@ -257,6 +281,8 @@ try {
         Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
 
         Write-Output "::endgroup::"
+
+
     }
 
 }
