@@ -240,7 +240,7 @@
         "data":  {
                      "AppVersion":  "10.0.1695.66",
                      "fscPreviewVersionPackageId":  "0b06054d-4d26-4dff-bc74-8ffaee5a5d40",
-                     "PlatformVersion":  "7.0.7036.86",
+                     "PlatformVersion":  "7.0.7036.87",
                      "retailSDKVersion":  "10.0.1695.39",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "480a3223-7eb5-4043-92e2-c46e7facb9a5",
@@ -252,7 +252,7 @@
     {
         "version":  "10.0.37",
         "data":  {
-                     "AppVersion":  "10.0.1725.36",
+                     "AppVersion":  "10.0.1725.37",
                      "fscPreviewVersionPackageId":  "90623f08-0140-4753-91cc-fb1c1ec59e41",
                      "PlatformVersion":  "7.0.7068.54",
                      "retailSDKVersion":  "10.0.1725.17",
