@@ -378,10 +378,10 @@ function ReadSettings {
         "models"                                 = ""    
         "specifyModelsManually"                  = $false
         "includeTestModel"                       = $false
-        "codeSignCertificateUrlSecretName"       = ""
-        "codeSignCertificatePasswordSecretName"  = ""
-        "codeSignCertificateAPISecretName"       = ""
-        "codeSignCertificateHashSecretName"      = ""
+        "codeSignCertificateUrlSecretName"       = "SIGN_CERTIFICATE_URL"
+        "codeSignCertificatePasswordSecretName"  = "SIGN_CERTIFICATE_PASSWORD"
+        "codeSignCertificateAPISecretName"       = "SIGN_CERTIFICATE_API"
+        "codeSignCertificateHashSecretName"      = "SIGN_CERTIFICATE_HASH"
         "nugetFeedName"                          = ""
         "nugetFeedUserName"                      = ""
         "nugetFeedUserSecretName"                = ""
@@ -1950,7 +1950,7 @@ function Sign-BinaryFile {
         {            
             if(![string]::IsNullOrEmpty($SM_CLIENT_CERT_FILE_URL))
             {
-                $certLocation = Join-Path $tempDirectory "digiCert"
+                $certLocation = Join-Path $tempDirectory "digiCert.p12"
                 Invoke-WebRequest -Uri "$SM_CLIENT_CERT_FILE_URL" -OutFile $certLocation
                 if(Test-Path $certLocation)
                 {
