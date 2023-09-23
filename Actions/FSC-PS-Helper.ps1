@@ -422,7 +422,7 @@ function ReadSettings {
         "fscFinalQualityUpdatePackageId"         = ""    
         "fscPreviewVersionPackageId"             = ""    
         "fscServiseUpdatePackageId"              = ""  
-        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName')
+        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName','codeSignCertificateUrlSecretName','codeSignCertificatePasswordSecretName','codeSignCertificateAPISecretName','codeSignCertificateHashSecretName')
     }
 
     $gitHubFolder = ".github"
