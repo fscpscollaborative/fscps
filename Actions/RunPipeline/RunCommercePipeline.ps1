@@ -147,11 +147,11 @@ try {
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=false" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=true" -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=false" -ShowBuildOutputInCurrentWindow 
     }
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
