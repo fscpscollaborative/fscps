@@ -139,19 +139,19 @@ try {
     }
     ### Prebuild
 
-    dotnet build $settings.solutionName /property:Configuration=Debug /property:NuGetInteractive=true
+    #dotnet build $settings.solutionName /property:Configuration=Debug /property:NuGetInteractive=true
     
     #& msbuild
-    <#installModules "Invoke-MsBuild"
+    installModules "Invoke-MsBuild"
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=true" -MsBuildFilePath "$msbuildexepath" -ShowBuildOutputInCurrentWindow -BypassVisualStudioDeveloperCommandPrompt
     }
     else
     {
-        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true" -ShowBuildOutputInCurrentWindow 
+        $msbuildresult = Invoke-MsBuild -Path $settings.solutionName -MsBuildParameters "/t:restore,rebuild /property:Configuration=Release /property:NuGetInteractive=true /property:BuildingInsideVisualStudio=true" -ShowBuildOutputInCurrentWindow 
     }
     if ($msbuildresult.BuildSucceeded -eq $true)
     {
@@ -165,7 +165,7 @@ try {
     {
       Write-Error "Unsure if build passed or failed: $($msbuildresult.Message)"
     }
-    #>
+    
 
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
@@ -231,10 +231,8 @@ try {
         $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
         $packageNamePattern = $packageNamePattern.Replace("DATE", (Get-Date -Format "yyyyMMdd").ToString())
         $packageName = $packageNamePattern.Replace("RUNNUMBER", $ENV:GITHUB_RUN_NUMBER)
-
         
         Set-Location $buildPath
-
 
         [System.IO.DirectoryInfo]$csuZipPackagePath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.zip$"} | ForEach-Object {$_.FullName}
         [System.IO.DirectoryInfo]$hWSInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*HardwareStation.*.exe$"} | ForEach-Object {$_.FullName}
