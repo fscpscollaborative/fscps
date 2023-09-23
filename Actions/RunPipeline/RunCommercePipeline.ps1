@@ -244,19 +244,20 @@ try {
         }
         if($hWSInstallerPath)
         {    
-            Copy-ToDestination -RelativePath $hWSInstallerPath.Parent.FullName -File $hWSInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($hWSInstallerPath)).$($packageName).zip"
+            Copy-ToDestination -RelativePath $hWSInstallerPath.Parent.FullName -File $hWSInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($hWSInstallerPath)).$($packageName).exe"
         }
         if($sCInstallerPath)
         {    
-            Copy-ToDestination -RelativePath $sCInstallerPath.Parent.FullName -File $sCInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sCInstallerPath)).$($packageName).zip"
+            Copy-ToDestination -RelativePath $sCInstallerPath.Parent.FullName -File $sCInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sCInstallerPath)).$($packageName).exe"
         }
         if($sUInstallerPath)
         {    
-            Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).zip"
+            Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).exe"
         }
 
         #sign files with DigiCert
-        Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -eq ".exe"} | ForEach-Object{
+        Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object{
+            Write-Output "File: '$($_.BaseName)' signing..."
             Sign-BinaryFile -SM_API_KEY "$codeSignCertificateAPISecretName" `
                             -SM_CLIENT_CERT_FILE_URL "$codeSignCertificateUrlSecretName" `
                             -SM_CLIENT_CERT_PASSWORD ConvertTo-SecureString "$codeSignCertificatePasswordSecretName" -AsPlainText -Force`
