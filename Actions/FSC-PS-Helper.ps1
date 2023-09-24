@@ -1923,7 +1923,7 @@ function Sign-BinaryFile {
         [Parameter(HelpMessage = "The DigiCert API Key", Mandatory = $true)]
         [string] $SM_API_KEY,
         [Parameter(HelpMessage = "The DigiCert certificate local path (p12)", Mandatory = $false)]
-        [string] $SM_CLIENT_CERT_FILE,
+        [string] $SM_CLIENT_CERT_FILE = "c:\temp\digicert.p12",
         [Parameter(HelpMessage = "The DigiCert certificate URL (p12)", Mandatory = $false)]
         [string] $SM_CLIENT_CERT_FILE_URL,
         [Parameter(HelpMessage = "The DigiCert certificate password", Mandatory = $true)]
