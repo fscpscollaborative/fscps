@@ -1915,7 +1915,6 @@ function ClearExtension {
     )
     Write-Output ($filePath.BaseName.Replace($filePath.Extension,""))
 }
-
 function Sign-BinaryFile {
     param (
         [Parameter(HelpMessage = "The DigiCert host", Mandatory = $false)]
@@ -1986,8 +1985,9 @@ function Sign-BinaryFile {
                 Write-Output "Downloaded. Installing..."
                 msiexec /i $smtools /quiet /qn 
                 Write-Output "Installed."
+                Start-Sleep -Seconds 5
             }
-            Set-Location "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
+            Set-Location "$Env:Programfiles\DigiCert\DigiCert One Signing Manager Tools"
     
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 Write-Output "===============Healthcheck================"
