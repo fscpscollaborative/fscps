@@ -1980,7 +1980,7 @@ function Sign-BinaryFile {
             Set-Location $tempDirectory
             if(-not (Test-Path -Path .\smtools-windows-x64.msi ))
             {
-                curl -X GET https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$($SM_API_KEY)" -o smtools-windows-x64.msi 
+                Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"} -o .\smtools-windows-x64.msi 
                 msiexec /i smtools-windows-x64.msi /quiet /qn 
             }
             Set-Location "C:\Program Files\DigiCert\DigiCert One Signing Manager Tools"
