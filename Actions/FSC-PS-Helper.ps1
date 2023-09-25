@@ -2048,6 +2048,8 @@ function Sign-BinaryFile {
         $appCertKitPath = "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit" 
         Set-PathVariable -Scope Process -RemovePath $appCertKitPath -ErrorAction SilentlyContinue
         Set-PathVariable -Scope Process -AddPath  $appCertKitPath -ErrorAction SilentlyContinue
+
+        & certutil.exe -csp "DigiCert Software Trust Manager KSP" -key -user
     }
     process{
         try {     
