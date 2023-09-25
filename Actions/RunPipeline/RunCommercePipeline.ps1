@@ -183,7 +183,7 @@ try {
         Write-Output "::group::Generate packages"
         OutputInfo "======================================== Generate packages"
         $artifactDirectory = (Join-Path $buildPath $($settings.artifactsPath))
-        Write-Output "Artifacts directory: $artifactDirectory" 
+        OutputInfo "Artifacts directory: $artifactDirectory" 
         if (!(Test-Path -Path $artifactDirectory))
         {
             [System.IO.Directory]::CreateDirectory($artifactDirectory)
@@ -257,7 +257,7 @@ try {
 
         #sign files with DigiCert
         Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object{
-            Write-Output "File: '$($_.BaseName)' signing..."
+            OutputInfo "File: '$($_.BaseName)' signing..."
             Sign-BinaryFile -SM_API_KEY "$codeSignCertificateAPISecretName" `
                             -SM_CLIENT_CERT_FILE_URL "$codeSignCertificateUrlSecretName" `
                             -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignCertificatePasswordSecretName -AsPlainText -Force) `

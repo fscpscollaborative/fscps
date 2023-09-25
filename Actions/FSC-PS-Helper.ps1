@@ -1979,20 +1979,21 @@ function Sign-BinaryFile {
             Set-Location $tempDirectory
             if(-not (Test-Path -Path .\smtools-windows-x64.msi ))
             {
+                OutputInfo "===============smtools-windows-x64.msi================"
                 $smtools = "smtools-windows-x64.msi"
-                Write-Output "The '$smtools' not found. Downloading..."
+                OutputInfo "The '$smtools' not found. Downloading..."
                 Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"}  -OutFile .\$smtools -Verbose
-                Write-Output "Downloaded. Installing..."
+                OutputInfo "Downloaded. Installing..."
                 msiexec /i $smtools /quiet /qn 
-                Write-Output "Installed."
+                OutputInfo "Installed."
                 Start-Sleep -Seconds 5
             }
             Set-Location "$Env:Programfiles\DigiCert\DigiCert One Signing Manager Tools"
     
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                Write-Output "===============Healthcheck================"
+                OutputInfo "===============Healthcheck================"
                 .\smctl.exe healthcheck
-                Write-Output "===============KeyPair list================"
+                OutputInfo "===============KeyPair list================"
                 .\smctl.exe keypair ls 
             }  
             $signMessage = $(.\smctl.exe sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE )
