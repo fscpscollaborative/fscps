@@ -2041,7 +2041,7 @@ function Sign-BinaryFile {
             Set-Location $($smctlLocation.Directory)
             Get-ChildItem $($smctlLocation.Directory)
 
-            .\smctl.exe sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose
+            & $($smctlLocation.FullName) sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose
 
             $signMessage = $(& $($smctlLocation.FullName) sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
 
