@@ -2008,7 +2008,8 @@ function Sign-BinaryFile {
                 & $smctlLocation.FullName keypair ls 
                 & $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
             }  
-            $signMessage = $(& $smctlLocation.FullName sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input '$($FILE)' )
+
+            $signMessage = $(& $smctlLocation.FullName sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input '"'+$FILE+'"')
             if($signMessage.Contains("FAILED")){throw;}
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 & $smctlLocation.FullName sign verify --input $FILE
