@@ -2050,6 +2050,9 @@ function Sign-BinaryFile {
         Set-PathVariable -Scope Process -AddPath  $appCertKitPath -ErrorAction SilentlyContinue
 
         & certutil.exe -csp "DigiCert Software Trust Manager KSP" -key -user
+
+        & $($smctlLocation.FullName) windows certsync
+
     }
     process{
         try {     
