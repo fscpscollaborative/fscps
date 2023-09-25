@@ -1981,7 +1981,7 @@ function Sign-BinaryFile {
             Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"}  -OutFile .\$smtools -Verbose
             Write-Output "Downloaded. Installing..."
             msiexec /i $smtools /quiet /qn /le smtools.log
-            Get-Content smtools.log
+            Get-Content smtools.log -ErrorAction SilentlyContinue
             Write-Output "Installed."
             Start-Sleep -Seconds 5
         }
