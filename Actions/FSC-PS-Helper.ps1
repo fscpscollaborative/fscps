@@ -1893,6 +1893,35 @@ function Update-Readme
         }
     }
 }
+function Import-D365FSCMetadataAssemblies([string]$binDir)
+{
+       if($metadataAssembliesLoaded -eq $false)
+       {
+            write-host "Importing metadata assemblies"
+
+              # Need load metadata.dll and any referenced ones, not flexible to pick the new added references
+            $m_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Core.dll
+            $m_metadata = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.dll
+            $m_storage = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Storage.dll
+            $m_xppinstrumentation = Join-Path $binDir Microsoft.Dynamics.ApplicationPlatform.XppServices.Instrumentation.dll
+            $m_management_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Core.dll
+            $m_management_delta = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Delta.dll
+            $m_management_diff = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Diff.dll
+            $m_management_merge = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Merge.dll
+
+            # Load required dlls, loading should fail the script run with exceptions thrown
+            [Reflection.Assembly]::LoadFile($m_core) > $null
+            [Reflection.Assembly]::LoadFile($m_metadata) > $null
+            [Reflection.Assembly]::LoadFile($m_storage) > $null
+            [Reflection.Assembly]::LoadFile($m_xppinstrumentation) > $null
+            [Reflection.Assembly]::LoadFile($m_management_core) > $null
+            [Reflection.Assembly]::LoadFile($m_management_delta) > $null
+            [Reflection.Assembly]::LoadFile($m_management_diff) > $null
+            [Reflection.Assembly]::LoadFile($m_management_merge) > $null
+
+            $metadataAssembliesLoaded = $true
+       }
+}
 function Copy-ToDestination
 {
     param(

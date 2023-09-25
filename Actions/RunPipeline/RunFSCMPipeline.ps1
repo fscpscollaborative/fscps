@@ -313,6 +313,7 @@ try {
             {
                 New-Item -Path $outputDir -ItemType Directory > $null
                 OutputInfo "Creating binary packages"
+                Import-D365FSCMetadataAssemblies $xppToolsPath -Verbose
                 foreach($packagePath in $packages)
                 {
                     $packageName = (Get-Item $packagePath).Name
