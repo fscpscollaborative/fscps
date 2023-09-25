@@ -99,7 +99,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
       
       - name: Publish artifacts  
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ env.PACKAGE_NAME }}
           path: ${{ env.ARTIFACTS_PATH }}
