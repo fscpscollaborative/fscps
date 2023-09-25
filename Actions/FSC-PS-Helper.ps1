@@ -2013,7 +2013,7 @@ function Sign-BinaryFile {
             $signMessage = $(& $smctlLocation.FullName sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
 
             if($signMessage.Contains("FAILED")){
-                Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log"
+                Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log")
                 throw;
             }
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
