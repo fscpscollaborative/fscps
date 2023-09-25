@@ -1972,41 +1972,51 @@ function Sign-BinaryFile {
         $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SM_CLIENT_CERT_PASSWORD)
         $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
         $env:SM_CLIENT_CERT_PASSWORD = $UnsecurePassword       
-
+        Set-Location $tempDirectory
+        if(-not (Test-Path -Path .\smtools-windows-x64.msi ))
+        {
+            OutputInfo "===============smtools-windows-x64.msi================"
+            $smtools = "smtools-windows-x64.msi"
+            OutputInfo "The '$smtools' not found. Downloading..."
+            Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"}  -OutFile .\$smtools -Verbose
+            OutputInfo "Downloaded. Installing..."
+            msiexec /i $smtools /quiet /qn 
+            OutputInfo "Installed."
+            Start-Sleep -Seconds 5
+        }
+        OutputInfo "Checking DigiCert location..."
+        $smctlLocation = (Get-ChildItem "$Env:Programfiles\DigiCert" -Recurse | Where-Object { $_.BaseName -eq "smctl" })
+        
+        if(Test-Path $smctlLocation)
+        {
+            OutputInfo "DigiCert directory found at: $($smctlLocation.Directory)"
+        }
+        else
+        {
+            OutputError "DigiCert directory not found. Check the installation."
+            exit 1
+        }
     }
     process{
         try {
-            Set-Location $tempDirectory
-            if(-not (Test-Path -Path .\smtools-windows-x64.msi ))
-            {
-                OutputInfo "===============smtools-windows-x64.msi================"
-                $smtools = "smtools-windows-x64.msi"
-                OutputInfo "The '$smtools' not found. Downloading..."
-                Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"}  -OutFile .\$smtools -Verbose
-                OutputInfo "Downloaded. Installing..."
-                msiexec /i $smtools /quiet /qn 
-                OutputInfo "Installed."
-                Start-Sleep -Seconds 5
-            }
-            Set-Location "$Env:Programfiles\DigiCert\DigiCert One Signing Manager Tools"
-    
+            
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 OutputInfo "===============Healthcheck================"
-                .\smctl.exe healthcheck
+                & $smctlLocation healthcheck
                 OutputInfo "===============KeyPair list================"
-                .\smctl.exe keypair ls 
+                & $smctlLocation keypair ls 
             }  
-            $signMessage = $(.\smctl.exe sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE )
+            $signMessage = $(& $smctlLocation sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE )
             if($signMessage.Contains("FAILED")){throw;}
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                .\smctl.exe sign verify --input $FILE
+                & $smctlLocation sign verify --input $FILE
             }        
             
             Write-Output "File '$($FILE)' was signed successful!"
         }
         catch {
             Write-Output "Something went wrong! Read the healthcheck"
-            .\smctl.exe healthcheck
+            & $smctlLocation healthcheck
         }
     }
     end{
