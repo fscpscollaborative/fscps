@@ -2024,14 +2024,19 @@ function Sign-BinaryFile {
         }
     }
     process{
-        try {            
-            if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                Write-Output "===============Healthcheck================"
-                & $($smctlLocation.FullName) healthcheck
-                Write-Output "===============KeyPair list================"
-                & $($smctlLocation.FullName) keypair ls 
-                #& $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
-            }  
+        try {     
+            try {
+                if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
+                    Write-Output "===============Healthcheck================"
+                    & $($smctlLocation.FullName) healthcheck
+                    Write-Output "===============KeyPair list================"
+                    & $($smctlLocation.FullName) keypair ls 
+                }  
+            }
+            catch {
+                
+            }       
+
             Write-Output "Set-Location of DigiCert" 
             Set-Location $($smctlLocation.Directory)
             Get-ChildItem $($smctlLocation.Directory)

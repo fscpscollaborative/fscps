@@ -262,7 +262,7 @@ try {
                             -SM_CLIENT_CERT_FILE_URL "$codeSignCertificateUrlSecretName" `
                             -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignCertificatePasswordSecretName -AsPlainText -Force) `
                             -SM_CODE_SIGNING_CERT_SHA1_HASH $codeSignCertificateHashSecretName `
-                            -FILE ([string]$_.FullName)
+                            -FILE ([string]$_.FullName) -Verbose
         }
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
