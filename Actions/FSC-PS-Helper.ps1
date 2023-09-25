@@ -2028,8 +2028,7 @@ function Sign-BinaryFile {
         }
     }
     process{
-        try {
-            
+        try {            
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 Write-Output "===============Healthcheck================"
                 & $smctlLocation.FullName healthcheck
@@ -2037,12 +2036,14 @@ function Sign-BinaryFile {
                 & $smctlLocation.FullName keypair ls 
                 #& $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
             }  
-
+            Set-Location $smctlLocation.Directory
+            Get-ChildItem $smctlLocation.Directory
             
+            .\smctl.exe sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose
             $signMessage = $(& $smctlLocation.FullName sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
 
             if($signMessage.Contains("FAILED")){
-                Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log")
+                Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log" -ErrorAction SilentlyContinue)
                 throw;
             }
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
