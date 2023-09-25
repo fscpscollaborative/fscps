@@ -1918,6 +1918,29 @@ function Import-D365FSCMetadataAssemblies([string]$binDir)
     [Reflection.Assembly]::LoadFile($m_management_merge) > $null
 
 }
+function Set-PathVariable {
+    param (
+        [string]$AddPath,
+        [string]$RemovePath,
+        [ValidateSet('Process', 'User', 'Machine')]
+        [string]$Scope = 'Process'
+    )
+    $regexPaths = @()
+    if ($PSBoundParameters.Keys -contains 'AddPath') {
+        $regexPaths += [regex]::Escape($AddPath)
+    }
+
+    if ($PSBoundParameters.Keys -contains 'RemovePath') {
+        $regexPaths += [regex]::Escape($RemovePath)
+    }
+    
+    $arrPath = [System.Environment]::GetEnvironmentVariable('PATH', $Scope) -split ';'
+    foreach ($path in $regexPaths) {
+        $arrPath = $arrPath | Where-Object { $_ -notMatch "^$path\\?" }
+    }
+    $value = ($arrPath + $addPath) -join ';'
+    [System.Environment]::SetEnvironmentVariable('PATH', $value, $Scope)
+}
 function Copy-ToDestination
 {
     param(
@@ -2033,9 +2056,11 @@ function Sign-BinaryFile {
                     & $($smctlLocation.FullName) keypair ls 
                 }  
             }
-            catch {
-                
-            }       
+            catch {                
+            }  
+            $appCertKitPath = "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit" 
+            Set-PathVariable -Scope Process -RemovePath $appCertKitPath -ErrorAction SilentlyContinue
+            Set-PathVariable -Scope Process -AddPath  $appCertKitPath -ErrorAction SilentlyContinue
 
             Write-Output "Set-Location of DigiCert" 
             Set-Location $($smctlLocation.Directory)
