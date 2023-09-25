@@ -1895,32 +1895,28 @@ function Update-Readme
 }
 function Import-D365FSCMetadataAssemblies([string]$binDir)
 {
-       if($metadataAssembliesLoaded -eq $false)
-       {
-            write-host "Importing metadata assemblies"
+    write-host "Importing metadata assemblies"
 
-              # Need load metadata.dll and any referenced ones, not flexible to pick the new added references
-            $m_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Core.dll
-            $m_metadata = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.dll
-            $m_storage = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Storage.dll
-            $m_xppinstrumentation = Join-Path $binDir Microsoft.Dynamics.ApplicationPlatform.XppServices.Instrumentation.dll
-            $m_management_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Core.dll
-            $m_management_delta = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Delta.dll
-            $m_management_diff = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Diff.dll
-            $m_management_merge = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Merge.dll
+    # Need load metadata.dll and any referenced ones, not flexible to pick the new added references
+    $m_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Core.dll
+    $m_metadata = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.dll
+    $m_storage = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Storage.dll
+    $m_xppinstrumentation = Join-Path $binDir Microsoft.Dynamics.ApplicationPlatform.XppServices.Instrumentation.dll
+    $m_management_core = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Core.dll
+    $m_management_delta = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Delta.dll
+    $m_management_diff = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Diff.dll
+    $m_management_merge = Join-Path $binDir Microsoft.Dynamics.AX.Metadata.Management.Merge.dll
 
-            # Load required dlls, loading should fail the script run with exceptions thrown
-            [Reflection.Assembly]::LoadFile($m_core) > $null
-            [Reflection.Assembly]::LoadFile($m_metadata) > $null
-            [Reflection.Assembly]::LoadFile($m_storage) > $null
-            [Reflection.Assembly]::LoadFile($m_xppinstrumentation) > $null
-            [Reflection.Assembly]::LoadFile($m_management_core) > $null
-            [Reflection.Assembly]::LoadFile($m_management_delta) > $null
-            [Reflection.Assembly]::LoadFile($m_management_diff) > $null
-            [Reflection.Assembly]::LoadFile($m_management_merge) > $null
+    # Load required dlls, loading should fail the script run with exceptions thrown
+    [Reflection.Assembly]::LoadFile($m_core) > $null
+    [Reflection.Assembly]::LoadFile($m_metadata) > $null
+    [Reflection.Assembly]::LoadFile($m_storage) > $null
+    [Reflection.Assembly]::LoadFile($m_xppinstrumentation) > $null
+    [Reflection.Assembly]::LoadFile($m_management_core) > $null
+    [Reflection.Assembly]::LoadFile($m_management_delta) > $null
+    [Reflection.Assembly]::LoadFile($m_management_diff) > $null
+    [Reflection.Assembly]::LoadFile($m_management_merge) > $null
 
-            $metadataAssembliesLoaded = $true
-       }
 }
 function Copy-ToDestination
 {
@@ -2031,23 +2027,25 @@ function Sign-BinaryFile {
         try {            
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 Write-Output "===============Healthcheck================"
-                & $smctlLocation.FullName healthcheck
+                & $($smctlLocation.FullName) healthcheck
                 Write-Output "===============KeyPair list================"
-                & $smctlLocation.FullName keypair ls 
+                & $($smctlLocation.FullName) keypair ls 
                 #& $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
             }  
-            Set-Location $smctlLocation.Directory
-            Get-ChildItem $smctlLocation.Directory
-            
+            Write-Output "Set-Location of DigiCert" 
+            Set-Location $($smctlLocation.Directory)
+            Get-ChildItem $($smctlLocation.Directory)
+
             .\smctl.exe sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose
-            $signMessage = $(& $smctlLocation.FullName sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
+
+            $signMessage = $(& $($smctlLocation.FullName) sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
 
             if($signMessage.Contains("FAILED")){
                 Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log" -ErrorAction SilentlyContinue)
                 throw;
             }
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                & $smctlLocation.FullName sign verify --input $FILE
+                & $($smctlLocation.FullName) sign verify --input $FILE
             }        
             
             Write-Output "File '$($FILE)' was signed successful!"
