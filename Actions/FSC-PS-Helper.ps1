@@ -2045,6 +2045,9 @@ function Sign-BinaryFile {
             Write-Error "DigiCert directory not found. Check the installation."
             exit 1
         }
+        $appCertKitPath = "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit" 
+        Set-PathVariable -Scope Process -RemovePath $appCertKitPath -ErrorAction SilentlyContinue
+        Set-PathVariable -Scope Process -AddPath  $appCertKitPath -ErrorAction SilentlyContinue
     }
     process{
         try {     
@@ -2058,16 +2061,14 @@ function Sign-BinaryFile {
             }
             catch {                
             }  
-            $appCertKitPath = "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit" 
-            Set-PathVariable -Scope Process -RemovePath $appCertKitPath -ErrorAction SilentlyContinue
-            Set-PathVariable -Scope Process -AddPath  $appCertKitPath -ErrorAction SilentlyContinue
+
 
             Write-Output "Set-Location of DigiCert" 
             Set-Location $($smctlLocation.Directory)
             Get-ChildItem $($smctlLocation.Directory)
 
             $signMessage = $(& $($smctlLocation.FullName) sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input $FILE --verbose)
-
+            Write-Output $($signMessage)
             if($signMessage.Contains("FAILED")){
                 Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log" -ErrorAction SilentlyContinue)
                 throw;
@@ -2079,7 +2080,7 @@ function Sign-BinaryFile {
             Write-Output "File '$($FILE)' was signed successful!"
         }
         catch {
-            Write-Output $($signMessage)
+            
             Write-Output "Something went wrong! Read the healthcheck."
            # & $smctlLocation.FullName healthcheck
         }
