@@ -1934,12 +1934,11 @@ function Sign-BinaryFile {
     )
     begin{
         $tempDirectory = "c:\temp"
-        $certLocation = ""
         if (!(Test-Path -Path $tempDirectory))
         {
             [System.IO.Directory]::CreateDirectory($tempDirectory)
         }
-
+        $certLocation = "$tempDirectory\digicert.p12"
         if(-not (Test-Path $FILE ))
         {
             Write-Error "File $FILE is not found! Check the path."
@@ -1965,6 +1964,7 @@ function Sign-BinaryFile {
         }
 
         $currentLocation = Get-Location
+        $signMessage = ""
         #set env variables
         $env:SM_CLIENT_CERT_FILE = $SM_CLIENT_CERT_FILE
         $env:SM_HOST = $SM_HOST 
@@ -1975,25 +1975,26 @@ function Sign-BinaryFile {
         Set-Location $tempDirectory
         if(-not (Test-Path -Path .\smtools-windows-x64.msi ))
         {
-            OutputInfo "===============smtools-windows-x64.msi================"
+            Write-Output "===============smtools-windows-x64.msi================"
             $smtools = "smtools-windows-x64.msi"
-            OutputInfo "The '$smtools' not found. Downloading..."
+            Write-Output "The '$smtools' not found. Downloading..."
             Invoke-WebRequest -Method Get https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -Headers @{ "x-api-key" = "$($SM_API_KEY)"}  -OutFile .\$smtools -Verbose
-            OutputInfo "Downloaded. Installing..."
-            msiexec /i $smtools /quiet /qn 
-            OutputInfo "Installed."
+            Write-Output "Downloaded. Installing..."
+            msiexec /i $smtools /quiet /qn /le smtools.log
+            Get-Content smtools.log
+            Write-Output "Installed."
             Start-Sleep -Seconds 5
         }
-        OutputInfo "Checking DigiCert location..."
-        $smctlLocation = (Get-ChildItem "$Env:Programfiles\DigiCert" -Recurse | Where-Object { $_.BaseName -eq "smctl" })
+        Write-Output "Checking DigiCert location..."
+        $smctlLocation = (Get-ChildItem "$Env:Programfiles\DigiCert" -Recurse | Where-Object { $_.BaseName -like "smctl" })
         
-        if(Test-Path $smctlLocation)
+        if(Test-Path $smctlLocation.FullName)
         {
-            OutputInfo "DigiCert directory found at: $($smctlLocation.Directory)"
+            Write-Output "DigiCert directory found at: $($smctlLocation.Directory)"
         }
         else
         {
-            OutputError "DigiCert directory not found. Check the installation."
+            Write-Error "DigiCert directory not found. Check the installation."
             exit 1
         }
     }
@@ -2001,22 +2002,24 @@ function Sign-BinaryFile {
         try {
             
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                OutputInfo "===============Healthcheck================"
-                & $smctlLocation healthcheck
-                OutputInfo "===============KeyPair list================"
-                & $smctlLocation keypair ls 
+                Write-Output "===============Healthcheck================"
+                & $smctlLocation.FullName healthcheck
+                Write-Output "===============KeyPair list================"
+                & $smctlLocation.FullName keypair ls 
+                & $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
             }  
-            $signMessage = $(& $smctlLocation sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE )
+            $signMessage = $(& $smctlLocation.FullName sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input '$($FILE)' )
             if($signMessage.Contains("FAILED")){throw;}
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
-                & $smctlLocation sign verify --input $FILE
+                & $smctlLocation.FullName sign verify --input $FILE
             }        
             
             Write-Output "File '$($FILE)' was signed successful!"
         }
         catch {
-            Write-Output "Something went wrong! Read the healthcheck"
-            & $smctlLocation healthcheck
+            Write-Output $($signMessage)
+            Write-Output "Something went wrong! Read the healthcheck."
+           # & $smctlLocation.FullName healthcheck
         }
     }
     end{
