@@ -2006,11 +2006,16 @@ function Sign-BinaryFile {
                 & $smctlLocation.FullName healthcheck
                 Write-Output "===============KeyPair list================"
                 & $smctlLocation.FullName keypair ls 
-                & $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
+                #& $smctlLocation.FullName windows certsync --keypair-alias=key_492745858
             }  
 
-            $signMessage = $(& $smctlLocation.FullName sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input '"'+$FILE+'"')
-            if($signMessage.Contains("FAILED")){throw;}
+            
+            $signMessage = $(& $smctlLocation.FullName sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
+
+            if($signMessage.Contains("FAILED")){
+                Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log"
+                throw;
+            }
             if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent){
                 & $smctlLocation.FullName sign verify --input $FILE
             }        
