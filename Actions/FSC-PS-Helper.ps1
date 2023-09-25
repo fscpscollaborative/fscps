@@ -2062,12 +2062,10 @@ function Sign-BinaryFile {
             catch {                
             }  
 
-
             Write-Output "Set-Location of DigiCert" 
             Set-Location $($smctlLocation.Directory)
-            Get-ChildItem $($smctlLocation.Directory)
 
-            $signMessage = $(& $($smctlLocation.FullName) sign --fingerprint "$SM_CODE_SIGNING_CERT_SHA1_HASH" --input $FILE --verbose)
+            $signMessage = $(& $($smctlLocation.FullName) sign --fingerprint $SM_CODE_SIGNING_CERT_SHA1_HASH --input $FILE --verbose)
             Write-Output $($signMessage)
             if($signMessage.Contains("FAILED")){
                 Write-Output (Get-Content "$env:USERPROFILE\.signingmanager\logs\smctl.log" -ErrorAction SilentlyContinue)
