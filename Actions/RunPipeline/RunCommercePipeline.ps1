@@ -313,10 +313,13 @@ try {
                 }  
                 Set-Location $baseProductInstallRoot
                 [System.IO.DirectoryInfo]$extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
-                Write-Host
-                Write-Host "Copy the binary and symbol files into extensions folder."
-                Copy-Item -Path (Join-Path "$buildPath" "\CommerceRuntime\Vertex.CommerceRuntime\bin\Release\netstandard2.0\*.pdb") -Destination  (Join-Path "$extensionInstallPath" "\")
 
+                if(Test-Path $extensionInstallPath){
+                    Write-Host
+                    Write-Host "Copy the binary and symbol files into extensions folder."
+                    Copy-Item -Path (Join-Path "$buildPath" "\CommerceRuntime\Vertex.CommerceRuntime\bin\Release\netstandard2.0\*.pdb") -Destination  (Join-Path "$extensionInstallPath" "\")
+                }
+               
              }
 
              $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
