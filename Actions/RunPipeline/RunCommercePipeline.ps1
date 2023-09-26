@@ -289,6 +289,54 @@ try {
 
         Write-Output "::endgroup::"
 
+        #deploy
+        if($settings.deploy)
+        {
+            Write-Output "::group::Deployment"
+            OutputInfo "======================================== ScaleUnit extension deployment"
+
+            Set-Location $($artifactDirectory)
+
+            $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
+
+            [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.exe$"} | ForEach-Object {$_.FullName}
+            if($sUInstallerPath)
+            {    
+                Write-Host "Installing the extension."
+                & $sUInstallerPath install
+                
+                if ($LastExitCode -ne 0) {
+                    Write-Host
+                    Write-CustomError "The extension installation has failed with exit code $LastExitCode. Please examine the above logs to fix a problem and start again."
+                    Write-Host
+                    exit $LastExitCode
+                }  
+                Set-Location $baseProductInstallRoot
+                [System.IO.DirectoryInfo]$extensionInstallPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "Extensions.*.$($sUInstallerPath.BaseName).exe$"} | ForEach-Object {$_.Directory}
+
+                Write-Host
+                Write-Host "Copy the binary and symbol files into extensions folder."
+                Copy-Item -Path (Join-Path "$buildPath" "\CommerceRuntime\Vertex.CommerceRuntime\bin\Release\netstandard2.0\*.pdb") -Destination  (Join-Path "$extensionInstallPath" "\")
+
+             }
+
+             $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
+             $port = "443"
+
+             #if ($Env:baseProduct_UseSelfHost -ne "true") {
+                # IIS deployment requires the additional actions to start debugging
+            
+            $RetailServerRoot = "https://$($MachineName):$port/RetailServer"
+        
+            # Open a default browser with a healthcheck page
+            $RetailServerHealthCheckUri = "$RetailServerRoot/healthcheck?testname=ping"
+            Write-Host "Open the IIS site at '$RetailServerHealthCheckUri' to start the process to attach debugger to."
+            Start-Process -FilePath $RetailServerHealthCheckUri
+            #}
+
+            
+            Write-Output "::endgroup::"
+        }
 
     }
 
