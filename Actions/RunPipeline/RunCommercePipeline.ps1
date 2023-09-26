@@ -291,7 +291,7 @@ try {
         Set-Location $buildPath
         Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
             $_.FullName
-            Copy-ToDestination -RelativePath $_.FullName -File $_.BaseName -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
+            Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
         }
 
         Write-Output "::endgroup::"
@@ -327,11 +327,14 @@ try {
                 if(Test-Path $extensionInstallPath){
                     Write-Host
                     Write-Host "Copy the binary and symbol files into extensions folder."
-                    Copy-Item -Path (Join-Path "$buildPath" "\CommerceRuntime\Vertex.CommerceRuntime\bin\Release\netstandard2.0\*.pdb") -Destination  (Join-Path "$extensionInstallPath" "\")
-                }
-               
+                    Get-ChildItem -Recurse | Where-Object {$_.FullName -match ".*.Runtime.*.bin.*.Release.*.Vertex.*pdb$"} | ForEach-Object {
+                        $_.FullName
+                        Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($extensionInstallPath)\$($_.Name)"   
+                    }
+                }               
              }
 
+             OutputInfo "======================================== Validation info"
              $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
              $port = "443"
 
@@ -343,7 +346,6 @@ try {
             # Open a default browser with a healthcheck page
             $RetailServerHealthCheckUri = "$RetailServerRoot/healthcheck?testname=ping"
             Write-Host "Open the IIS site at '$RetailServerHealthCheckUri' to start the process to attach debugger to."
-            Start-Process -FilePath $RetailServerHealthCheckUri
             #}
 
             Write-Output "::endgroup::"
