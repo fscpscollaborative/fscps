@@ -240,6 +240,18 @@ try {
         [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.exe$"} | ForEach-Object {$_.FullName}
         if($csuZipPackagePath)
         {    
+            [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')
+            $zipfile = $csuZipPackagePath
+            $stream = New-Object IO.FileStream($zipfile, [IO.FileMode]::Open)
+            $mode   = [IO.Compression.ZipArchiveMode]::Update
+            $zip    = New-Object IO.Compression.ZipArchive($stream, $mode)
+            ($zip.Entries | Where-Object { $_.Name -match 'Azure' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'Microsoft' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'System'  -and $_.Name -notmatch 'System.Runtime.Caching' -and $_.Name -notmatch 'System.ServiceModel.Http' -and $_.Name -notmatch 'System.ServiceModel.Primitives' -and $_.Name -notmatch 'System.Private.ServiceModel' -and $_.Name -notmatch 'System.Configuration.ConfigurationManager' -and $_.Name -notmatch 'System.Security.Cryptography.ProtectedData' -and $_.Name -notmatch 'System.Security.Permissions' -and $_.Name -notmatch 'System.Security.Cryptography.Xml' -and $_.Name -notmatch 'System.Security.Cryptography.Pkcs' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'Newtonsoft' }) | ForEach-Object { $_.Delete() }
+            $zip.Dispose()
+            $stream.Close()
+            $stream.Dispose()
             Copy-ToDestination -RelativePath $csuZipPackagePath.Parent.FullName -File $csuZipPackagePath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($csuZipPackagePath)).$($packageName).zip"
         }
         if($hWSInstallerPath)
@@ -291,6 +303,19 @@ try {
         Set-Location $buildPath
         Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
             $_.FullName
+            $zipfile = $_
+            # Cleanup NuGet file
+            [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')            
+            $stream = New-Object IO.FileStream($zipfile, [IO.FileMode]::Open)
+            $mode   = [IO.Compression.ZipArchiveMode]::Update
+            $zip    = New-Object IO.Compression.ZipArchive($stream, $mode)
+            ($zip.Entries | Where-Object { $_.Name -match 'Azure' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'Microsoft' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'System' }) | ForEach-Object { $_.Delete() }
+            ($zip.Entries | Where-Object { $_.Name -match 'Newtonsoft' }) | ForEach-Object { $_.Delete() }
+            $zip.Dispose()
+            $stream.Close()
+            $stream.Dispose()
             Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
         }
 
