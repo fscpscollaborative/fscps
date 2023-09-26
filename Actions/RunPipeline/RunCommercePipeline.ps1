@@ -334,11 +334,11 @@ try {
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
-            [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
-            if($sUInstallerPath)
+            [System.IO.DirectoryInfo]$sUExtPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
+            if($sUExtPath)
             {    
                 Write-Host "Installing the extension."
-                & $sUInstallerPath install
+                & $sUExtPath install
                 
                 if ($LastExitCode -ne 0) {
                     Write-Host
@@ -347,7 +347,7 @@ try {
                     exit $LastExitCode
                 }  
                 Set-Location $baseProductInstallRoot
-                $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath.Directory))"
+                $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
                 if(Test-Path $extensionInstallPath){
                     Write-Host
                     Write-Host "Copy the binary and symbol files into extensions folder."
