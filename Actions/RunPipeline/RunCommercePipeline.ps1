@@ -312,8 +312,7 @@ try {
                     exit $LastExitCode
                 }  
                 Set-Location $baseProductInstallRoot
-                [System.IO.DirectoryInfo]$extensionInstallPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "Extensions.*.$($sUInstallerPath.BaseName).exe$"} | ForEach-Object {$_.Directory}
-
+                [System.IO.DirectoryInfo]$extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
                 Write-Host
                 Write-Host "Copy the binary and symbol files into extensions folder."
                 Copy-Item -Path (Join-Path "$buildPath" "\CommerceRuntime\Vertex.CommerceRuntime\bin\Release\netstandard2.0\*.pdb") -Destination  (Join-Path "$extensionInstallPath" "\")
