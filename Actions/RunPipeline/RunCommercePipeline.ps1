@@ -348,7 +348,7 @@ try {
                 }  
                 Set-Location $baseProductInstallRoot
                 [System.IO.DirectoryInfo]$extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
-
+                $extensionInstallPath.FullName
                 if(Test-Path $extensionInstallPath.FullName){
                     Write-Host
                     Write-Host "Copy the binary and symbol files into extensions folder."
