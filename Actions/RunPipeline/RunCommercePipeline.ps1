@@ -306,7 +306,7 @@ try {
             $zipfile = $_
             # Cleanup NuGet file
             [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')            
-            $stream = New-Object IO.FileStream($zipfile, [IO.FileMode]::Open)
+            $stream = New-Object IO.FileStream($zipfile.FullName, [IO.FileMode]::Open)
             $mode   = [IO.Compression.ZipArchiveMode]::Update
             $zip    = New-Object IO.Compression.ZipArchive($stream, $mode)
             ($zip.Entries | Where-Object { $_.Name -match 'Azure' }) | ForEach-Object { $_.Delete() }
