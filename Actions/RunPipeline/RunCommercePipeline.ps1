@@ -284,11 +284,21 @@ try {
 
         }
 
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
-        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
+        Write-Output "::endgroup::"
+
+        Write-Output "::group::Export NuGets"
+
+        Set-Location $buildPath
+        Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
+            $_.FullName
+            Copy-ToDestination -RelativePath $_.FullName -File $_.BaseName -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
+        }
 
         Write-Output "::endgroup::"
 
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
+     
         #deploy
         if($settings.deploy)
         {
