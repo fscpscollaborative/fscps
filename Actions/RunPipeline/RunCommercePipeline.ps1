@@ -225,7 +225,7 @@ try {
         }
         else
         {
-            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME", $settings.packageName)
+            $packageNamePattern = $packageNamePattern.Replace("PACKAGENAME-", ""<#$settings.packageName#>)
         }
         $packageNamePattern = $packageNamePattern.Replace("BRANCHNAME", $($settings.sourceBranch))
         $packageNamePattern = $packageNamePattern.Replace("FNSCMVERSION", $DynamicsVersion)
