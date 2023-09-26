@@ -299,7 +299,7 @@ try {
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
-            [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.exe$"} | ForEach-Object {$_.FullName}
+            [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
             if($sUInstallerPath)
             {    
                 Write-Host "Installing the extension."
@@ -334,7 +334,6 @@ try {
             Start-Process -FilePath $RetailServerHealthCheckUri
             #}
 
-            
             Write-Output "::endgroup::"
         }
 
