@@ -347,9 +347,8 @@ try {
                     exit $LastExitCode
                 }  
                 Set-Location $baseProductInstallRoot
-                [System.IO.DirectoryInfo]$extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
-                $extensionInstallPath.FullName
-                if(Test-Path $extensionInstallPath.FullName){
+                $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath.Directory))"
+                if(Test-Path $extensionInstallPath){
                     Write-Host
                     Write-Host "Copy the binary and symbol files into extensions folder."
                     Get-ChildItem -Recurse | Where-Object {$_.FullName -match ".*.Runtime.*.bin.*.Release.*.Vertex.*pdb$"} | ForEach-Object {
