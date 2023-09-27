@@ -118,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: '${{ env.PACKAGE_PATH }}'
+          path: '${{ env.ARTIFACTS_PATH }}'
           
       - name: Publish Release
         id: PublishRelease
