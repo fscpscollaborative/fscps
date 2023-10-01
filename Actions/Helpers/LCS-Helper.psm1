@@ -357,9 +357,15 @@ function ProcessingSDP {
                     $curVer.data.fscPreviewVersionPackageId=$AssetId;
                     break;
                 }
-                {$AssetName.ToLower().StartsWith("Final Quality Update".ToLower()) -or $AssetName.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
+                {$AssetName.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
                 {  
                     $curVer.data.fscLatestQualityUpdatePackageId=$AssetId;
+                    break;
+                }
+                {$AssetName.ToLower().StartsWith("Final Quality Update".ToLower())} 
+                {  
+                    $curVer.data.fscLatestQualityUpdatePackageId=$AssetId;
+                    $curVer.data.fscFinalQualityUpdatePackageId=$AssetId;
                     break;
                 }
                     Default {}
