@@ -31,9 +31,6 @@ try {
 
 
 
-    Write-Host "Get settings var"
-    Get-Content "$env:Settings"
-
 
 
 

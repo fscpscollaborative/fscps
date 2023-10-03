@@ -265,6 +265,13 @@ try {
     Add-Content -Path $env:GITHUB_OUTPUT -Value "type=$repoType"
     Add-Content -Path $env:GITHUB_ENV -Value "type=$repoType"
 
+
+
+    
+
+    Write-Host "Get settings var"
+    Get-Content "$env:Settings"
+
 }
 catch {
     OutputError -message $_.Exception.Message
