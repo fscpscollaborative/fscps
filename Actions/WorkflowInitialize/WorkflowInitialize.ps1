@@ -28,6 +28,15 @@ try {
 
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
     installModules @("AZ.Storage","d365fo.tools")
+
+
+
+    Write-Host "Get settings var"
+    Get-Content "$env:Settings"
+
+
+
+
 }
 catch {
     OutputError -message $_.Exception.Message
