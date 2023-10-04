@@ -97,7 +97,7 @@ try {
         {
             OutputInfo "======================================== Start $($environmentName)"
             az vm start -g $($settings.azVmrg) -n $($settings.azVmname)
-            Start-Sleep -Seconds 60
+            #Start-Sleep -Seconds 60
             $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
             OutputInfo "The environment '$environmentName' is $PowerState"
             Start-Sleep -Seconds 3
@@ -110,7 +110,7 @@ try {
         {
             OutputInfo "======================================== Start $($environmentName)"
             az vm stop -g $($settings.azVmrg) -n $($settings.azVmname)
-            Start-Sleep -Seconds 15
+            #Start-Sleep -Seconds 15
             $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
             OutputInfo "The environment '$environmentName' is $PowerState"
             Start-Sleep -Seconds 3
