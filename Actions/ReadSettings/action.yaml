@@ -34,6 +34,9 @@ outputs:
   EnvironmentsJson:
     description: Environments in compressed Json format
     value: ${{ steps.readsettings.outputs.Environments }}
+  StartEnvironmentsJson:
+    description: Environments in compressed Json format
+    value: ${{ steps.readsettings.outputs.StartEnvironments }}
   source_branch:
     description: Source branch
     value: ${{ steps.readsettings.outputs.SOURCE_BRANCH }}

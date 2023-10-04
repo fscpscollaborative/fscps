@@ -21,7 +21,7 @@ inputs:
     description: Secrets from repository in compressed Json format
     required: false
     default: ''
-  environmentName:
+  environment_name:
     description: Name of the environment
     required: false
     default: ''
@@ -43,7 +43,7 @@ runs:
         _type: ${{ inputs.type }}
         _token: ${{ inputs.token }}
         _settingsJson: ${{ inputs.settingsJson }}
-        _environmentName: ${{ inputs.environmentName }}
+        _environmentName: ${{ inputs.environment_name }}
         _state: ${{ inputs.skipWaiting }}
         _secretsJson: ${{ inputs.secretsJson }}
       run: try { ${{ github.action_path }}/EnvironmentState.ps1 -state $ENV:_state -environmentName $ENV:_environmentName -type $ENV:_type -actor $ENV:_actor -token $ENV:_token -settingsJson $ENV:_settingsJson -secretsJson $ENV:_secretsJson  } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message.Replace("`r",'').Replace("`n",' ')))"; exit 1 }

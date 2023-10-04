@@ -68,9 +68,32 @@ try {
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
     Write-Output "::endgroup::"
 
-
+    Write-Output "::group::Start/Stop environment"
     
+    OutputInfo "Check az cli installation..."
+    if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
+    {
+        OutputInfo "az cli installing.."
+        $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+        OutputInfo "az cli installed.."
+    }
 
+    Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
+
+    $PowerState = ""
+    if ($AzureRMAccount) { 
+        #Do Logic
+        OutputInfo "== Logged in == $($settings.azTenantId) "
+
+        OutputInfo "Getting Azure VM State $($settings.azVmname)"
+        $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
+        OutputInfo "....state is $($PowerState)"
+    }
+
+    OutputInfo "The environment '$environmentName' is $PowerState"
+
+    Write-Output "::endgroup::"
 
 }
 catch {
