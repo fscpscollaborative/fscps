@@ -247,6 +247,9 @@ try {
     $gitHubRunner = $settings.githubRunner.Split(',') | ConvertTo-Json -compress
     Add-Content -Path $env:GITHUB_OUTPUT -Value "GitHubRunner=$githubRunner"
 
+    $runsOn = $settings.'runs-on'.Split(',') | ConvertTo-Json -compress
+    Add-Content -Path $env:GITHUB_OUTPUT -Value "RunsOn=$runsOn"
+
     if($settings.buildVersion.Contains(','))
     {
         $versionsJSon = $settings.buildVersion.Split(',') | ConvertTo-Json -compress

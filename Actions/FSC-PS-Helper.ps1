@@ -365,6 +365,7 @@ function ReadSettings {
     $settings = [ordered]@{
         "companyName"                            = ""
         "type"                                   = "FSCM"
+        "runs-on"                                = ""
         "fscPsVer"                               = "v1.3"
         "currentBranch"                          = $branchName
         "sourceBranch"                           = ""

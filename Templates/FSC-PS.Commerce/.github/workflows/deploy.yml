@@ -28,6 +28,7 @@ jobs:
       environments: ${{ steps.ReadSettings.outputs.EnvironmentsJson }}
       start_environments: ${{ steps.ReadSettings.outputs.StartEnvironmentsJson }}
       githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+      runs_on: ${{ steps.ReadSettings.outputs.runs_on }}
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
@@ -59,7 +60,7 @@ jobs:
    CheckEnvironmentState:
     needs: [ Initialization ]
     if: needs.Initialization.outputs.start_environments != ''
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
     environment: ${{ matrix.environment }}
     strategy:
       matrix:

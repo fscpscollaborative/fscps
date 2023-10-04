@@ -40,6 +40,9 @@ outputs:
   source_branch:
     description: Source branch
     value: ${{ steps.readsettings.outputs.SOURCE_BRANCH }}
+  runs_on:
+    description: Runs on
+    value: ${{ steps.readsettings.outputs.RunsOn }}
   type:
     description: Repo type
     value: ${{ steps.readsettings.outputs.type }}
