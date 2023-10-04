@@ -270,6 +270,8 @@ try {
     {
         Write-Host $settings.type
         $environmentsJSon
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$environmentsJson"
+        Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$environmentsJson"
     }
 
 
