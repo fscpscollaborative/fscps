@@ -89,9 +89,7 @@ try {
         OutputInfo "Getting Azure VM State $($settings.azVmname)"
         $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
         OutputInfo "The environment '$environmentName' is $PowerState"
-    }
-
-    
+    }    
 
     Write-Output "::endgroup::"
 
