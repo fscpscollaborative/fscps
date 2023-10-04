@@ -85,7 +85,7 @@ try {
     if ($AzureRMAccount) { 
         #Do Logic
         OutputInfo "== Logged in == $($settings.azTenantId) "
-
+        az vm list
         OutputInfo "Getting Azure VM State $($settings.azVmname)"
         $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
         OutputInfo "....state is $($PowerState)"
