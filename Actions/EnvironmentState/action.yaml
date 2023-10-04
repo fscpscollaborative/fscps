@@ -44,7 +44,7 @@ runs:
         _token: ${{ inputs.token }}
         _settingsJson: ${{ inputs.settingsJson }}
         _environmentName: ${{ inputs.environment_name }}
-        _state: ${{ inputs.skipWaiting }}
+        _state: ${{ inputs.state }}
         _secretsJson: ${{ inputs.secretsJson }}
       run: try { ${{ github.action_path }}/EnvironmentState.ps1 -state $ENV:_state -environmentName $ENV:_environmentName -type $ENV:_type -actor $ENV:_actor -token $ENV:_token -settingsJson $ENV:_settingsJson -secretsJson $ENV:_secretsJson  } catch { Write-Host "::Error::Unexpected error when running action ($($_.Exception.Message.Replace("`r",'').Replace("`n",' ')))"; exit 1 }
 branding:
