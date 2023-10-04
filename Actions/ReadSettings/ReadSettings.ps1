@@ -31,7 +31,7 @@ try {
     $envsFile = (Get-Content $EnvironmentsFile) | ConvertFrom-Json
 
     $github = (Get-ActionContext)
-
+    $environmentsJSon = ''
 
     if($github.Payload.PSObject.Properties.Name -eq "inputs")
     {
@@ -264,6 +264,14 @@ try {
 
     Add-Content -Path $env:GITHUB_OUTPUT -Value "type=$repoType"
     Add-Content -Path $env:GITHUB_ENV -Value "type=$repoType"
+
+
+    if($workflowName -eq "(DEPLOY)")
+    {
+        Write-Host $settings.type
+        $environmentsJSon
+    }
+
 
 
 }
