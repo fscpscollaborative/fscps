@@ -85,12 +85,37 @@ try {
     if ($AzureRMAccount) { 
         #Do Logic
         OutputInfo "== Logged in == $($settings.azTenantId) "
-        az vm list
         OutputInfo "Getting Azure VM State $($settings.azVmname)"
         $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
         OutputInfo "The environment '$environmentName' is $PowerState"
     }    
 
+    if($state -eq "Start")
+    {
+        #Startup environment
+        if($PowerState -ne "running")
+        {
+            OutputInfo "======================================== Start $($environmentName)"
+            az vm start -g $($settings.azVmrg) -n $($settings.azVmname)
+            Start-Sleep -Seconds 60
+            $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
+            OutputInfo "The environment '$environmentName' is $PowerState"
+            Start-Sleep -Seconds 3
+        }
+    }
+    if($state -eq "Stop")
+    {
+        #Stop environment
+        if($PowerState -ne "running")
+        {
+            OutputInfo "======================================== Start $($environmentName)"
+            az vm stop -g $($settings.azVmrg) -n $($settings.azVmname)
+            Start-Sleep -Seconds 60
+            $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
+            OutputInfo "The environment '$environmentName' is $PowerState"
+            Start-Sleep -Seconds 3
+        }
+    }
     Write-Output "::endgroup::"
 
 }
