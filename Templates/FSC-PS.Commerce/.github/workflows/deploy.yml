@@ -68,7 +68,7 @@ jobs:
       matrix:
         environment: ${{ fromJson(needs.Initialization.outputs.start_environments) }}
       fail-fast: false
-    name: Check environment state ${{ matrix.environment }}
+    name: Start environment ${{ matrix.environment }}
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
@@ -176,7 +176,7 @@ jobs:
       matrix:
         environment: ${{ fromJson(needs.Initialization.outputs.start_environments) }}
       fail-fast: false
-    name: Check environment state ${{ matrix.environment }}
+    name: Stop environment ${{ matrix.environment }}
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
