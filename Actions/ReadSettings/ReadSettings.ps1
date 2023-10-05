@@ -283,7 +283,7 @@ try {
                 
             }
             catch {
-                OutputError $_.Exception.Message
+                OutputWarning $_.Exception.Message
             }
 
             $environmentsJSon
