@@ -90,9 +90,9 @@ try {
     if($state -eq "Stop")
     {
         #Stop environment
-        if($PowerState -ne "running")
+        if($PowerState -eq "running")
         {
-            OutputInfo "======================================== Start $($environmentName)"
+            OutputInfo "======================================== Stop $($environmentName)"
             az vm stop -g $($settings.azVmrg) -n $($settings.azVmname)
             #Start-Sleep -Seconds 15
             $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
