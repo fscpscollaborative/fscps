@@ -280,15 +280,29 @@ try {
                 $azClientSecret = GetSecret -secret "AZ_CLIENTSECRET"
                 if(!$azClientSecret){throw "GitHub secret AZ_CLIENTSECRET not found. Please, create it."}
 
-                
+                $startEnvironments = @($envsFile | ForEach-Object { 
+                    $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                    if($PowerState -ne "running")
+                    {
+                        $_.settings.azVmname
+                    }
+                })
             }
             catch {
                 OutputWarning $_.Exception.Message
             }
-
-            $environmentsJSon
-            Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$environmentsJson"
-            Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$environmentsJson"+
+            Write-Host "Envs to start: $startEnvironments"
+            if($startEnvironments.Count -eq 1)
+            {
+                $startEnvironmentsJson = '["'+$($startEnvironments[0]).ToString()+'"]'
+            }
+            else
+            {
+                $startEnvironmentsJson = $startEnvironments | ConvertTo-Json -compress
+            }
+            $startEnvironmentsJson
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
+            Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
         }
     }
 
