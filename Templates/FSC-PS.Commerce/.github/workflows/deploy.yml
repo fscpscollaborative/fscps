@@ -59,7 +59,7 @@ jobs:
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
 
-   CheckEnvironmentState:
+   StartEnvironments:
     needs: [ Initialization ]
     if: needs.Initialization.outputs.start_environments != ''
     runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
@@ -108,7 +108,7 @@ jobs:
           state: "Start"
 
    Deploy:
-    needs: [ Initialization, CheckEnvironmentState ]
+    needs: [ Initialization, StartEnvironments ]
     if: needs.Initialization.outputs.environments != ''
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
@@ -166,11 +166,59 @@ jobs:
           environment_name: ${{ matrix.environment }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-                
+
+   StopEnvironments:
+    needs: [ Deploy ]
+    if: needs.Initialization.outputs.start_environments != ''
+    runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
+    environment: ${{ matrix.environment }}
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.Initialization.outputs.start_environments) }}
+      fail-fast: false
+    name: Check environment state ${{ matrix.environment }}
+    steps:
+      - name: Support longpaths
+        run: git config --system core.longpaths true
+      
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+        with:
+          ref: ${{ needs.Initialization.outputs.source_branch }}
+          
+      - name: Read settings
+        id: ReadSettings
+        uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
+        with:
+          environment: ${{ matrix.environment }}
+          
+      - name: Checkout ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
+        if: steps.ReadSettings.outputs.SOURCE_BRANCH != needs.Initialization.outputs.source_branch
+        uses: actions/checkout@v3.5.2
+        with:
+          ref: ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
+          
+      - name: Read secrets
+        uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.3
+        env:
+          secrets: ${{ toJson(secrets) }}    
+        with:
+          settingsJson: ${{ env.Settings }}
+
+      - name: Change environment state
+        uses: ciellosinc/FSC-PS-Actions/EnvironmentState@v1.3
+        id: runpipeline
+        with:
+          type: ${{ needs.Initialization.outputs.type}}
+          environment_name: ${{ matrix.environment }}
+          settingsJson: ${{ env.Settings }}
+          secretsJson: ${{ env.RepoSecrets }}
+          state: "Stop"    
+
    PostProcess: 
     if: ${{ !cancelled() }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    needs: [ Initialization, CheckEnvironmentState, Deploy ]
+    needs: [ Initialization, StartEnvironments, StopEnvironments, Deploy ]
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
