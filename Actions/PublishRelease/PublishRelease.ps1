@@ -79,6 +79,7 @@ try {
             PreRelease = $false
             RepositoryName = "$($github.Payload.repository.name)"
             RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
+        }
     }
     else {
         $release = @{
