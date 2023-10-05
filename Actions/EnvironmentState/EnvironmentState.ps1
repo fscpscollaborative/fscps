@@ -71,7 +71,7 @@ try {
     Write-Output "::group::Start/Stop environment"
     
     $PowerState = ""
-    $PowerState = Check-AzureVMState -VMName $azVmname -VMGroup $($settings.azVmrg) -ClientId "$azClientId" -ClientSecret "$azClientsecretSecretname" -TenantId $($settings.azTenantId)
+    $PowerState = Check-AzureVMState -VMName $($settings.azVmname) -VMGroup $($settings.azVmrg) -ClientId "$($settings.azClientId)" -ClientSecret "$azClientsecretSecretname" -TenantId $($settings.azTenantId)
     OutputInfo "The environment '$environmentName' is $PowerState"
 
     if($state -eq "Start")

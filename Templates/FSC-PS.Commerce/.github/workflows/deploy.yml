@@ -217,7 +217,7 @@ jobs:
 
    PostProcess: 
     if: ${{ !cancelled() }}
-    runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
+    runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
     needs: [ Initialization, StartEnvironments, StopEnvironments, Deploy ]
     steps:
       - name: Support longpaths
