@@ -1965,6 +1965,34 @@ function ClearExtension {
     )
     Write-Output ($filePath.BaseName.Replace($filePath.Extension,""))
 }
+function Check-AzureVMState
+{
+    [CmdletBinding()]
+    param (
+        [string]$VMName,
+        [string]$VMGroup,
+        [string]$TenantId,
+        [string]$ClientId,
+        [string]$ClientSecret
+    )
+    begin{
+        if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
+        {
+            Write-Host "az cli installing.."
+            $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+            Write-Host "az cli installed.."
+        }
+        Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+        $AzureRMAccount = az login --service-principal --username "$ClientId" --password "$ClientSecret" --tenant $TenantId
+    }
+    process{
+        if($AzureRMAccount)
+        {
+            $PowerState = ([string](az vm get-instance-view --name $VMName --resource-group $VMGroup --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
+            return $PowerState
+        }
+    }
+}
 function Sign-BinaryFile {
     param (
         [Parameter(HelpMessage = "The DigiCert host", Mandatory = $false)]

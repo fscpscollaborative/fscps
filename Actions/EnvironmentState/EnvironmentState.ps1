@@ -70,23 +70,12 @@ try {
 
     Write-Output "::group::Start/Stop environment"
     
-    OutputInfo "Check az cli installation..."
-    if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
-    {
-        OutputInfo "az cli installing.."
-        $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
-        OutputInfo "az cli installed.."
-    }
-
-    Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
-
     $PowerState = ""
     if ($AzureRMAccount) { 
         #Do Logic
         OutputInfo "== Logged in == $($settings.azTenantId) "
         OutputInfo "Getting Azure VM State $($settings.azVmname)"
-        $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
+        $PowerState = Check-AzureVMState -VMName $azVmname -VMGroup $($settings.azVmrg) -ClientId "$azClientId" -ClientSecret "$azClientsecretSecretname" -TenantId $($settings.azTenantId)
         OutputInfo "The environment '$environmentName' is $PowerState"
     }    
 
