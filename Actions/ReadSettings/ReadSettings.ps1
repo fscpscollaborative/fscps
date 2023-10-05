@@ -275,34 +275,73 @@ try {
         if($settings.type -eq "Commerce")
         {
             Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
-
+            $startEnvironments = @()
             try {
                 $azClientSecret = GetSecret -secret "AZ_CLIENTSECRET"
                 if(!$azClientSecret){throw "GitHub secret AZ_CLIENTSECRET not found. Please, create it."}
 
-                $startEnvironments = @($envsFile | ForEach-Object { 
-                    $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
-                    if($PowerState -ne "running")
-                    {
-                        $_.settings.azVmname
-                    }
-                })
+                if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
+                {
+                    $startEnvironments = @($envsFile | ForEach-Object { 
+                        $sEnv = $_
+                        $dEnvCount = $dynamicsEnvironment.Split(",").Count
+                        if($dEnvCount -gt 1)
+                        {
+                            $dynamicsEnvironment.Split(",") | ForEach-Object {
+                                $dName = $_
+                                if($sEnv.settings.azVmname -eq $dName)
+                                {
+                                    $PowerState = Check-AzureVMState -VMName $sEnv.settings.azVmname -VMGroup $sEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                                    if($PowerState -ne "running")
+                                    {
+                                        $sEnv.settings.azVmname
+                                    }
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            if($sEnv.settings.azVmname -eq $dynamicsEnvironment)
+                            {
+                                $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                                if($PowerState -ne "running")
+                                {
+                                    $_.settings.azVmname
+                                }
+                            }
+                        }
+                    }) 
+                }
+                else {
+                    $startEnvironments = @($envsFile | ForEach-Object { 
+                        $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                        if($PowerState -ne "running")
+                        {
+                            $_.settings.azVmname
+                        }
+                    })                    
+                }
+
+
+
+                Write-Host "Envs to start: $startEnvironments"
+                if($startEnvironments.Count -eq 1)
+                {
+                    $startEnvironmentsJson = '["'+$($startEnvironments[0]).ToString()+'"]'
+                }
+                else
+                {
+                    $startEnvironmentsJson = $startEnvironments | ConvertTo-Json -compress
+                }
+                $startEnvironmentsJson
+                Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
+                Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
+
             }
             catch {
                 OutputWarning $_.Exception.Message
             }
-            Write-Host "Envs to start: $startEnvironments"
-            if($startEnvironments.Count -eq 1)
-            {
-                $startEnvironmentsJson = '["'+$($startEnvironments[0]).ToString()+'"]'
-            }
-            else
-            {
-                $startEnvironmentsJson = $startEnvironments | ConvertTo-Json -compress
-            }
-            $startEnvironmentsJson
-            Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
-            Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
+
         }
     }
 
