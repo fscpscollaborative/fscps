@@ -272,9 +272,24 @@ try {
     if($workflowName -eq "(DEPLOY)")
     {
         Write-Host $settings.type
-        $environmentsJSon
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$environmentsJson"
-        Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$environmentsJson"
+        if($settings.type -eq "Commerce")
+        {
+            Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
+
+            try {
+                $azClientSecret = GetSecret -secret "AZ_CLIENTSECRET"
+                if(!$azClientSecret){throw "GitHub secret AZ_CLIENTSECRET not found. Please, create it."}
+
+                
+            }
+            catch {
+                OutputError $_.Exception.Message
+            }
+
+            $environmentsJSon
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$environmentsJson"
+            Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$environmentsJson"+
+        }
     }
 
 
