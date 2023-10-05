@@ -93,7 +93,7 @@ try {
         if($PowerState -eq "running")
         {
             OutputInfo "======================================== Stop $($environmentName)"
-            az vm stop -g $($settings.azVmrg) -n $($settings.azVmname)
+            az vm deallocate -g $($settings.azVmrg) -n $($settings.azVmname)
             #Start-Sleep -Seconds 15
             $PowerState = ([string](az vm get-instance-view --name $($settings.azVmname) --resource-group $($settings.azVmrg) --query instanceView.statuses[1] | ConvertFrom-Json).DisplayStatus).Trim().Trim("[").Trim("]").Trim('"').Trim("VM ").Replace(' ','')
             OutputInfo "The environment '$environmentName' is $PowerState"
