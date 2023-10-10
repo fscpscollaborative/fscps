@@ -275,6 +275,8 @@ try {
         [System.IO.DirectoryInfo]$hWSInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*HardwareStation.*.exe$"} | ForEach-Object {$_.FullName}
         [System.IO.DirectoryInfo]$sCInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*StoreCommerce.*.exe$"} | ForEach-Object {$_.FullName}
         [System.IO.DirectoryInfo]$sUInstallerPath = Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*ScaleUnit.*.exe$"} | ForEach-Object {$_.FullName}
+        
+        OutputInfo "======================================== Copy packages to the artifacts folder"
         if($csuZipPackagePath)
         {    
             [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')
@@ -304,7 +306,8 @@ try {
             Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).exe"
         }
 
-
+        Write-Output "::endgroup::"
+        Write-Output "::group::Sign packages"
         #sign files
         Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object
         {          
