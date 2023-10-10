@@ -306,8 +306,9 @@ try {
 
 
         #sign files
-        Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object{
-            
+        Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object
+        {          
+            [string]$filePath = "$($_.FullName)"
             switch($settings.codeSignType)
             {
                 "azure_sign_tool" {
@@ -318,7 +319,7 @@ try {
                                         -kvi "$($settings.codeSignKeyVaultAppId)" `
                                         -kvs "$($settings.codeSignKeyVaultClientSecretName)" `
                                         -tr "$($settings.codeSignKeyVaultTimestampServer)" `
-                                        -td sha256 ([string]$_.FullName)
+                                        -td sha256 "$filePath"
                 }
                 "digicert_keystore" {
                     OutputInfo "File: '$($_.FullName)' signing..."
@@ -326,12 +327,9 @@ try {
                     -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
                     -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
                     -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
-                    -FILE ([string]$_.FullName)
+                    -FILE "$filePath"
                 }
             }
-
-
-
         }
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
