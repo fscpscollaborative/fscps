@@ -324,6 +324,7 @@ try {
                                         -kvs "$($settings.codeSignKeyVaultClientSecretName)" `
                                         -tr "$($settings.codeSignKeyVaultTimestampServer)" `
                                         -td sha256 "$filePath"
+                    Break;
                 }
                 "digicert_keystore" {                    
                     Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
@@ -331,6 +332,7 @@ try {
                     -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
                     -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
                     -FILE "$filePath"
+                    Break;
                 }
             }
         }
