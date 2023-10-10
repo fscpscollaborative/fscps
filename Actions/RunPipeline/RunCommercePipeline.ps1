@@ -267,14 +267,34 @@ try {
             Copy-ToDestination -RelativePath $sUInstallerPath.Parent.FullName -File $sUInstallerPath.BaseName -DestinationFullName "$($artifactDirectory)\$(ClearExtension($sUInstallerPath)).$($packageName).exe"
         }
 
-        #sign files with DigiCert
+
+        #sign files
         Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object{
-            OutputInfo "File: '$($_.FullName)' signing..."
-            Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
-                            -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
-                            -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
-                            -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
-                            -FILE ([string]$_.FullName)
+            
+            switch($settings.codeSignType)
+            {
+                "azure_sign_tool" {
+                    dotnet tool install --global AzureSignTool
+                    azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" `
+                                        -kvt "$($settings.codeSignKeyVaultTenantId)" `
+                                        -kvc "$($settings.codeSignKeyVaultCertificateName)" `
+                                        -kvi "$($settings.codeSignKeyVaultAppId)" `
+                                        -kvs "$($settings.codeSignKeyVaultClientSecretName)" `
+                                        -tr "$($settings.codeSignKeyVaultTimestampServer)" `
+                                        -td sha256 ([string]$_.FullName)
+                }
+                "digicert_keystore" {
+                    OutputInfo "File: '$($_.FullName)' signing..."
+                    Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
+                    -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
+                    -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
+                    -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
+                    -FILE ([string]$_.FullName)
+                }
+            }
+
+
+
         }
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"

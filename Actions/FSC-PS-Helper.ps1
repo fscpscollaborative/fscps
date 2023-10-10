@@ -380,6 +380,7 @@ function ReadSettings {
         "models"                                 = ""    
         "specifyModelsManually"                  = $false
         "includeTestModel"                       = $false
+        "codeSignType"                           = "notsign"
         "codeSignDigiCertUrlSecretName"          = "SIGN_CERTIFICATE_URL"
         "codeSignDigiCertPasswordSecretName"     = "SIGN_CERTIFICATE_PASSWORD"
         "codeSignDigiCertAPISecretName"          = "SIGN_CERTIFICATE_API"

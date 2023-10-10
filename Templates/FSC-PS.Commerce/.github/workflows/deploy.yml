@@ -168,7 +168,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
 
    StopEnvironments:
-    needs: [ Deploy ]
+    needs: [ Initialization, StartEnvironments, Deploy ]
     if: needs.Initialization.outputs.start_environments != ''
     runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
     environment: ${{ matrix.environment }}
