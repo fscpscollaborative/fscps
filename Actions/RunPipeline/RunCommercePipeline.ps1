@@ -313,12 +313,22 @@ try {
         {          
             [string]$filePath = "$($_.FullName)"
             OutputInfo "Signing File: '$($filePath)' ..."
-            switch($settings.codeSignType)
+            switch ( $settings.codeSignType )
             {
                 "azure_sign_tool" {
-                    & dotnet tool install --global AzureSignTool
-                    & azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($settings.codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
-                    Break;
+                    try {
+                        & dotnet tool install --global AzureSignTool;
+                    }
+                    catch {
+                        OutputInfo "$($_.Exception.Message)"
+                    }
+                    try {
+                        & azuresigntool sign -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($settings.codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
+                    }                     
+                    catch {
+                        OutputInfo "$($_.Exception.Message)"
+                    }
+                    break;
                 }
                 "digicert_keystore" {                    
                     Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
@@ -326,7 +336,7 @@ try {
                     -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
                     -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
                     -FILE "$filePath"
-                    Break;
+                    break;
                 }
             }
         }
