@@ -75,7 +75,15 @@ try {
                     {
                         [DateTime]$lastCommitedDate = ((Get-Date -Date "01-01-1970") + ([System.TimeSpan]::FromSeconds($orTime))).ToUniversalTime()
                         OutputInfo "Latest branch commit at: $($lastCommitedDate)"
-                        [DateTime]$deployedDate = $(Get-Date (Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)")).ToUniversalTime()
+                        $lddDate = Get-LatestDeployedDate -token $token -environmentName $_.Name -repoName "$($github.Payload.repository.name)"
+                        if($lddDate -eq "")
+                        {
+                            [DateTime]$deployedDate = $(Get-Date -Date "01-01-1970").ToUniversalTime()
+                        }
+                        else {
+                            [DateTime]$deployedDate = $(Get-Date ($lddDate)).ToUniversalTime()
+                        }
+                        
                         OutputInfo "Latest deployed commit at: $($deployedDate)"
                         if((New-TimeSpan -Start $($deployedDate) -End $($lastCommitedDate)).Ticks -gt 0)
                         {
@@ -271,8 +279,7 @@ try {
 
     if($workflowName -eq "(DEPLOY)")
     {
-        Write-Host $settings.type
-        if($settings.type -eq "Commerce")
+        if($settings.type -eq "Commerce" -and $github.Job -eq "Initialization")
         {
             Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
             $startEnvironments = @()
@@ -322,8 +329,6 @@ try {
                     })                    
                 }
 
-
-
                 Write-Host "Envs to start: $startEnvironments"
                 if($startEnvironments.Count -eq 1)
                 {
@@ -336,7 +341,6 @@ try {
                 $startEnvironmentsJson
                 Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
                 Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
-
             }
             catch {
                 OutputWarning $_.Exception.Message
