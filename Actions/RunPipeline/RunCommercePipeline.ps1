@@ -324,7 +324,7 @@ try {
                         OutputInfo "$($_.Exception.Message)"
                     }
                     try {
-                        & azuresigntool sign -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($settings.codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
+                        & azuresigntool sign -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
                     }                     
                     catch {
                         OutputInfo "$($_.Exception.Message)"
