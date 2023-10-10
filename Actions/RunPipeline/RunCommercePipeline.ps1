@@ -139,9 +139,46 @@ try {
     }
     ### Prebuild
 
+    if($workflowName -eq "(RELEASE)")
+    {
+        if($($github.Payload.inputs.versionNumber) -ne "")
+        {
+            $versionNumber = $($github.Payload.inputs.versionNumber)
+            $propsFile = Join-Path $ENV:GITHUB_WORKSPACE "repo.props"
+            if ($versionNumber -match "^\d+\.\d+\.\d+\.\d+$")
+            {
+                $versions = $versionNumber.Split('.')
+            }
+            else
+            {
+                throw "Version Number '$versionNumber' is not of format #.#.#.#"
+            }
+            [xml]$xml = Get-Content $propsFile -Encoding UTF8
+            
+            $modelInfo = $xml.SelectNodes("/Project")
+            if ($modelInfo.Count -eq 1)
+            {
+                $version = $xml.SelectNodes("/Project/PropertyGroup/MajorVersion")[0]
+                $version.InnerText = "$($versions[0]).$($versions[1])"
+            
+                $version = $xml.SelectNodes("/Project/PropertyGroup/BuildNumber")[0]
+                $version.InnerText = "$($versions[2]).$($versions[3])"
+            
+                $xml.Save($propsFile)
+            }
+            else
+            {
+                Write-Host "::Error: - File '$propsFile' is not a valid props file"
+            }
+        }
+    }
     #dotnet build $settings.solutionName /property:Configuration=Debug /property:NuGetInteractive=true
     
     #& msbuild
+
+
+
+
     installModules "Invoke-MsBuild"
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
     if($msbuildpath -ne "")
