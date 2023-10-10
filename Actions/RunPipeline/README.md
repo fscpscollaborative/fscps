@@ -2,7 +2,7 @@
 Run pipeline in FSC-PS repository 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
-### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}') 
+### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","codeSignDigiCertUrl":"","codeSignDigiCertPw":""}') 
  Secrets from repository in compressed Json format 
 
 ### environment_name (Default: '') 

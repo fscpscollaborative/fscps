@@ -2,7 +2,7 @@
 Post process action. Cleanup. 
 ## :wrench: Parameters 
 ## :arrow_down: Inputs 
-### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}') 
+### secretsJson (Default: '{"insiderSasToken":"","licenseFileUrl":"","codeSignDigiCertUrl":"","codeSignDigiCertPw":""}') 
  Secrets from repository in compressed Json format 
 
 ### token (Default: '${{ github.token }}') 

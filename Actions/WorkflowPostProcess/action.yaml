@@ -15,7 +15,7 @@ inputs:
   secretsJson:
     description: Secrets from repository in compressed Json format
     required: false
-    default: '{"insiderSasToken":"","licenseFileUrl":"","CodeSignCertificateUrl":"","CodeSignCertificatePw":""}'
+    default: '{"insiderSasToken":"","licenseFileUrl":"","codeSignDigiCertUrl":"","codeSignDigiCertPw":""}'
 
 runs:
   using: composite

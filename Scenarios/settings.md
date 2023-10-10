@@ -120,7 +120,7 @@ The repository settings are only read from the repository settings file (.github
 | versioningStrategy |	under development | 0 |
 | repoTokenSecretName | Specifies the name (**NOT the secret**) of the REPO_TOKEN secret. Default is REPO_TOKEN. FSC-PS for GitHub will look for a secret with this name in GitHub Secrets or Azure KeyVault to use as Personal Access Token with permission to modify workflows when running the Update FSC-PS System Files workflow. Read [this](UpdateFSC-PSSystemFiles.md) for more information. | REPO_TOKEN |
 | failOn | Specifies what the pipeline will fail on. Allowed values are none, warning and error | error |
-| codeSignCertificateUrlSecretName<br />codeSignCertificatePasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called CodeSignCertificateUrl and CodeSignCertificatePassword. Read [this](SetupCD.md) for more information. | CodeSignCertificateUrl<br />CodeSignCertificatePassword |
+| codeSignDigiCertUrlSecretName<br />codeSignDigiCertPasswordSecretName | Specifying the secure URL from which your codesigning certificate pfx file can be downloaded and the password for this certificate. These settings specifies the names (**NOT the secrets**) of the code signing certificate url and password. Default is to look for secrets called codeSignDigiCertUrl and codeSignDigiCertPassword. Read [this](SetupCD.md) for more information. | codeSignDigiCertUrl<br />codeSignDigiCertPassword |
 
 ---
 [back](/README.md)

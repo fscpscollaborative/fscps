@@ -270,10 +270,10 @@ try {
         #sign files with DigiCert
         Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object{
             OutputInfo "File: '$($_.FullName)' signing..."
-            Sign-BinaryFile -SM_API_KEY "$codeSignCertificateAPISecretName" `
-                            -SM_CLIENT_CERT_FILE_URL "$codeSignCertificateUrlSecretName" `
-                            -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignCertificatePasswordSecretName -AsPlainText -Force) `
-                            -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignCertificateHashSecretName" `
+            Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
+                            -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
+                            -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
+                            -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
                             -FILE ([string]$_.FullName)
         }
 

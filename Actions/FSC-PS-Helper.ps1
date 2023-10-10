@@ -380,10 +380,16 @@ function ReadSettings {
         "models"                                 = ""    
         "specifyModelsManually"                  = $false
         "includeTestModel"                       = $false
-        "codeSignCertificateUrlSecretName"       = "SIGN_CERTIFICATE_URL"
-        "codeSignCertificatePasswordSecretName"  = "SIGN_CERTIFICATE_PASSWORD"
-        "codeSignCertificateAPISecretName"       = "SIGN_CERTIFICATE_API"
-        "codeSignCertificateHashSecretName"      = "SIGN_CERTIFICATE_HASH"
+        "codeSignDigiCertUrlSecretName"          = "SIGN_CERTIFICATE_URL"
+        "codeSignDigiCertPasswordSecretName"     = "SIGN_CERTIFICATE_PASSWORD"
+        "codeSignDigiCertAPISecretName"          = "SIGN_CERTIFICATE_API"
+        "codeSignDigiCertHashSecretName"         = "SIGN_CERTIFICATE_HASH"
+        "codeSighKeyVaultUri"                    = ""
+        "codeSignKeyVaultTenantId"               = ""
+        "codeSignKeyVaultAppId"                  = ""
+        "codeSignKeyVaultCertificateName"        = ""
+        "codeSignKeyVaultTimestampServer"        = "http://timestamp.digicert.com"
+        "codeSignKeyVaultClientSecretName"       = "SIGN_KV_CLIENTSECRET"
         "nugetFeedName"                          = ""
         "nugetFeedUserName"                      = ""
         "nugetFeedUserSecretName"                = ""
@@ -424,7 +430,7 @@ function ReadSettings {
         "fscFinalQualityUpdatePackageId"         = ""    
         "fscPreviewVersionPackageId"             = ""    
         "fscServiseUpdatePackageId"              = ""  
-        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName','codeSignCertificateUrlSecretName','codeSignCertificatePasswordSecretName','codeSignCertificateAPISecretName','codeSignCertificateHashSecretName')
+        "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName','codeSignDigiCertUrlSecretName','codeSignDigiCertPasswordSecretName','codeSignDigiCertAPISecretName','codeSignDigiCertHashSecretName','codeSignKeyVaultClientSecretName')
     }
 
     $gitHubFolder = ".github"
