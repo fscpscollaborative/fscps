@@ -316,8 +316,8 @@ try {
             switch($settings.codeSignType)
             {
                 "azure_sign_tool" {
-                    dotnet tool install --global AzureSignTool
-                    azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" `
+                    & dotnet tool install --global AzureSignTool
+                    & azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" `
                                         -kvt "$($settings.codeSignKeyVaultTenantId)" `
                                         -kvc "$($settings.codeSignKeyVaultCertificateName)" `
                                         -kvi "$($settings.codeSignKeyVaultAppId)" `
