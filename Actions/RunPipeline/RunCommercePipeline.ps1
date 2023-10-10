@@ -317,13 +317,7 @@ try {
             {
                 "azure_sign_tool" {
                     & dotnet tool install --global AzureSignTool
-                    & azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" `
-                                        -kvt "$($settings.codeSignKeyVaultTenantId)" `
-                                        -kvc "$($settings.codeSignKeyVaultCertificateName)" `
-                                        -kvi "$($settings.codeSignKeyVaultAppId)" `
-                                        -kvs "$($settings.codeSignKeyVaultClientSecretName)" `
-                                        -tr "$($settings.codeSignKeyVaultTimestampServer)" `
-                                        -td sha256 "$filePath"
+                    & azuresigntool sign  -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($settings.codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
                     Break;
                 }
                 "digicert_keystore" {                    
