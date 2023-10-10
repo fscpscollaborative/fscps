@@ -309,6 +309,7 @@ try {
         Get-ChildItem $artifactDirectory | Where-Object{$_.Extension -like ".exe"} | ForEach-Object
         {          
             [string]$filePath = "$($_.FullName)"
+            OutputInfo "Signing File: '$($filePath)' ..."
             switch($settings.codeSignType)
             {
                 "azure_sign_tool" {
@@ -321,8 +322,7 @@ try {
                                         -tr "$($settings.codeSignKeyVaultTimestampServer)" `
                                         -td sha256 "$filePath"
                 }
-                "digicert_keystore" {
-                    OutputInfo "File: '$($_.FullName)' signing..."
+                "digicert_keystore" {                    
                     Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
                     -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
                     -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
