@@ -313,7 +313,12 @@ try {
         Get-ChildItem $artifactDirectory | Where-Object {$_.Extension -like ".exe"} | ForEach-Object{          
             Write-Output "Signing File: '$($_.FullName)' ..."
             [string]$filePath = "$($_.FullName)"
-            
+            try {
+                if(!$codeSignKeyVaultClientSecretName){throw "GitHub secret SIGN_KV_CLIENTSECRET not found. Please, create it."}
+            }
+            catch {
+                OutputError $_.Exception.Message
+            }
             switch ( $settings.codeSignType )
             {
                 "azure_sign_tool" {
