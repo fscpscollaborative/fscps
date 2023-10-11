@@ -457,13 +457,3 @@ finally
 {
     OutputInfo "Execution is done."
 }
-Get-ChildItem "C:\actions-runner\_work\*" -Recurse | ForEach-Object{
-    Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue
-}
-Get-ChildItem "C:\RSDK" -Recurse | ForEach-Object{
-    Remove-Item $_.FullName -Force
-}
-Get-ChildItem "C:\temp" -Recurse | ForEach-Object{
-    Remove-Item $_.FullName -Force
-}
-
