@@ -108,7 +108,7 @@ jobs:
           state: "Start"
 
    Deploy:
-    needs: [ Initialization, StartEnvironments ]
+    needs: [ Initialization ]
     if: needs.Initialization.outputs.environments != ''
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
@@ -168,7 +168,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
 
    StopEnvironments:
-    needs: [ Initialization, StartEnvironments, Deploy ]
+    needs: [ Initialization, Deploy ]
     if: needs.Initialization.outputs.start_environments != ''
     runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
     environment: ${{ matrix.environment }}
@@ -218,7 +218,7 @@ jobs:
    PostProcess: 
     if: ${{ !cancelled() }}
     runs-on: ${{ fromJson(needs.Initialization.outputs.runs_on) }}
-    needs: [ Initialization, StartEnvironments, StopEnvironments, Deploy ]
+    needs: [ Initialization, Deploy ]
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
