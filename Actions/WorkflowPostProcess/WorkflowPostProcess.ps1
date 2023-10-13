@@ -83,8 +83,8 @@ try {
                 } 
                 #Delete skipped actions
                 $jobs = Invoke-RestMethod @getJobsParam
-                foreach($job in $jobs.jobs){
-                    if($job.conclusion -eq "skipped"){$del = $true}
+                foreach($job in $jobs.jobs){            
+                    if($($job.name.StartsWith("Deploy")) -and $($job.conclusion -eq "skipped")){$del = $true}
                 }
             }
         

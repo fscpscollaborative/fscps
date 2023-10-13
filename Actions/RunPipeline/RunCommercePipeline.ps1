@@ -105,25 +105,7 @@ try {
     nuget sources Add -Name $settings.nugetFeedName -Source $settings.nugetSourcePath -username $nugetUserName -password $nugetFeedPasswordSecretName
    
     Write-Output "::endgroup::"
-<#
-    Write-Output "::group::Nuget install packages"
-    OutputInfo "======================================== Nuget install packages"
-    $packagesFilePath = Join-Path $buildPath packages.config
-    if(Test-Path $packagesFilePath)
-    {
-        OutputInfo "Found packages.config file at path: $packagesFilePath "
-        nuget restore $packagesFilePath
-    }
-    else
-    {
-        OutputInfo "Not Found packages.config file at path: $packagesFilePath "
-        nuget restore $settings.solutionName
-    }
-    
-    #Nuget install packages
-    
-    Write-Output "::endgroup::"
-#>
+
     Write-Output "::group::Build solution"
 
     #Build solution
@@ -177,8 +159,6 @@ try {
     #& msbuild
 
 
-
-
     installModules "Invoke-MsBuild"
     $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
     if($msbuildpath -ne "")
@@ -213,6 +193,16 @@ try {
     ### Postbuild
 
     Write-Output "::endgroup::"
+
+
+    ### UnitTesting
+    $unitTestingCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\UnitTesting.ps1'
+    if(Test-Path $unitTestingCustomScript)
+    {
+        & $unitTestingCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+    }
+    ### UnitTesting
+
 
     #GeneratePackages
     if($settings.generatePackages)
@@ -307,6 +297,7 @@ try {
         }
 
         Write-Output "::endgroup::"
+
         Write-Output "::group::Sign packages"
         #sign files
         
