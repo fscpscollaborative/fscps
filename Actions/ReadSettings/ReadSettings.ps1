@@ -154,7 +154,6 @@ try {
             $environmentsJson = '["'+$($dynamicsEnvironment).ToString()+'"]'
         }
 
-
         Add-Content -Path $env:GITHUB_OUTPUT -Value "SOURCE_BRANCH=$sourceBranch"
         Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
 
@@ -339,18 +338,17 @@ try {
                     $startEnvironmentsJson = $startEnvironments | ConvertTo-Json -compress
                 }
                 $startEnvironmentsJson
-                Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
-                Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
+                if($environmentsJSon.Length -gt 0)
+                {
+                    Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
+                    Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
+                }
             }
             catch {
                 OutputWarning $_.Exception.Message
             }
-
         }
     }
-
-
-
 }
 catch {
     OutputError -message $_.Exception.Message
