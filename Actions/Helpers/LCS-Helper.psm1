@@ -37,7 +37,7 @@ function GetLCSSharedAssetsList {
     [PsObject[]]$array = @()
     $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
+    $assetList = @()
     try
     {
         $wc = New-Object System.Net.WebClient
