@@ -37,7 +37,21 @@ function GetLCSSharedAssetsList {
     [PsObject[]]$array = @()
     $url = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType="+$($FileType.value__)
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $assetList = (Invoke-RestMethod -Method Get -Uri $url -Headers $header)
+
+    try
+    {
+        $wc = New-Object System.Net.WebClient
+        $wc.Headers.Add($header);
+        $assetList = $wc.DownloadString($url) | ConvertTo-Json
+    }
+    catch
+    {
+        $ErrorMessage = $_.Exception.Message
+        $FailedItem = $_.Exception.ItemName
+        ((Get-Date).ToString() + " | Error: " + $ErrorMessage + " - " + $FailedItem);
+    }
+
+    #$assetList = (Invoke-RestMethod -Method Get -Uri $url -Headers $header)
     $assetList.GetEnumerator() | ForEach-Object {
         $array += [PsObject]@{ Name = $_.Name; FileName = $_.FileName; ModifiedDate = $_.ModifiedDate; Id = $_.Id }
     }
