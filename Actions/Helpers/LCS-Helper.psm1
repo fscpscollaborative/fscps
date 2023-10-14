@@ -41,7 +41,10 @@ function GetLCSSharedAssetsList {
     try
     {
         $wc = New-Object System.Net.WebClient
-        $wc.Headers.Add($header);
+        $header  | ForEach-Object { 
+            $wc.Headers.Add($_);
+        }
+        
         $assetList = $wc.DownloadString($url) | ConvertTo-Json
     }
     catch
