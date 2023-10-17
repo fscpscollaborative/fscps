@@ -5,7 +5,7 @@ Set-StrictMode -Version 2.0
 
 # IMPORTANT: No code that can fail should be outside the try/catch
 try {
-    .(Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
+    Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
     Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
     $github = (Get-ActionContext)
     Write-Host ($github | ConvertTo-Json)

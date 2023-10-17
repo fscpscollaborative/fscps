@@ -17,8 +17,8 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
-    
+    Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
+
     $workflowName = $env:GITHUB_WORKFLOW
     $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $workflowName
     if ($get) {
