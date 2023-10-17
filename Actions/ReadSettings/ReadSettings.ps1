@@ -18,6 +18,7 @@ Set-StrictMode -Version 2.0
 
 try {
     . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
+    
     $workflowName = $env:GITHUB_WORKFLOW
     $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $workflowName
     if ($get) {
@@ -351,7 +352,7 @@ try {
     }
 }
 catch {
-    OutputError -message $_.Exception.Message
+    Write-Error $_.Exception.Message
     exit
 }
 finally {
