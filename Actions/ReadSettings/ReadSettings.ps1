@@ -338,7 +338,7 @@ try {
                     $startEnvironmentsJson = $startEnvironments | ConvertTo-Json -compress
                 }
                 $startEnvironmentsJson
-                if($environmentsJSon.Length -gt 0)
+                if($environmentsJSon)
                 {
                     Add-Content -Path $env:GITHUB_OUTPUT -Value "StartEnvironments=$startEnvironmentsJson"
                     Add-Content -Path $env:GITHUB_ENV -Value "StartEnvironments=$startEnvironmentsJson"
