@@ -16,15 +16,15 @@ try {
     Install-Module -Name PSSodium -Force
     Write-Big -str "$branch"
 
-     #Load REPO_TOKEN secret from github
-     $github = (Get-ActionContext)
-     try {
-         $ghToken = GetSecret -secret "REPO_TOKEN"
-         if(!$ghToken){throw "GitHub secret REPO_TOKEN not found. Please, create it."}
-     }
-     catch {
-         OutputError $_.Exception.Message
-     }
+    #Load REPO_TOKEN secret from github
+    $github = (Get-ActionContext)
+    try {
+        $ghToken = GetSecret -secret "REPO_TOKEN"
+        if(!$ghToken){throw "GitHub secret REPO_TOKEN not found. Please, create it."}
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
 
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
     installModules @("AZ.Storage","d365fo.tools")
