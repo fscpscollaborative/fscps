@@ -209,7 +209,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Update:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Update:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "Update:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -218,7 +218,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -250,7 +250,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -274,7 +274,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -296,7 +296,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "CI:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "CI:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "CI:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -322,7 +322,7 @@ try {
                     #GitHub runner
                     if ($repoSettings.ContainsKey("runs-on")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [ $($repoSettings."runs-on") ]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }

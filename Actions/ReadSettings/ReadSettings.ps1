@@ -252,10 +252,10 @@ try {
     Add-Content -Path $env:GITHUB_OUTPUT -Value "Settings=$OutSettingsJson"
     Add-Content -Path $env:GITHUB_ENV -Value "Settings=$OutSettingsJson"
 
-    $gitHubRunner = $settings.githubRunner.Replace(" ", "").Split(',') | ConvertTo-Json -compress
+    $gitHubRunner = $settings.githubRunner.Trim().Split(',') | ConvertTo-Json -compress
     Add-Content -Path $env:GITHUB_OUTPUT -Value "GitHubRunner=$githubRunner"
 
-    $runsOn = $settings.'runs-on'.Split(',') | ConvertTo-Json -compress
+    $runsOn = $settings.'runs-on'.Trim().Split(',') | ConvertTo-Json -compress
     Add-Content -Path $env:GITHUB_OUTPUT -Value "RunsOn=$runsOn"
 
     if($settings.buildVersion.Contains(','))
