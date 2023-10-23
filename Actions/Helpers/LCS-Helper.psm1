@@ -39,12 +39,22 @@ function GetLCSSharedAssetsList {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $assetList = @()
 
-    try {
-        $assetList = (Invoke-RestMethod -Method Get -Uri $url -Headers $header -TimeoutSec 500)
+    $repeat = $true
+    $cnt = 0
+    do{
+        try {
+            $assetList = (Invoke-RestMethod -Method Get -Uri $url -Headers $header -TimeoutSec 360)
+            $repeat = $false
+        }
+        catch {
+            if($cnt -lt 4)
+            {
+                $repeat = $true
+                $cnt++
+            }
+        } 
     }
-    catch {
-        $assetList = (Invoke-RestMethod -Method Get -Uri $url -Headers $header -TimeoutSec 500)
-    }    
+    while($repeat)
 
     $assetList.GetEnumerator() | ForEach-Object {
         $array += [PsObject]@{ Name = $_.Name; FileName = $_.FileName; ModifiedDate = $_.ModifiedDate; Id = $_.Id }
