@@ -24,7 +24,7 @@ jobs:
         shell: pwsh
         run:  Remove-Item ${{ github.workspace }}\* -Recurse -Force
          
-      - uses: actions/checkout@v3.5.2
+      - uses: actions/checkout@v4.1.1
 
       - name: Update Version
         shell: pwsh

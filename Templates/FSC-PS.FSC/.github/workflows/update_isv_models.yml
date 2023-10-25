@@ -32,7 +32,7 @@ jobs:
         run: git config --system core.longpaths true
         
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
 
       - name: Initialize the workflow
         uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.3
@@ -54,7 +54,7 @@ jobs:
         run: git config --system core.longpaths true
 
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
         with:
           token: ${{ secrets.REPO_TOKEN }}
           
@@ -78,7 +78,7 @@ jobs:
         run: git config --system core.longpaths true
 
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
 
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3

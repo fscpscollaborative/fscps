@@ -29,7 +29,7 @@ jobs:
       githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
 
       - name: Initialize the workflow
         uses: ciellosinc/FSC-PS-Actions/WorkflowInitialize@v1.3
@@ -64,7 +64,7 @@ jobs:
     name: Deploy ${{ matrix.environment }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
         with:
           ref: ${{ needs.Initialization.outputs.source_branch }}
          
@@ -76,7 +76,7 @@ jobs:
           
       - name: Checkout ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
         if: steps.ReadSettings.outputs.SOURCE_BRANCH != needs.Initialization.outputs.source_branch
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
         with:
           ref: ${{ steps.ReadSettings.outputs.SOURCE_BRANCH }}
          
@@ -112,7 +112,7 @@ jobs:
     needs: [ Initialization,  Deploy ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
 
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
