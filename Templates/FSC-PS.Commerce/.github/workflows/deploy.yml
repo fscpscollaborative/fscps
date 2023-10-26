@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
    inputs:
       environment:
-        description: 'Select FSCM Environment'
+        description: 'Select CSU Environment'
         required: false
         default: ''
         type: choice
