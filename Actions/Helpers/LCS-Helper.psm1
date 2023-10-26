@@ -52,6 +52,9 @@ function GetLCSSharedAssetsList {
                 $repeat = $true
                 $cnt++
             }
+            else {
+                $repeat = $false
+            }
         } 
     }
     while($repeat)
