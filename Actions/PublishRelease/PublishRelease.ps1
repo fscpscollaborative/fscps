@@ -19,7 +19,8 @@ Set-StrictMode -Version 2.0
 # IMPORTANT: No code that can fail should be outside the try/catch
 
 try {
-    . (Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve)
+    $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
+    . ($helperPath)
     $github = (Get-ActionContext)
 
     $github.Payload.inputs
@@ -74,6 +75,7 @@ try {
         $release = @{
             AccessToken = "$repoTokenSecretName"
             TagName = "$tag"
+            Name = "$name"
             ReleaseText = "$(($releaseNote.Content | ConvertFrom-Json ).body)"
             Draft = $false
             PreRelease = $false
@@ -113,6 +115,14 @@ try {
         }
     }
     ###
+    
+    ### PrePublish
+    $prePublishCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PrePublish.ps1'
+    if(Test-Path $prePublishCustomScript)
+    {
+        & $prePublishCustomScript -settings $settings -githubContext $github -helperPath $helperPath -artifactsPath $artifactsPath
+    }
+    ### PrePublish
     Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit "$($github.Payload.ref)"
 }
 catch {
