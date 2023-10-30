@@ -16,10 +16,17 @@ try {
 
     OutputInfo "Installing PSSodium..."
     Install-Module -Name PSSodium -Force
-    Write-Big -str "$branch"
+
+    try {
+        Write-Big -str "$branch"
+    }
+    catch {
+        OutputInfo "Write-Big Issue $($_.Exception.Message)"
+    }
+    
 
     #Load REPO_TOKEN secret from github
-    
+    OutputInfo "Load REPO_TOKEN secret from GitHub..."
     try {
         $ghToken = GetSecret -secret "REPO_TOKEN"
         if(!$ghToken){throw "GitHub secret REPO_TOKEN not found. Please, create it."}
