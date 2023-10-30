@@ -14,8 +14,8 @@ try {
     $ap = "$ENV:GITHUB_ACTION_PATH".Split('\')
     $branch = $ap[$ap.Count-2]
 
-    OutputInfo "Installing PSSodium..."
-    Install-Module -Name PSSodium -Force
+    #OutputInfo "Installing PSSodium..."
+    #Install-Module -Name PSSodium 
 
     try {
         Write-Big -str "$branch"
