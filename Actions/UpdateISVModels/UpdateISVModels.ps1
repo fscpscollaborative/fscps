@@ -30,9 +30,6 @@ try {
 
     $settings = $settingsJson | ConvertFrom-Json | ConvertTo-HashTable | ConvertTo-OrderedDictionary
 
-    $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
-    $environments = @((Get-Content $EnvironmentsFile) | ConvertFrom-Json | ForEach-Object {$_.Name})
-
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
 
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -84,6 +81,7 @@ try {
     invoke-git clone $url 
     $archivePath = "$baseFolder\temp.zip"
     Invoke-WebRequest -Uri $artifactsPath -OutFile $archivePath
+    Unblock-File -Path $archivePath
     Set-Location -Path $baseFolder
 
     $branch = [System.IO.Path]::GetRandomFileName()

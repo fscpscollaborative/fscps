@@ -1849,17 +1849,37 @@ function Update-D365FSCISVSource
     $tempFolder = "$targetPath\_tmp"
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
     Expand-7zipArchive -Path $archivePath -DestinationPath $tempFolder
+    $ispackage = Get-ChildItem -Path $tempFolder -Filter 'AXUpdateInstaller.exe' -Recurse -ErrorAction SilentlyContinue -Force
 
-    $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
-    $metadataPath = $modelPath[0].Parent.Parent.FullName
-    
-    Get-ChildItem -Path $metadataPath | ForEach-Object {
-        $_.Name
-        Remove-Item -Path (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-        Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+    if($ispackage)
+    {
+        Write-Host "Package"
+        $models = Get-ChildItem -Path $tempFolder -Filter "dynamicsax-*.zip" -Recurse -ErrorAction SilentlyContinue -Force
+        foreach($model in $models)
+        {            
+            $zipFile = [IO.Compression.ZipFile]::OpenRead($model.FullName)
+            $zipFile.Entries | Where-Object {$_.FullName.Contains(".xref")} | ForEach-Object{
+                $modelName = $_.Name.Replace(".xref", "")
+                $targetModelPath = (Join-Path $targetPath "PackagesLocalDirectory/$modelName/")   
+                Expand-7zipArchive -Path $models.FullName -DestinationPath $targetModelPath
+                Remove-Item $targetModelPath/$_ -Force 
+            }            
+        }
     }
-    
-    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+    else
+    {   
+        Write-Host "Archive found"
+        $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
+        $metadataPath = $modelPath[0].Parent.Parent.FullName
+        
+        Get-ChildItem -Path $metadataPath | ForEach-Object {
+            $_.Name
+            Remove-Item -Path (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+            Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+        }
+        
+        Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+    }    
 }
 
 function Update-Readme
