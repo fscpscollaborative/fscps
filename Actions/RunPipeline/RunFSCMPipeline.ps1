@@ -81,10 +81,10 @@ try {
     $initCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\Init.ps1'
     if(Test-Path $initCustomScript)
     {
-        & $initCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+        & $initCustomScript -settings $settings -githubContext $github -helperPath $helperPath -token $token
     }
     ### Init
-    
+
     # GetModels
     if($($settings.specifyModelsManually) -eq "true")
     {
