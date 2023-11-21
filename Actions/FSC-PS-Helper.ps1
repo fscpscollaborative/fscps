@@ -1852,6 +1852,7 @@ function Update-D365FSCISVSource
 
     $archivePaths = [System.Collections.ArrayList]@()
     $isArchivesInside = $false
+    [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')
     $zipFile = [IO.Compression.ZipFile]::OpenRead($archivePath)
     $zipFile.Entries | Where-Object {$_.FullName.Contains(".zip")} | ForEach-Object{
         $isArchivesInside = $true
