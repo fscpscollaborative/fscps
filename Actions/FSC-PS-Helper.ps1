@@ -1848,10 +1848,7 @@ function Update-D365FSCISVSource
 
     $tempFolder = "$targetPath\_tmp"
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-
-
     #check is archive contains few archives
-
 
     $archivePaths = [System.Collections.ArrayList]@()
     $isArchivesInside = $false
@@ -1863,7 +1860,7 @@ function Update-D365FSCISVSource
     ##if archive doesnt contain the archives, add the base path
     if($isArchivesInside)
     {
-
+        Unblock-File $archivePath
         Expand-7zipArchive -Path $archivePath -DestinationPath "$tempFolder/archives"
         Get-ChildItem "$tempFolder/archives" -Filter '*.zip' -Recurse -ErrorAction SilentlyContinue -Force | ForEach-Object {
             $archivePaths.Add($_.FullName)
@@ -1874,6 +1871,7 @@ function Update-D365FSCISVSource
     }
     foreach($archive in $archivePaths)
     {
+        Unblock-File $archive
         Expand-7zipArchive -Path $archive -DestinationPath $tempFolder
         $ispackage = Get-ChildItem -Path $tempFolder -Filter 'AXUpdateInstaller.exe' -Recurse -ErrorAction SilentlyContinue -Force
 
