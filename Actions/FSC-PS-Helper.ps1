@@ -10,6 +10,10 @@ $lcsHelperPath = Join-Path $PSScriptRoot 'Helpers\LCS-Helper.psm1'
 if (Test-Path $lcsHelperPath) {
     Import-Module $lcsHelperPath
 }
+$readSecretsHelperPath = Join-Path $PSScriptRoot 'Helpers\ReadSecretsHelper.psm1'
+if (Test-Path $readSecretsHelperPath) {
+    Import-Module $readSecretsHelperPath
+}
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 enum LcsAssetFileType {
     Model = 1
