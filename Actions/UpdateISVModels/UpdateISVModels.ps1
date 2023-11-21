@@ -88,7 +88,7 @@ try {
     invoke-git checkout -b $branch $($settings.currentBranch)
 
     Update-D365FSCISVSource -archivePath $archivePath -targetPath $baseFolder
-
+    Get-ChildItem $baseFolder
     Remove-Item $archivePath -Force
 
     invoke-git status
