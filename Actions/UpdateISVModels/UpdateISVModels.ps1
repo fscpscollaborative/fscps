@@ -85,7 +85,7 @@ try {
     Set-Location -Path $baseFolder
 
     $branch = [System.IO.Path]::GetRandomFileName()
-    invoke-git checkout -b $branch $($settings.currentBranch)
+    invoke-git checkout -b $branch $($env:GITHUB_REF_NAME)
 
     Update-D365FSCISVSource -archivePath $archivePath -targetPath $baseFolder
     Get-ChildItem $baseFolder
@@ -99,8 +99,8 @@ try {
     $message = "DevOps - update ISV models"
     invoke-git commit --allow-empty -m "'$message'"
     invoke-git push -u origin $branch
-    Write-Output "Create PR to the $($settings.currentBranch)"
-    invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --base $($settings.currentBranch)
+    Write-Output "Create PR to the $($env:GITHUB_REF_NAME)"
+    invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --base $env:GITHUB_REF_NAME
 
 }
 catch {
