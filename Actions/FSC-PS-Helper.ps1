@@ -10,6 +10,7 @@ $lcsHelperPath = Join-Path $PSScriptRoot 'Helpers\LCS-Helper.psm1'
 if (Test-Path $lcsHelperPath) {
     Import-Module $lcsHelperPath
 }
+Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 enum LcsAssetFileType {
     Model = 1
     ProcessDataPackage = 4
@@ -1852,7 +1853,7 @@ function Update-D365FSCISVSource
 
     $archivePaths = [System.Collections.ArrayList]@()
     $isArchivesInside = $false
-    [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')
+
     $zipFile = [IO.Compression.ZipFile]::OpenRead($archivePath)
     $zipFile.Entries | Where-Object {$_.FullName.Contains(".zip")} | ForEach-Object{
         $isArchivesInside = $true
