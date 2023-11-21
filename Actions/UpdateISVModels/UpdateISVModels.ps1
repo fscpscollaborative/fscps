@@ -78,7 +78,7 @@ try {
     invoke-git config --global core.autocrlf true
 
     # Clone URL
-    invoke-git clone $url 
+    # invoke-git clone $url 
     $archivePath = "$baseFolder\temp.zip"
     Invoke-WebRequest -Uri $artifactsPath -OutFile $archivePath
     Unblock-File -Path $archivePath
@@ -89,8 +89,10 @@ try {
 
     Update-D365FSCISVSource -archivePath $archivePath -targetPath $baseFolder
     Get-ChildItem $baseFolder
+
     Remove-Item $archivePath -Force -ErrorAction SilentlyContinue
     Remove-Item /$github.Payload.repository.name -Force -ErrorAction SilentlyContinue
+
     Get-ChildItem $baseFolder
     invoke-git status
     invoke-git add *
