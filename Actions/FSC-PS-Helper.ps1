@@ -1848,38 +1848,70 @@ function Update-D365FSCISVSource
 
     $tempFolder = "$targetPath\_tmp"
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-    Expand-7zipArchive -Path $archivePath -DestinationPath $tempFolder
-    $ispackage = Get-ChildItem -Path $tempFolder -Filter 'AXUpdateInstaller.exe' -Recurse -ErrorAction SilentlyContinue -Force
 
-    if($ispackage)
+
+    #check is archive contains few archives
+
+
+    $archivePaths = [System.Collections.ArrayList]@()
+    $isArchivesInside = $false
+    $zipFile = [IO.Compression.ZipFile]::OpenRead($archivePath)
+    $zipFile.Entries | Where-Object {$_.FullName.Contains(".zip")} | ForEach-Object{
+        $isArchivesInside = $true
+    }   
+    $zipFile.Dispose()
+    ##if archive doesnt contain the archives, add the base path
+    if($isArchivesInside)
     {
-        Write-Host "Package"
-        $models = Get-ChildItem -Path $tempFolder -Filter "dynamicsax-*.zip" -Recurse -ErrorAction SilentlyContinue -Force
-        foreach($model in $models)
-        {            
-            $zipFile = [IO.Compression.ZipFile]::OpenRead($model.FullName)
-            $zipFile.Entries | Where-Object {$_.FullName.Contains(".xref")} | ForEach-Object{
-                $modelName = $_.Name.Replace(".xref", "")
-                $targetModelPath = (Join-Path $targetPath "PackagesLocalDirectory/$modelName/")   
-                Expand-7zipArchive -Path $models.FullName -DestinationPath $targetModelPath
-                Remove-Item $targetModelPath/$_ -Force 
-            }            
+
+        Expand-7zipArchive -Path $archivePath -DestinationPath "$tempFolder/archives"
+        Get-ChildItem "$tempFolder/archives" -Filter '*.zip' -Recurse -ErrorAction SilentlyContinue -Force | ForEach-Object {
+            $archivePaths.Add($_.FullName)
         }
     }
-    else
-    {   
-        Write-Host "Archive found"
-        $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
-        $metadataPath = $modelPath[0].Parent.Parent.FullName
-        
-        Get-ChildItem -Path $metadataPath | ForEach-Object {
-            $_.Name
-            Remove-Item -Path (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-            Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+    else {
+        $archivePaths.Add($archivePath)
+    }
+    foreach($archive in $archivePaths)
+    {
+        Expand-7zipArchive -Path $archive -DestinationPath $tempFolder
+        $ispackage = Get-ChildItem -Path $tempFolder -Filter 'AXUpdateInstaller.exe' -Recurse -ErrorAction SilentlyContinue -Force
+
+        if($ispackage)
+        {
+            Write-Host "Package"
+            $models = Get-ChildItem -Path $tempFolder -Filter "dynamicsax-*.zip" -Recurse -ErrorAction SilentlyContinue -Force
+            foreach($model in $models)
+            {            
+                $zipFile = [IO.Compression.ZipFile]::OpenRead($model.FullName)
+                $zipFile.Entries | Where-Object {$_.FullName.Contains(".xref")} | ForEach-Object{
+                    $modelName = $_.Name.Replace(".xref", "")
+                    $targetModelPath = (Join-Path $targetPath "PackagesLocalDirectory/$modelName/")   
+                    Expand-7zipArchive -Path $models.FullName -DestinationPath $targetModelPath
+                    Remove-Item $targetModelPath/$_ -Force 
+                }            
+                $zipFile.Dispose()
+            }
         }
+        else
+        {   
+            Write-Host "Archive found"
+            $modelPath = Get-ChildItem -Path $tempFolder -Filter Descriptor -Recurse -ErrorAction SilentlyContinue -Force
+            if(!$modelPath)
+            {
+                $modelPath = Get-ChildItem -Path $tempFolder -Filter bin -Recurse -ErrorAction SilentlyContinue -Force
+            }
+            $metadataPath = $modelPath[0].Parent.Parent.FullName
+            
+            Get-ChildItem -Path $metadataPath | ForEach-Object {
+                $_.Name
+                Remove-Item -Path (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
+                Copy-Item -Path "$metadataPath\$($_.Name)" -Destination (Join-Path $targetPath "PackagesLocalDirectory\$($_.Name)") -Recurse -Force
+            }      
+        }  
         
-        Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
-    }    
+    }
+    Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false  
 }
 
 function Update-Readme
