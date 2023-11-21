@@ -90,16 +90,15 @@ try {
     Update-D365FSCISVSource -archivePath $archivePath -targetPath $baseFolder
     Get-ChildItem $baseFolder
     Remove-Item $archivePath -Force -ErrorAction SilentlyContinue
-    Remove-Item $baseFolder/$github.Payload.repository.name -Force -ErrorAction SilentlyContinue
-
+    Remove-Item /$github.Payload.repository.name -Force -ErrorAction SilentlyContinue
+    Get-ChildItem $baseFolder
     invoke-git status
     invoke-git add *
     $message = "DevOps - update ISV models"
     invoke-git commit --allow-empty -m "'$message'"
     invoke-git push -u origin $branch
     Write-Output "Create PR to the $($settings.currentBranch)"
-    $releaseNotes = "No release notes available!"
-    invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --body "$releaseNotes" --base $($settings.currentBranch)
+    invoke-gh pr create --fill --head $branch --repo $env:GITHUB_REPOSITORY --base $($settings.currentBranch)
 
 }
 catch {
