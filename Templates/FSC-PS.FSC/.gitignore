@@ -163,6 +163,7 @@ DBSynchronization.xml
 /**/GeneralLedger
 /**/GeneralLedgerFormAdaptor
 /**/GlobalizationLTM
+/**/Globalizationfeature
 /**/GlobalUnifiedPricing
 /**/HRPlatform
 /**/InboundTransportationManagement
@@ -198,6 +199,7 @@ DBSynchronization.xml
 /**/Plugins
 /**/Policy
 /**/ProcessAutomation
+/**/ProcessAdvisorIntegration
 /**/ProcessGuide
 /**/Project
 /**/ProjectMobile
