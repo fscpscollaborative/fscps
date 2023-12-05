@@ -830,30 +830,31 @@ function Publish-GithubRelease
 
     process
     {
-
+        $artifacts = (Get-ChildItem $Artifact)
         if ($Artifact)
         {
-            foreach ($file in (Get-ChildItem $Artifact))
+            foreach ($file in $artifacts)
             {
                 Write-Output "Release File: "
                 $file
 
                 $body = [System.IO.File]::ReadAllBytes($file.FullName)
-                if(!$Name)
+                if($Name.Length -eq 0)
                 {
                     $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($file.Name)"
                 }
                 else
                 {
-                    if($Artifact.Count -gt 1)
+                    if($file.Extension -eq '.zip')
                     {
-                        $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($file.Name)"
-                    }
-                    else {
                         $Name = $Name -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
                         $fileName = (($Name)+($file.Extension))
     
                         $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
+                        
+                    }
+                    else {
+                        $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($file.Name)"
                     }
 
                 }
