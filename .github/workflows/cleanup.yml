@@ -36,7 +36,8 @@ on:
         - info
         - warning
         - debug 
-
+  schedule:
+   - cron: '0 23 * * *'
 
 jobs:
   del_runs:
