@@ -845,10 +845,17 @@ function Publish-GithubRelease
                 }
                 else
                 {
-                    $Name = $Name -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
-                    $fileName = (($Name)+($file.Extension))
+                    if($Artifact.Count -gt 1)
+                    {
+                        $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($file.Name)"
+                    }
+                    else {
+                        $Name = $Name -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
+                        $fileName = (($Name)+($file.Extension))
+    
+                        $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
+                    }
 
-                    $uri = $release.upload_url -replace "\{\?name,label\}", "?name=$($fileName)"
                 }
                 $assetParams = @{
                     Uri         = $uri
