@@ -49,7 +49,7 @@ jobs:
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
         
       - name: Setup Node.js
         uses: actions/setup-node@v3.6.0   

@@ -52,7 +52,7 @@ jobs:
         with:
           type: ${{ steps.ReadSettings.outputs.type }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
         
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3

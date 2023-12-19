@@ -98,7 +98,7 @@ jobs:
         with:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
 
       - name: Publish artifacts  
         uses: actions/upload-artifact@v3.1.0
@@ -161,4 +161,4 @@ jobs:
         with:
           remove_current: ${{ needs.Initialization.outputs.environments == '' }}
           settingsJson: ${{ env.Settings }}
-          SecretsJson: ${{ env.RepoSecrets }}
+          secretsJson: ${{ env.RepoSecrets }}
