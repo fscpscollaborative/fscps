@@ -430,6 +430,7 @@ function ReadSettings {
         "deploy"                                 = $false
         "deployOnlyNew"                          = $true
         "deploymentScheduler"                    = $true        
+        "signArtifacts"                          = $false
         "fscFinalQualityUpdatePackageId"         = ""    
         "fscPreviewVersionPackageId"             = ""    
         "fscServiseUpdatePackageId"              = ""  

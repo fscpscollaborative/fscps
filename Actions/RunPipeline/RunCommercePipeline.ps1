@@ -160,7 +160,7 @@ try {
 
 
     installModules "Invoke-MsBuild"
-<#    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
+    <#    $msbuildpath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
     if($msbuildpath -ne "")
     {
         $msbuildexepath = Join-Path $msbuildpath "MSBuild\Current\Bin\MSBuild.exe"
@@ -298,45 +298,50 @@ try {
 
         Write-Output "::endgroup::"
 
-        Write-Output "::group::Sign packages"
-        #sign files
-        
-        Get-ChildItem $artifactDirectory | Where-Object {$_.Extension -like ".exe"} | ForEach-Object{          
-            Write-Output "Signing File: '$($_.FullName)' ..."
-            [string]$filePath = "$($_.FullName)"
-            try {
-                if(!$codeSignKeyVaultClientSecretName){throw "GitHub secret SIGN_KV_CLIENTSECRET not found. Please, create it."}
-            }
-            catch {
-                OutputError $_.Exception.Message
-            }
-            switch ( $settings.codeSignType )
-            {
-                "azure_sign_tool" {
-                    try {
-                        & dotnet tool install --global AzureSignTool;
-                    }
-                    catch {
-                        OutputInfo "$($_.Exception.Message)"
-                    }
-                    try {
-                        & azuresigntool sign -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
-                    }                     
-                    catch {
-                        OutputInfo "$($_.Exception.Message)"
-                    }
-                    break;
+        if($settings.signArtifacts)
+        {
+            Write-Output "::group::Sign packages"
+            #sign files
+            
+            Get-ChildItem $artifactDirectory | Where-Object {$_.Extension -like ".exe"} | ForEach-Object{          
+                Write-Output "Signing File: '$($_.FullName)' ..."
+                [string]$filePath = "$($_.FullName)"
+                try {
+                    if(!$codeSignKeyVaultClientSecretName){throw "GitHub secret SIGN_KV_CLIENTSECRET not found. Please, create it."}
                 }
-                "digicert_keystore" {                    
-                    Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
-                    -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
-                    -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
-                    -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
-                    -FILE "$filePath"
-                    break;
+                catch {
+                    OutputError $_.Exception.Message
+                }
+                switch ( $settings.codeSignType )
+                {
+                    "azure_sign_tool" {
+                        try {
+                            & dotnet tool install --global AzureSignTool;
+                        }
+                        catch {
+                            OutputInfo "$($_.Exception.Message)"
+                        }
+                        try {
+                            & azuresigntool sign -kvu "$($settings.codeSighKeyVaultUri)" -kvt "$($settings.codeSignKeyVaultTenantId)" -kvc "$($settings.codeSignKeyVaultCertificateName)" -kvi "$($settings.codeSignKeyVaultAppId)" -kvs "$($codeSignKeyVaultClientSecretName)" -tr "$($settings.codeSignKeyVaultTimestampServer)" -td sha256 "$filePath"
+                        }                     
+                        catch {
+                            OutputInfo "$($_.Exception.Message)"
+                        }
+                        break;
+                    }
+                    "digicert_keystore" {                    
+                        Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
+                        -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
+                        -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
+                        -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `
+                        -FILE "$filePath"
+                        break;
+                    }
                 }
             }
+            Write-Output "::endgroup::"
         }
+        
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$packageName"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$packageName"
@@ -357,7 +362,7 @@ try {
 
         }
 
-        Write-Output "::endgroup::"
+        
 
         Write-Output "::group::Export NuGets"
 
