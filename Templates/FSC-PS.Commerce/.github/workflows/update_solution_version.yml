@@ -56,6 +56,19 @@ jobs:
           {
               Write-Host "::Error: - File '$propsFile' is not a valid props file"
           }
+
+          $manifestFilePath = '.\POS\manifest.json'
+
+          if(Test-Path $manifestFilePath)
+          {
+              $manifestFileContent = (Get-Content $manifestFilePath)
+              $curNumber = $manifestFileContent -match '.*"version": "(\d*).*'
+              $newNumber = ""
+              if ($curNumber) {
+                  $newNumber = $curNumber -replace '\d.*\d.*\d.*\d', $version
+                  $manifestFileContent.Replace($curNumber, $newNumber) | Set-Content $manifestFilePath
+              }              
+          }
            
       - name: Create Pull Request
         id: cpr
