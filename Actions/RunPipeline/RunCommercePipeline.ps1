@@ -421,12 +421,12 @@ try {
                 }               
              }
 
-             OutputInfo "======================================== Validation info"
-             $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
-             $port = "443"
+            <#  OutputInfo "======================================== Validation info"
+            $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
+            $port = "443"
 
-             #if ($Env:baseProduct_UseSelfHost -ne "true") {
-                # IIS deployment requires the additional actions to start debugging
+            #if ($Env:baseProduct_UseSelfHost -ne "true") {
+            # IIS deployment requires the additional actions to start debugging
             
             $RetailServerRoot = "https://$($MachineName):$port/RetailServer"
         
@@ -436,6 +436,15 @@ try {
             #}
 
             Write-Output "::endgroup::"
+            #>
+
+            ### PostDeploy
+            $postdeployCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostDeploy.ps1'
+            if(Test-Path $postdeployCustomScript)
+            {
+                & $postdeployCustomScript -settings $settings -githubContext $github -helperPath $helperPath
+            }
+            ### PostDeploy
         }
 
     }
