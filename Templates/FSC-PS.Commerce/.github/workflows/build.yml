@@ -50,11 +50,7 @@ jobs:
    Build:
     needs: [ Initialization ]
     runs-on: ${{ fromJson(needs.Initialization.outputs.githubRunner) }}
-    strategy:
-      matrix:
-        version: ${{ fromJson(needs.Initialization.outputs.versions) }}
-      fail-fast: false
-    name: Build ${{ matrix.version }}
+    name: Build 
     steps:
       - name: Support longpaths
         run: git config --system core.longpaths true
@@ -64,8 +60,6 @@ jobs:
 
       - name: Read settings
         uses: ciellosinc/FSC-PS-Actions/ReadSettings@v1.3
-        with:
-          version: ${{ matrix.version }}
           
       - name: Read secrets
         uses: ciellosinc/FSC-PS-Actions/ReadSecrets@v1.3
@@ -93,7 +87,6 @@ jobs:
         id: runpipeline
         with:
           type: ${{ needs.Initialization.outputs.type}}
-          version: ${{ matrix.version }}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
       
