@@ -280,9 +280,9 @@
     {
         "version":  "10.0.39",
         "data":  {
-                     "AppVersion":  "",
+                     "AppVersion":  "10.0.1860.18",
                      "fscPreviewVersionPackageId":  "617748f9-4094-49f8-8367-7d439e748479",
-                     "PlatformVersion":  "",
+                     "PlatformVersion":  "7.0.7198.18",
                      "retailSDKVersion":  "10.0.1860.18",
                      "retailSDKURL":  "",
                      "fscServiseUpdatePackageId":  "",
