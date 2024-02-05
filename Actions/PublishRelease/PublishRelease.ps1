@@ -95,9 +95,8 @@ try {
         }
     }
 
-    Write-Output "Release: "
-    
-    Write-Host  $release
+    Write-Output "Release: "    
+    $release
     Write-Output "Artifacts path: $artifactsPath"
 
     ### Add custom file to the release folder
@@ -122,7 +121,7 @@ try {
         & $prePublishCustomScript -settings $settings -githubContext $github -helperPath $helperPath -artifactsPath $artifactsPath
     }
     ### PrePublish
-    Publish-GithubRelease @release -Artifact "$artifactsPath" -Commit "$($github.Payload.ref)"
+    Publish-GithubRelease @release -Artifact "$artifactsPath"
 }
 catch {
     OutputError -message $_.Exception.Message
