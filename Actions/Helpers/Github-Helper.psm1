@@ -806,7 +806,7 @@ function Publish-GithubRelease
         {
             $body["prerelease"] = $PreRelease.IsPresent
         }
-
+        
         $releaseParams = @{
             Uri         = "https://api.github.com/repos/{0}/{1}/releases" -f $RepositoryOwner, $RepositoryName
             Method      = 'POST'
@@ -821,10 +821,12 @@ function Publish-GithubRelease
         }
         try {
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Write-Output "ReleaseParams: "    
+            $releaseParams | ConvertTo-Json
             $release = Invoke-RestMethod @releaseParams
         }
         catch {
-            throw $_
+            throw $_.Exception.Message
         }
     }
 
