@@ -65,7 +65,7 @@ jobs:
               $curNumber = $manifestFileContent -match '.*"version": "(\d*).*'
               $newNumber = ""
               if ($curNumber) {
-                  $newNumber = $curNumber -replace '\d.*\d.*\d.*\d', $version
+                $newNumber = $curNumber -replace '\d.*\d.*\d.*\d', "$($versions[0]).$($versions[1]).$($versions[2]).$($versions[3])"
                   $manifestFileContent.Replace($curNumber, $newNumber) | Set-Content $manifestFilePath
               }              
           }
