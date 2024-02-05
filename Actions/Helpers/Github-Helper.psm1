@@ -845,7 +845,7 @@ function Publish-GithubRelease
                 }
                 else
                 {
-                    if($file.Extension -eq '.zip')
+                    if($file.Extension -eq '.zip' -and $Artifact.Count -eq 1)
                     {
                         $Name = $Name -replace "-" , " " -replace "    " , " " -replace "   " , " " -replace "  " , " " -replace " " , "."
                         $fileName = (($Name)+($file.Extension))

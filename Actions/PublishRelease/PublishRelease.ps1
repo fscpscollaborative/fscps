@@ -86,7 +86,7 @@ try {
         $release = @{
             AccessToken = "$repoTokenSecretName"
             TagName = "$tag"
-            #Name = "$name"
+            Name = "$name"
             ReleaseText = "$(($releaseNote.Content | ConvertFrom-Json ).body)"
             Draft = $false
             PreRelease = $false
@@ -97,7 +97,7 @@ try {
 
     Write-Output "Release: "
     
-    $release 
+    Write-Host  $release
     Write-Output "Artifacts path: $artifactsPath"
 
     ### Add custom file to the release folder
