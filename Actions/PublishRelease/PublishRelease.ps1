@@ -96,7 +96,7 @@ try {
     }
 
     Write-Output "Release: "    
-    $release
+    $release | ConvertTo-Json
     Write-Output "Artifacts path: $artifactsPath"
 
     ### Add custom file to the release folder
