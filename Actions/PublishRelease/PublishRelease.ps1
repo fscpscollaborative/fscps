@@ -86,7 +86,7 @@ try {
         $release = @{
             AccessToken = "$repoTokenSecretName"
             TagName = "$tag"
-            Name = "$name"
+            #Name = "$name"
             ReleaseText = "$(($releaseNote.Content | ConvertFrom-Json ).body)"
             Draft = $false
             PreRelease = $false
