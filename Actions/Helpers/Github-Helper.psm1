@@ -820,14 +820,19 @@ function Publish-GithubRelease
             ErrorAction = "Stop"
         }
         try {
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            #[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             Write-Output "ReleaseParams: "    
             $releaseParams | ConvertTo-Json
             $release = Invoke-RestMethod @releaseParams
         }
         catch {
-            throw $_.Exception.Message
+            $streamReader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
+            $ErrResp = $streamReader.ReadToEnd() | ConvertFrom-Json
+            $streamReader.Close()
+            throw $ErrResp
         }
+    
+        
     }
 
     process
