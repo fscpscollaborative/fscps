@@ -796,7 +796,7 @@ function Publish-GithubRelease
         }
         if ($PSBoundParameters.ContainsKey("ReleaseText"))
         {
-            $body["body"] = $ReleaseText
+            #$body["body"] = $ReleaseText
         }
         if ($PSBoundParameters.ContainsKey("Draft"))
         {
