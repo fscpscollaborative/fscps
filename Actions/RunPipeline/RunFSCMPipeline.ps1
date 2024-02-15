@@ -106,7 +106,7 @@ try {
     
 
     
-
+    Write-Output "Main model: $mainModel"
     Write-Output "Models: $models"
     Write-Output "Models to package: $modelsToPackage"
 
