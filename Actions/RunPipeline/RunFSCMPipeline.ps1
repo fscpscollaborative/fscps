@@ -221,7 +221,7 @@ try {
             {
                 if($mainModel.Split(","))
                 {
-                    Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
+                    Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($mainModel.Split(",").Item(0))+"\Descriptor\*.xml")
                 }
                 else {
                     Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($mainModel+"\Descriptor\*.xml")
