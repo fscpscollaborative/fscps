@@ -75,7 +75,8 @@ try {
     $plat_package =  'Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.' + $PlatformVersion
     $app_package =  'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.' + $ApplicationVersion
     $appsuite_package =  'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.' + $ApplicationVersion
-
+    ##get main model
+    $mainModel = Get-FSCModels -metadataPath $settings.metadataPath
 
     ### Init
     $initCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\Init.ps1'
@@ -103,6 +104,9 @@ try {
         $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true') -all
     }
     
+
+    
+
     Write-Output "Models: $models"
     Write-Output "Models to package: $modelsToPackage"
 
@@ -215,7 +219,13 @@ try {
         {
             if($models.Split(","))
             {
-                Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
+                if($mainModel.Split(","))
+                {
+                    Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($models.Split(",").Item(0))+"\Descriptor\*.xml")
+                }
+                else {
+                    Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($mainModel+"\Descriptor\*.xml")
+                }
             }
             else {
                 Update-FSCModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($models+"\Descriptor\*.xml")
