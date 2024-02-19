@@ -147,6 +147,18 @@ try {
             {
                 Write-Host "::Error: - File '$propsFile' is not a valid props file"
             }
+            $manifestFilePath = '.\POS\manifest.json'
+
+            if(Test-Path $manifestFilePath)
+            {
+                $manifestFileContent = (Get-Content $manifestFilePath)
+                $curNumber = $manifestFileContent -match '.*"version": "(\d*).*'
+                $newNumber = ""
+                if ($curNumber) {
+                    $newNumber = $curNumber -replace '\d.*\d.*\d.*\d', "$($versions[0]).$($versions[1]).$($versions[2]).$($versions[3])"
+                    $manifestFileContent.Replace($curNumber, $newNumber) | Set-Content $manifestFilePath
+                }              
+            }
         }
     }
     #dotnet msbuild /t:restore,rebuild $settings.solutionName /property:Configuration=Release /property:NuGetInteractive=true
