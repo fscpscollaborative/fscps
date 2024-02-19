@@ -829,7 +829,7 @@ function Publish-GithubRelease
             $streamReader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
             $ErrResp = $streamReader.ReadToEnd() | ConvertFrom-Json
             $streamReader.Close()
-            throw $ErrResp
+            throw $ErrResp.ToString()
         }
     
         
