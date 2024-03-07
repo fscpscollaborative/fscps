@@ -379,9 +379,10 @@ try {
         Set-Location $buildPath
         #deploy
         Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
+            $_.FullName
             if($settings.cleanupNugets)
             {
-                $_.FullName
+                
                 $zipfile = $_
                 # Cleanup NuGet file
                 [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')            
