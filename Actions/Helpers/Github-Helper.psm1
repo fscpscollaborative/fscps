@@ -747,7 +747,9 @@ function Publish-GithubRelease
         # Name of the release
         [String]
         $Name,
-
+        # Title of the release
+        [String]
+        $Title,
         # Text describing the contents of the tag.
         [Alias('Body')]
         [String]
@@ -796,7 +798,7 @@ function Publish-GithubRelease
         }
         if ($PSBoundParameters.ContainsKey("ReleaseText"))
         {
-            #$body["body"] = $ReleaseText
+            $body["body"] = $ReleaseText
         }
         if ($PSBoundParameters.ContainsKey("Draft"))
         {
@@ -820,19 +822,25 @@ function Publish-GithubRelease
             ErrorAction = "Stop"
         }
         try {
-            #[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             Write-Output "ReleaseParams: "    
-            $releaseParams | ConvertTo-Json
             $release = Invoke-RestMethod @releaseParams
         }
         catch {
-            $streamReader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
-            $ErrResp = $streamReader.ReadToEnd() | ConvertFrom-Json
-            $streamReader.Close()
-            throw $ErrResp.ToString()
-        }
-    
-        
+            try {
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                Write-Output "ReleaseParams: "    
+                $releaseParams | ConvertTo-Json
+                $releaseParams.Body = '';
+                $release = Invoke-RestMethod @releaseParams
+            }
+            catch {
+                $streamReader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream())
+                $ErrResp = $streamReader.ReadToEnd() | ConvertFrom-Json
+                $streamReader.Close()
+                throw $ErrResp.ToString()
+            }
+        }        
     }
 
     process
@@ -886,6 +894,30 @@ function Publish-GithubRelease
                 }
             }
         }
+    }
+
+    end {
+        #### Update release
+        $body = @{ "name" = $Title }
+        if ($PSBoundParameters.ContainsKey("TargetCommit"))
+        {
+            $body["target_commitish"] = $TargetCommit
+        }
+        $updateParams = @{
+            Uri         = "https://api.github.com/repos/{0}/{1}/releases/{2}" -f $RepositoryOwner, $RepositoryName, $release.id
+            Method      = 'PATCH'
+            Headers     = @{
+                Authorization = 'Basic ' + [Convert]::ToBase64String(
+                    [Text.Encoding]::ASCII.GetBytes($AccessToken + ":x-oauth-basic")
+                )
+            }
+            ContentType = 'application/json'
+            Body        = $body | ConvertTo-Json
+            ErrorAction = "Stop"
+        }
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Write-Output "Update params: " $updateParams    
+        $release = Invoke-RestMethod @updateParams
     }
 }
 

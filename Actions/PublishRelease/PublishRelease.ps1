@@ -80,6 +80,7 @@ try {
             PreRelease = $false
             RepositoryName = "$($github.Payload.repository.name)"
             RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
+            Title = "$name"
         }
     }
     else {
@@ -92,6 +93,7 @@ try {
             PreRelease = $false
             RepositoryName = "$($github.Payload.repository.name)"
             RepositoryOwner = "$($Env:GITHUB_REPOSITORY_OWNER)"
+            Title = "$name"
         }
     }
 
