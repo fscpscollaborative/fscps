@@ -374,22 +374,26 @@ try {
         Write-Output "::group::Export NuGets"
 
         Set-Location $buildPath
-        Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
-            $_.FullName
-            $zipfile = $_
-            # Cleanup NuGet file
-            [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')            
-            $stream = New-Object IO.FileStream($zipfile.FullName, [IO.FileMode]::Open)
-            $mode   = [IO.Compression.ZipArchiveMode]::Update
-            $zip    = New-Object IO.Compression.ZipArchive($stream, $mode)
-            ($zip.Entries | Where-Object { $_.Name -match 'Azure' }) | ForEach-Object { $_.Delete() }
-            ($zip.Entries | Where-Object { $_.Name -match 'Microsoft' }) | ForEach-Object { $_.Delete() }
-            ($zip.Entries | Where-Object { $_.Name -match 'System' }) | ForEach-Object { $_.Delete() }
-            ($zip.Entries | Where-Object { $_.Name -match 'Newtonsoft' }) | ForEach-Object { $_.Delete() }
-            $zip.Dispose()
-            $stream.Close()
-            $stream.Dispose()
-            Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
+        #deploy
+        if($settings.cleanupNugets)
+        {
+            Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
+                $_.FullName
+                $zipfile = $_
+                # Cleanup NuGet file
+                [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression')            
+                $stream = New-Object IO.FileStream($zipfile.FullName, [IO.FileMode]::Open)
+                $mode   = [IO.Compression.ZipArchiveMode]::Update
+                $zip    = New-Object IO.Compression.ZipArchive($stream, $mode)
+                ($zip.Entries | Where-Object { $_.Name -match 'Azure' }) | ForEach-Object { $_.Delete() }
+                ($zip.Entries | Where-Object { $_.Name -match 'Microsoft' }) | ForEach-Object { $_.Delete() }
+                ($zip.Entries | Where-Object { $_.Name -match 'System' }) | ForEach-Object { $_.Delete() }
+                ($zip.Entries | Where-Object { $_.Name -match 'Newtonsoft' }) | ForEach-Object { $_.Delete() }
+                $zip.Dispose()
+                $stream.Close()
+                $stream.Dispose()
+                Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
+            }
         }
 
         Write-Output "::endgroup::"

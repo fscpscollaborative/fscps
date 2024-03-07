@@ -434,6 +434,7 @@ function ReadSettings {
         "fscFinalQualityUpdatePackageId"         = ""    
         "fscPreviewVersionPackageId"             = ""    
         "fscServiseUpdatePackageId"              = ""  
+        "cleanupNugets"                          = $false
         "secretsList"                            = @('nugetFeedPasswordSecretName','nugetFeedUserSecretName','lcsUsernameSecretname','lcsPasswordSecretname','azClientsecretSecretname','repoTokenSecretName','codeSignDigiCertUrlSecretName','codeSignDigiCertPasswordSecretName','codeSignDigiCertAPISecretName','codeSignDigiCertHashSecretName','codeSignKeyVaultClientSecretName')
     }
 
