@@ -1231,7 +1231,6 @@ function Find-Match {
         Write-Error $_
     } 
 }
-
 function New-FindOptions {
     [CmdletBinding()]
     param(
@@ -1243,7 +1242,6 @@ function New-FindOptions {
         FollowSymbolicLinks = $FollowSymbolicLinks.IsPresent
     }
 }
-
 function New-MatchOptions {
     [CmdletBinding()]
     param(
@@ -1271,7 +1269,6 @@ function New-MatchOptions {
         NoNull = $NoNull.IsPresent
     }
 }
-
 function ConvertTo-NormalizedSeparators {
     [CmdletBinding()]
     param([string]$Path)
@@ -1288,7 +1285,6 @@ function ConvertTo-NormalizedSeparators {
 
     return $Path
 }
-
 function Get-FindInfoFromPattern {
     [CmdletBinding()]
     param(
@@ -1383,7 +1379,6 @@ function Get-FindInfoFromPattern {
         StatOnly = $literalSegments.Count -eq $parsedSegments.Count
     }
 }
-
 function Get-FindResult {
     [CmdletBinding()]
     param(
@@ -1425,7 +1420,6 @@ function Get-FindResult {
         }
     }
 }
-
 function Get-RootedPattern {
     [CmdletBinding()]
     param(
@@ -1460,7 +1454,6 @@ function Get-RootedPattern {
 
     return "$DefaultRoot$Pattern"
 }
-
 function Test-Rooted {
     [CmdletBinding()]
     param(
@@ -1471,7 +1464,6 @@ function Test-Rooted {
     return $Path.StartsWith('\') -or # e.g. \ or \hello or \\hello
         $Path -like '[A-Z]:*'        # e.g. C: or C:\hello
 }
-
 function Copy-MatchOptions {
     [CmdletBinding()]
     param($Options)
@@ -1489,7 +1481,6 @@ function Copy-MatchOptions {
         NoNull = $Options.NoNull -eq $true
     }
 }
-
 function ConvertTo-MinimatchOptions {
     [CmdletBinding()]
     param($Options)
@@ -1508,7 +1499,6 @@ function ConvertTo-MinimatchOptions {
     $opt.NoNull = $Options.NoNull -eq $true
     return $opt
 }
-
 function Get-LocString {
     [CmdletBinding()]
     param(
@@ -1552,7 +1542,6 @@ function Get-LocString {
         "$format $ArgumentList"
     }
 }
-
 function ConvertFrom-LongFormPath {
     [CmdletBinding()]
     param([string]$Path)
@@ -1569,7 +1558,6 @@ function ConvertFrom-LongFormPath {
 
     return $Path
 }
-
 function ConvertTo-LongFormPath {
     [CmdletBinding()]
     param(
@@ -1589,8 +1577,6 @@ function ConvertTo-LongFormPath {
 
     return $longFormPath
 }
-
-# TODO: ADD A SWITCH TO EXCLUDE FILES, A SWITCH TO EXCLUDE DIRECTORIES, AND A SWITCH NOT TO FOLLOW REPARSE POINTS.
 function Get-DirectoryChildItem {
     [CmdletBinding()]
     param(
@@ -1721,7 +1707,6 @@ function Get-DirectoryChildItem {
         if (!$directoryQueue.Count) { $null = $stackOfDirectoryQueues.Pop() }
     }
 }
-
 function Get-FullNormalizedPath {
     [CmdletBinding()]
     param(
@@ -1756,7 +1741,6 @@ function Get-FullNormalizedPath {
 
     $outPath
 }
-
 function ConvertTo-OrderedDictionary
 {
     #requires -Version 2.0
@@ -1798,7 +1782,6 @@ function ConvertTo-OrderedDictionary
         Write-Output $outputObject
     }
 }
-
 function Import-D365FSCSource
 {
     [CmdletBinding()]
@@ -1839,7 +1822,6 @@ function Import-D365FSCSource
 
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false
 }
-
 function Update-D365FSCISVSource
 {
     [CmdletBinding()]
@@ -1917,11 +1899,11 @@ function Update-D365FSCISVSource
     }
     Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue -Confirm:$false  
 }
-
 function Update-Readme
 {
-    Install-Module PowerShell-yaml
-    Get-ChildItem Actions -Directory | ForEach-Object{
+    Install-Module PowerShell-yaml -Force
+    Get-ChildItem .\Actions -Directory
+    Get-ChildItem .\Actions -Directory | ForEach-Object{
         $yamlFile = (Join-Path $_.FullName action.yaml)
         if(Test-Path -Path $yamlFile)
         {

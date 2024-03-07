@@ -378,9 +378,9 @@ try {
 
         Set-Location $buildPath
         #deploy
-        if($settings.cleanupNugets)
-        {
-            Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
+        Get-ChildItem -Recurse | Where-Object {$_.FullName -match "bin.*.Release.*.nupkg$"} | ForEach-Object {
+            if($settings.cleanupNugets)
+            {
                 $_.FullName
                 $zipfile = $_
                 # Cleanup NuGet file
@@ -395,9 +395,10 @@ try {
                 $zip.Dispose()
                 $stream.Close()
                 $stream.Dispose()
-                Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
             }
+            Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($artifactDirectory)\$($_.BaseName).nupkg"        
         }
+        
 
         Write-Output "::endgroup::"
 
