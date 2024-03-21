@@ -281,6 +281,24 @@ try {
     {
         if($settings.type -eq "Commerce" -and $github.Job -eq "Initialization")
         {
+            function GetEnvironment {
+                param(
+                    [string]$envName
+                )
+                begin
+                {
+                    $envsJson = (Get-Content Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\environments.json') | ConvertFrom-Json
+                }
+                process{
+                    @($envsJson | ForEach-Object { 
+                        if($_.name -eq $envName) 
+                        {
+                            return $_
+                        }
+                    })
+                }
+                
+            }
             Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
             $selectedEnvironments = $environmentsJson | ConvertFrom-Json
             $startEnvironments = @()
@@ -291,7 +309,7 @@ try {
                 if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
                 {
                     $selectedEnvironments | ForEach-Object { 
-                        $sEnv = $_
+                        $sEnv = GetEnvironment -envName $_
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
                         {
@@ -311,11 +329,11 @@ try {
                         {
                             if($sEnv.name -eq $dynamicsEnvironment)
                             {
-                                $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                                $PowerState = Check-AzureVMState -VMName $sEnv.settings.azVmname -VMGroup $sEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                                 OutputInfo -message "Environment check: $($sEnv.settings.azVmname) $PowerState"
                                 if($PowerState -ne "running")
                                 {
-                                    $startEnvironments += $_.settings.azVmname
+                                    $startEnvironments += $sEnv.settings.azVmname
                                 }
                             }
                         }
