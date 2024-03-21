@@ -310,6 +310,7 @@ try {
                 {
                     $selectedEnvironments | ForEach-Object { 
                         $sEnv = GetEnvironment -envName $_
+                        OutputInfo -message "Checking $($sEnv.name)"
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
                         {
