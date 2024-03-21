@@ -287,7 +287,7 @@ try {
                 )
                 begin
                 {
-                    $envsJson = (Get-Content Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\environments.json') | ConvertFrom-Json
+                    $envsJson = (Get-Content (Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\environments.json')) | ConvertFrom-Json
                 }
                 process{
                     @($envsJson | ForEach-Object { 
