@@ -308,7 +308,7 @@ try {
                         }
                         else 
                         {
-                            if($sEnv.settings.azVmname -eq $dynamicsEnvironment)
+                            if($sEnv.settings.azVmname.Contains($dynamicsEnvironment))
                             {
                                 $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                                 OutputInfo -message "Environment check: $($sEnv.settings.azVmname) $PowerState"
