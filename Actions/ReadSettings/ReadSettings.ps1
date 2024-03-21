@@ -289,7 +289,7 @@ try {
 
                 if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
                 {
-                    $startEnvironments = @($envsFile | ForEach-Object { 
+                    $envsFile | ForEach-Object { 
                         $sEnv = $_
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
@@ -301,7 +301,7 @@ try {
                                     $PowerState = Check-AzureVMState -VMName $sEnv.settings.azVmname -VMGroup $sEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                                     if($PowerState -ne "running")
                                     {
-                                        $sEnv.settings.azVmname
+                                        $startEnvironments += $sEnv.settings.azVmname
                                     }
                                 }
                             }
@@ -313,18 +313,18 @@ try {
                                 $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                                 if($PowerState -ne "running")
                                 {
-                                    $_.settings.azVmname
+                                    $startEnvironments += $_.settings.azVmname
                                 }
                             }
                         }
-                    }) 
+                    }
                 }
                 else {
                     $startEnvironments = @($envsFile | ForEach-Object { 
                         $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                         if($PowerState -ne "running")
                         {
-                            $_.settings.azVmname
+                            $startEnvironments += $_.settings.azVmname
                         }
                     })                    
                 }
