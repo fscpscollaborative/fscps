@@ -282,6 +282,7 @@ try {
         if($settings.type -eq "Commerce" -and $github.Job -eq "Initialization")
         {
             Import-Module (Join-Path $PSScriptRoot "..\Helpers\ReadSecretsHelper.psm1")
+            $selectedEnvironments = $environmentsJson | ConvertFrom-Json
             $startEnvironments = @()
             try {
                 $azClientSecret = GetSecret -secret "AZ_CLIENTSECRET"
@@ -289,7 +290,7 @@ try {
 
                 if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
                 {
-                    $envsFile | ForEach-Object { 
+                    $selectedEnvironments | ForEach-Object { 
                         $sEnv = $_
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
@@ -321,7 +322,7 @@ try {
                     }
                 }
                 else {
-                    $startEnvironments = @($envsFile | ForEach-Object { 
+                    $startEnvironments = @($selectedEnvironments | ForEach-Object { 
                         $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                         if($PowerState -ne "running")
                         {
