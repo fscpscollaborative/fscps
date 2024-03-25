@@ -340,13 +340,14 @@ try {
                     }
                 }
                 else {
-                    $startEnvironments = @($selectedEnvironments | ForEach-Object { 
-                        $PowerState = Check-AzureVMState -VMName $_.settings.azVmname -VMGroup $_.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                    $selectedEnvironments | ForEach-Object { 
+                        $startEnv = $_
+                        $PowerState = Check-AzureVMState -VMName $startEnv.settings.azVmname -VMGroup $startEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                         if($PowerState -ne "running")
                         {
-                            $startEnvironments += $_.settings.azVmname
+                            $startEnvironments += $startEnv.settings.azVmname
                         }
-                    })                    
+                    }                   
                 }
 
                 Write-Host "Envs to start: $startEnvironments"
