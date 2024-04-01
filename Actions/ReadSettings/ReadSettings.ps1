@@ -114,7 +114,7 @@ try {
         $dEnvCount = $dynamicsEnvironment.Split(",").Count
         ForEach($env in $envsFile)
         {
-            if($dEnvCount -gt 1)
+            if($dEnvCount -gt 1)gs
             {
                 $dynamicsEnvironment.Split(",") | ForEach-Object {
                     if($env.name -eq $_)
@@ -342,6 +342,7 @@ try {
                 else {
                     $selectedEnvironments | ForEach-Object { 
                         $startEnv = $_
+                        $_
                         $PowerState = Check-AzureVMState -VMName $startEnv.settings.azVmname -VMGroup $startEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                         if($PowerState -ne "running")
                         {
