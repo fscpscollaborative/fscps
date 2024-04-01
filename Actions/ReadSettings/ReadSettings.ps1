@@ -114,7 +114,7 @@ try {
         $dEnvCount = $dynamicsEnvironment.Split(",").Count
         ForEach($env in $envsFile)
         {
-            if($dEnvCount -gt 1)gs
+            if($dEnvCount -gt 1)
             {
                 $dynamicsEnvironment.Split(",") | ForEach-Object {
                     if($env.name -eq $_)
@@ -310,6 +310,7 @@ try {
                 {
                     $selectedEnvironments | ForEach-Object { 
                         $sEnv = GetEnvironment -envName $_
+                        $sEnv
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
                         {
