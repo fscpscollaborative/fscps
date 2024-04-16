@@ -20,7 +20,8 @@ try {
     Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
 
     $workflowName = $env:GITHUB_WORKFLOW
-    $settings = ReadSettings -baseFolder $ENV:GITHUB_WORKSPACE -workflowName $workflowName
+    $settings = Get-FSCPSSettings -OutputAsHashtable
+    $settings
     if ($get) {
         $getSettings = $get.Split(',').Trim()
     }

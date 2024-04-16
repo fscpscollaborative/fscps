@@ -105,9 +105,6 @@ try {
    
     try
     {                  
-        Write-Output "::group::Build solution"
-        #Build solution
-        OutputInfo "======================================== Build solution"
         Set-Location $buildPath
         
         ### Prebuild
@@ -147,8 +144,6 @@ try {
             & $postbuildCustomScript -settings $settings -githubContext $github -helperPath $helperPath
         }
         ### Postbuild
-        
-        Write-Output "::endgroup::"
 
         if($settings.generatePackages)
         {
