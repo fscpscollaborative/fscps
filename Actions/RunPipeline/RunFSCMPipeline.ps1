@@ -63,7 +63,6 @@ try {
     {
         $settings.sourceBranch = $settings.currentBranch
     }
-    $settings
     $version
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
@@ -140,7 +139,7 @@ try {
         }
         
         $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE
-
+        $buildResult
         ### Postbuild
         $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
         if(Test-Path $postbuildCustomScript)
