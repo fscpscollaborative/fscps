@@ -20,7 +20,7 @@ Set-StrictMode -Version 2.0
 try {
     $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
     . ($helperPath)
-    installModules @("AZ.Storage","d365fo.tools", "fscps.tools")
+    installModules @("fscps.tools")
     $LastExitCode = 0
     $baseFolder = $ENV:GITHUB_WORKSPACE
     $workflowName = $env:GITHUB_WORKFLOW
