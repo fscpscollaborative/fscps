@@ -30,6 +30,7 @@ try {
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson
+    $settings
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $settingsHash = $settings #| ConvertTo-HashTable
     $settings.secretsList | ForEach-Object {
