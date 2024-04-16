@@ -501,6 +501,11 @@ function installModules {
         }
 
         $modules | ForEach-Object { 
+            Write-Host "Updating module $_"
+            Update-Module $_ -WarningAction SilentlyContinue | Out-Null
+        }
+
+        $modules | ForEach-Object { 
             Write-Host "Importing module $_"
             Import-Module $_ -DisableNameChecking -WarningAction SilentlyContinue | Out-Null
         }
