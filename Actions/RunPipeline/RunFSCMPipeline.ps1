@@ -22,7 +22,6 @@ try {
     . ($helperPath)
     installModules @("fscps.tools")
     $LastExitCode = 0
-    $baseFolder = $ENV:GITHUB_WORKSPACE
     $workflowName = $env:GITHUB_WORKFLOW
     $github = (Get-ActionContext)
 
@@ -301,14 +300,6 @@ try {
     }
     finally
     {
-        if (Test-Path -Path $outputDir)
-        {
-            Remove-Item -Path $outputDir -Recurse -Force
-        }
-        if (Test-Path -Path $tempCombinedPackage)
-        {
-            Remove-Item -Path $tempCombinedPackage -Force
-        }
     }
 }
 catch {
