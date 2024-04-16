@@ -36,7 +36,7 @@ try {
     }
 
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
-    #installModules @("AZ.Storage","d365fo.tools")
+    installModules @("fscps.tools")
 }
 catch {
     OutputError -message $_.Exception.Message

@@ -241,7 +241,7 @@ try {
                     $srcPattern = '        - "*"'
                     $replacePattern = '        - "*"'
                     $replacePattern += "`r`n"
-                    Get-Versions | ForEach-Object { 
+                    $versions | ForEach-Object { 
                         $ver = $_.version
                         $replacePattern += "        - "+'"'+$($ver)+'"'+"`r`n"
 

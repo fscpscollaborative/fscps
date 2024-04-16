@@ -55,8 +55,6 @@ try {
     
     $settings.buildVersion
 
-    $versions = Get-Versions
-
     if($settings.sourceBranch -eq "")
     {
         $settings.sourceBranch = $settings.currentBranch
