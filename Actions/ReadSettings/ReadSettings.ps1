@@ -22,7 +22,7 @@ try {
     $workflowName = $env:GITHUB_WORKFLOW
 
     Set-FSCPSSettings
-    
+
     $settings = Get-FSCPSSettings -OutputAsHashtable
     $settings
     if ($get) {
@@ -377,6 +377,7 @@ try {
             }
         }
     }
+    $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
 }
 catch {
     Write-Error $_.Exception.Message
