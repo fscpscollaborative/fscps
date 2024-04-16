@@ -66,6 +66,9 @@ try {
     $version
     #SourceBranchToPascakCase
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
+
+    $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
+
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
     $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
 
