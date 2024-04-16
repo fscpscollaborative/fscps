@@ -29,8 +29,8 @@ try {
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
-    $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable | ConvertTo-OrderedDictionary
-    #$settings
+    $settings = ((Get-FSCPSSettings -SettingsJsonString $settingsJson) | ConvertTo-OrderedDictionary)
+    $settings
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $settingsHash = $settings #| ConvertTo-HashTable
     $settings.secretsList | ForEach-Object {
