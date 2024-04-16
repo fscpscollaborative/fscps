@@ -150,34 +150,35 @@ try {
         
         Write-Output "::endgroup::"
 
-        $pname                  = $buildResult.PACKAGE_NAME
-        $deployablePackagePath  = $buildResult.PACKAGE_PATH
-        $artifactDirectory      = $buildResult.ARTIFACTS_PATH
-
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$pname"
-        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$deployablePackagePath"
-        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
-        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
-
-        $artifacts = Get-ChildItem $artifactDirectory
-        $artifactsList = $artifacts.FullName -join ","
-
-        if($artifactsList.Contains(','))
+        if($settings.generatePackages)
         {
-            $artifacts = $artifactsList.Split(',') | ConvertTo-Json -compress
+            $pname                  = $buildResult.PACKAGE_NAME
+            $deployablePackagePath  = $buildResult.PACKAGE_PATH
+            $artifactDirectory      = $buildResult.ARTIFACTS_PATH
+
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$pname"
+            Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$pname"
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_PATH=$deployablePackagePath"
+            Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_PATH=$deployablePackagePath"
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$artifactDirectory"
+            Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$artifactDirectory"
+
+            $artifacts = Get-ChildItem $artifactDirectory
+            $artifactsList = $artifacts.FullName -join ","
+
+            if($artifactsList.Contains(','))
+            {
+                $artifacts = $artifactsList.Split(',') | ConvertTo-Json -compress
+            }
+            else
+            {
+                $artifacts = '["'+$($artifactsList).ToString()+'"]'
+
+            }
+
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
+            Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
         }
-        else
-        {
-            $artifacts = '["'+$($artifactsList).ToString()+'"]'
-
-        }
-
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
-        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
-
-        Write-Output "::endgroup::"
 
         #Upload to LCS
         $assetId = ""
