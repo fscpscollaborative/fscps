@@ -18,7 +18,7 @@ Set-StrictMode -Version 2.0
 
 try {
     Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
-
+    installModules @("fscps.tools")
     $workflowName = $env:GITHUB_WORKFLOW
     $settings = Get-FSCPSSettings -OutputAsHashtable
     $settings
