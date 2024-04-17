@@ -185,7 +185,7 @@ try {
                         break;
                     }
                     "digicert_keystore" {                    
-                        Sign-BinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
+                        Invoke-FSCPSSignBinaryFile -SM_API_KEY "$codeSignDigiCertAPISecretName" `
                         -SM_CLIENT_CERT_FILE_URL "$codeSignDigiCertUrlSecretName" `
                         -SM_CLIENT_CERT_PASSWORD $(ConvertTo-SecureString $codeSignDigiCertPasswordSecretName -AsPlainText -Force) `
                         -SM_CODE_SIGNING_CERT_SHA1_HASH "$codeSignDigiCertHashSecretName" `

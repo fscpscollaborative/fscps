@@ -174,128 +174,133 @@ try {
 
             Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
             Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
-        }
 
-        #Upload to LCS
-        $assetId = ""
-        if($settings.uploadPackageToLCS)
-        {
-            Write-Output "::group::Upload artifact to the LCS"
-            OutputInfo "======================================== Upload artifact to the LCS"
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-            $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-            Write-Output "::endgroup::"
 
-            #Deploy asset to the LCS Environment
-            if($settings.deploy)
+
+            #Upload to LCS
+            $assetId = ""
+            if($settings.uploadPackageToLCS)
             {
-                Write-Output "::group::Deploy asset to the LCS Environment"
-                OutputInfo "======================================== Deploy asset to the LCS Environment"
-                #Check environment status
-                OutputInfo "======================================== Check $($EnvironmentName) status"
-
-                $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
-                $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
-
-                OutputInfo "Check az cli installation..."
-                if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
-                {
-                    OutputInfo "az cli installing.."
-                    $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
-                    OutputInfo "az cli installed.."
-                }
-
-                Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
-                $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
-
-                $PowerState = ""
-                if ($AzureRMAccount) { 
-                    #Do Logic
-                    OutputInfo "== Logged in == $($settings.azTenantId) "
-
-                    OutputInfo "Getting Azure VM State $($settings.azVmname)"
-                    $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
-                    OutputInfo "....state is $($PowerState)"
-                }
-                
-                OutputInfo "Getting LCS State $($settings.azVmname)"
-                $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
-                if($status.DeploymentState -eq "Servicing")
-                {
-                    do {
-                        Start-Sleep -Seconds 60
-                        $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
-                    
-                        OutputInfo "Waiting of previous deployment finish. Current status: $($status.DeploymentState)"
-                    }
-                    while ($status.DeploymentState -eq "Servicing")
-                    
-                    OutputInfo "Previous deployment status: $($status.DeploymentState)"
-                    Start-Sleep -Seconds 120
-                }
-                if($status.DeploymentState -eq "Failed")
-                {
-                    OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
-                }
-
-                #Startup environment
-                #if($PowerState -ne "running")
-                #{
-                    OutputInfo "======================================== Start $($EnvironmentName)"
-                    Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
-                    Start-Sleep -Seconds 60
-                #}
+                Write-Output "::group::Upload artifact to the LCS"
+                OutputInfo "======================================== Upload artifact to the LCS"
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
+                $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
+                Write-Output "::endgroup::"
 
                 #Deploy asset to the LCS Environment
-                OutputInfo "======================================== Deploy asset to the LCS Environment"
-                $WaitForCompletion = $true
-                $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
-                $errorCnt = 0
-                $deploymentStatus = ""
-                do {
-                    Start-Sleep -Seconds 60
-                    $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
+                if($settings.deploy)
+                {
+                    Write-Output "::group::Deploy asset to the LCS Environment"
+                    OutputInfo "======================================== Deploy asset to the LCS Environment"
+                    #Check environment status
+                    OutputInfo "======================================== Check $($EnvironmentName) status"
 
-                    if (($deploymentStatus.ErrorMessage))
+                    $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
+                    $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
+
+                    OutputInfo "Check az cli installation..."
+                    if(-not(Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"))
                     {
-                        $errorCnt++
+                        OutputInfo "az cli installing.."
+                        $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+                        OutputInfo "az cli installed.."
                     }
 
-                    if($errorCnt -eq 3)
+                    Set-Alias -Name az -Value "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd"
+                    $AzureRMAccount = az login --service-principal -u $settings.azClientId -p "$azClientsecretSecretname" --tenant $settings.azTenantId
+
+                    $PowerState = ""
+                    if ($AzureRMAccount) { 
+                        #Do Logic
+                        OutputInfo "== Logged in == $($settings.azTenantId) "
+
+                        OutputInfo "Getting Azure VM State $($settings.azVmname)"
+                        $PowerState = ([string](az vm list -d --query "[?name=='$($settings.azVmname)'].powerState").Trim().Trim("[").Trim("]").Trim('"').Trim("VM ")).Replace(' ','')
+                        OutputInfo "....state is $($PowerState)"
+                    }
+                    
+                    OutputInfo "Getting LCS State $($settings.azVmname)"
+                    $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                    if($status.DeploymentState -eq "Servicing")
                     {
-                        if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
+                        do {
+                            Start-Sleep -Seconds 60
+                            $status = Get-D365LcsEnvironmentMetadata -EnvironmentId $settings.lcsEnvironmentId
+                        
+                            OutputInfo "Waiting of previous deployment finish. Current status: $($status.DeploymentState)"
+                        }
+                        while ($status.DeploymentState -eq "Servicing")
+                        
+                        OutputInfo "Previous deployment status: $($status.DeploymentState)"
+                        Start-Sleep -Seconds 120
+                    }
+                    if($status.DeploymentState -eq "Failed")
+                    {
+                        OutputError -message "Previous deployment status is failed. Please ckeck the deployment logs in LCS."
+                    }
+
+                    #Startup environment
+                    #if($PowerState -ne "running")
+                    #{
+                        OutputInfo "======================================== Start $($EnvironmentName)"
+                        Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
+                        Start-Sleep -Seconds 60
+                    #}
+
+                    #Deploy asset to the LCS Environment
+                    OutputInfo "======================================== Deploy asset to the LCS Environment"
+                    $WaitForCompletion = $true
+                    $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
+                    $errorCnt = 0
+                    $deploymentStatus = ""
+                    do {
+                        Start-Sleep -Seconds 60
+                        $deploymentStatus = Get-D365LcsDeploymentStatus -ActivityId $PSFObject.ActivityId -EnvironmentId $settings.lcsEnvironmentId -FailOnErrorMessage -SleepInSeconds 5
+
+                        if (($deploymentStatus.ErrorMessage))
+                        {
+                            $errorCnt++
+                        }
+
+                        if($errorCnt -eq 3)
+                        {
+                            if (($deploymentStatus.ErrorMessage) -or ($deploymentStatus.OperationStatus -eq "PreparationFailed")) {
+                                $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
+                                OutputError -message $errorMessagePayload
+                            }
+                        }
+                        #if deployment is failed throw anyway
+                        if(($deploymentStatus.OperationStatus -eq "Failed") -or [string]::IsNullOrEmpty($deploymentStatus.OperationStatus))
+                        {
                             $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
                             OutputError -message $errorMessagePayload
                         }
-                    }
-                    #if deployment is failed throw anyway
-                    if(($deploymentStatus.OperationStatus -eq "Failed") -or [string]::IsNullOrEmpty($deploymentStatus.OperationStatus))
-                    {
-                        $errorMessagePayload = "`r`n$($deploymentStatus | ConvertTo-Json)"
-                        OutputError -message $errorMessagePayload
-                    }
 
-                    OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
-                }
-                while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
-                
-                
-                if(($deploymentStatus.OperationStatus -eq "Completed"))
-                {
-                    $lcsConfig = Get-D365LcsApiConfig
-                    Remove-D365LcsAssetFile -ProjectId $lcsConfig.projectid -AssetId "$($assetId.AssetId)" -BearerToken $lcsConfig.bearertoken -LcsApiUri $lcsConfig.lcsapiuri -Verbose
+                        OutputInfo "Deployment status: $($deploymentStatus.OperationStatus)"
+                    }
+                    while ((($deploymentStatus.OperationStatus -eq "InProgress") -or ($deploymentStatus.OperationStatus -eq "NotStarted") -or ($deploymentStatus.OperationStatus -eq "PreparingEnvironment")) -and $WaitForCompletion)
                     
-                }
+                    
+                    if(($deploymentStatus.OperationStatus -eq "Completed"))
+                    {
+                        $lcsConfig = Get-D365LcsApiConfig
+                        Remove-D365LcsAssetFile -ProjectId $lcsConfig.projectid -AssetId "$($assetId.AssetId)" -BearerToken $lcsConfig.bearertoken -LcsApiUri $lcsConfig.lcsapiuri -Verbose
+                        
+                    }
 
-                if($PowerState -ne "running")
-                {
-                    OutputInfo "======================================== Stop $($EnvironmentName)"
-                    Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
+                    if($PowerState -ne "running")
+                    {
+                        OutputInfo "======================================== Stop $($EnvironmentName)"
+                        Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
+                    }
+                    Write-Output "::endgroup::"
                 }
-                Write-Output "::endgroup::"
             }
+
         }
+        $artifactDirectory  = $buildResult.ARTIFACTS_PATH
+
     }
     finally
     {
