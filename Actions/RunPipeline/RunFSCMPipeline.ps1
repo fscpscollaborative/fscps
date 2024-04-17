@@ -299,7 +299,7 @@ try {
             }
 
         }
-        $artifactDirectory  = $buildResult.ARTIFACTS_PATH
+        
 
     }
     finally
