@@ -123,7 +123,7 @@ try {
     }
 
     $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE
-    $buildResult    
+        
 
     ### Postbuild
     $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
@@ -146,9 +146,18 @@ try {
     #GeneratePackages
     if($settings.generatePackages)
     {
+        Write-Host "BuildResult ========================="
+        $buildResult
+
+        Write-Host "Variables ========================="
         $PACKAGE_NAME = $buildResult.PACKAGE_NAME
         $ARTIFACTS_PATH = $buildResult.ARTIFACTS_PATH
         $ARTIFACTS_LIST = $buildResult.ARTIFACTS_LIST
+
+        $PACKAGE_NAME
+        $ARTIFACTS_PATH
+        $ARTIFACTS_LIST
+        Write-Host "Add-Content ========================="
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$PACKAGE_NAME"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$PACKAGE_NAME"
