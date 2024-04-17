@@ -31,7 +31,6 @@ try {
 
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable
     $settings
-    $settings.secretsList
 
     $secrets = $secretsJson | ConvertFrom-Json | ConvertTo-HashTable
     $settingsHash = $settings #| ConvertTo-HashTable
@@ -63,13 +62,14 @@ try {
     {
         $settings.sourceBranch = $settings.currentBranch
     }
+
     $version
-    #SourceBranchToPascakCase
+
     $settings.sourceBranch = [regex]::Replace(($settings.sourceBranch).Replace("refs/heads/","").Replace("/","_"), '(?i)(?:^|-|_)(\p{L})', { $args[0].Groups[1].Value.ToUpper() })
 
     $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
-
     $buildPath = Join-Path "C:\Temp" $settings.buildPath
+
     $msMetadataDirectory = "$($buildPath)\$($settings.metadataPath)".Trim()
 
     $mainModel = Get-FSCModels -metadataPath $settings.metadataPath
@@ -108,8 +108,6 @@ try {
    
     try
     {                  
-        Set-Location $buildPath
-        
         ### Prebuild
         $prebuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PreBuild.ps1'
         if(Test-Path $prebuildCustomScript)
