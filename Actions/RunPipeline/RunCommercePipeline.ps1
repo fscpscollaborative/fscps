@@ -146,19 +146,23 @@ try {
     #GeneratePackages
     if($settings.generatePackages)
     {
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$($buildResult.PACKAGE_NAME)"
-        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$($buildResult.PACKAGE_NAME)"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$($buildResult.ARTIFACTS_PATH)"
-        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$($buildResult.ARTIFACTS_PATH)"
-        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$($buildResult.ARTIFACTS_LIST)"
-        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$($buildResult.ARTIFACTS_LIST)"
+        $PACKAGE_NAME = $buildResult.PACKAGE_NAME
+        $ARTIFACTS_PATH = $buildResult.ARTIFACTS_PATH
+        $ARTIFACTS_LIST = $buildResult.ARTIFACTS_LIST
+
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$PACKAGE_NAME"
+        Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$PACKAGE_NAME"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$ARTIFACTS_PATH"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_PATH=$ARTIFACTS_PATH"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$ARTIFACTS_LIST"
+        Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$ARTIFACTS_LIST"
 
         if($settings.signArtifacts)
         {
             Write-Output "::group::Sign packages"
             #sign files
             
-            Get-ChildItem $($buildResult.ARTIFACTS_PATH) | Where-Object {$_.Extension -like ".exe"} | ForEach-Object{          
+            Get-ChildItem $ARTIFACTS_PATH | Where-Object {$_.Extension -like ".exe"} | ForEach-Object{          
                 Write-Output "Signing File: '$($_.FullName)' ..."
                 [string]$filePath = "$($_.FullName)"
                 try {
@@ -206,7 +210,7 @@ try {
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
-            [System.IO.DirectoryInfo]$sUExtPath = Get-ChildItem -Path $($buildResult.ARTIFACTS_PATH) -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
+            [System.IO.DirectoryInfo]$sUExtPath = Get-ChildItem -Path $ARTIFACTS_PATH -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
             if($sUExtPath)
             {    
                 Write-Host "Installing the extension."
