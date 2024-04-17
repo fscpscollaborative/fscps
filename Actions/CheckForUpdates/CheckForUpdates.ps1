@@ -216,9 +216,9 @@ try {
                 
                 if ($fileName -eq "release.yml") {
                     #GitHub runner
-                    if ($repoSettings.ContainsKey("githubRunner")) {
+                    if ($settings.ContainsKey("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -248,9 +248,9 @@ try {
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($repoSettings.ContainsKey("githubRunner")) {
+                    if ($settings.ContainsKey("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -272,9 +272,9 @@ try {
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                     #GitHub runner
-                    if ($repoSettings.ContainsKey("githubRunner")) {
+                    if ($settings.ContainsKey("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -294,9 +294,9 @@ try {
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($repoSettings.ContainsKey("githubRunner")) {
+                    if ($settings.ContainsKey("githubRunner")) {
                         $srcPattern = "CI:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "CI:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
+                        $replacePattern = "CI:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
@@ -320,9 +320,9 @@ try {
 
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($repoSettings.ContainsKey("githubRunner")) {
+                    if ($settings.ContainsKey("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
-                        $replacePattern = "Initialization:`r`n    runs-on: [$($repoSettings."runs-on")]`r`n"
+                        $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                 }
