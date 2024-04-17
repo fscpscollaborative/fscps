@@ -31,7 +31,8 @@ try {
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
-    $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson
+    $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable
+    $settings
 
     $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
     try {
@@ -213,7 +214,7 @@ try {
                 
                 if ($fileName -eq "release.yml") {
                     #GitHub runner
-                    if ($settings.ContainsKey("githubRunner")) {
+                    if ($settingsHash.Contains("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
@@ -245,7 +246,7 @@ try {
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($settings.ContainsKey("githubRunner")) {
+                    if ($settingsHash.Contains("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
@@ -269,7 +270,7 @@ try {
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     }
                     #GitHub runner
-                    if ($settings.ContainsKey("githubRunner")) {
+                    if ($settingsHash.Contains("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
@@ -291,7 +292,7 @@ try {
                     }
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($settings.ContainsKey("githubRunner")) {
+                    if ($settingsHash.Contains("githubRunner")) {
                         $srcPattern = "CI:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "CI:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
@@ -317,7 +318,7 @@ try {
 
                     $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
                     #GitHub runner
-                    if ($settings.ContainsKey("githubRunner")) {
+                    if ($settingsHash.Contains("githubRunner")) {
                         $srcPattern = "Initialization:`r`n    runs-on: [ windows-latest ]`r`n"
                         $replacePattern = "Initialization:`r`n    runs-on: [$($settings."githubRunner")]`r`n"
                         $srcContent = $srcContent.Replace($srcPattern, $replacePattern)
