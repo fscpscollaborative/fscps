@@ -24,7 +24,7 @@ try {
     Set-FSCPSSettings
 
     $settings = Get-FSCPSSettings -OutputAsHashtable
-    $settings
+    #$settings
     if ($get) {
         $getSettings = $get.Split(',').Trim()
     }
@@ -318,8 +318,8 @@ try {
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
                         {
-                            $dynamicsEnvironment.Split(",") | ForEach-Object {
-                                $dName = $_
+                            foreach ($dName in $dynamicsEnvironment.Split(",")) 
+                            {
                                 if($sEnv.settings.azVmname -eq $dName)
                                 {
                                     $PowerState = Check-AzureVMState -VMName $sEnv.settings.azVmname -VMGroup $sEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
@@ -378,6 +378,7 @@ try {
         }
     }
     $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
+    $settings
 }
 catch {
     Write-Error $_.Exception.Message
