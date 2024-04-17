@@ -31,7 +31,7 @@ try {
     Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
-    $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable
+    $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson
 
     $EnvironmentsFile = Join-Path $baseFolder '.FSC-PS\environments.json'
     try {
