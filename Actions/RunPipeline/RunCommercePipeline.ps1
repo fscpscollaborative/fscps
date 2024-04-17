@@ -64,7 +64,6 @@ try {
     $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
     $settings
 
-    $buildPath = $settings.retailSDKBuildPath
     Write-Output "::endgroup::"
 
     Write-Output "::group::Build solution"
@@ -153,10 +152,9 @@ try {
         $PACKAGE_NAME = $buildResult.PACKAGE_NAME
         $ARTIFACTS_PATH = $buildResult.ARTIFACTS_PATH
         $ARTIFACTS_LIST = $buildResult.ARTIFACTS_LIST
-
-        $PACKAGE_NAME
-        $ARTIFACTS_PATH
-        $ARTIFACTS_LIST
+        $SU_INSTALLER_PATH = $buildResult.SU_INSTALLER_PATH
+        $BUILD_FOLDER_PATH = $buildResult.BUILD_FOLDER_PATH
+        
         Write-Host "Add-Content ========================="
 
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$PACKAGE_NAME"
@@ -231,13 +229,13 @@ try {
                     Write-Host
                     exit $LastExitCode
                 }  
-                $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($sUInstallerPath))"
+                $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($SU_INSTALLER_PATH))"
                 $extensionInstallPath
                 if(Test-Path $extensionInstallPath){
                     Write-Host
                     Write-Host "Copy the binary and symbol files into extensions folder."
-                    Set-Location $buildPath
-                    Get-ChildItem -Path $buildPath -Recurse | Where-Object {$_.FullName -match ".*.Runtime.*.bin.*.Release.*.Vertex.*pdb$"} | ForEach-Object {
+                    Set-Location $BUILD_FOLDER_PATH
+                    Get-ChildItem -Path $BUILD_FOLDER_PATH -Recurse | Where-Object {$_.FullName -match ".*.Runtime.*.bin.*.Release.*.Vertex.*pdb$"} | ForEach-Object {
                         $_.FullName
                         Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($extensionInstallPath)\$($_.Name)"   
                     }
