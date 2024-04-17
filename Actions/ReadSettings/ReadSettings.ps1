@@ -378,7 +378,6 @@ try {
         }
     }
     $settings = Get-FSCPSSettings -SettingsJsonString ($settings | ConvertTo-Json) -OutputAsHashtable
-    $settings
 }
 catch {
     Write-Error $_.Exception.Message
