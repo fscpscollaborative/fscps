@@ -313,8 +313,7 @@ try {
                 if($dynamicsEnvironment -and $dynamicsEnvironment -ne "*")
                 {
                     $selectedEnvironments | ForEach-Object { 
-                        $sEnv = GetEnvironment -envName $_
-                        $sEnv
+                        $sEnv = GetEnvironment -envName $_.name
                         $dEnvCount = $dynamicsEnvironment.Split(",").Count
                         if($dEnvCount -gt 1)
                         {
@@ -346,12 +345,11 @@ try {
                 }
                 else {
                     $selectedEnvironments | ForEach-Object { 
-                        $startEnv = $_
-                        $_
-                        $PowerState = Check-AzureVMState -VMName $startEnv.settings.azVmname -VMGroup $startEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
+                        $sEnv = GetEnvironment -envName $_.name
+                        $PowerState = Check-AzureVMState -VMName $sEnv.settings.azVmname -VMGroup $sEnv.settings.azVmrg -ClientId "$($settings.azClientId)" -ClientSecret "$azClientSecret" -TenantId $($settings.azTenantId)
                         if($PowerState -ne "running")
                         {
-                            $startEnvironments += $startEnv.settings.azVmname
+                            $startEnvironments += $sEnv.settings.azVmname
                         }
                     }                   
                 }
