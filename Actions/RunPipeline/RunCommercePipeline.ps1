@@ -217,11 +217,11 @@ try {
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
-            [System.IO.DirectoryInfo]$sUExtPath = Get-ChildItem -Path $ARTIFACTS_PATH -Recurse | Where-Object {$_.FullName -match ".*ScaleUnit.*.exe$" } | ForEach-Object {$_.FullName}
-            if($sUExtPath)
+        
+            if($SU_INSTALLER_PATH)
             {    
                 Write-Host "Installing the extension."
-                & $sUExtPath install
+                & $SU_INSTALLER_PATH  install
                 
                 if ($LastExitCode -ne 0) {
                     Write-Host
