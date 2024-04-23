@@ -242,9 +242,9 @@
     {
         "version":  "10.0.34",
         "data":  {
-                     "AppVersionLatest":  "10.0.1591.99",                     
+                     "AppVersionLatest":  "10.0.1591.99",
                      "PlatformVersionLatest":  "7.0.6931.99",
-                     "AppVersionGA":  "10.0.1591.99",                     
+                     "AppVersionGA":  "10.0.1591.99",
                      "PlatformVersionGA":  "7.0.6931.99",
                      "FSCPreviewVersionPackageId":  "82a79a39-21c3-4333-a663-6094659ad03d",
                      "RetailSDKVersion":  "10.0.1591.148",
