@@ -63,7 +63,7 @@ try {
         Set-Variable -Name $_ -Value $value
     }
     
-    $versions = Get-Versions
+    $versions = Get-FSCPSVersionInfo
 
     if($settings.sourceBranch -eq "")
     {

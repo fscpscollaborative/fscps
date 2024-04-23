@@ -55,9 +55,9 @@ These LCS settings should contain the tenant configuration what will use by defa
 | lcsClientId | The ClientId of the azure application what has access to the LCS | |
 | lcsUsernameSecretname | The github secret name that contains the username what has at least Owner access to the LCS project. It is a highly recommend to create a separate AAD user for this purposes. E.g. lcsadmin@contoso.com | AZ_TENANT_USERNAME |
 | lcsPasswordSecretname | The github secret name that contains the password of the LCS user. | AZ_TENANT_PASSWORD |
-| fscPreviewVersionPackageId | The AssetId of the Preview package of the FSC. Depends on the FSC Version(version.default.json). | "" |
-| fscServiseUpdatePackageId | The AssetId of the Service Update (GA) package of the FSC. Depends on the FSC Version(version.default.json). | "" |
-| fscFinalQualityUpdatePackageId | The AssetId of the Final Quality Update (Latest) package of the FSC. Depends on the FSC Version(version.default.json). | "" |
+| FSCPreviewVersionPackageId | The AssetId of the Preview package of the FSC. Depends on the FSC Version(version.default.json). | "" |
+| FSCServiseUpdatePackageId | The AssetId of the Service Update (GA) package of the FSC. Depends on the FSC Version(version.default.json). | "" |
+| FSCFinalQualityUpdatePackageId | The AssetId of the Final Quality Update (Latest) package of the FSC. Depends on the FSC Version(version.default.json). | "" |
 
 ### Azure settings
 These Azure settings should contain the tenant configuration what will use by default for all deployments. Used for checking the VM status in the deploy workflow. AAD Application should have "DevTest labs" permitions for the Azure sebscription. Can be overrided in the environments settings.
@@ -73,15 +73,15 @@ These Azure settings should contain the tenant configuration what will use by de
 These Retail settings should contain the RetailSDK settings. Can be overrided in the .FSC-PS\versions.json settings.
 | Name | Description | Default value |
 | :-- | :-- | :-- | 
-| retailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
-| retailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+| RetailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+| RetailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ### ECommerce settings
 The ECommerce settings. Can be overrided in the .FSC-PS\versions.json settings.
 | Name | Description | Default value |
 | :-- | :-- | :-- | 
 | ecommerceMicrosoftRepoUrl | ECommerce specific. The Msdyn365.Commerce.OnlineSDK repo URL what will use to build the ECommerce pacage. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
-| ecommerceMicrosoftRepoBranch | ECommerce specific. The Msdyn365.Commerce.OnlineSDK repo branch. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
+| EcommerceMicrosoftRepoBranch | ECommerce specific. The Msdyn365.Commerce.OnlineSDK repo branch. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ## Runtime generated settings
 | Name | Description | Default value |

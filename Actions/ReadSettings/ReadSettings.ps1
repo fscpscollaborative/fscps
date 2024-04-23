@@ -239,9 +239,9 @@ try {
         $settings.buildVersion = $DynamicsVersion
         
         $ver = Get-VersionData -sdkVersion $settings.buildVersion
-        $settings.retailSDKVersion = $ver.retailSDKVersion
-        $settings.retailSDKURL = $ver.retailSDKURL
-        $settings.ecommerceMicrosoftRepoBranch = $ver.ecommerceMicrosoftRepoBranch
+        $settings.RetailSDKVersion = $ver.RetailSDKVersion
+        $settings.RetailSDKURL = $ver.RetailSDKURL
+        $settings.EcommerceMicrosoftRepoBranch = $ver.EcommerceMicrosoftRepoBranch
     }
 
     $outSettings = @{}

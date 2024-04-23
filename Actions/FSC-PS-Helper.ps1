@@ -414,19 +414,19 @@ function Update-RetailSDK
     {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $version = Get-VersionData -sdkVersion $sdkVersion
-        $path = Join-Path $sdkPath ("RetailSDK.$($version.retailSDKVersion).7z")
+        $path = Join-Path $sdkPath ("RetailSDK.$($version.RetailSDKVersion).7z")
 
         if(!(Test-Path -Path $path))
         {
-            OutputDebug "RetailSDK $($version.retailSDKVersion) is not found."
-            if($version.retailSDKURL)
+            OutputDebug "RetailSDK $($version.RetailSDKVersion) is not found."
+            if($version.RetailSDKURL)
             {
                 OutputDebug "Web request. Downloading..."
-                $silent = Invoke-WebRequest -Uri $version.retailSDKURL -OutFile $path
+                $silent = Invoke-WebRequest -Uri $version.RetailSDKURL -OutFile $path
             }
             else {
                 OutputDebug "Azure Blob. Downloading..."
-                $silent = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.retailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
+                $silent = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.RetailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
             }
         }
         return $path
@@ -462,14 +462,94 @@ function Get-VersionData
     param (
         [string]$sdkVersion
     )
+    begin{
+        $versionsDefaultFile = Join-Path "$PSScriptRoot" "Helpers\versions.default.json"
+        $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
+        try {
+            $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\versions.json'        
+
+            if(Test-Path $versionsFile)
+            {
+                $versions = (Get-Content $versionsFile) | ConvertFrom-Json
+                ForEach($version in $versions)
+                { 
+                    ForEach($versionDefault in $versionsDefault)
+                    {
+                        if($version.version -eq $versionDefault.version)
+                        {
+                
+                            if($version.data.PSobject.Properties.name -match "AppVersionGA")
+                            {
+                                if($version.data.AppVersionGA -ne "")
+                                {
+                                    $versionDefault.data.AppVersionGA = $version.data.AppVersionGA
+                                }
+                            }
+                            if($version.data.PSobject.Properties.name -match "PlatformVersionGA")
+                            {
+                                if($version.data.PlatformVersionGA -ne "")
+                                {
+                                    $versionDefault.data.PlatformVersionGA = $version.data.PlatformVersionGA
+                                }
+                            }
+                            if($version.data.PSobject.Properties.name -match "AppVersionLatest")
+                            {
+                                if($version.data.AppVersionLatest -ne "")
+                                {
+                                    $versionDefault.data.AppVersionLatest = $version.data.AppVersionLatest
+                                }
+                            }
+                            if($version.data.PSobject.Properties.name -match "PlatformVersionLatest")
+                            {
+                                if($version.data.PlatformVersionLatest -ne "")
+                                {
+                                    $versionDefault.data.PlatformVersionLatest = $version.data.PlatformVersionLatest
+                                }
+                            }
+                            if($version.data.PSobject.Properties.name -match "RetailSDKURL")
+                            {
+                                if($version.data.RetailSDKURL -ne "")
+                                {
+                                    $versionDefault.data.RetailSDKURL = $version.data.RetailSDKURL
+                                }
+                            }
+                            if($version.data.PSobject.Properties.name -match "RetailSDKVersion")
+                            {
+                                if($version.data.RetailSDKVersion -ne "")
+                                {
+                                    $versionDefault.data.RetailSDKVersion = $version.data.RetailSDKVersion
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch {
+            <#Do this if a terminating exception happens#>
+        }       
+       
+    }
     process
     {
-        $data = Get-Versions
-        foreach($d in $data)
+        foreach($d in $versionsDefault)
         {
             if($d.version -eq $sdkVersion)
             {
-                Write-Output $d.data
+                $data = @{
+                    AppVersion                      = $d.data.AppVersionLatest
+                    PlatformVersion                 = $d.data.PlatformVersionLatest
+                    RetailSDKVersion                = $d.data.RetailSDKVersion
+                    RetailSDKURL                    = $d.data.RetailSDKURL
+                    FSCServiseUpdatePackageId       = $d.data.FSCServiseUpdatePackageId
+                    FSCPreviewVersionPackageId      = $d.data.FSCPreviewVersionPackageId
+                    FSCLatestQualityUpdatePackageId = $d.data.FSCLatestQualityUpdatePackageId
+                    FSCFinalQualityUpdatePackageId  = $d.data.FSCFinalQualityUpdatePackageId
+                    EcommerceMicrosoftRepoBranch    = $d.data.EcommerceMicrosoftRepoBranch
+                }
+                      
+                $object = New-Object PSObject -Property $data
+                Write-Output $object
             }
         }
     }
@@ -511,18 +591,18 @@ function Get-Versions
                                 $versionDefault.data.PlatformVersion = $version.data.PlatformVersion
                             }
                         }
-                        if($version.data.PSobject.Properties.name -match "retailSDKURL")
+                        if($version.data.PSobject.Properties.name -match "RetailSDKURL")
                         {
-                            if($version.data.retailSDKURL -ne "")
+                            if($version.data.RetailSDKURL -ne "")
                             {
-                                $versionDefault.data.retailSDKURL = $version.data.retailSDKURL
+                                $versionDefault.data.RetailSDKURL = $version.data.RetailSDKURL
                             }
                         }
-                        if($version.data.PSobject.Properties.name -match "retailSDKVersion")
+                        if($version.data.PSobject.Properties.name -match "RetailSDKVersion")
                         {
-                            if($version.data.retailSDKVersion -ne "")
+                            if($version.data.RetailSDKVersion -ne "")
                             {
-                                $versionDefault.data.retailSDKVersion = $version.data.retailSDKVersion
+                                $versionDefault.data.RetailSDKVersion = $version.data.RetailSDKVersion
                             }
                         }
                     }

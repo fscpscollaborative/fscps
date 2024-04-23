@@ -66,7 +66,7 @@ jobs:
                     $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
                     try
                     {
-                    ProcessingNuGet -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
+                    ProcessingNuGet -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken -LCSAssetName $_.Name
                     }
                     catch
                     {

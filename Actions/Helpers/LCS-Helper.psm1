@@ -153,7 +153,8 @@ function ProcessingNuGet {
         [string]$LCSToken,
         [string]$StorageToken,
         [string]$PackageDestination = "C:\temp\packages",
-        [string]$StorageSAStoken
+        [string]$StorageSAStoken,
+        [string]$LCSAssetName
     )
     Begin{
         $storageAccountName = 'ciellosarchive'
@@ -170,6 +171,7 @@ function ProcessingNuGet {
         OutputInfo "ProjectId: $ProjectId"
         OutputInfo "LCSToken: $LCSToken"
         OutputInfo "PackageDestination: $PackageDestination"
+        OutputInfo "LCSAssetName: $LCSAssetName"
     }
     process {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -272,7 +274,7 @@ function ProcessingNuGet {
             $curVer = $versions.Where({$_.version -eq $FSCVersion})
             if(!$curVer)
             {
-                $curVer = (@{version=$FSCVersion;data=@{PlatformVersion='';AppVersion='';retailSDKVersion=''; retailSDKURL=''; ecommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
+                $curVer = (@{version=$FSCVersion;data=@{PlatformVersionGA='';AppVersionGA='';PlatformVersionLatest='';AppVersionLatest='';RetailSDKVersion=''; RetailSDKURL=''; EcommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
                 $versions.Add($curVer)
                 $curVer = $versions.Where({$_.version -eq $FSCVersion})
             }
@@ -280,13 +282,31 @@ function ProcessingNuGet {
                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.CompilerPackage.".ToLower()) -or
                 $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Platform.DevALM.BuildXpp.".ToLower())} 
                 {  
-                    $curVer.data.PlatformVersion = Get-NewestNugetVersion $version $curVer.data.PlatformVersion;                 
+                    $curVer.data.PlatformVersionLatest = Get-NewestNugetVersion $version $curVer.data.PlatformVersionLatest;   
+                    if($LCSAssetName.StartsWith("PU"))
+                    {
+                        $ver = Get-NewestNugetVersion $version $curVer.data.PlatformVersionGA;
+                        $curVer.data.PlatformVersionGA = $ver
+                    }        
+                    if($curVer.data.PlatformVersionGA -eq "")
+                    {
+                        $curVer.data.PlatformVersionGA = $curVer.data.PlatformVersionLatest
+                    }    
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.".ToLower()) -or
                 $AssetName.ToLower().StartsWith("Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.".ToLower())} 
                 {  
-                    $curVer.data.AppVersion = Get-NewestNugetVersion $version $curVer.data.AppVersion;
+                    $curVer.data.AppVersionLatest = Get-NewestNugetVersion $version $curVer.data.AppVersionLatest;
+                    if($LCSAssetName.StartsWith("PU"))
+                    {
+                        $ver = Get-NewestNugetVersion $version $curVer.data.AppVersionGA;
+                        $curVer.data.AppVersionGA = $ver
+                    }        
+                    if($curVer.data.AppVersionGA -eq "")
+                    {
+                        $curVer.data.AppVersionGA = $curVer.data.AppVersionLatest
+                    }   
                     break;
                 }
                 Default {}
@@ -339,28 +359,30 @@ function ProcessingSDP {
             $curVer = $versions.Where({$_.version -eq $FSCVersion})
             if(!$curVer)
             {
-                $curVer = (@{version=$FSCVersion;data=@{PlatformVersion='';
-                                                        AppVersion='';
-                                                        retailSDKVersion=''; 
-                                                        retailSDKURL=''; 
-                                                        fscServiseUpdatePackageId=''; 
-                                                        fscPreviewVersionPackageId=''; 
-                                                        fscFinalQualityUpdatePackageId=''; 
-                                                        ecommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
+                $curVer = (@{version=$FSCVersion;data=@{PlatformVersionGA='';
+                                                        AppVersionGA='';
+                                                        PlatformVersionLatest='';
+                                                        AppVersionLatest='';
+                                                        RetailSDKVersion=''; 
+                                                        RetailSDKURL=''; 
+                                                        FSCServiseUpdatePackageId=''; 
+                                                        FSCPreviewVersionPackageId=''; 
+                                                        FSCFinalQualityUpdatePackageId=''; 
+                                                        EcommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
                 $versions.Add($curVer)
                 $curVer = $versions.Where({$_.version -eq $FSCVersion})
             }
-            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "fscServiseUpdatePackageId"}))
+            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "FSCServiseUpdatePackageId"}))
             {
-                $curVer.data | Add-Member -MemberType NoteProperty -name "fscServiseUpdatePackageId" -value ""
+                $curVer.data | Add-Member -MemberType NoteProperty -name "FSCServiseUpdatePackageId" -value ""
             }
-            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "fscPreviewVersionPackageId"}))
+            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "FSCPreviewVersionPackageId"}))
             {
-                $curVer.data | Add-Member -MemberType NoteProperty -name "fscPreviewVersionPackageId" -value ""
+                $curVer.data | Add-Member -MemberType NoteProperty -name "FSCPreviewVersionPackageId" -value ""
             }
-            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "fscLatestQualityUpdatePackageId"}))
+            if(-not $curVer.data.PSobject.Properties.Where({$_.name -eq "FSCLatestQualityUpdatePackageId"}))
             {
-                $curVer.data | Add-Member -MemberType NoteProperty -name "fscLatestQualityUpdatePackageId" -value ""
+                $curVer.data | Add-Member -MemberType NoteProperty -name "FSCLatestQualityUpdatePackageId" -value ""
             }
             $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $AssetName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
             $download = $false
@@ -371,23 +393,23 @@ function ProcessingSDP {
             switch ($AssetName) {
                 {$AssetName.ToLower().StartsWith("Service Update".ToLower())} 
                 {  
-                    $curVer.data.fscServiseUpdatePackageId=$AssetId;                 
+                    $curVer.data.FSCServiseUpdatePackageId=$AssetId;                 
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Preview Version".ToLower())} 
                 {  
-                    $curVer.data.fscPreviewVersionPackageId=$AssetId;
+                    $curVer.data.FSCPreviewVersionPackageId=$AssetId;
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
                 {  
-                    $curVer.data.fscLatestQualityUpdatePackageId=$AssetId;
+                    $curVer.data.FSCLatestQualityUpdatePackageId=$AssetId;
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Final Quality Update".ToLower())} 
                 {  
-                    $curVer.data.fscLatestQualityUpdatePackageId=$AssetId;
-                    $curVer.data.fscFinalQualityUpdatePackageId=$AssetId;
+                    $curVer.data.FSCLatestQualityUpdatePackageId=$AssetId;
+                    $curVer.data.FSCFinalQualityUpdatePackageId=$AssetId;
                     break;
                 }
                     Default {}
@@ -426,10 +448,10 @@ function ProcessingSDP {
                 $archDestinationPath = $destinationFilePath.Replace(".zip", "")
                 Expand-7zipArchive $destinationFilePath -DestinationPath $archDestinationPath
                 $retailSDKPath = Join-Path $archDestinationPath "RetailSDK\Code"
-                $retailsdkVersion = Get-Content $retailSDKPath\"Microsoft-version.txt"
-                $retailSDKDestinationPath = Join-Path C:\Temp ("RetailSDK."+$retailsdkVersion+".7z")
+                $RetailSDKVersion = Get-Content $retailSDKPath\"Microsoft-version.txt"
+                $retailSDKDestinationPath = Join-Path C:\Temp ("RetailSDK."+$RetailSDKVersion+".7z")
                 Compress-7zipArchive -Path $retailSDKPath\* -DestinationPath $retailSDKDestinationPath
-                ProcessingRSDK -PackageName ("RetailSDK."+$retailsdkVersion+".7z") -PackageDestination $retailSDKDestinationPath -SDKVersion $retailsdkVersion -StorageSAStoken $StorageSAStoken
+                ProcessingRSDK -PackageName ("RetailSDK."+$RetailSDKVersion+".7z") -PackageDestination $retailSDKDestinationPath -SDKVersion $RetailSDKVersion -StorageSAStoken $StorageSAStoken
             }
             if(Test-Path $destinationFilePath)
             {
@@ -473,7 +495,7 @@ function ProcessingRSDK {
             {
                 $upload = $true
             }
-            $curVer.data.retailSDKVersion=$SDKVersion; 
+            $curVer.data.RetailSDKVersion=$SDKVersion; 
             Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
             if($upload)
             {

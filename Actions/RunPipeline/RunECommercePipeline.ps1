@@ -94,7 +94,7 @@ try {
     npm install --global yarn
 
     $settings.ecommerceMicrosoftRepoUrl
-    $settings.ecommerceMicrosoftRepoBranch
+    $settings.EcommerceMicrosoftRepoBranch
     Set-Location $tempPath
 
     ### clone msdyn365 repo
@@ -104,7 +104,7 @@ try {
     OutputInfo "Set location $buildPath" 
     Set-Location $buildPath
     invoke-git fetch --all
-    invoke-git checkout "$($settings.ecommerceMicrosoftRepoBranch)"
+    invoke-git checkout "$($settings.EcommerceMicrosoftRepoBranch)"
 
     #remove git folder
     Remove-Item $buildPath\.git -Recurse -Force -ErrorAction SilentlyContinue
