@@ -780,7 +780,7 @@ function Publish-GithubRelease
 
     process
     {
-        $artifacts = (Get-ChildItem $Artifact)
+        $artifacts = (Get-ChildItem $Artifact -File -Recurse)
         if ($Artifact)
         {
             foreach ($file in $artifacts)
