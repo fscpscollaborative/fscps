@@ -26,7 +26,6 @@ try {
     $github = (Get-ActionContext)
 
     #Use settings and secrets
-    Write-Output "::group::Use settings and secrets"
     OutputInfo "======================================== Use settings and secrets"
 
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable
@@ -103,8 +102,6 @@ try {
     Write-Output "Main model: $mainModel"
     Write-Output "Models: $models"
     Write-Output "Models to package: $modelsToPackage"
-
-    Write-Output "::endgroup::"
    
     try
     {                  
@@ -124,10 +121,10 @@ try {
                 {
                     if($mainModel.Split(","))
                     {
-                        Update-FSCPSModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($mainModel.Split(",").Item(0))+"\Descriptor\*.xml")
+                        Update-FSCPSModelVersion -xppSourcePath $settings.metadataPath -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($($mainModel.Split(",").Item(0))+"\Descriptor\*.xml")
                     }
                     else {
-                        Update-FSCPSModelVersion -xppSourcePath $msMetadataDirectory -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($mainModel+"\Descriptor\*.xml")
+                        Update-FSCPSModelVersion -xppSourcePath $settings.metadataPath -xppLayer "ISV" -versionNumber $($github.Payload.inputs.versionNumber) -xppDescriptorSearch $($mainModel+"\Descriptor\*.xml")
                     }
                 }
                 else {
@@ -181,12 +178,10 @@ try {
             $assetId = ""
             if($settings.uploadPackageToLCS)
             {
-                Write-Output "::group::Upload artifact to the LCS"
                 OutputInfo "======================================== Upload artifact to the LCS"
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                 Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                 $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
-                Write-Output "::endgroup::"
 
                 #Deploy asset to the LCS Environment
                 if($settings.deploy)
