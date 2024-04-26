@@ -362,18 +362,19 @@ function installModules {
                 Write-Host "Installing module $_"
                 Install-Module $_ -Force -AllowClobber | Out-Null
             }
-        }
-
-        $modules | ForEach-Object { 
-            Write-Host "Updating module $_"
-            Update-Module $_ -WarningAction SilentlyContinue -Force | Out-Null
+            $onlineModule = Find-Module $_
+            $installedModule = get-installedmodule $_
+            if($onlineModule.Version -ne $installedModule.Version)
+            {
+                Write-Host "Updating module $_"
+                Update-Module $_ -WarningAction SilentlyContinue | Out-Null
+            }
         }
 
         $modules | ForEach-Object { 
             Write-Host "Importing module $_"
             Import-Module $_ -DisableNameChecking -Force -WarningAction SilentlyContinue | Out-Null
         }
-
     }
     end{
         Set-MpPreference -DisableRealtimeMonitoring $false
