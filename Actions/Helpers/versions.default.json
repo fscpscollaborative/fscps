@@ -339,14 +339,14 @@
         "version":  "10.0.40",
         "data":  {
                      "FSCFinalQualityUpdatePackageId":  "",
-                     "AppVersionGA":  "",
-                     "PlatformVersionGA":  "",
-                     "PlatformVersionLatest":  "",
+                     "AppVersionGA":  "10.0.1935.5",
+                     "PlatformVersionGA":  "7.0.7279.17",
+                     "PlatformVersionLatest":  "7.0.7279.17",
                      "FSCPreviewVersionPackageId":  "36476c26-e819-40b1-a1df-c9dfeb9aa5f2",
                      "EcommerceMicrosoftRepoBranch":  "",
                      "RetailSDKURL":  "",
                      "FSCServiseUpdatePackageId":  "",
-                     "AppVersionLatest":  "",
+                     "AppVersionLatest":  "10.0.1935.5",
                      "RetailSDKVersion":  "10.0.1935.5",
                      "FSCLatestQualityUpdatePackageId":  ""
                  }
