@@ -17,8 +17,8 @@ jobs:
 
       - name: CheckUser
         run: |
-          if ("$ENV:GITHUB_REPOSITORY" -eq "ciellosinc/FSC-PS" -and "$ENV:GITHUB_ACTOR" -ne "onikolaiev") {
-            Write-Host "::Error::You cannot run deploy and collect in the ciellosinc/FSC-PS repo"
+          if ("$ENV:GITHUB_REPOSITORY" -eq "fscpscollaborative/fscps" -and "$ENV:GITHUB_ACTOR" -ne "onikolaiev") {
+            Write-Host "::Error::You cannot run deploy and collect in the fscpscollaborative/fscps repo"
             exit 1
           }
       - name: Update Nugets
@@ -96,5 +96,5 @@ jobs:
                 invoke-git push -u origin $branch
                 #Write-Output "Create PR to the main"
                 #$releaseNotes = "No release notes available!"
-                #invoke-gh pr create --fill --head $branch --repo "https://github.com/ciellosinc/FSC-PS.git" --body "$releaseNotes" --base main
+                #invoke-gh pr create --fill --head $branch --repo "https://github.com/fscpscollaborative/fscps.git" --body "$releaseNotes" --base main
             }

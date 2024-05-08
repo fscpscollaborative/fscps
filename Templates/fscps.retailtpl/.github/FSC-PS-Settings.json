@@ -1,0 +1,5 @@
+{
+      "templateUrl":  "https://github.com/fscpscollaborative/fscps.retailtpl",
+      "templateBranch":  "main",
+      "runs-on":  "windows-latest"
+}

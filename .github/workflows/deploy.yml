@@ -26,8 +26,8 @@ jobs:
 
       - name: CheckUser
         run: |
-          if ("$ENV:GITHUB_REPOSITORY" -eq "ciellosinc/FSC-PS" -and "$ENV:GITHUB_ACTOR" -ne "onikolaiev") {
-            Write-Host "::Error::You cannot run deploy and collect in the ciellosinc/FSC-PS repo"
+          if ("$ENV:GITHUB_REPOSITORY" -eq "fscpscollaborative/fscps" -and "$ENV:GITHUB_ACTOR" -ne "onikolaiev") {
+            Write-Host "::Error::You cannot run deploy and collect in the fscpscollaborative/fscps repo"
             exit 1
           }
       - name: Deploy
@@ -44,10 +44,10 @@ jobs:
               $settings = [ordered]@{
                   "githubOwner" = $githubOwner
                   "actionsRepo" = "FSC-PS-Actions"
-                  "fscTemplateRepo" = "FSC-PS.FSC"
-                  "retailTemplateRepo" = "FSC-PS.Retail"
-                  "commerceTemplateRepo" = "FSC-PS.Commerce"
-                  "ecommerceTemplateRepo" = "FSC-PS.ECommerce"
+                  "fscTemplateRepo" = "fscps.fsctpl"
+                  "retailTemplateRepo" = "fscps.retailtpl"
+                  "commerceTemplateRepo" = "fscps.commercetpl"
+                  "ecommerceTemplateRepo" = "fscps.ecommercetpl"
                   "branch" = '${{ github.event.inputs.branch }}'
                   "copyToMain" = ('${{ github.event.inputs.copyToMain }}' -eq 'Y')
                   "localFolder" = ""

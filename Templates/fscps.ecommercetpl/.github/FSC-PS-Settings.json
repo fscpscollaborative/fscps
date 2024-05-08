@@ -1,0 +1,5 @@
+{
+      "templateUrl":  "https://github.com/fscpscollaborative/fscps.ecommercetpl",
+      "templateBranch":  "main",
+      "runs-on":  "windows-latest"
+}

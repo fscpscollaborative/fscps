@@ -29,11 +29,11 @@ try {
     }
 
     $originalOwnerAndRepo = @{
-        "actionsRepo" = "ciellosinc/FSC-PS-Actions"
-        "fscTemplateRepo" = "ciellosinc/FSC-PS.FSC"
-        "retailTemplateRepo" = "ciellosinc/FSC-PS.Retail"
-        "commerceTemplateRepo" = "ciellosinc/FSC-PS.Commerce"
-        "ecommerceTemplateRepo" = "ciellosinc/FSC-PS.ECommerce"
+        "actionsRepo" = "fscpscollaborative/fscps.gh"
+        "fscTemplateRepo" = "fscpscollaborative/fscps.fsctpl"
+        "retailTemplateRepo" = "fscpscollaborative/fscps.retailtpl"
+        "commerceTemplateRepo" = "fscpscollaborative/fscps.commercetpl"
+        "ecommerceTemplateRepo" = "fscpscollaborative/fscps.ecommercetpl"
     }
     $originalBranch = "main"
 
@@ -167,10 +167,10 @@ try {
 
     $repos = @(
         @{ "repo" = $config.actionsRepo;            "srcPath" = Join-Path $baseRepoPath "Actions";                      "dstPath" = $actionsRepoPath;            "branch" = $config.branch }
-        @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.FSC";         "dstPath" = $fscTemplateRepoPath;        "branch" = $config.branch }
-        @{ "repo" = $config.retailTemplateRepo;     "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Retail";      "dstPath" = $retailTemplateRepoPath;     "branch" = $config.branch }
-        @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Commerce";    "dstPath" = $commerceTemplateRepoPath;   "branch" = $config.branch }
-        @{ "repo" = $config.ecommerceTemplateRepo;  "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.ECommerce";   "dstPath" = $ecommerceTemplateRepoPath;  "branch" = $config.branch }
+        @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\fscps.fsctpl";         "dstPath" = $fscTemplateRepoPath;        "branch" = $config.branch }
+        @{ "repo" = $config.retailTemplateRepo;     "srcPath" = Join-Path $baseRepoPath "Templates\fscps.retailtpl";      "dstPath" = $retailTemplateRepoPath;     "branch" = $config.branch }
+        @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\fscps.commercetpl";    "dstPath" = $commerceTemplateRepoPath;   "branch" = $config.branch }
+        @{ "repo" = $config.ecommerceTemplateRepo;  "srcPath" = Join-Path $baseRepoPath "Templates\fscps.ecommercetpl";   "dstPath" = $ecommerceTemplateRepoPath;  "branch" = $config.branch }
     )
 
     if ($collect) {
@@ -240,10 +240,10 @@ try {
         if ($copyToMain -and $config.branch -ne "main") {
             Write-Host "Copy template repositories to main branch"
             $additionalRepos = @(
-                @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.FSC";       "dstPath" = $fscTemplateRepoPath;       "branch" = "main" }
-                @{ "repo" = $config.retailTemplateRepo;     "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Retail";    "dstPath" = $retailTemplateRepoPath;    "branch" = "main" }
-                @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.Commerce";  "dstPath" = $commerceTemplateRepoPath;  "branch" = "main" }
-                @{ "repo" = $config.ecommerceTemplateRepo;  "srcPath" = Join-Path $baseRepoPath "Templates\FSC-PS.ECommerce"; "dstPath" = $ecommerceTemplateRepoPath; "branch" = "main" }
+                @{ "repo" = $config.fscTemplateRepo;        "srcPath" = Join-Path $baseRepoPath "Templates\fscps.fsctpl";       "dstPath" = $fscTemplateRepoPath;       "branch" = "main" }
+                @{ "repo" = $config.retailTemplateRepo;     "srcPath" = Join-Path $baseRepoPath "Templates\fscps.retailtpl";    "dstPath" = $retailTemplateRepoPath;    "branch" = "main" }
+                @{ "repo" = $config.commerceTemplateRepo;   "srcPath" = Join-Path $baseRepoPath "Templates\fscps.commercetpl";  "dstPath" = $commerceTemplateRepoPath;  "branch" = "main" }
+                @{ "repo" = $config.ecommerceTemplateRepo;  "srcPath" = Join-Path $baseRepoPath "Templates\fscps.ecommercetpl"; "dstPath" = $ecommerceTemplateRepoPath; "branch" = "main" }
                 @{ "repo" = $config.actionsRepo;            "srcPath" = Join-Path $baseRepoPath "Actions";                    "dstPath" = $actionsRepoPath;           "branch" = "main" }
             )
         }

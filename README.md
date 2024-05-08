@@ -4,10 +4,10 @@
 The goal is that people who have created their GitHub repositories based on the FSC-PS templates, can maintain these repositories and stay current just by running a workflow, which updates their repositories. This includes necessary changes to scripts and workflows to cope with new features and functions.
 
 The template repository to use as starting point are:
-- https://github.com/ciellosinc/FSC-PS.FSC is the GitHub repository template for D365 FSC Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.Retail is the GitHub repository template for D365 Legacy Retail Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.Commerce is the GitHub repository template for D365 Commerce Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.ECommerce is the GitHub repository template for D365 ECommerce Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.fsctpl is the GitHub repository template for D365 FSC Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.retailtpl is the GitHub repository template for D365 Legacy Retail Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.commercetpl is the GitHub repository template for D365 Commerce Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.ecommercetpl is the GitHub repository template for D365 ECommerce Extenstions. This is your starting point.
 
 The below usage scenarios takes you through how to get started and how to perform the most common tasks.
 
@@ -26,8 +26,8 @@ Usage scenarios:
 # This project
 This project in the main source repository for FSC-PS for GitHub. This project is deployed on every release to a branch in the following repositories:
 
-- https://github.com/ciellosinc/FSC-PS.FSC is the GitHub repository template for D365 FSC Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.Retail is the GitHub repository template for D365 Legacy Retail Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.Commerce is the GitHub repository template for D365 Commerce Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS.ECommerce is the GitHub repository template for D365 ECommerce Extenstions. This is your starting point.
-- https://github.com/ciellosinc/FSC-PS-Actions is the GitHub repository containing the GitHub Actions used by the template above.
+- https://github.com/fscpscollaborative/fscps.fsctpl is the GitHub repository template for D365 FSC Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.retailtpl is the GitHub repository template for D365 Legacy Retail Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.commercetpl is the GitHub repository template for D365 Commerce Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.ecommercetpl is the GitHub repository template for D365 ECommerce Extenstions. This is your starting point.
+- https://github.com/fscpscollaborative/fscps.gh is the GitHub repository containing the GitHub Actions used by the template above.
