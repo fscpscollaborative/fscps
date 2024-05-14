@@ -393,6 +393,47 @@ function ConvertTo-HashTable() {
     }
     $ht
 }
+
+function GeneratePackagesConfig
+{
+    [CmdletBinding()]
+    param (
+        [string]$DynamicsVersion,
+        [string]$NugetFeedName = '',
+        [string]$NugetSourcePath = '',
+        [string]$NugetFolderPath = ''
+    )
+
+    if (-not $NugetFolderPath) {
+        $NugetFolderPath =  Join-Path $PSScriptRoot 'NewBuild'
+    }
+    if (-not (Test-Path -Path $NugetFolderPath)) {
+        New-Item -ItemType Directory -Path $NugetFolderPath
+    }
+
+    Set-Location $PSScriptRoot\Build
+
+    #generate nuget.config
+    $NugetConfigFileName = 'nuget.config'
+    $NewNugetFile = Join-Path $NugetFolderPath $NugetConfigFileName
+    if($NugetFeedName)
+    {
+        $tempFile = (Get-Content $NugetConfigFileName).Replace('NugetFeedName', $NugetFeedName).Replace('NugetSourcePath', $NugetSourcePath)
+    }
+    else {
+        $tempFile = (Get-Content $NugetConfigFileName).Replace('<add key="NugetFeedName" value="NugetSourcePath" />', '')
+    }
+    Set-Content $NewNugetFile $tempFile
+    $version = Get-FSCPSVersionInfo -Version "$DynamicsVersion"
+    #generate packages.config
+    $PackagesConfigFileName = 'packages.config'
+    $NewPackagesFile = Join-Path $NugetFolderPath $PackagesConfigFileName
+    $tempFile = (Get-Content $PackagesConfigFileName).Replace('PlatformVersion', $version.data.PlatformVersion).Replace('ApplicationVersion', $version.data.AppVersion)
+    Set-Content $NewPackagesFile $tempFile
+
+    Set-Location $PSScriptRoot
+}
+
 function Update-RetailSDK
 {
     [CmdletBinding()]
