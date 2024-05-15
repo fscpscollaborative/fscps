@@ -1,7 +1,0 @@
-{
-    "type":"Retail",
-    "packageName": "ContosoExtension",
-    "ciBranches": "main,release",
-    "buildVersion": "10.0.29",
-    "deploymentScheduler":false
-}

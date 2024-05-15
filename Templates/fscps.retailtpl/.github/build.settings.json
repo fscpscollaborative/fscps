@@ -1,5 +1,0 @@
-{
-	"deploy": false,
-    "generatePackages" : true,
-    "uploadPackageToLCS":  false
-}

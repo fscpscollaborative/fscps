@@ -9,7 +9,7 @@ Run pipeline in FSC-PS repository
  The Dynamics Environment Name 
 
 ### type (Default: 'FSCM') 
- The application type. FSCM/Retail/ECommerce 
+ The application type. FSCM/Commerce/ECommerce 
 
 ### version (Default: '') 
  The Dynamics Application Version 

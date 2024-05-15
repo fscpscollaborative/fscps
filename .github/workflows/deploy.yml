@@ -45,7 +45,6 @@ jobs:
                   "githubOwner" = $githubOwner
                   "actionsRepo" = "fscps.gh"
                   "fscTemplateRepo" = "fscps.fsctpl"
-                  "retailTemplateRepo" = "fscps.retailtpl"
                   "commerceTemplateRepo" = "fscps.commercetpl"
                   "ecommerceTemplateRepo" = "fscps.ecommercetpl"
                   "branch" = '${{ github.event.inputs.branch }}'

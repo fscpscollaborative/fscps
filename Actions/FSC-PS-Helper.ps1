@@ -301,6 +301,7 @@ function Get-AXReferencedTestModel
     }
     return $testModelsList -join ","
 }
+
 function Get-FSCModels
 {
     [CmdletBinding()]
@@ -338,6 +339,7 @@ function Get-FSCModels
         Throw "Folder $metadataPath with metadata doesnot exists"
     }
 }
+
 function installModules {
     Param(
         [String[]] $modules
@@ -381,6 +383,7 @@ function installModules {
     }
     
 }
+
 function ConvertTo-HashTable() {
     [CmdletBinding()]
     Param(
@@ -434,46 +437,6 @@ function GeneratePackagesConfig
     Set-Location $PSScriptRoot
 }
 
-function Update-RetailSDK
-{
-    [CmdletBinding()]
-    param (
-        [string]$sdkVersion,
-        [string]$sdkPath
-    )
-    begin
-    {
-        OutputDebug "SDKVersion is $sdkVersion"
-        OutputDebug "SDKPath is $sdkPath"
-        $storageAccountName = 'ciellosarchive'
-        $storageContainer = 'retailsdk'
-        #Just read-only SAS token :)
-        $StorageSAStoken = 'sp=r&st=2022-10-26T06:49:19Z&se=2032-10-26T14:49:19Z&spr=https&sv=2021-06-08&sr=c&sig=MXHL7F8liAPlwIxzg8FJNjfwJVIjpLMqUV2HYlyvieA%3D'
-        $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-        $silent = [System.IO.Directory]::CreateDirectory($sdkPath) 
-    }
-    process
-    {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        $version = Get-VersionData -sdkVersion $sdkVersion
-        $path = Join-Path $sdkPath ("RetailSDK.$($version.RetailSDKVersion).7z")
-
-        if(!(Test-Path -Path $path))
-        {
-            OutputDebug "RetailSDK $($version.RetailSDKVersion) is not found."
-            if($version.RetailSDKURL)
-            {
-                OutputDebug "Web request. Downloading..."
-                $silent = Invoke-WebRequest -Uri $version.RetailSDKURL -OutFile $path
-            }
-            else {
-                OutputDebug "Azure Blob. Downloading..."
-                $silent = Get-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob ("RetailSDK.$($version.RetailSDKVersion).7z") -Destination $path -ConcurrentTaskCount 10 -Force
-            }
-        }
-        return $path
-    }
-}
 function Get-NuGetVersion
 {    
     [CmdletBinding()]
@@ -498,6 +461,7 @@ function Get-NuGetVersion
         $zipFile.Dispose()
     }
 }
+
 function Get-VersionData
 {
     [CmdletBinding()]
@@ -548,20 +512,6 @@ function Get-VersionData
                                     $versionDefault.data.PlatformVersionLatest = $version.data.PlatformVersionLatest
                                 }
                             }
-                            if($version.data.PSobject.Properties.name -match "RetailSDKURL")
-                            {
-                                if($version.data.RetailSDKURL -ne "")
-                                {
-                                    $versionDefault.data.RetailSDKURL = $version.data.RetailSDKURL
-                                }
-                            }
-                            if($version.data.PSobject.Properties.name -match "RetailSDKVersion")
-                            {
-                                if($version.data.RetailSDKVersion -ne "")
-                                {
-                                    $versionDefault.data.RetailSDKVersion = $version.data.RetailSDKVersion
-                                }
-                            }
                         }
                     }
                 }
@@ -581,8 +531,6 @@ function Get-VersionData
                 $data = @{
                     AppVersion                      = $d.data.AppVersionLatest
                     PlatformVersion                 = $d.data.PlatformVersionLatest
-                    RetailSDKVersion                = $d.data.RetailSDKVersion
-                    RetailSDKURL                    = $d.data.RetailSDKURL
                     FSCServiseUpdatePackageId       = $d.data.FSCServiseUpdatePackageId
                     FSCPreviewVersionPackageId      = $d.data.FSCPreviewVersionPackageId
                     FSCLatestQualityUpdatePackageId = $d.data.FSCLatestQualityUpdatePackageId
@@ -594,64 +542,6 @@ function Get-VersionData
                 Write-Output $object
             }
         }
-    }
-}
-function Get-Versions
-{
-    [CmdletBinding()]
-    param (
-    )
-
-    process
-    {
-        $versionsDefaultFile = Join-Path "$PSScriptRoot" "Helpers\versions.default.json"
-        $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json 
-        $versionsFile = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\versions.json'
-        
-
-        if(Test-Path $versionsFile)
-        {
-            $versions = (Get-Content $versionsFile) | ConvertFrom-Json
-            ForEach($version in $versions)
-            { 
-                ForEach($versionDefault in $versionsDefault)
-                {
-                    if($version.version -eq $versionDefault.version)
-                    {
-            
-                        if($version.data.PSobject.Properties.name -match "AppVersion")
-                        {
-                            if($version.data.AppVersion -ne "")
-                            {
-                                $versionDefault.data.AppVersion = $version.data.AppVersion
-                            }
-                        }
-                        if($version.data.PSobject.Properties.name -match "PlatformVersion")
-                        {
-                            if($version.data.PlatformVersion -ne "")
-                            {
-                                $versionDefault.data.PlatformVersion = $version.data.PlatformVersion
-                            }
-                        }
-                        if($version.data.PSobject.Properties.name -match "RetailSDKURL")
-                        {
-                            if($version.data.RetailSDKURL -ne "")
-                            {
-                                $versionDefault.data.RetailSDKURL = $version.data.RetailSDKURL
-                            }
-                        }
-                        if($version.data.PSobject.Properties.name -match "RetailSDKVersion")
-                        {
-                            if($version.data.RetailSDKVersion -ne "")
-                            {
-                                $versionDefault.data.RetailSDKVersion = $version.data.RetailSDKVersion
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Write-Output ($versionsDefault)
     }
 }
 

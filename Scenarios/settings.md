@@ -17,7 +17,7 @@ When running a workflow or a local script, the settings are applied by reading o
 ## Basic settings
 | Name | Description | Default value |
 | :-- | :-- | :-- |
-| type | Specifies the type of project. Allowed values are **FSCM** or **Retail** or **Commerce** or **ECommerce**. This value comes with the default repository. | FSCM |
+| type | Specifies the type of project. Allowed values are **FSCM** or **Commerce** or **ECommerce**. This value comes with the default repository. | FSCM |
 | companyName | Company name using for generate the package name.  | |
 | buildVersion | The default D365 FSC version used to build and generate the package. Can be overriden by FSC-PS-Settings/environment/build/ci/deploy settings  | |
 | buildPath | The FSC-PS system will copy the {github.workspace} into this folder and will do the build from it. The folder will be located inside C:\Temp\  | _bld |
@@ -27,8 +27,6 @@ When running a workflow or a local script, the settings are applied by reading o
 | generatePackages | Option to generate a package after build. Often used in build, deploy and release workflows | true |
 | uploadPackageToLCS | Option to upload generated package to the LCS after build and generate process. IMPORTANT!!! generatePackages option should be set to True  | false |
 | exportModel | FSC specific. Option to generate axmodel file. IMPORTANT!!! generatePackages option should be set to True  | false |
-| retailSDKZipPath | Retail specific. Optional. The path to the directory where RetailSDK archives will be stored  | C:\RSDK |
-| retailSDKBuildPath | Retail specific. Optional. The path to the directory where RetailSDK will build the extension.  | C:\Temp\RetailSDK |
 | deployOnlyNew | FSC/Retail specific. Deploy environments while schedule only if the related environment branch has changes yongest then latest deploy  | true |
 | specifyModelsManually | FSC specific. If you want to build/deploy only specific models, set to true  | false |
 | models | FSC specific. Comma delimited array of models.  | "" |
@@ -68,13 +66,6 @@ These Azure settings should contain the tenant configuration what will use by de
 | azClientsecretSecretname | The github secret name that contains ClientSecret of the registered application  | AZ_CLIENTSECRET |
 | azVmname | The name of the Azure Virtual Machine. Should be specified in the .FSC-PS\environments.json settings  |  |
 | azVmrg |  The name of the Azure Resouce Group contains the Virtual machine. Should be specified in the .FSC-PS\environments.json settings |  |
-
-### Retail settings
-These Retail settings should contain the RetailSDK settings. Can be overrided in the .FSC-PS\versions.json settings.
-| Name | Description | Default value |
-| :-- | :-- | :-- | 
-| RetailSDKVersion | Retail specific. The RetailSDK version what will use to build the Retail extention. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
-| RetailSDKURL | Retail specific. The direct http link to do download the RetailSDK 7z archive. By default the settings from the versions.default.json will be used but can be overriden in .FSC-PS\versions.json file.  | |
 
 ### ECommerce settings
 The ECommerce settings. Can be overrided in the .FSC-PS\versions.json settings.

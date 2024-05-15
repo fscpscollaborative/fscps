@@ -1,5 +1,0 @@
-{
-    "generatePackages" : true,
-    "uploadPackageToLCS":  false,
-    "exportModel":true
-}

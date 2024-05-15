@@ -274,7 +274,7 @@ function ProcessingNuGet {
             $curVer = $versions.Where({$_.version -eq $FSCVersion})
             if(!$curVer)
             {
-                $curVer = (@{version=$FSCVersion;data=@{PlatformVersionGA='';AppVersionGA='';PlatformVersionLatest='';AppVersionLatest='';RetailSDKVersion=''; RetailSDKURL=''; EcommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
+                $curVer = (@{version=$FSCVersion;data=@{PlatformVersionGA='';AppVersionGA='';PlatformVersionLatest='';AppVersionLatest=''; EcommerceMicrosoftRepoBranch=''}} | ConvertTo-Json | ConvertFrom-Json)
                 $versions.Add($curVer)
                 $curVer = $versions.Where({$_.version -eq $FSCVersion})
             }
@@ -363,8 +363,6 @@ function ProcessingSDP {
                                                         AppVersionGA='';
                                                         PlatformVersionLatest='';
                                                         AppVersionLatest='';
-                                                        RetailSDKVersion=''; 
-                                                        RetailSDKURL=''; 
                                                         FSCServiseUpdatePackageId=''; 
                                                         FSCPreviewVersionPackageId=''; 
                                                         FSCFinalQualityUpdatePackageId=''; 
@@ -445,13 +443,6 @@ function ProcessingSDP {
                 
                 Write-Output "Uploading package to the Azure... $destinationFilePath"
                 Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $($destinationFilePath) -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
-                $archDestinationPath = $destinationFilePath.Replace(".zip", "")
-                Expand-7zipArchive $destinationFilePath -DestinationPath $archDestinationPath
-                $retailSDKPath = Join-Path $archDestinationPath "RetailSDK\Code"
-                $RetailSDKVersion = Get-Content $retailSDKPath\"Microsoft-version.txt"
-                $retailSDKDestinationPath = Join-Path C:\Temp ("RetailSDK."+$RetailSDKVersion+".7z")
-                Compress-7zipArchive -Path $retailSDKPath\* -DestinationPath $retailSDKDestinationPath
-                ProcessingRSDK -PackageName ("RetailSDK."+$RetailSDKVersion+".7z") -PackageDestination $retailSDKDestinationPath -SDKVersion $RetailSDKVersion -StorageSAStoken $StorageSAStoken
             }
             if(Test-Path $destinationFilePath)
             {
@@ -461,52 +452,7 @@ function ProcessingSDP {
         }
     }
 }
-function ProcessingRSDK {
-    param (
-        [string]$PackageName,
-        [string]$SDKVersion,
-        [string]$PackageDestination,
-        [string]$StorageSAStoken
-    )
-    Begin{
-        $storageAccountName = 'ciellosarchive'
-        $storageContainer = 'retailsdk'
-        $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $StorageSAStoken
-        OutputInfo "PackageName: $PackageName"
-        OutputInfo "PackageDestination: $PackageDestination"
-    }
-    process {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-        OutputInfo "SDKVersion:  $SDKVersion"
-        OutputInfo "PackageName:  $PackageName"
-
-        if($SDKVersion -ne "")
-        {
-            $versions = New-Object System.Collections.ArrayList
-            $versionsDefaultFile = "Actions\Helpers\versions.default.json"
-            $versionsDefault = (Get-Content $versionsDefaultFile) | ConvertFrom-Json
-            $versionsDefault | ForEach-Object{$versions.Add($_)}
-            $curVer = $versions.Where({$_.version -eq $FSCVersion})
-            
-            $blob = Get-AzStorageBlob -Context $ctx -Container $storageContainer -Blob $PackageName -ConcurrentTaskCount 10 -ErrorAction SilentlyContinue
-            $upload = $false
-            if(!$blob)
-            {
-                $upload = $true
-            }
-            $curVer.data.RetailSDKVersion=$SDKVersion; 
-            Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
-            if($upload)
-            {
-                Write-Output "Uploading package to the Azure..."
-                Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$PackageName" -File "$PackageDestination" -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
-            }
-            
-            Remove-Item $PackageDestination -Force
-        }
-    }
-}
 function Remove-D365LcsAssetFile {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     [CmdletBinding()]

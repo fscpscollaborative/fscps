@@ -3,7 +3,7 @@
 - A GitHub account.
 
 
-1. Navigate to https://github.com/fscpscollaborative/fscps.fsctpl or https://github.com/fscpscollaborative/fscps.retailtpl or https://github.com/fscpscollaborative/fscps.commercetpl or https://github.com/fscpscollaborative/fscps.ecommercetpl and then choose **Use this template**.
+1. Navigate to https://github.com/fscpscollaborative/fscps.fsctpl or https://github.com/fscpscollaborative/fscps.commercetpl or https://github.com/fscpscollaborative/fscps.ecommercetpl and then choose **Use this template**.
 ![Use this template](/Scenarios/images/1a.png)
 1. Enter **appName** as repository name and select **Create Repository from template**.
 ![Add repo](/Scenarios/images/1b.png)
