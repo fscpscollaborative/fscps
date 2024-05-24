@@ -16,7 +16,7 @@
 }
 ~~~
 
-**NOTE:** Please refer to [this description](settings.md) to find more details.
+**NOTE:** Please refer to [this description](https://github.com/fscpscollaborative/fscps.tools/wiki/Settings) to find more details.
 
 3. Update versions file
 ~~~javascript

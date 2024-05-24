@@ -25,7 +25,7 @@
 }
 ~~~
 
-**NOTE:** lcsProjectId - Paste the LCS projectID. Please refer to [this description](settings.md) to find more details.
+**NOTE:** lcsProjectId - Paste the LCS projectID. Please refer to [this description](https://github.com/fscpscollaborative/fscps.tools/wiki/Settings) to find more details.
 
 6. Login to the LCS and deploy new or use the existing one environment.
 7. Update .\FSC-PS\environments.json file
@@ -45,7 +45,7 @@
 ]
 ~~~
 
-**NOTE:** "cron" - It meant that the environment will deploy at 21:00 PM UTC. Please refer to [this description](settings.md) to find more details.
+**NOTE:** "cron" - It meant that the environment will deploy at 21:00 PM UTC. Please refer to [this description](https://github.com/fscpscollaborative/fscps.tools/wiki/Settings) to find more details.
 
 8. Run [Update FSC-PS files](UpdateFSC-PS.md)
 9. Deploy [D365FSC. Deploy the code to the environment ](DeployCode.md)

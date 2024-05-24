@@ -21,7 +21,7 @@ Usage scenarios:
 8. [D365FSC. Build a specific model(`s) ](Scenarios/DeploySpecificModel.md)
 9. [D365FSC. Deploy the code to the environment ](Scenarios/DeployCode.md)
 
-**Note:** Please refer to [this description](Scenarios/settings.md) to learn about the settings file and how you can modify default behaviors.
+**Note:** Please refer to [this description](https://github.com/fscpscollaborative/fscps.tools/wiki/Settings) to learn about the settings file and how you can modify default behaviors.
 # This project
 This project in the main source repository for FSC-PS for GitHub. This project is deployed on every release to a branch in the following repositories:
 

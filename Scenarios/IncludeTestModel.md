@@ -9,7 +9,7 @@ If you need to always deploy your test model to the specific environment do the 
     {
         "name":"Contoso-QA",
         "settings":{
-            "buildVersion": "10.0.29",
+            "buildVersion": "10.0.39",
             "sourceBranch": "main",
             "lcsEnvironmentId": "{SetLCSEnvironmentId-GUID}",
             "azVmname" : "{SetAzurVMName}",
