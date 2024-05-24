@@ -20,8 +20,8 @@ try {
     Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
     installModules @("fscps.tools")
     $workflowName = $env:GITHUB_WORKFLOW
-
-    Set-FSCPSSettings
+    $Script:IsOnGitHub = $true
+    Set-FSCPSSettings -Verbose
 
     $settings = Get-FSCPSSettings -OutputAsHashtable
     #$settings
