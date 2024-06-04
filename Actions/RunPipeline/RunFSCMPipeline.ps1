@@ -98,11 +98,12 @@ try {
         $models = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true')
         $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true') -all
     }
-
-    Write-Output "Main model: $mainModel"
-    Write-Output "Models: $models"
-    Write-Output "Models to package: $modelsToPackage"
    
+    if($modelsToPackage.Count -eq 0)
+    {
+        OutputError -message "There is no models to build."
+    }
+
     try
     {                  
         ### Prebuild
@@ -133,7 +134,7 @@ try {
             }
         }
         
-        $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE
+        $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE 
         $buildResult
         ### Postbuild
         $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
@@ -172,8 +173,6 @@ try {
             Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_LIST=$artifacts"
             Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACTS_LIST=$artifacts"
 
-
-
             #Upload to LCS
             $assetId = ""
             if($settings.uploadPackageToLCS)
@@ -181,7 +180,7 @@ try {
                 OutputInfo "======================================== Upload artifact to the LCS"
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                 Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
-                $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose
+                $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose -EnableException
 
                 #Deploy asset to the LCS Environment
                 if($settings.deploy)
@@ -292,10 +291,7 @@ try {
                     Write-Output "::endgroup::"
                 }
             }
-
         }
-        
-
     }
     finally
     {
