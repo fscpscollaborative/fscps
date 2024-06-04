@@ -217,33 +217,30 @@ try {
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
-        
             if($SU_INSTALLER_PATH)
             {    
                 Write-Host "Installing the extension."
-                & $SU_INSTALLER_PATH  install
+                & $SU_INSTALLER_PATH install
                 
                 if ($LastExitCode -ne 0) {
-                    Write-Host
                     Write-CustomError "The extension installation has failed with exit code $LastExitCode. Please examine the above logs to fix a problem and start again."
-                    Write-Host
                     exit $LastExitCode
                 }  
                 $extensionInstallPath = Join-Path $baseProductInstallRoot "Extensions/$(ClearExtension($SU_INSTALLER_PATH))"
                 $extensionInstallPath
                 if(Test-Path $extensionInstallPath){
-                    Write-Host
+
                     Write-Host "Copy the binary and symbol files into extensions folder."
                     Set-Location $BUILD_FOLDER_PATH
                     Get-ChildItem -Path $BUILD_FOLDER_PATH -Recurse | Where-Object {$_.FullName -match ".*.Runtime.*.bin.*.Release.*.Vertex.*pdb$"} | ForEach-Object {
                         $_.FullName
-                        Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($extensionInstallPath)\$($_.Name)"   
+                        Copy-ToDestination -RelativePath $_.Directory -File $_.Name -DestinationFullName "$($extensionInstallPath)\$($_.Name)"
                     }
-                }               
-             }
+                }
+            }
 
             <#  OutputInfo "======================================== Validation info"
-            $MachineName = "vtx-nextgen-csu.eastus.cloudapp.azure.com"
+            $MachineName = "*-nextgen-csu.eastus.cloudapp.azure.com"
             $port = "443"
 
             #if ($Env:baseProduct_UseSelfHost -ne "true") {
