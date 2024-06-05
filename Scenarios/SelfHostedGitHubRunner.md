@@ -13,7 +13,6 @@
     ....
     "githubRunner":"{SpecificLabel}",
     ....
-    "useLocalNuGetStorage":true
 }
 ~~~
 
