@@ -11,8 +11,7 @@
     "type":"FSCM",
     "packageName": "ContosoExtension",
     "buildVersion": "10.0.29",
-    "ciBranches": "main,release",
-    "useLocalNuGetStorage":true
+    "ciBranches": "main,release"
 }
 ~~~
 
