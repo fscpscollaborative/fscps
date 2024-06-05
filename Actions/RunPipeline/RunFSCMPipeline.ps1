@@ -99,10 +99,7 @@ try {
         $modelsToPackage = Get-FSCModels -metadataPath $settings.metadataPath -includeTest:($settings.includeTestModel -eq 'true') -all
     }
    
-    if($modelsToPackage.Count -eq 0)
-    {
-        OutputError -message "There is no models to build."
-    }
+
 
     try
     {                  
