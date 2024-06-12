@@ -23,13 +23,16 @@ jobs:
     runs-on: [ windows-latest ]
     steps:
       - uses: actions/checkout@v4.1.1
-
+        with:
+         ref: master
+         
       - name: CheckUser
         run: |
           if ("$ENV:GITHUB_REPOSITORY" -eq "fscpscollaborative/fscps" -and "$ENV:GITHUB_ACTOR" -ne "onikolaiev") {
             Write-Host "::Error::You cannot run deploy and collect in the fscpscollaborative/fscps repo"
             exit 1
           }
+          
       - name: Deploy
         run: |
           $ErrorActionPreference = "Stop"
