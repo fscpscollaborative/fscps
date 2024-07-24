@@ -65,44 +65,55 @@ try {
         [array]$deleteRuns = @()
 
         foreach ($action in $actions) {
-            $del = $false
-            #if run older than 7 days - delete
-            $retentionHours = (7 * 24)
-            $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
-            if ($timeSpan.TotalHours -gt $retentionHours) {
-                $del = $true
-            }
-            #if it`s a clean deploy run - delete
-       
-            if($action.display_title -match "DEPLOY" -and ($action.status -eq "completed"))
-            {
-                $getJobsParam = @{
-                    Uri     = $action.jobs_url
-                    Method  = "Get"
-                    Headers = $baseHeader
-                } 
-                #Delete skipped actions
-                $jobs = Invoke-RestMethod @getJobsParam
-                foreach($job in $jobs.jobs){            
-                    if($($job.name.StartsWith("Deploy")) -and $($job.conclusion -eq "skipped")){$del = $true}
+            try {
+                $del = $false
+                #if run older than 7 days - delete
+                $retentionHours = (7 * 24)
+                $timeSpan = NEW-TIMESPAN -Start $action.created_at -End (Get-Date).ToString()
+                if ($timeSpan.TotalHours -gt $retentionHours) {
+                    $del = $true
+                }
+                #if it`s a clean deploy run - delete
+           
+                if($action.display_title -match "DEPLOY" -and ($action.status -eq "completed"))
+                {
+                    $getJobsParam = @{
+                        Uri     = $action.jobs_url
+                        Method  = "Get"
+                        Headers = $baseHeader
+                    } 
+                    #Delete skipped actions
+                    $jobs = Invoke-RestMethod @getJobsParam
+                    foreach($job in $jobs.jobs){            
+                        if($($job.name.StartsWith("Deploy")) -and $($job.conclusion -eq "skipped")){$del = $true}
+                    }
+                }
+            
+                if($del)
+                {
+                    Write-Host "Found job $($action.display_title)"
+                    $deleteRuns += $action
                 }
             }
-        
-            if($del)
-            {
-                Write-Host "Found job $($action.display_title)"
-                $deleteRuns += $action
+            catch {
+                <#Do this if a terminating exception happens#>
             }
+           
         }
         foreach ($action in $deleteRuns) {
+            try {
+                $runsDeleteParam = @{
+                    Uri     = $action.url
+                    Method  = "Delete"
+                    Headers = $baseHeader
+                } 
+                Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
+                Invoke-RestMethod @runsDeleteParam
+            }
+            catch {
+                <#Do this if a terminating exception happens#>
+            }
 
-            $runsDeleteParam = @{
-                Uri     = $action.url
-                Method  = "Delete"
-                Headers = $baseHeader
-            } 
-            Write-Host "Delete job $(($runsDeleteParam.Uri -split "/")[8])"
-            Invoke-RestMethod @runsDeleteParam
         }
     }
     #Cleanup workspace folder
