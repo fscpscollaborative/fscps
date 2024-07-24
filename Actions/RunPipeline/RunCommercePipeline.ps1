@@ -19,6 +19,7 @@ Set-StrictMode -Version 2.0
 try {
     $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
     . ($helperPath)
+    
     installModules @("fscps.tools")
     $LastExitCode = 0
     $workflowName = $env:GITHUB_WORKFLOW
