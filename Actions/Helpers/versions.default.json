@@ -304,5 +304,15 @@
                      "AppVersionLatest":  "10.0.1935.90",
                      "FSCLatestQualityUpdatePackageId":  "252a9ebc-56ed-4750-a6fa-c81bae66ed91"
                  }
+    },
+    {
+        "version":  "10.0.41",
+        "data":  {
+                     "PlatformVersionLatest":  "7.0.7367.10",
+                     "EcommerceMicrosoftRepoBranch":  "",
+                     "PlatformVersionGA":  "7.0.7367.10",
+                     "AppVersionGA":  "10.0.2015.16",
+                     "AppVersionLatest":  "10.0.2015.16"
+                 }
     }
 ]
