@@ -308,11 +308,11 @@
     {
         "version":  "10.0.41",
         "data":  {
-                     "PlatformVersionLatest":  "7.0.7367.10",
+                     "PlatformVersionLatest":  "7.0.7367.25",
                      "EcommerceMicrosoftRepoBranch":  "",
                      "PlatformVersionGA":  "7.0.7367.10",
                      "AppVersionGA":  "10.0.2015.16",
-                     "AppVersionLatest":  "10.0.2015.16",
+                     "AppVersionLatest":  "10.0.2015.32",
                      "FSCServiseUpdatePackageId":  "",
                      "FSCPreviewVersionPackageId":  "e0779f4a-e36c-49d2-afb7-14018f9d3783",
                      "FSCLatestQualityUpdatePackageId":  ""
