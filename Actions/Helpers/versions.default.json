@@ -272,9 +272,9 @@
                      "PlatformVersionLatest":  "7.0.7120.99",
                      "PlatformVersionGA":  "7.0.7120.53",
                      "FSCServiseUpdatePackageId":  "8e73b713-d183-4b9a-8dbd-20fb067a71cf",
-                     "FSCFinalQualityUpdatePackageId":  "",
+                     "FSCFinalQualityUpdatePackageId":  "c93b35cd-37da-4d9f-a9ba-ccf630ce9c1a",
                      "EcommerceMicrosoftRepoBranch":  "RS/10.0.38",
-                     "FSCLatestQualityUpdatePackageId":  "82103716-37ee-4f47-8843-0cc743c1e817"
+                     "FSCLatestQualityUpdatePackageId":  "c93b35cd-37da-4d9f-a9ba-ccf630ce9c1a"
                  }
     },
     {
@@ -288,7 +288,7 @@
                      "FSCServiseUpdatePackageId":  "c57a2d71-00f3-4e4d-8d42-93a7ec4a6b48",
                      "FSCFinalQualityUpdatePackageId":  "",
                      "EcommerceMicrosoftRepoBranch":  "RS/10.0.39",
-                     "FSCLatestQualityUpdatePackageId":  "c4c34334-e70f-4baf-b9ea-0296a4b83f47"
+                     "FSCLatestQualityUpdatePackageId":  "cc012103-daf4-47ab-a2ae-e8a4777ee9f9"
                  }
     },
     {
@@ -302,20 +302,20 @@
                      "EcommerceMicrosoftRepoBranch":  "",
                      "FSCServiseUpdatePackageId":  "67323700-c9d4-484a-945f-65698ec7dbae",
                      "AppVersionLatest":  "10.0.1935.98",
-                     "FSCLatestQualityUpdatePackageId":  "bfdf1b05-de3c-4490-bb5d-45b9673a5123"
+                     "FSCLatestQualityUpdatePackageId":  "cf8651d3-060b-4a65-8ad7-0dc2b2b7f268"
                  }
     },
     {
         "version":  "10.0.41",
         "data":  {
-                     "PlatformVersionLatest":  "7.0.7367.10",
+                     "PlatformVersionLatest":  "7.0.7367.52",
                      "EcommerceMicrosoftRepoBranch":  "",
-                     "PlatformVersionGA":  "7.0.7367.10",
-                     "AppVersionGA":  "10.0.2015.16",
-                     "AppVersionLatest":  "10.0.2015.16",
+                     "PlatformVersionGA":  "7.0.7367.32",
+                     "AppVersionGA":  "10.0.2015.40",
+                     "AppVersionLatest":  "10.0.2015.55",
                      "FSCServiseUpdatePackageId":  "",
-                     "FSCPreviewVersionPackageId":  "e0779f4a-e36c-49d2-afb7-14018f9d3783",
-                     "FSCLatestQualityUpdatePackageId":  ""
+                     "FSCPreviewVersionPackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713",
+                     "FSCLatestQualityUpdatePackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713"
                  }
     }
 ]
