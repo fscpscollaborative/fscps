@@ -315,7 +315,8 @@
                      "AppVersionLatest":  "10.0.2015.55",
                      "FSCServiseUpdatePackageId":  "",
                      "FSCPreviewVersionPackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713",
-                     "FSCLatestQualityUpdatePackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713"
+                     "FSCLatestQualityUpdatePackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713",
+                     "FSCFinalQualityUpdatePackageId":  ""
                  }
     }
 ]
