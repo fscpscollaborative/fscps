@@ -302,13 +302,13 @@
                      "EcommerceMicrosoftRepoBranch":  "",
                      "FSCServiseUpdatePackageId":  "67323700-c9d4-484a-945f-65698ec7dbae",
                      "AppVersionLatest":  "10.0.1935.98",
-                     "FSCLatestQualityUpdatePackageId":  "818a8416-67b2-4da7-82e3-628bd65058d5"
+                     "FSCLatestQualityUpdatePackageId":  "5ff89c52-6b3f-4e31-86f6-fbd3dbd811df"
                  }
     },
     {
         "version":  "10.0.41",
         "data":  {
-                     "PlatformVersionLatest":  "7.0.7367.89",
+                     "PlatformVersionLatest":  "7.0.7367.91",
                      "EcommerceMicrosoftRepoBranch":  "",
                      "PlatformVersionGA":  "7.0.7367.49",
                      "AppVersionGA":  "10.0.2015.54",
