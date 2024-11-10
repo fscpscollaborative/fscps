@@ -315,7 +315,7 @@
                      "AppVersionLatest":  "10.0.2015.99",
                      "FSCServiseUpdatePackageId":  "97430104-7e88-44bf-a3d0-7a508d5a2d20",
                      "FSCPreviewVersionPackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713",
-                     "FSCLatestQualityUpdatePackageId":  "8b4dad2d-2a5a-4160-b016-ae47c75f5853",
+                     "FSCLatestQualityUpdatePackageId":  "5d69f108-f06b-409c-8c31-0e1db60bff00",
                      "FSCFinalQualityUpdatePackageId":  ""
                  }
     },
@@ -323,7 +323,7 @@
         "version":  "10.0.42",
         "data":  {
                      "PlatformVersionGA":  "7.0.7452.15",
-                     "FSCPreviewVersionPackageId":  "c815bdd5-9e6e-4be1-87db-786e45c92d40",
+                     "FSCPreviewVersionPackageId":  "01e30832-3c1e-4817-8e2f-c8e24636c91f",
                      "AppVersionGA":  "10.0.2095.13",
                      "FSCServiseUpdatePackageId":  "",
                      "PlatformVersionLatest":  "7.0.7452.15",
