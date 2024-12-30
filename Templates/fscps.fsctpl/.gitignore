@@ -92,6 +92,7 @@ DBSynchronization.xml
 /**/AtlCoreFinancial
 /**/AtlCostAccounting
 /**/AtlFoundation
+/**/ATLGlobalizationLTM
 /**/AtlMaterialhandling
 /**/AtlPersonnel
 /**/AtlSampleTests
@@ -151,6 +152,7 @@ DBSynchronization.xml
 /**/ExpenseMobile
 /**/ExportControl
 /**/FinanceInsightsContracts
+/**/FieldServiceIntegration
 /**/FinancialDimensionService
 /**/FinancialReporting
 /**/FinancialReportingEntityStore
@@ -190,6 +192,7 @@ DBSynchronization.xml
 /**/MonitoringAndTelemetry
 /**/OperationalInsights
 /**/PaymentPredictor
+/**/PayrollIntegration
 /**/Personnel
 /**/PersonnelBusinessProcess
 /**/PersonnelCore
@@ -198,8 +201,8 @@ DBSynchronization.xml
 /**/PersonnelUpgrade
 /**/Plugins
 /**/Policy
-/**/ProcessAutomation
 /**/ProcessAdvisorIntegration
+/**/ProcessAutomation
 /**/ProcessGuide
 /**/Project
 /**/ProjectMobile
@@ -216,6 +219,7 @@ DBSynchronization.xml
 /**/RevenueRecognition
 /**/ScaleUnitDatapipeline
 /**/ScaleUnitManagement
+/**/SCMCopilot
 /**/SCMInsights
 /**/SCMMobile
 /**/SelfHealing
@@ -236,8 +240,13 @@ DBSynchronization.xml
 /**/UnitOfMeasure
 /**/WarehouseExecutionWorkload
 /**/WarehouseExecutionWorkloadBackoffice
+/**/WarehouseOrders
+/**/WarehouseOrdersIntegration
 /**/WarehousePlanning
 /**/WHSAppTaskValidator
 /**/WHSTests
 /**/WMSAdvancedMigration
 /**/WorkloadCommon
+/**/UbiquitousBuying
+/**/ApplicationWebComponents
+/**/ImmersiveExperiences
