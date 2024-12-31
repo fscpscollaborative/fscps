@@ -113,7 +113,30 @@ jobs:
           type: ${{ needs.Initialization.outputs.type}}
           settingsJson: ${{ env.Settings }}
           secretsJson: ${{ env.RepoSecrets }}
-
+          
+      - name: Add logs to job summary
+        run: |
+          $logFiles = Get-ChildItem -Path "${{ env.ARTIFACTS_PATH }}\Logs" -Recurse -Filter *.log
+          $summary = "# Logs `n`n"
+          if ($logFiles) {
+              foreach ($logFile in $logFiles) {
+                  $content = Get-Content -Path $logFile
+                  $summary += "## $logFile `n"
+                  foreach ($line in $content) {
+                      # if the line consists only of = or - characters 
+                      # (which would be interpreted as a setext heading 
+                      # (https://github.github.com/gfm/#setext-headings)), 
+                      # add a new line before it
+                      if ($line -match "^[=-]+$") {
+                          $summary += "`n$line`n"
+                      } else {
+                        $summary += $line + "`n"
+                      } 
+                  }
+              }
+          }
+          $summary >> $env:GITHUB_STEP_SUMMARY
+  
       - name: Publish artifacts  
         uses: actions/upload-artifact@v4
         with:
