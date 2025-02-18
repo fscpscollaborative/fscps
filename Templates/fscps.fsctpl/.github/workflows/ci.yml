@@ -71,6 +71,7 @@ jobs:
           secretsJson: ${{ env.RepoSecrets }}
           
       - name: Add logs to job summary
+        if: ${{ !cancelled() }}
         run: |
           if (![string]::IsNullOrEmpty("${{ env.ARTIFACTS_PATH }}")) {
             $logFiles = Get-ChildItem -Path "${{ env.ARTIFACTS_PATH }}\Logs" -Recurse -Filter *.log
