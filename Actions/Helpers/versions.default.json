@@ -302,7 +302,7 @@
                      "EcommerceMicrosoftRepoBranch":  "",
                      "FSCServiseUpdatePackageId":  "67323700-c9d4-484a-945f-65698ec7dbae",
                      "AppVersionLatest":  "10.0.1935.98",
-                     "FSCLatestQualityUpdatePackageId":  "239aacbc-0fa0-44c0-89a2-f5211bad4ace"
+                     "FSCLatestQualityUpdatePackageId":  "a4785cc4-16f7-4491-9be6-95f0b09606d7"
                  }
     },
     {
@@ -326,24 +326,24 @@
                      "FSCPreviewVersionPackageId":  "01e30832-3c1e-4817-8e2f-c8e24636c91f",
                      "AppVersionGA":  "10.0.2095.59",
                      "FSCServiseUpdatePackageId":  "bb728c23-f3bd-4bb8-9fef-13e33592ae01",
-                     "PlatformVersionLatest":  "7.0.7452.88",
+                     "PlatformVersionLatest":  "7.0.7452.94",
                      "FSCFinalQualityUpdatePackageId":  "",
                      "EcommerceMicrosoftRepoBranch":  "",
                      "AppVersionLatest":  "10.0.2095.99",
-                     "FSCLatestQualityUpdatePackageId":  ""
+                     "FSCLatestQualityUpdatePackageId":  "88df5c2c-dc05-4daa-b87c-8078a857e356"
                  }
     },
     {
         "version":  "10.0.43",
         "data":  {
                      "PlatformVersionGA":  "7.0.7521.23",
-                     "FSCPreviewVersionPackageId":  "9127aed4-be13-4dbc-b99d-2bf1aa5a1d00",
+                     "FSCPreviewVersionPackageId":  "470df1b6-9303-4ae1-834c-da611846ca25",
                      "AppVersionGA":  "10.0.2177.18",
                      "FSCServiseUpdatePackageId":  "",
-                     "PlatformVersionLatest":  "7.0.7521.23",
+                     "PlatformVersionLatest":  "7.0.7521.49",
                      "FSCFinalQualityUpdatePackageId":  "",
                      "EcommerceMicrosoftRepoBranch":  "",
-                     "AppVersionLatest":  "10.0.2177.18",
+                     "AppVersionLatest":  "10.0.2177.31",
                      "FSCLatestQualityUpdatePackageId":  ""
                  }
     }
