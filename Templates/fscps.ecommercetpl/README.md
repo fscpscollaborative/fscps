@@ -7,18 +7,18 @@ If you want to contribute, please, create an issue or  PR on the main project ht
 ### Generate GitHub PAT(Personal Access Token)
 
 - Login to your GitHub account and open Settings 
-![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_a.png)
+![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_a.png)
 
 - Developer Settings 
-![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_b.png)
+![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_b.png)
 
 - Personal Access Token -> Generate New Token 
- ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_c.png)
+ ![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_c.png)
 
- ![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_d.png)
+ ![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_d.png)
 
 - Copy and save your PAT somewhere and click the Authorize SSO 
-![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_e.png)
+![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_e.png)
 
 ### Map the repository code
 - Log in to your devbox and run the Powershell ISE with administrator permissions.
@@ -119,8 +119,8 @@ Paste the generated PAT into the popup GitHub window.
 ### Configure VisualStudio
 - Open VisualStudio and select “Open a Local Folder”
 
-![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_f.png)
+![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_f.png)
 
 - Find the "$RetailExtensionFolderName" folder and click select 
 
-![](https://raw.githubusercontent.com/ciellosinc/FSC-PS/main/Scenarios/images/fsc_dev_g.png)
+![](https://raw.githubusercontent.com/fscpscollaborative/fscps/main/Scenarios/images/fsc_dev_g.png)
