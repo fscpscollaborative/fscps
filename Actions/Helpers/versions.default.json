@@ -315,7 +315,7 @@
                      "AppVersionLatest":  "10.0.2015.99",
                      "FSCServiseUpdatePackageId":  "97430104-7e88-44bf-a3d0-7a508d5a2d20",
                      "FSCPreviewVersionPackageId":  "3cbb0431-91d3-4e33-94a9-116d5ac87713",
-                     "FSCLatestQualityUpdatePackageId":  "4b5eb6c7-3d80-4506-83b5-ba29d5f03046",
+                     "FSCLatestQualityUpdatePackageId":  "77830db7-6ea0-43b9-9ca5-62c7942c2c8e",
                      "FSCFinalQualityUpdatePackageId":  ""
                  }
     },
@@ -343,7 +343,7 @@
                      "PlatformVersionLatest":  "7.0.7521.98",
                      "FSCFinalQualityUpdatePackageId":  "",
                      "EcommerceMicrosoftRepoBranch":  "",
-                     "AppVersionLatest":  "10.0.2177.63",
+                     "AppVersionLatest":  "10.0.2177.74",
                      "FSCLatestQualityUpdatePackageId":  ""
                  }
     }
