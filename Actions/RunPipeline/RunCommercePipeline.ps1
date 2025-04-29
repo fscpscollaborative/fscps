@@ -27,7 +27,7 @@ try {
 
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
-    Convert-FSCPSTextToAscii -Text "Use settings and secrets" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110
+    Convert-FSCPSTextToAscii -Text "Use settings and secrets" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     
 
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable    
@@ -212,7 +212,7 @@ try {
         if($settings.deploy)
         {
             Write-Output "::group::Deployment"
-            Convert-FSCPSTextToAscii -Text "ScaleUnit extension deployment" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105
+            Convert-FSCPSTextToAscii -Text "ScaleUnit extension deployment" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
@@ -263,7 +263,7 @@ try {
             }
             ### PostDeploy
         }
-        Convert-FSCPSTextToAscii -Text "Done" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105 -Padding 2
+        Convert-FSCPSTextToAscii -Text "Done" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
 
     }
 
