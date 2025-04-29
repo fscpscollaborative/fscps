@@ -27,7 +27,8 @@ try {
 
     #Use settings and secrets
     Write-Output "::group::Use settings and secrets"
-    OutputInfo "======================================== Use settings and secrets"
+    Convert-FSCPSTextToAscii -Text "Use settings and secrets" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110
+    
 
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable    
 
@@ -146,18 +147,15 @@ try {
     #GeneratePackages
     if($settings.generatePackages)
     {
-        Write-Host "BuildResult ========================="
         $buildResult
 
-        Write-Host "Variables ========================="
+       
         $PACKAGE_NAME = $buildResult.PACKAGE_NAME
         $ARTIFACTS_PATH = $buildResult.ARTIFACTS_PATH
         $ARTIFACTS_LIST = $buildResult.ARTIFACTS_LIST
         $SU_INSTALLER_PATH = $buildResult.SU_INSTALLER_PATH
         $BUILD_FOLDER_PATH = $buildResult.BUILD_FOLDER_PATH
         
-        Write-Host "Add-Content ========================="
-
         Add-Content -Path $env:GITHUB_OUTPUT -Value "PACKAGE_NAME=$PACKAGE_NAME"
         Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_NAME=$PACKAGE_NAME"
         Add-Content -Path $env:GITHUB_OUTPUT -Value "ARTIFACTS_PATH=$ARTIFACTS_PATH"
@@ -214,7 +212,7 @@ try {
         if($settings.deploy)
         {
             Write-Output "::group::Deployment"
-            OutputInfo "======================================== ScaleUnit extension deployment"
+            Convert-FSCPSTextToAscii -Text "ScaleUnit extension deployment" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105
 
             $baseProductInstallRoot = "${Env:Programfiles}\Microsoft Dynamics 365\10.0\Commerce Scale Unit"
 
@@ -265,6 +263,8 @@ try {
             }
             ### PostDeploy
         }
+        Convert-FSCPSTextToAscii -Text "Done" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105 -Padding 2
+
     }
 
 }
