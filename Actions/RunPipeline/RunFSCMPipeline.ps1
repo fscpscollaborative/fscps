@@ -181,7 +181,6 @@ try {
                 #Deploy asset to the LCS Environment
                 if($settings.deploy)
                 {
-                    Write-Output "::group::Deploy asset to the LCS Environment"
                     Convert-FSCPSTextToAscii -Text "Deploy asset to the LCS Environment" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                     #Check environment status
@@ -290,7 +289,6 @@ try {
                 
                         Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                     }
-                    Write-Output "::endgroup::"
                 }
             }
         }
