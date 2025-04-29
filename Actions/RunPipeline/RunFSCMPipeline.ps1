@@ -26,7 +26,7 @@ try {
     $github = (Get-ActionContext)
 
     #Use settings and secrets
-    Convert-FSCPSTextToAscii -Text "Use settings and secrets" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 
+    Convert-FSCPSTextToAscii -Text "Use settings and secrets" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     $settings = Get-FSCPSSettings -SettingsJsonString $settingsJson -OutputAsHashtable
     $settings
 
@@ -173,7 +173,7 @@ try {
             $assetId = ""
             if($settings.uploadPackageToLCS)
             {
-                Convert-FSCPSTextToAscii -Text "Upload artifact to the LCS" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 120
+                Convert-FSCPSTextToAscii -Text "Upload artifact to the LCS" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                 Get-D365LcsApiToken -ClientId $settings.lcsClientId -Username "$lcsUsernameSecretname" -Password "$lcsPasswordSecretName" -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $settings.lcsProjectId
                 $assetId = Invoke-D365LcsUpload -FilePath "$deployablePackagePath" -FileType "SoftwareDeployablePackage" -Name "$pname" -Verbose -EnableException
@@ -182,11 +182,11 @@ try {
                 if($settings.deploy)
                 {
                     Write-Output "::group::Deploy asset to the LCS Environment"
-                    Convert-FSCPSTextToAscii -Text "Deploy asset to the LCS Environment" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 90
+                    Convert-FSCPSTextToAscii -Text "Deploy asset to the LCS Environment" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                     #Check environment status
 
-                    Convert-FSCPSTextToAscii -Text "Check $($EnvironmentName) status" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 
+                    Convert-FSCPSTextToAscii -Text "Check $($EnvironmentName) status" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                     $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
                     $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)
@@ -235,7 +235,7 @@ try {
                     #Startup environment
                     #if($PowerState -ne "running")
                     #{
-                        Convert-FSCPSTextToAscii -Text "Start $($EnvironmentName)" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105 
+                        Convert-FSCPSTextToAscii -Text "Start $($EnvironmentName)" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                         Invoke-D365LcsEnvironmentStart -EnvironmentId $settings.lcsEnvironmentId
                         Start-Sleep -Seconds 60
@@ -243,7 +243,7 @@ try {
 
                     #Deploy asset to the LCS Environment
 
-                    Convert-FSCPSTextToAscii -Text "Deployment..." -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110
+                    Convert-FSCPSTextToAscii -Text "Deployment..." -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                     $WaitForCompletion = $true
                     $PSFObject = Invoke-D365LcsDeployment -AssetId "$($assetId.AssetId)" -EnvironmentId "$($settings.lcsEnvironmentId)" -UpdateName "$pname"
@@ -286,7 +286,7 @@ try {
 
                     if($PowerState -ne "running")
                     {
-                        Convert-FSCPSTextToAscii -Text "Stop $($EnvironmentName)" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 105 -Padding 2
+                        Convert-FSCPSTextToAscii -Text "Stop $($EnvironmentName)" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                         Invoke-D365LcsEnvironmentStop -EnvironmentId $settings.lcsEnvironmentId
                     }
@@ -294,7 +294,7 @@ try {
                 }
             }
         }
-        Convert-FSCPSTextToAscii -Text "Done" -Font "Standard" -BorderType DoubleDots -HorizontalLayout ControlledSmushing  -Padding 2
+        Convert-FSCPSTextToAscii -Text "Done" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     }
     finally
     {
