@@ -12,20 +12,20 @@ try {
     $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
     . $helperPath
 
-    installModules @("fscps.tools")
+    installModules @("fscps.tools", "fscps.ascii")
 
-    OutputInfo "======================================== Gather version info"
+    Convert-FSCPSTextToAscii -Text "Gather version info" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     $versionData = Get-FSCPSVersionInfo -Version $DynamicsVersion
     $PlatformVersion = $versionData.data.PlatformVersion
     $ApplicationVersion = $versionData.data.AppVersion
 
-    OutputInfo "======================================== Download NuGet packages"
+    Convert-FSCPSTextToAscii -Text "Download NuGet packages" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     Get-FSCPSNuget -Version $PlatformVersion -Type PlatformCompilerPackage -Path $PackagesDirectory -Force
     Get-FSCPSNuget -Version $PlatformVersion -Type PlatformDevALM -Path $PackagesDirectory
     Get-FSCPSNuget -Version $ApplicationVersion -Type ApplicationDevALM -Path $PackagesDirectory
     Get-FSCPSNuget -Version $ApplicationVersion -Type ApplicationSuiteDevALM -Path $PackagesDirectory
 
-    OutputInfo "======================================== Nuget install packages"
+    Convert-FSCPSTextToAscii -Text "Nuget install packages" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
     $PackagesDirectoryFullPath = Get-Item -Path $PackagesDirectory
     GeneratePackagesConfig -DynamicsVersion $DynamicsVersion -NugetFeedName "local" -NugetSourcePath $PackagesDirectoryFullPath.FullName
     Set-Location NewBuild

@@ -18,7 +18,7 @@ Set-StrictMode -Version 2.0
 
 try {
     Import-Module (Join-Path $PSScriptRoot "..\FSC-PS-Helper.ps1")
-    installModules @("fscps.tools")
+    installModules @("fscps.tools", "fscps.ascii")
     $workflowName = $env:GITHUB_WORKFLOW
     $Script:IsOnGitHub = $true
     Set-FSCPSSettings -Verbose
@@ -67,7 +67,8 @@ try {
                 $orTime = $(git log -1 --format=%ct "$($_.settings.sourceBranch)")
             }
             try {
-                OutputInfo "Environment ====================== $($_.Name)."
+
+                Convert-FSCPSTextToAscii -Text "Environment = $($_.Name)." -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2 -Timestamp
                 $check = $true
                 if($github.EventName -eq "schedule")
                 {
