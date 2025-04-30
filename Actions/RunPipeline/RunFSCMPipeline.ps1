@@ -20,7 +20,7 @@ Set-StrictMode -Version 2.0
 try {
     $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
     . ($helperPath)
-    installModules @("fscps.tools")
+    installModules @("fscps.tools", "fscps.ascii")
     $LastExitCode = 0
     $workflowName = $env:GITHUB_WORKFLOW
     $github = (Get-ActionContext)
@@ -185,7 +185,7 @@ try {
                 
                     #Check environment status
 
-                    Convert-FSCPSTextToAscii -Text "Check $($EnvironmentName) status" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
+                    Convert-FSCPSTextToAscii -Text "Che ck $($EnvironmentName) status" -Font "Term" -BorderType DoubleDots -HorizontalLayout ControlledSmushing -ScreenWigth 110 -Padding 2
                 
                     $azurePassword = ConvertTo-SecureString $azClientsecretSecretname -AsPlainText -Force
                     $psCred = New-Object System.Management.Automation.PSCredential($settings.azClientId , $azurePassword)

@@ -20,7 +20,7 @@ try {
     $helperPath = Join-Path -Path $PSScriptRoot -ChildPath "..\FSC-PS-Helper.ps1" -Resolve
     . ($helperPath)
     
-    installModules @("fscps.tools")
+    installModules @("fscps.tools", "fscps.ascii")
     $LastExitCode = 0
     $workflowName = $env:GITHUB_WORKFLOW
     $github = (Get-ActionContext)
