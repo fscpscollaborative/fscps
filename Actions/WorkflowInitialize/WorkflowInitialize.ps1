@@ -36,7 +36,7 @@ try {
     }
 
     #Test-ALGoRepository -baseFolder $ENV:GITHUB_WORKSPACE
-    installModules @("fscps.tools")
+    installModules @("fscps.tools", "fscps.ascii")
 }
 catch {
     OutputError -message $_.Exception.Message
