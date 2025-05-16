@@ -389,14 +389,16 @@ function ProcessingSDP {
                 $download = $true
             }
             switch ($AssetName) {
-                {$AssetName.ToLower().StartsWith("Service Update".ToLower())} 
+                {$AssetName.ToLower().StartsWith("Service Update".ToLower()) -or $AssetName.ToLower().StartsWith("First Release Service Update".ToLower())} 
                 {  
-                    $curVer.data.FSCServiseUpdatePackageId=$AssetId;                 
+                    $curVer.data.FSCServiseUpdatePackageId=$AssetId;
+                    $curVer.data.FSCLatestQualityUpdatePackageId=$AssetId;                 
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Preview Version".ToLower())} 
                 {  
                     $curVer.data.FSCPreviewVersionPackageId=$AssetId;
+                    $curVer.data.FSCLatestQualityUpdatePackageId=$AssetId;
                     break;
                 }
                 {$AssetName.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
