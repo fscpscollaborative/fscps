@@ -41,7 +41,21 @@ jobs:
 
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             $lcstoken = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-            $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType NuGetPackage
+
+
+            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType SoftwareDeployablePackage -AssetName "*10.0*" -LcsApiUri "https://lcsapi.lcs.dynamics.com"
+            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
+                $fileName = $_.Name
+                $fscVersion = Get-FSCVersionFromPackageName $_.Name
+                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
+                {
+                    OutputInfo "#################### $fscVersion #####################"
+                    $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
+                    ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
+                }
+            }
+            
+            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType NuGetPackage -LcsApiUri "https://lcsapi.lcs.dynamics.com"
 
             Set-Location $baseFolder
             $branch = main #[System.IO.Path]::GetRandomFileName()
@@ -77,17 +91,7 @@ jobs:
                 }
             }
             
-            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType SoftwareDeployablePackage -AssetName "*10.0*"
-            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
-                $fileName = $_.Name
-                $fscVersion = Get-FSCVersionFromPackageName $_.Name
-                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
-                {
-                    OutputInfo "#################### $fscVersion #####################"
-                    $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-                    ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
-                }
-            }
+
             Set-Location $baseFolder
             invoke-git add .
 
