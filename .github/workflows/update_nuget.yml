@@ -77,7 +77,7 @@ jobs:
                 }
             }
             
-            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType SoftwareDeployablePackage -AssetName "*10.0*"
+            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType SoftwareDeployablePackage
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.Name
                 $fscVersion = Get-FSCVersionFromPackageName $_.Name
