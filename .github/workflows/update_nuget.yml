@@ -41,28 +41,12 @@ jobs:
 
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             $lcstoken = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-
-
-            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType SoftwareDeployablePackage -AssetName "*10.0*" -LcsApiUri "https://lcsapi.lcs.dynamics.com"
-            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
-                $fileName = $_.Name
-                $fscVersion = Get-FSCVersionFromPackageName $_.Name
-                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
-                {
-                    OutputInfo "#################### $fscVersion #####################"
-                    $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-                    ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
-                }
-            }
-            
-            $assetsList = Get-D365LcsSharedAssetFile -Token $lcstoken -ProjectId $lcsProjectId -FileType NuGetPackage -LcsApiUri "https://lcsapi.lcs.dynamics.com"
+           
 
             Set-Location $baseFolder
             $branch = main #[System.IO.Path]::GetRandomFileName()
             $githubOwner = "$ENV:GITHUB_ACTOR"
-
-            $minimumfscversion = "10.0.40"
-
+            $minimumfscversion = "10.0.39"
             $fscVersionRegex = [regex] "(([0-9]*[0-9])\.){2}(?:[0-9]*[0-9]?)"
 
             invoke-git config --global user.email "$githubOwner@users.noreply.github.com"
@@ -73,6 +57,20 @@ jobs:
             #invoke-git checkout -b $branch main
             invoke-git checkout $branch
 
+
+            $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType SoftwareDeployablePackage
+            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
+                $fileName = $_.Name
+                $fscVersion = Get-FSCVersionFromPackageName $_.Name
+                if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
+                {
+                    OutputInfo "#################### $fscVersion #####################"
+                    $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
+                    ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
+                }
+            }
+
+            $assetsList = GetLCSSharedAssetsList -Token $lcstoken -FileType NuGetPackage
             $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
                 $fscVersion = Get-FSCVersionFromPackageName $_.Name
@@ -90,7 +88,8 @@ jobs:
                     }
                 }
             }
-
+            
+            
             Set-Location $baseFolder
             invoke-git add .
 
