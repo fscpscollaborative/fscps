@@ -90,7 +90,6 @@ jobs:
                     }
                 }
             }
-            
 
             Set-Location $baseFolder
             invoke-git add .
