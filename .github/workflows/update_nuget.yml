@@ -66,7 +66,7 @@ jobs:
             Set-FSCPSLCSSettings -SettingsJsonString $settingsFile
 
             $assetsList = Get-FSCPSLCSSharedAssetList -AssetFileType SoftwareDeployablePackage
-            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
+            $assetsList | Sort-Object{$_.LocalModifiedDate} | ForEach-Object {
                 $fileName = $_.Name
                 $fscVersion = Get-FSCVersionFromPackageName $_.Name
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6 -and -not $fileName.StartsWith("AX2012"))
@@ -78,7 +78,7 @@ jobs:
             }
 
             $assetsList = Get-FSCPSLCSSharedAssetList -AssetFileType NuGetPackage
-            $assetsList | Sort-Object{$_.ModifiedDate} | ForEach-Object {
+            $assetsList | Sort-Object{$_.LocalModifiedDate} | ForEach-Object {
                 $fileName = $_.FileName
                 $fscVersion = Get-FSCVersionFromPackageName $_.Name
                 if($fscVersion -gt $minimumfscversion -and $fscVersion.Length -gt 6)
