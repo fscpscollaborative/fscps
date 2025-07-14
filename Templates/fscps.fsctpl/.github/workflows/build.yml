@@ -111,8 +111,8 @@ jobs:
             $summary = "# Logs `n`n"
             if ($logFiles) {
                 foreach ($logFile in $logFiles) {
-                    $content = Get-Content -Path $logFile
-                    $summary += "## $logFile `n"
+                    $content = Get-Content -Path $logFile.FullName
+                    $summary += "## $($logFile.Name) `n"
                     foreach ($line in $content) {
                         # if the line consists only of = or - characters 
                         # (which would be interpreted as a setext heading 
