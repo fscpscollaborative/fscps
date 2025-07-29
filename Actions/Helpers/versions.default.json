@@ -365,12 +365,12 @@
     "version": "10.0.45",
     "data": {
       "FSCFinalQualityUpdatePackageId": "",
-      "PlatformVersionLatest": "",
-      "AppVersionGA": "",
+      "PlatformVersionLatest": "7.0.7690.12",
+      "AppVersionGA": "10.0.2345.13",
       "FSCServiseUpdatePackageId": "",
       "EcommerceMicrosoftRepoBranch": "",
-      "PlatformVersionGA": "",
-      "AppVersionLatest": "",
+      "PlatformVersionGA": "7.0.7690.12",
+      "AppVersionLatest": "10.0.2345.13",
       "FSCPreviewVersionPackageId": "24b3c6fa-ea7d-4b10-a757-fd2cd2fb1925",
       "FSCLatestQualityUpdatePackageId": "24b3c6fa-ea7d-4b10-a757-fd2cd2fb1925"
     }
