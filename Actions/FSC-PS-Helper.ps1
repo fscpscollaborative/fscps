@@ -530,6 +530,7 @@ function Get-VersionData
             {
                 $data = @{
                     AppVersion                      = $d.data.AppVersionLatest
+                    PlatformUpdate                  = $d.data.PlatformUpdate
                     PlatformVersion                 = $d.data.PlatformVersionLatest
                     FSCServiseUpdatePackageId       = $d.data.FSCServiseUpdatePackageId
                     FSCPreviewVersionPackageId      = $d.data.FSCPreviewVersionPackageId

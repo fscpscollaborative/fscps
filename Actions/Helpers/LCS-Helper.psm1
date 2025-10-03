@@ -361,6 +361,7 @@ function ProcessingSDP {
             {
                 $curVer = (@{version=$FSCVersion;data=@{PlatformVersionGA='';
                                                         AppVersionGA='';
+                                                        PlatformUpdate='';
                                                         PlatformVersionLatest='';
                                                         AppVersionLatest='';
                                                         FSCServiseUpdatePackageId=''; 
@@ -414,6 +415,7 @@ function ProcessingSDP {
                 }
                     Default {}
             }
+            $curVer.data.PlatformUpdate = Convert-VersionToPlatformUpdate -Version $FSCVersion
             Set-Content -Path $versionsDefaultFile ($versions | Sort-Object{$_.version} | ConvertTo-Json)
             if($download)
             {
@@ -577,5 +579,40 @@ function Get-NewestNugetVersion
         else {
             $Version2
         }
+    }
+}
+
+# Converts an FSC version (e.g. 10.0.30) to a Platform Update number (e.g. 54) using rule PU = minor + 24
+# Examples:
+#   Convert-VersionToPlatformUpdate -Version 10.0.30          -> 54
+#   Convert-VersionToPlatformUpdate -Version 10.0.30 -AsLabel -> "Plat Update 54"
+#   Convert-VersionToPlatformUpdate -Version 10.0.30 -AsPU    -> "PU54"
+function Convert-VersionToPlatformUpdate {
+    [CmdletBinding()] 
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Version,
+
+        # Return formatted like "Plat Update <n>"
+        [switch] $AsLabel,
+
+        # Return formatted like "PU<n>"
+        [switch] $AsPU
+    )
+    process {
+        if ([string]::IsNullOrWhiteSpace($Version)) { return $null }
+
+        # Expecting at least 3 segments (Major.Minor.Build)
+        $parts = $Version.Split('.')
+        if ($parts.Count -lt 3) { return $null }
+
+        $third = $parts[2]
+        if (-not ($third -match '^[0-9]+$')) { return $null }
+
+        $pu = ([int]$third) + 24
+
+        if ($AsLabel) { return "Plat Update $pu" }
+        if ($AsPU)    { return "PU$pu" }
+        return $pu
     }
 }
