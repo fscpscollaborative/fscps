@@ -402,5 +402,20 @@
       "FSCPreviewVersionPackageId": "b496cab0-7fcf-4ddf-84a7-e252d38eb5c3",
       "FSCLatestQualityUpdatePackageId": "6c4ae2f2-30d8-42ec-8885-3c4a48913b4b"
     }
+  },
+  {
+    "version": "10.0.46",
+    "data": {
+      "AppVersionLatest": "",
+      "PlatformUpdate": 70,
+      "FSCPreviewVersionPackageId": "14b9b055-2cc1-44c2-967d-707e28736a73",
+      "PlatformVersionLatest": "",
+      "FSCServiseUpdatePackageId": "",
+      "AppVersionGA": "",
+      "EcommerceMicrosoftRepoBranch": "",
+      "PlatformVersionGA": "",
+      "FSCFinalQualityUpdatePackageId": "",
+      "FSCLatestQualityUpdatePackageId": "14b9b055-2cc1-44c2-967d-707e28736a73"
+    }
   }
 ]
