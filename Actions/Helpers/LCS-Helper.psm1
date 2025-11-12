@@ -566,18 +566,28 @@ function Get-NewestNugetVersion
         [string]$Version1,
         [string]$Version2
     )
-    begin{
-        $reg = [regex] "\b(([0-9]*[0-9]).){4}\b"
-    }
     process{
-        $ver1 = $reg.Match($Version1).Groups[1].Value
-        $ver2 = $reg.Match($Version2).Groups[1].Value
-        if($ver1 -gt $ver2)
-        {
-            $Version1
+        if ([string]::IsNullOrWhiteSpace($Version1)) { return $Version2 }
+        if ([string]::IsNullOrWhiteSpace($Version2)) { return $Version1 }
+        
+        # Convert to System.Version for proper comparison
+        try {
+            $v1 = [Version]$Version1
+            $v2 = [Version]$Version2
+            
+            if ($v1 -gt $v2) {
+                return $Version1
+            } else {
+                return $Version2
+            }
         }
-        else {
-            $Version2
+        catch {
+            # Fallback to string comparison if version parsing fails
+            if ($Version1 -gt $Version2) {
+                return $Version1
+            } else {
+                return $Version2
+            }
         }
     }
 }
