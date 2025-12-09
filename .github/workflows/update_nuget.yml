@@ -73,7 +73,8 @@ jobs:
                 {
                     OutputInfo "#################### $fscVersion #####################"
                     $token = GetToken -lcsClientId $lcsClientId -lcsUserName $lcsUserName -lcsUserPasswd $lcsUserPassword
-                    ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
+                    #ProcessingSDP -FSCVersion $fscVersion -AssetId $_.Id -AssetName $fileName -ProjectId $lcsProjectId -LCSToken $lcstoken -StorageSAStoken $StorageSAStoken
+                    ProcessingSDP -SelectedAsset $_ -AssetCollection $assetsList -ProjectId $lcsProjectId -LCSToken $token -StorageSAStoken $StorageSAStoken
                 }
             }
 
