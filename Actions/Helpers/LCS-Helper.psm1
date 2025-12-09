@@ -354,23 +354,19 @@ function ProcessingSDP {
         Remove-Item -Path $PackageDestination/* -Recurse -Force
         
         # Display processing information
-        OutputInfo "Processing Asset ID: $AssetId"
-        OutputInfo "Processing Asset Name: $AssetName" 
-        OutputInfo "Available Assets Total: $($AssetCollection.Count)"
-        OutputInfo "Target Project: $ProjectId"
-        OutputInfo "Destination Path: $PackageDestination"
-        OutputInfo "FSC Product Version: $FSCVersion"
+        Write-Host "Processing Asset ID: $AssetId"
+        Write-Host "Processing Asset Name: $AssetName" 
+        Write-Host "Available Assets Total: $($AssetCollection.Count)"
+        Write-Host "Target Project: $ProjectId"
+        Write-Host "Destination Path: $PackageDestination"
+        Write-Host "FSC Product Version: $FSCVersion"
     }
     
     process {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $destinationFilePath = Join-Path $PackageDestination ($AssetName.Replace(":",".")+".zip")  
 
-        # Retrieve download URL for the selected asset
-        $downloadUri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
-        $assetDownloadData = (Invoke-RestMethod -Method Get -Uri $downloadUri -Headers $header)
-
-        OutputInfo "Processing FSC Version: $FSCVersion"
+        Write-Host "Processing FSC Version: $FSCVersion"
 
         if(-not [string]::IsNullOrEmpty($FSCVersion))
         {
@@ -378,7 +374,7 @@ function ProcessingSDP {
             $versionList = New-Object System.Collections.ArrayList
             $versionConfigPath = "Actions\Helpers\versions.default.json"
             $defaultVersionData = (Get-Content $versionConfigPath) | ConvertFrom-Json
-            $defaultVersionData | ForEach-Object{$versionList.Add($_)}
+            $defaultVersionData | ForEach-Object{$versionList.Add($_) | Out-Null}
             
             # Locate existing version or create new entry
             $currentVersion = $versionList.Where({$_.version -eq $FSCVersion})
@@ -396,7 +392,6 @@ function ProcessingSDP {
                 $versionList.Add($newVersionRecord)
                 $currentVersion = $versionList.Where({$_.version -eq $FSCVersion})
             }
-            
             # Ensure required package tracking properties exist
             $requiredFields = @("FSCServiseUpdatePackageId", "FSCPreviewVersionPackageId", "FSCLatestQualityUpdatePackageId")
             foreach($fieldName in $requiredFields)
@@ -407,6 +402,50 @@ function ProcessingSDP {
                 }
             }
             
+            # Helper function to compare platform builds
+            function Compare-PlatformBuild {
+                param(
+                    [string]$ExistingPackageId,
+                    [string]$PackageType,
+                    [string]$CurrentPlatformBuild,
+                    [array]$AssetCollection
+                )
+                
+                if ([string]::IsNullOrEmpty($ExistingPackageId)) {
+                    Write-Host "No existing $PackageType package ID. Download required."
+                    return $true
+                }
+                
+                $existingAsset = $AssetCollection | Where-Object { $_.Id -eq $ExistingPackageId }
+                if (-not $existingAsset) {
+                    Write-Host "No existing $PackageType found. Download required."
+                    return $true
+                }
+                
+                $existingProperties = ConvertFrom-FSCPSFileAssetProperties -Asset $existingAsset
+                $existingPlatformBuild = $existingProperties.platformBuild
+                
+                if ([string]::IsNullOrEmpty($CurrentPlatformBuild) -or [string]::IsNullOrEmpty($existingPlatformBuild)) {
+                    Write-Host "$PackageType platform build information missing. Defaulting to download."
+                    return $true
+                }
+                
+                try {
+                    $currentVersionObj = [System.Version]::Parse($CurrentPlatformBuild)
+                    $existingVersionObj = [System.Version]::Parse($existingPlatformBuild)
+                    
+                    if ($currentVersionObj -gt $existingVersionObj) {
+                        Write-Host "Current $PackageType platformBuild ($CurrentPlatformBuild) is newer than existing ($existingPlatformBuild). Download required."
+                        return $true
+                    } else {
+                        Write-Host "Current $PackageType platformBuild ($CurrentPlatformBuild) is not newer than existing ($existingPlatformBuild). Skipping download."
+                        return $false
+                    }
+                } catch {
+                    Write-Host "Error comparing $PackageType platform builds. Defaulting to download."
+                    return $true
+                }
+            }
             # Determine if package should be downloaded based on type and version comparison
             $shouldDownload = $false
             
@@ -414,49 +453,8 @@ function ProcessingSDP {
             switch ($AssetName) {
                 {$_.ToLower().StartsWith("Service Update".ToLower()) -or $_.ToLower().StartsWith("First Release Service Update".ToLower())} 
                 {  
-                    # For Service Updates, compare platformBuild versions
-                    if (-not [string]::IsNullOrEmpty($currentVersion.data.FSCServiseUpdatePackageId)) {
-                        # Find existing Service Update package in asset collection
-                        $existingServiceUpdateAsset = $AssetCollection | Where-Object { $_.Id -eq $currentVersion.data.FSCServiseUpdatePackageId }
-                        
-                        if ($existingServiceUpdateAsset) {
-                            # Get platformBuild of existing Service Update
-                            $existingServiceUpdateProperties = ConvertFrom-FSCPSFileAssetProperties -Asset $existingServiceUpdateAsset
-                            $existingPlatformBuild = $existingServiceUpdateProperties.platformBuild
-                            
-                            # Get platformBuild of current asset being processed
-                            $currentPlatformBuild = $convertedAssetData.platformBuild
-                            
-                            # Compare platform builds (assuming format like "7.0.7690.33")
-                            if (-not [string]::IsNullOrEmpty($currentPlatformBuild) -and -not [string]::IsNullOrEmpty($existingPlatformBuild)) {
-                                try {
-                                    $currentVersion = [System.Version]::Parse($currentPlatformBuild)
-                                    $existingVersion = [System.Version]::Parse($existingPlatformBuild)
-                                    
-                                    if ($currentVersion -gt $existingVersion) {
-                                        $shouldDownload = $true
-                                        OutputInfo "Current platformBuild ($currentPlatformBuild) is newer than existing ($existingPlatformBuild). Download required."
-                                    } else {
-                                        OutputInfo "Current platformBuild ($currentPlatformBuild) is not newer than existing ($existingPlatformBuild). Skipping download."
-                                    }
-                                } catch {
-                                    OutputInfo "Error comparing platform builds. Defaulting to download."
-                                    $shouldDownload = $true
-                                }
-                            } else {
-                                OutputInfo "Platform build information missing. Defaulting to download."
-                                $shouldDownload = $true
-                            }
-                        } else {
-                            OutputInfo "No existing Service Update found. Download required."
-                            $shouldDownload = $true
-                        }
-                    } else {
-                        OutputInfo "No existing Service Update package ID. Download required."
-                        $shouldDownload = $true
-                    }
+                    $shouldDownload = Compare-PlatformBuild -ExistingPackageId $currentVersion.data.FSCServiseUpdatePackageId -PackageType "Service Update" -CurrentPlatformBuild $convertedAssetData.platformBuild -AssetCollection $AssetCollection
                     
-                    # Update tracking data if downloading
                     if ($shouldDownload) {
                         $currentVersion.data.FSCServiseUpdatePackageId=$AssetId;
                         $currentVersion.data.FSCLatestQualityUpdatePackageId=$AssetId;
@@ -465,15 +463,21 @@ function ProcessingSDP {
                 }
                 {$_.ToLower().StartsWith("Preview Version".ToLower())} 
                 {  
-                    $shouldDownload = $true
-                    $currentVersion.data.FSCPreviewVersionPackageId=$AssetId;
-                    $currentVersion.data.FSCLatestQualityUpdatePackageId=$AssetId;
+                    $shouldDownload = Compare-PlatformBuild -ExistingPackageId $currentVersion.data.FSCPreviewVersionPackageId -PackageType "Preview Version" -CurrentPlatformBuild $convertedAssetData.platformBuild -AssetCollection $AssetCollection
+                    
+                    if ($shouldDownload) {
+                        $currentVersion.data.FSCPreviewVersionPackageId=$AssetId;
+                        $currentVersion.data.FSCLatestQualityUpdatePackageId=$AssetId;
+                    }
                     break;
                 }
                 {$_.ToLower().StartsWith("Proactive Quality Update".ToLower())} 
                 {  
-                    $shouldDownload = $true
-                    $currentVersion.data.FSCLatestQualityUpdatePackageId=$AssetId;
+                    $shouldDownload = Compare-PlatformBuild -ExistingPackageId $currentVersion.data.FSCLatestQualityUpdatePackageId -PackageType "Proactive Quality Update" -CurrentPlatformBuild $convertedAssetData.platformBuild -AssetCollection $AssetCollection
+                    
+                    if ($shouldDownload) {
+                        $currentVersion.data.FSCLatestQualityUpdatePackageId=$AssetId;
+                    }
                     break;
                 }
                 {$_.ToLower().StartsWith("Final Quality Update".ToLower())} 
@@ -484,17 +488,21 @@ function ProcessingSDP {
                     break;
                 }
                 Default {
+                    Write-Host "Unrecognized package type for asset '$AssetName'. Defaulting to download."
                     $shouldDownload = $true
                 }
             }
-            
+            Write-Host "Download decision for asset '$AssetName': $shouldDownload"
             # Update platform information from asset properties and save configuration
             $platformUpdate = $convertedAssetData.platformVersion -replace '^Update', ''
-            $currentVersion.data.PlatformUpdate = $platformUpdate
+            $currentVersion.data.PlatformUpdate = [int]::Parse($platformUpdate)
             Set-Content -Path $versionConfigPath ($versionList | Sort-Object{$_.version} | ConvertTo-Json)
-            
+
             if($shouldDownload)
             {
+                # Retrieve download URL for the selected asset
+                $downloadUri = "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($ProjectId)?assetId=$($AssetId)"
+                $assetDownloadData = (Invoke-RestMethod -Method Get -Uri $downloadUri -Headers $header)
                 # Verify AzCopy availability
                 $azCopyExecutable = "c:\temp\azcopy.exe"
                 $azCopyReady = Test-Path $azCopyExecutable
@@ -502,9 +510,9 @@ function ProcessingSDP {
                 # Install AzCopy if not present
                 If (-not $azCopyReady)
                 {
-                    Write-Output "AzCopy utility not detected. Downloading..."
+                    Write-Host "AzCopy utility not detected. Downloading..."
                     Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-windows" -OutFile c:\temp\AzCopy.zip -UseBasicParsing
-                    Write-Output "Extracting AzCopy archive..."
+                    Write-Host "Extracting AzCopy archive..."
                     Expand-Archive c:\temp\AzCopy.zip c:\temp\AzCopy -Force
                     Get-ChildItem c:\temp\AzCopy/*/azcopy.exe | Copy-Item -Destination $azCopyExecutable
                 }
@@ -512,15 +520,15 @@ function ProcessingSDP {
                 # Download package if not already present locally
                 if(-not (Test-Path $destinationFilePath))
                 {
-                    Write-Output "Retrieving package from LCS platform..."
+                    Write-Host "Retrieving package from LCS platform..."
                     & $azCopyExecutable copy $assetDownloadData.FileLocation "$destinationFilePath" --output-level quiet
                 }
                 
                 # Upload to Azure Storage (replace existing if present)
-                Write-Output "Transferring package to Azure Storage: $destinationFilePath"
-                Write-Output "Uploading to container '$storageContainer' with blob name '$AssetName' (will replace if exists)"
+                Write-Host "Transferring package to Azure Storage: $destinationFilePath"
+                Write-Host "Uploading to container '$storageContainer' with blob name '$AssetName' (will replace if exists)"
                 Set-AzStorageBlobContent -Context $ctx -Container $storageContainer -Blob "$AssetName" -File $destinationFilePath -StandardBlobTier Hot -ConcurrentTaskCount 10 -Force
-                Write-Output "Package successfully uploaded to Azure Storage"
+                Write-Host "Package successfully uploaded to Azure Storage"
             }
             
             # Clean up local file after processing
