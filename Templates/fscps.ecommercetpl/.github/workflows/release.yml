@@ -40,6 +40,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ github.ref }}
 
       - name: Initialize the workflow
         uses: fscpscollaborative/fscps.gh/WorkflowInitialize@v2.1
@@ -67,6 +69,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ needs.Initialization.outputs.source_branch || github.ref }}
 
       - name: Read settings
         uses: fscpscollaborative/fscps.gh/ReadSettings@v2.1
@@ -123,6 +127,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ needs.Initialization.outputs.source_branch || github.ref }}
 
       - name: Read settings
         id: ReadSettings
@@ -144,6 +150,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ needs.Initialization.outputs.source_branch || github.ref }}
 
       - name: Read settings
         uses: fscpscollaborative/fscps.gh/ReadSettings@v2.1
