@@ -130,7 +130,7 @@ try {
             }
         }
         
-        $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE 
+        $buildResult = Invoke-FSCPSCompile -SourcesPath $ENV:GITHUB_WORKSPACE -Force
         $buildResult
         ### Postbuild
         $postbuildCustomScript = Join-Path $ENV:GITHUB_WORKSPACE '.FSC-PS\CustomScripts\PostBuild.ps1'
