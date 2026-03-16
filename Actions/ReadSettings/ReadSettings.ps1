@@ -280,16 +280,17 @@ try {
     Add-Content -Path $env:GITHUB_ENV -Value "type=$repoType"
 
     # Set source_branch for all workflows
-    if($settings.sourceBranch){
-        $sourceBranch = $settings.sourceBranch;
-    }
-    else
-    {
-        $sourceBranch = $settings.currentBranch;
-    }
-    Add-Content -Path $env:GITHUB_OUTPUT -Value "SOURCE_BRANCH=$sourceBranch"
-    Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
-
+    <# 
+        if($settings.sourceBranch){
+            $sourceBranch = $settings.sourceBranch;
+        }
+        else
+        {
+            $sourceBranch = $settings.currentBranch;
+        }
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "SOURCE_BRANCH=$sourceBranch"
+        Add-Content -Path $env:GITHUB_ENV -Value "SOURCE_BRANCH=$sourceBranch"
+    #>
 
     if($workflowName -eq "(DEPLOY)")
     {
