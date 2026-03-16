@@ -52,4 +52,4 @@ jobs:
           keep_minimum_runs: ${{ github.event.inputs.minimum_runs }}
           delete_workflow_pattern: ${{ github.event.inputs.delete_workflow_pattern }}
           delete_workflow_by_state_pattern: ${{ github.event.inputs.delete_workflow_by_state_pattern }}
-          dry_run: ${{ github.event.inputs.dry_run }}
+          dry_run: false
