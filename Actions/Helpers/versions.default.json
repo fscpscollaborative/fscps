@@ -400,13 +400,13 @@
       "AppVersionLatest": "10.0.2345.191",
       "PlatformUpdate": 69,
       "FSCPreviewVersionPackageId": "b496cab0-7fcf-4ddf-84a7-e252d38eb5c3",
-      "FSCLatestQualityUpdatePackageId": "311fda40-0ea9-4ce4-9963-9b138070da13"
+      "FSCLatestQualityUpdatePackageId": "6ab7d2a5-3257-4caf-a142-6ca4c2289ae4"
     }
   },
   {
     "version": "10.0.46",
     "data": {
-      "AppVersionLatest": "10.0.2428.134",
+      "AppVersionLatest": "10.0.2428.135",
       "PlatformUpdate": 70,
       "FSCPreviewVersionPackageId": "14b9b055-2cc1-44c2-967d-707e28736a73",
       "PlatformVersionLatest": "7.0.7778.75",
