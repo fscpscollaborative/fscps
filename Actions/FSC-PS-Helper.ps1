@@ -109,22 +109,48 @@ function Update-7ZipInstallation
         # Let's go directly to the website and see what it lists as the current version
         $BaseUri = "https://www.7-zip.org/"
         $BasePage = Invoke-WebRequest -Uri ( $BaseUri + 'download.html' ) -UseBasicParsing
-        # Determine bit-ness of O/S and download accordingly
+        # Determine bit-ness of O/S and download accordingly.
+        # 7-Zip now recommends EXE installers and MSI links might not always be present.
         if ( [System.Environment]::Is64BitOperatingSystem ) {
-            # The most recent 'current' (non-beta/alpha) is listed at the top, so we only need the first.
-            $ChildPath = $BasePage.Links | Where-Object { $_.href -like '*7z*-x64.msi' } | Select-Object -First 1 | Select-Object -ExpandProperty href
-        } else {
-            # The most recent 'current' (non-beta/alpha) is listed at the top, so we only need the first.
-            $ChildPath = $BasePage.Links | Where-Object { $_.href -like '*7z*.msi' } | Select-Object -First 1 | Select-Object -ExpandProperty href
+            $DownloadPatterns = @('*7z*-x64.exe', '*7z*-x64.msi', '*7z*.exe', '*7z*.msi')
+        }
+        else {
+            $DownloadPatterns = @('*7z*.exe', '*7z*.msi')
+        }
+
+        $ChildPath = $null
+        foreach ($pattern in $DownloadPatterns) {
+            # The most recent 'current' installer is listed first, so take the first match.
+            $ChildPath = $BasePage.Links |
+                Where-Object { $_.href -like $pattern } |
+                Select-Object -First 1 |
+                Select-Object -ExpandProperty href
+
+            if ($ChildPath) {
+                break
+            }
+        }
+
+        if (-not $ChildPath) {
+            throw "Could not find a 7-Zip installer link on $($BaseUri)download.html"
         }
         
         # Let's build the required download link
-        $DownloadUrl = $BaseUri + $ChildPath
+        $DownloadUrl = [System.Uri]::new([System.Uri]$BaseUri, $ChildPath).AbsoluteUri
+        $InstallerPath = Join-Path -Path $env:TEMP -ChildPath (Split-Path -Path $DownloadUrl -Leaf)
         
         Write-Host "Downloading the latest 7-Zip to the temp folder"
-        Invoke-WebRequest -Uri $DownloadUrl -OutFile "$env:TEMP\$( Split-Path -Path $DownloadUrl -Leaf )" | Out-Null
+        Invoke-WebRequest -Uri $DownloadUrl -OutFile $InstallerPath | Out-Null
         Write-Host "Installing the latest 7-Zip"
-        Start-Process -FilePath "$env:SystemRoot\system32\msiexec.exe" -ArgumentList "/package", "$env:TEMP\$( Split-Path -Path $DownloadUrl -Leaf )", "/passive" -Wait
+        if ($InstallerPath -like '*.msi') {
+            Start-Process -FilePath "$env:SystemRoot\system32\msiexec.exe" -ArgumentList "/package", $InstallerPath, "/passive" -Wait
+        }
+        elseif ($InstallerPath -like '*.exe') {
+            Start-Process -FilePath $InstallerPath -ArgumentList "/S" -Wait
+        }
+        else {
+            throw "Unsupported 7-Zip installer format: $InstallerPath"
+        }
 }
 function Compress-7zipArchive {
     Param (
