@@ -409,7 +409,7 @@
       "AppVersionLatest": "10.0.2428.172",
       "PlatformUpdate": 70,
       "FSCPreviewVersionPackageId": "14b9b055-2cc1-44c2-967d-707e28736a73",
-      "PlatformVersionLatest": "7.0.7778.107",
+      "PlatformVersionLatest": "7.0.7778.109",
       "FSCServiseUpdatePackageId": "c55054ca-e84c-40f4-9f0e-64b970791841",
       "AppVersionGA": "10.0.2428.63",
       "EcommerceMicrosoftRepoBranch": "",
@@ -421,12 +421,12 @@
   {
     "version": "10.0.47",
     "data": {
-      "PlatformVersionLatest": "7.0.7858.94",
+      "PlatformVersionLatest": "7.0.7858.96",
       "PlatformVersionGA": "7.0.7858.27",
       "AppVersionGA": "10.0.2527.42",
       "PlatformUpdate": 71,
       "FSCPreviewVersionPackageId": "15fc6af6-a65e-448e-877e-394929d89e0a",
-      "AppVersionLatest": "10.0.2527.107",
+      "AppVersionLatest": "10.0.2527.109",
       "EcommerceMicrosoftRepoBranch": "",
       "FSCFinalQualityUpdatePackageId": "",
       "FSCServiseUpdatePackageId": "2f6d5af1-69ec-4e36-b0f1-71ea1d8e4544",
