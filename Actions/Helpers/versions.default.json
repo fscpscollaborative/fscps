@@ -406,31 +406,31 @@
   {
     "version": "10.0.46",
     "data": {
-      "AppVersionLatest": "10.0.2428.197",
+      "AppVersionLatest": "10.0.2428.210",
       "PlatformUpdate": 70,
       "FSCPreviewVersionPackageId": "14b9b055-2cc1-44c2-967d-707e28736a73",
-      "PlatformVersionLatest": "7.0.7778.128",
+      "PlatformVersionLatest": "7.0.7778.141",
       "FSCServiseUpdatePackageId": "c55054ca-e84c-40f4-9f0e-64b970791841",
       "AppVersionGA": "10.0.2428.63",
       "EcommerceMicrosoftRepoBranch": "",
       "PlatformVersionGA": "7.0.7778.29",
       "FSCFinalQualityUpdatePackageId": "",
-      "FSCLatestQualityUpdatePackageId": "8bdf5b3e-dbd7-420a-a1df-d8336266ef62"
+      "FSCLatestQualityUpdatePackageId": "3d993640-d84d-43cb-adae-a4a6da810ebf"
     }
   },
   {
     "version": "10.0.47",
     "data": {
-      "PlatformVersionLatest": "7.0.7858.118",
+      "PlatformVersionLatest": "7.0.7858.132",
       "PlatformVersionGA": "7.0.7858.27",
       "AppVersionGA": "10.0.2527.42",
       "PlatformUpdate": 71,
       "FSCPreviewVersionPackageId": "15fc6af6-a65e-448e-877e-394929d89e0a",
-      "AppVersionLatest": "10.0.2527.138",
+      "AppVersionLatest": "10.0.2527.151",
       "EcommerceMicrosoftRepoBranch": "",
       "FSCFinalQualityUpdatePackageId": "",
       "FSCServiseUpdatePackageId": "2f6d5af1-69ec-4e36-b0f1-71ea1d8e4544",
-      "FSCLatestQualityUpdatePackageId": "9f8c5be5-abdc-475d-a94a-c0a30356da1e"
+      "FSCLatestQualityUpdatePackageId": "842be6cf-2170-4c90-adaf-08c358356191"
     }
   },
   {
@@ -440,8 +440,8 @@
       "EcommerceMicrosoftRepoBranch": "",
       "FSCPreviewVersionPackageId": "f5d57648-17b5-4462-a242-e733e934065b",
       "AppVersionGA": "10.0.2645.32",
-      "PlatformVersionLatest": "7.0.7996.52",
-      "AppVersionLatest": "10.0.2645.58",
+      "PlatformVersionLatest": "7.0.7996.69",
+      "AppVersionLatest": "10.0.2645.71",
       "PlatformVersionGA": "7.0.7996.33",
       "PlatformUpdate": 72,
       "FSCLatestQualityUpdatePackageId": "dc852703-0ebd-42e5-b331-39b3728752a0"
