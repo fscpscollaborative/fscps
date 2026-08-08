@@ -421,7 +421,7 @@
   {
     "version": "10.0.47",
     "data": {
-      "PlatformVersionLatest": "7.0.7858.156",
+      "PlatformVersionLatest": "7.0.7858.157",
       "PlatformVersionGA": "7.0.7858.27",
       "AppVersionGA": "10.0.2527.42",
       "PlatformUpdate": 71,
@@ -440,7 +440,7 @@
       "EcommerceMicrosoftRepoBranch": "",
       "FSCPreviewVersionPackageId": "f5d57648-17b5-4462-a242-e733e934065b",
       "AppVersionGA": "10.0.2645.32",
-      "PlatformVersionLatest": "7.0.7996.98",
+      "PlatformVersionLatest": "7.0.7996.100",
       "AppVersionLatest": "10.0.2645.106",
       "PlatformVersionGA": "7.0.7996.33",
       "PlatformUpdate": 72,
