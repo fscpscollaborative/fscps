@@ -406,7 +406,7 @@
   {
     "version": "10.0.46",
     "data": {
-      "AppVersionLatest": "10.0.2428.238",
+      "AppVersionLatest": "10.0.2428.243",
       "PlatformUpdate": 70,
       "FSCPreviewVersionPackageId": "14b9b055-2cc1-44c2-967d-707e28736a73",
       "PlatformVersionLatest": "7.0.7778.150",
@@ -415,22 +415,22 @@
       "EcommerceMicrosoftRepoBranch": "",
       "PlatformVersionGA": "7.0.7778.29",
       "FSCFinalQualityUpdatePackageId": "",
-      "FSCLatestQualityUpdatePackageId": "437d89f1-b8b5-40d3-a3bd-2b88361c3dde"
+      "FSCLatestQualityUpdatePackageId": "d0ac2242-24fd-48be-86e9-fc20a3bcb008"
     }
   },
   {
     "version": "10.0.47",
     "data": {
-      "PlatformVersionLatest": "7.0.7858.159",
+      "PlatformVersionLatest": "7.0.7858.166",
       "PlatformVersionGA": "7.0.7858.27",
       "AppVersionGA": "10.0.2527.42",
       "PlatformUpdate": 71,
       "FSCPreviewVersionPackageId": "15fc6af6-a65e-448e-877e-394929d89e0a",
-      "AppVersionLatest": "10.0.2527.192",
+      "AppVersionLatest": "10.0.2527.206",
       "EcommerceMicrosoftRepoBranch": "",
       "FSCFinalQualityUpdatePackageId": "",
       "FSCServiseUpdatePackageId": "2f6d5af1-69ec-4e36-b0f1-71ea1d8e4544",
-      "FSCLatestQualityUpdatePackageId": "2329f762-a95a-4898-a2f7-b48d5cd267da"
+      "FSCLatestQualityUpdatePackageId": "2f1fe061-b07e-4d1b-aab0-6c2a1d592195"
     }
   },
   {
@@ -440,26 +440,26 @@
       "EcommerceMicrosoftRepoBranch": "",
       "FSCPreviewVersionPackageId": "f5d57648-17b5-4462-a242-e733e934065b",
       "AppVersionGA": "10.0.2645.32",
-      "PlatformVersionLatest": "7.0.7996.102",
-      "AppVersionLatest": "10.0.2645.108",
+      "PlatformVersionLatest": "7.0.7996.111",
+      "AppVersionLatest": "10.0.2645.126",
       "PlatformVersionGA": "7.0.7996.33",
       "PlatformUpdate": 72,
-      "FSCLatestQualityUpdatePackageId": "6fa20dd6-568c-4ceb-8aed-c9ddf3c201d3"
+      "FSCLatestQualityUpdatePackageId": "34b6e614-816b-47d3-8a25-448971977f83"
     },
     "version": "10.0.48"
   },
   {
     "data": {
       "PlatformUpdate": 73,
-      "FSCPreviewVersionPackageId": "b3b941c0-26c6-42ee-acbb-856ebb5bae55",
-      "PlatformVersionLatest": "7.0.8199.3",
+      "FSCPreviewVersionPackageId": "d9d7383f-fa54-4f5a-b93a-2d5e592f2a8b",
+      "PlatformVersionLatest": "7.0.8199.36",
       "EcommerceMicrosoftRepoBranch": "",
-      "PlatformVersionGA": "7.0.8199.3",
+      "PlatformVersionGA": "7.0.8199.32",
       "FSCFinalQualityUpdatePackageId": "",
-      "AppVersionGA": "10.0.2790.11",
-      "FSCServiseUpdatePackageId": "",
-      "AppVersionLatest": "10.0.2790.11",
-      "FSCLatestQualityUpdatePackageId": "b3b941c0-26c6-42ee-acbb-856ebb5bae55"
+      "AppVersionGA": "10.0.2790.46",
+      "FSCServiseUpdatePackageId": "a27fb400-d48d-4ee2-9e6d-ab8a29b218a4",
+      "AppVersionLatest": "10.0.2790.52",
+      "FSCLatestQualityUpdatePackageId": "a27fb400-d48d-4ee2-9e6d-ab8a29b218a4"
     },
     "version": "10.0.49"
   }
