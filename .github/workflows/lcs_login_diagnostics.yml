@@ -117,6 +117,9 @@ jobs:
                 Write-Output "[GetSharedAssets fileType=$type] assets=$($assets.Count); sample: $((($assets | Select-Object -First 3).Name) -join ' | ')"
                 $first = $assets | Select-Object -First 1
                 Write-Output "[GetSharedAssets fileType=$type] fields: $(($first.PSObject.Properties.Name) -join ', ')"
+                if ($type -eq 10) {
+                  $assets | Group-Object Name | Sort-Object Name | ForEach-Object { Write-Output "[name] $($_.Name) x$($_.Count)" }
+                }
                 $withProps = @($assets | Where-Object { $_.AssetProperties -and @($_.AssetProperties).Count -gt 0 })
                 Write-Output "[GetSharedAssets fileType=$type] assets with AssetProperties: $($withProps.Count) of $($assets.Count)"
                 foreach ($a in @($assets | Select-Object -First 4) + @($withProps | Select-Object -First 2)) {
