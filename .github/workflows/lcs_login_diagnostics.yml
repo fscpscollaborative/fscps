@@ -117,6 +117,11 @@ jobs:
                 Write-Output "[GetSharedAssets fileType=$type] assets=$($assets.Count); sample: $((($assets | Select-Object -First 3).Name) -join ' | ')"
                 $first = $assets | Select-Object -First 1
                 Write-Output "[GetSharedAssets fileType=$type] fields: $(($first.PSObject.Properties.Name) -join ', ')"
+                $withProps = @($assets | Where-Object { $_.AssetProperties -and @($_.AssetProperties).Count -gt 0 })
+                Write-Output "[GetSharedAssets fileType=$type] assets with AssetProperties: $($withProps.Count) of $($assets.Count)"
+                foreach ($a in @($assets | Select-Object -First 4) + @($withProps | Select-Object -First 2)) {
+                  Write-Output "[asset] name=$($a.Name) | version=$($a.Version) | modified=$($a.ModifiedDate) | desc=$(Hide ([string]$a.FileDescription)) | props=$(Hide ($a.AssetProperties | ConvertTo-Json -Depth 4 -Compress))"
+                }
                 if ($first.PSObject.Properties['AssetProperties']) {
                   $json = ($first.AssetProperties | ConvertTo-Json -Depth 4 -Compress)
                   Write-Output "[GetSharedAssets fileType=$type] AssetProperties of first asset: $(Hide $json)"
