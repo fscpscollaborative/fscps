@@ -74,6 +74,8 @@ jobs:
           BUILD_PREFIX_OVERRIDES: ${{ vars.FINOPS_BUILD_PREFIX_OVERRIDES || '{"10.0.45":"10.0.2345"}' }}
           # 10.0.50 (PU74) preview builds are downloadable but not yet listed in the service catalog.
           ADDITIONAL_RELEASES: ${{ vars.FINOPS_ADDITIONAL_RELEASES || '[{"appVersion":"10.0.50","appBuild":"10.0.2919","platVersion":"PU74"}]' }}
+          # Preview builds of the next release appear without a catalog entry; find them by probing.
+          DISCOVER_NEXT_RELEASE: ${{ vars.FINOPS_DISCOVER_NEXT_RELEASE || 'true' }}
           LIST_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.list_only }}
           ALL_BUILDS: ${{ github.event_name == 'workflow_dispatch' && inputs.all_builds }}
           AZURE_STORAGE_SAS_TOKEN: ${{ secrets.NUGET_STORAGE_SAS_TOKEN }}
@@ -84,6 +86,7 @@ jobs:
             Container = $env:STORAGE_CONTAINER
             BuildPrefixOverrides = $env:BUILD_PREFIX_OVERRIDES | ConvertFrom-Json -AsHashtable
             AdditionalReleases = @($env:ADDITIONAL_RELEASES | ConvertFrom-Json)
+            DiscoverNextRelease = $env:DISCOVER_NEXT_RELEASE -eq 'true'
             ListOnly = $env:LIST_ONLY -eq 'true'
             AllBuilds = $env:ALL_BUILDS -eq 'true'
           }

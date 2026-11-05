@@ -11,6 +11,9 @@ param(
     [Security.SecureString] $AccessToken,
     [hashtable] $BuildPrefixOverrides = @{},
     [object[]] $AdditionalReleases = @(),
+    [switch] $DiscoverNextRelease,
+    [ValidateRange(1, 1000)] [int] $DiscoveryPrefixSpan = 400,
+    [ValidateRange(1, 32)] [int] $DiscoveryThrottleLimit = 16,
     [switch] $AllBuilds,
     [switch] $ListOnly
 )
@@ -38,6 +41,15 @@ foreach ($extra in $AdditionalReleases) {
     $releases += [pscustomobject]@{ appVersion = $appVersion; appBuild = $appBuild; platVersion = $platVersion }
 }
 $releases = @($releases | Sort-Object { [version]$_.appVersion })
+if ($DiscoverNextRelease) {
+    $last = $releases[-1]
+    $next = Find-FinOpsNextRelease -Session $session -LastAppBuild $last.appBuild -LastAppVersion $last.appVersion `
+        -LastPlatVersion $last.platVersion -PrefixSpan $DiscoveryPrefixSpan -ThrottleLimit $DiscoveryThrottleLimit
+    if ($next) {
+        Write-Warning "Discovered unlisted release $($next.appVersion) ($($next.appBuild), $($next.platVersion)) by probing build prefixes."
+        $releases += $next
+    }
+}
 $plan = @(
     foreach ($release in $releases) {
         $prefix = $release.appBuild

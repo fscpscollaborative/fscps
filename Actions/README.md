@@ -94,6 +94,7 @@ successful blob uploads remain available and can be reused on rerun.
    | `FINOPS_NUGET_SYNC_ENABLED` | Set to `true` only after a successful manual synchronization; enables the daily 22:00 UTC run |
    | `FINOPS_BUILD_PREFIX_OVERRIDES` | Optional JSON object; defaults to `{"10.0.45":"10.0.2345"}` |
    | `FINOPS_ADDITIONAL_RELEASES` | Optional JSON array of releases the service does not list yet; defaults to `[{"appVersion":"10.0.50","appBuild":"10.0.2919","platVersion":"PU74"}]` |
+   | `FINOPS_DISCOVER_NEXT_RELEASE` | Optional; defaults to `true`. Probes build prefixes above the newest known release (about 400 requests, ~30 s) to find a new preview that the catalog does not list yet |
 
    **Preview releases:** the service catalog (`finopsversions`) may omit a release
    whose builds are already downloadable. For 10.0.50 (PU74, build `10.0.2919`,
@@ -103,6 +104,15 @@ successful blob uploads remain available and can be reused on rerun.
    advertises the release the catalog entry wins. Take the build number from
    Microsoft's "Platform updates for version X" article. 10.0.50 packages target
    Visual Studio 2026 and are preview builds.
+
+   With `FINOPS_DISCOVER_NEXT_RELEASE=true` the next release (for example 10.0.51,
+   PU75) is also found automatically: the script probes the next 400 build
+   prefixes after the newest known release and labels the first one with builds as
+   the following version and platform update. This assumes consecutive release
+   numbering. The result is ignored (with a warning) if any probe below the hit
+   failed, and nothing is added when no prefix has builds. If a release ever skips
+   a number or the build gap exceeds 400, add it through
+   `FINOPS_ADDITIONAL_RELEASES`.
 
    The prefix override is explicit because the service advertises `10.0.2545` for
    10.0.45, whose build list is empty; `10.0.2345` was verified against the service.
