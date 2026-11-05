@@ -1,0 +1,112 @@
+name: Update NuGets (Dataverse)
+
+on:
+  workflow_dispatch:
+    inputs:
+      list_only:
+        description: List releases and builds without downloading, uploading or committing
+        type: boolean
+        default: true
+      all_builds:
+        description: Backfill all available builds instead of the latest per release (large download)
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 22 * * *'
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: finops-version-updates-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  sync:
+    if: github.event_name == 'workflow_dispatch' || vars.FINOPS_NUGET_SYNC_ENABLED == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate configuration
+        env:
+          DATAVERSE_URL: ${{ vars.FINOPS_DATAVERSE_URL }}
+          CLIENT_ID: ${{ vars.FINOPS_AZURE_CLIENT_ID }}
+          TENANT_ID: ${{ vars.FINOPS_AZURE_TENANT_ID }}
+          AUTH_MODE: ${{ vars.FINOPS_AZURE_AUTH_MODE || 'oidc' }}
+        run: |
+          foreach ($name in 'DATAVERSE_URL', 'CLIENT_ID', 'TENANT_ID') {
+            if (-not [Environment]::GetEnvironmentVariable($name)) {
+              throw "Missing repository variable: $name. See Actions/README.md."
+            }
+          }
+          if ($env:AUTH_MODE -notin 'oidc', 'client-secret') {
+            throw 'FINOPS_AZURE_AUTH_MODE must be oidc or client-secret.'
+          }
+
+      - name: Sign in with workload identity
+        if: vars.FINOPS_AZURE_AUTH_MODE != 'client-secret'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.FINOPS_AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.FINOPS_AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Sign in with application secret
+        if: vars.FINOPS_AZURE_AUTH_MODE == 'client-secret'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.FINOPS_AZURE_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      - name: Discover and synchronize NuGets
+        env:
+          DATAVERSE_URL: ${{ vars.FINOPS_DATAVERSE_URL }}
+          STORAGE_ACCOUNT: ${{ vars.FINOPS_NUGET_STORAGE_ACCOUNT || 'ciellosarchive' }}
+          STORAGE_CONTAINER: ${{ vars.FINOPS_NUGET_STORAGE_CONTAINER || 'nuget' }}
+          # The service currently advertises 10.0.2545 for 10.0.45, but only 10.0.2345 has builds.
+          BUILD_PREFIX_OVERRIDES: ${{ vars.FINOPS_BUILD_PREFIX_OVERRIDES || '{"10.0.45":"10.0.2345"}' }}
+          LIST_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.list_only }}
+          ALL_BUILDS: ${{ github.event_name == 'workflow_dispatch' && inputs.all_builds }}
+          AZURE_STORAGE_SAS_TOKEN: ${{ secrets.NUGET_STORAGE_SAS_TOKEN }}
+        run: |
+          $parameters = @{
+            DataverseUrl = $env:DATAVERSE_URL
+            StorageAccount = $env:STORAGE_ACCOUNT
+            Container = $env:STORAGE_CONTAINER
+            BuildPrefixOverrides = $env:BUILD_PREFIX_OVERRIDES | ConvertFrom-Json -AsHashtable
+            ListOnly = $env:LIST_ONLY -eq 'true'
+            AllBuilds = $env:ALL_BUILDS -eq 'true'
+          }
+          $results = @(& .\Actions\Helpers\Sync-FinOpsNuGets.ps1 @parameters)
+          $results | Format-Table -AutoSize
+          "## FinOps NuGet synchronization`n" | Add-Content $env:GITHUB_STEP_SUMMARY
+          "List only: $($parameters.ListOnly). All builds: $($parameters.AllBuilds).`n" | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```text' | Add-Content $env:GITHUB_STEP_SUMMARY
+          $results | Format-Table -AutoSize | Out-String | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```' | Add-Content $env:GITHUB_STEP_SUMMARY
+
+      - name: Commit version metadata
+        if: github.event_name != 'workflow_dispatch' || !inputs.list_only
+        run: |
+          $path = 'Actions/Helpers/versions.default.json'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- $path
+          if ($LASTEXITCODE -ne 0) { throw 'Could not stage version metadata.' }
+          git diff --cached --quiet -- $path
+          $diffExit = $LASTEXITCODE
+          if ($diffExit -eq 1) {
+            git commit -m 'Update FinOps NuGet versions.' -m 'Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>'
+            if ($LASTEXITCODE -ne 0) { throw 'Could not commit version metadata.' }
+            git push origin "HEAD:$env:GITHUB_REF_NAME"
+            if ($LASTEXITCODE -ne 0) { throw 'Could not push version metadata; rerun against the latest branch revision.' }
+          } elseif ($diffExit -ne 0) {
+            throw 'Could not inspect staged version metadata.'
+          }

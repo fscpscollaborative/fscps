@@ -1,0 +1,217 @@
+BeforeAll {
+    . (Join-Path $PSScriptRoot 'FinOps-Sync.ps1')
+    . (Join-Path $PSScriptRoot 'FinOps-NuGet.ps1')
+    $script:syncPath = Join-Path $PSScriptRoot 'Sync-FinOpsNuGets.ps1'
+    $script:token = ConvertTo-SecureString 'test-only' -AsPlainText -Force
+    function az { param([Parameter(ValueFromRemainingArguments)] $Arguments) }
+
+    function New-TestPackage {
+        param([string] $Path, [string] $Id, [string] $Version)
+        $zip = [IO.Compression.ZipFile]::Open($Path, [IO.Compression.ZipArchiveMode]::Create)
+        try {
+            $entry = $zip.CreateEntry('package.nuspec')
+            $writer = [IO.StreamWriter]::new($entry.Open())
+            try {
+                $writer.Write("<package xmlns='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd'><metadata><id>$Id</id><version>$Version</version></metadata></package>")
+            }
+            finally { $writer.Dispose() }
+        }
+        finally { $zip.Dispose() }
+    }
+}
+
+Describe 'NuGet identity validation' {
+    It 'reads a namespaced nuspec without extracting the archive' {
+        $path = Join-Path $TestDrive 'valid.nupkg'
+        New-TestPackage $path 'Test.Package' '10.0.2000.10'
+        $identity = Read-FinOpsNuGetIdentity $path
+        $identity.Id | Should -Be 'Test.Package'
+        $identity.Version | Should -Be '10.0.2000.10'
+    }
+
+    It 'rejects malformed or missing versions' {
+        $path = Join-Path $TestDrive 'invalid.nupkg'
+        New-TestPackage $path 'Test.Package' 'invalid'
+        { Read-FinOpsNuGetIdentity $path } | Should -Throw '*no valid NuGet ID*'
+    }
+}
+
+Describe 'Version metadata merge' {
+    It 'preserves GA, asset IDs, custom fields and does not downgrade latest versions' {
+        $versions = @(@{
+            version = '10.0.49'
+            data = [ordered]@{
+                AppVersionGA = '10.0.2790.1'; PlatformVersionGA = '7.0.8199.1'
+                AppVersionLatest = '10.0.2790.120'; PlatformVersionLatest = '7.0.8199.80'
+                FSCServiseUpdatePackageId = 'existing-id'; Custom = 'keep'; PlatformUpdate = 73
+            }
+        })
+        Update-FinOpsVersionRecord ([ref]$versions) '10.0.49' '10.0.2790.111' '7.0.8199.70' 'PU73'
+        $versions[0].data.AppVersionLatest | Should -Be '10.0.2790.120'
+        $versions[0].data.PlatformVersionLatest | Should -Be '7.0.8199.80'
+        $versions[0].data.AppVersionGA | Should -Be '10.0.2790.1'
+        $versions[0].data.PlatformVersionGA | Should -Be '7.0.8199.1'
+        $versions[0].data.FSCServiseUpdatePackageId | Should -Be 'existing-id'
+        $versions[0].data.Custom | Should -Be 'keep'
+    }
+
+    It 'adds a release without inventing GA or LCS asset IDs' {
+        $versions = @()
+        Update-FinOpsVersionRecord ([ref]$versions) '10.0.49' '10.0.2790.111' '7.0.8199.70' 'PU73'
+        $versions.Count | Should -Be 1
+        $versions[0].version | Should -Be '10.0.49'
+        $versions[0].data.AppVersionLatest | Should -Be '10.0.2790.111'
+        $versions[0].data.PlatformVersionLatest | Should -Be '7.0.8199.70'
+        $versions[0].data.PlatformUpdate | Should -Be 73
+        $versions[0].data.AppVersionGA | Should -Be ''
+        $versions[0].data.FSCServiseUpdatePackageId | Should -Be ''
+    }
+}
+
+Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
+    BeforeEach {
+        $script:versionsPath = Join-Path $TestDrive 'versions.json'
+        $script:initialJson = '[{"version":"10.0.48","data":{"AppVersionLatest":"10.0.2645.37","PlatformVersionLatest":"7.0.7996.39","Custom":"keep"}}]'
+        Set-Content $versionsPath $initialJson
+        $global:FscpsSyncTestState = @{
+            Blobs = @{}
+            Uploads = 0
+            VersionsPath = $versionsPath
+            InitialJson = $initialJson
+            JsonDuringLastUpload = $null
+        }
+        Mock az {
+            $global:LASTEXITCODE = 0
+            $nameIndex = [array]::IndexOf($Arguments, '--name')
+            $name = $Arguments[$nameIndex + 1]
+            switch ($Arguments[2]) {
+                'exists' { return (@{ exists = $global:FscpsSyncTestState.Blobs.ContainsKey($name) } | ConvertTo-Json -Compress) }
+                'show' { return ($global:FscpsSyncTestState.Blobs[$name] | ConvertTo-Json -Depth 10 -Compress) }
+                'upload' {
+                    $global:FscpsSyncTestState.Uploads++
+                    if ($global:FscpsSyncTestState.Uploads -eq 5) {
+                        $global:FscpsSyncTestState.JsonDuringLastUpload = Get-Content -LiteralPath $global:FscpsSyncTestState.VersionsPath -Raw
+                    }
+                    $file = $Arguments[[array]::IndexOf($Arguments, '--file') + 1]
+                    $sha = ($Arguments | Where-Object { $_ -like 'fscpssha256=*' }) -replace '^fscpssha256=', ''
+                    $version = ($Arguments | Where-Object { $_ -like 'fscpsversion=*' }) -replace '^fscpsversion=', ''
+                    $global:FscpsSyncTestState.Blobs[$name] = @{
+                        metadata = @{ fscpssha256 = $sha; fscpsversion = $version }
+                        properties = @{ contentLength = (Get-Item $file).Length }
+                    }
+                    return '{}'
+                }
+                default { throw 'Unexpected Azure CLI call.' }
+            }
+        }
+        Mock Invoke-WebRequest {
+            if ($OutFile) {
+                $package = [IO.Path]::GetFileNameWithoutExtension($OutFile) -replace '\.\d+\.\d+\.\d+\.\d+$', ''
+                $version = if ($package -like '*.Platform.*') { '7.0.8199.70' } else { '10.0.2790.111' }
+                New-TestPackage $OutFile $package $version
+                return @{ StatusCode = 200; Headers = @{ 'Content-Length' = [string](Get-Item $OutFile).Length } }
+            }
+            $content = switch -Wildcard ($Uri) {
+                '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]' }
+                '*/finopsbuilds?*' { '["10.0.2790.110","10.0.2790.111"]' }
+                '*/finopsplatbuild?*' { '"7.0.8199.70"' }
+                '*/nugetpackage?*' { '"https://teststorage.blob.core.windows.net/packages/package.nupkg?sig=test"' }
+                default { throw 'Unexpected HTTP call.' }
+            }
+            @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
+        }
+    }
+
+    It 'lists latest builds without changing JSON or using storage' {
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly)
+        $result.Count | Should -Be 1
+        $result[0].AppBuild | Should -Be '10.0.2790.111'
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+        Should -Invoke az -Times 0 -Exactly
+    }
+
+    It 'lists all builds when backfill is explicitly requested' {
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -AllBuilds)
+        $result.Count | Should -Be 2
+    }
+
+    It 'uploads five validated canonical packages, merges JSON and skips them on rerun' {
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath)
+        $result[0].PackagesPublished | Should -Be 5
+        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        $global:FscpsSyncTestState.JsonDuringLastUpload.Trim() | Should -Be $initialJson
+        $global:FscpsSyncTestState.Blobs.ContainsKey('Microsoft.Dynamics.AX.Platform.CompilerPackage.7.0.8199.70.nupkg') | Should -BeTrue
+        $versions = @(Get-Content $versionsPath -Raw | ConvertFrom-Json)
+        $versions.Count | Should -Be 2
+        $versions[0].data.Custom | Should -Be 'keep'
+        $versions[1].data.AppVersionLatest | Should -Be '10.0.2790.111'
+        $firstJson = Get-Content $versionsPath -Raw
+        $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath
+        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        (Get-Content $versionsPath -Raw) | Should -BeExactly $firstJson
+        Should -Invoke Invoke-WebRequest -Times 5 -Exactly -ParameterFilter { $OutFile }
+    }
+
+    It 'does not modify JSON on an upload failure and reports an error' {
+        Mock az { $global:LASTEXITCODE = 1 } -ParameterFilter { $Arguments[2] -eq 'upload' }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*Storage operation*failed*'
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+    }
+
+    It 'does not update JSON or upload anything when package download fails' {
+        Mock Invoke-WebRequest {
+            throw 'Download interrupted.'
+        } -ParameterFilter { $OutFile }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*Blob access failed*'
+        $global:FscpsSyncTestState.Uploads | Should -Be 0
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+    }
+
+    It 'leaves JSON untouched after partial publication and reuses successful uploads on retry' {
+        $global:FscpsSyncTestState.FailUpload = $true
+        Mock az { $global:LASTEXITCODE = 1 } -ParameterFilter {
+            $global:FscpsSyncTestState.FailUpload -and $Arguments[2] -eq 'upload' -and
+            $Arguments -contains 'Microsoft.Dynamics.AX.ApplicationSuite.DevALM.BuildXpp.10.0.2790.111.nupkg'
+        }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*Storage operation*failed*'
+        $global:FscpsSyncTestState.Uploads | Should -Be 2
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+        $global:FscpsSyncTestState.FailUpload = $false
+        $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath
+        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        @(Get-Content $versionsPath -Raw | ConvertFrom-Json).Count | Should -Be 2
+    }
+
+    It 'fails verification if the uploaded size is wrong' {
+        Mock az {
+            $global:LASTEXITCODE = 0
+            '{"metadata":{"fscpssha256":"wrong"},"properties":{"contentLength":1}}'
+        } -ParameterFilter { $Arguments[2] -eq 'show' }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*Publication verification failed*'
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+    }
+
+    It 'does not publish packages with incorrect nuspec identity' {
+        Mock Invoke-WebRequest {
+            New-TestPackage $OutFile 'Wrong.Package' '7.0.8199.70'
+            @{ StatusCode = 200; Headers = @{ 'Content-Length' = [string](Get-Item $OutFile).Length } }
+        } -ParameterFilter { $OutFile }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*identity mismatch*'
+        $global:FscpsSyncTestState.Uploads | Should -Be 0
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
+    }
+
+    It 'applies explicit prefix overrides and never silently falls back' {
+        $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -BuildPrefixOverrides @{ '10.0.49' = '10.0.2790' } -WarningVariable warnings
+        $warnings | Should -Match 'Using configured build prefix'
+    }
+
+    AfterAll {
+        Remove-Variable -Name FscpsSyncTestState -Scope Global -ErrorAction SilentlyContinue
+    }
+}
