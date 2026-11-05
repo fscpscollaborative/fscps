@@ -93,6 +93,16 @@ successful blob uploads remain available and can be reused on rerun.
    | `FINOPS_NUGET_STORAGE_CONTAINER` | Optional; defaults to `nuget` |
    | `FINOPS_NUGET_SYNC_ENABLED` | Set to `true` only after a successful manual synchronization; enables the daily 22:00 UTC run |
    | `FINOPS_BUILD_PREFIX_OVERRIDES` | Optional JSON object; defaults to `{"10.0.45":"10.0.2345"}` |
+   | `FINOPS_ADDITIONAL_RELEASES` | Optional JSON array of releases the service does not list yet; defaults to `[{"appVersion":"10.0.50","appBuild":"10.0.2919","platVersion":"PU74"}]` |
+
+   **Preview releases:** the service catalog (`finopsversions`) may omit a release
+   whose builds are already downloadable. For 10.0.50 (PU74, build `10.0.2919`,
+   platform `7.0.8358`) the catalog omitted it on November 5, 2026, yet
+   `finopsbuilds`, `finopsplatbuild` and `nugetpackage` all worked. Releases listed
+   in `FINOPS_ADDITIONAL_RELEASES` are processed with a warning; once the catalog
+   advertises the release the catalog entry wins. Take the build number from
+   Microsoft's "Platform updates for version X" article. 10.0.50 packages target
+   Visual Studio 2026 and are preview builds.
 
    The prefix override is explicit because the service advertises `10.0.2545` for
    10.0.45, whose build list is empty; `10.0.2345` was verified against the service.
