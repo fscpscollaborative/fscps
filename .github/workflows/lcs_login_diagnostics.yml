@@ -73,3 +73,44 @@ jobs:
             }
             catch { Write-Output "[shared assets API] FAILED: $(Hide $_.Exception.Message)" }
           } $env:LCS_USERNAME $env:LCS_USER_PASSWORD
+
+      - name: Diagnose token-based LCS API (no browser)
+        env:
+          LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
+          LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
+          LCS_CLIENT_ID: ${{ secrets.LCS_CLIENT_ID }}
+          LCS_PROJECT_ID: ${{ secrets.LCS_PROJECT_ID }}
+        run: |
+          $ErrorActionPreference = 'Continue'
+          function Hide([string] $text) {
+            foreach ($value in $env:LCS_USERNAME, $env:LCS_USER_PASSWORD, $env:LCS_CLIENT_ID) { if ($value) { $text = $text.Replace($value, '<secret>') } }
+            $text = $text -replace '[\w.+-]+@[\w.-]+', '<email>' -replace '\s+', ' '
+            $text.Substring(0, [Math]::Min(200, $text.Length))
+          }
+          $body = @{
+            grant_type = 'password'; client_id = $env:LCS_CLIENT_ID; username = $env:LCS_USERNAME
+            password = $env:LCS_USER_PASSWORD; resource = 'https://lcsapi.lcs.dynamics.com'; scope = 'openid'
+          }
+          try {
+            $token = (Invoke-RestMethod -Method Post -Uri 'https://login.microsoftonline.com/common/oauth2/token' -Body $body).access_token
+            Write-Output "[token] acquired: $([bool]$token)"
+          }
+          catch {
+            $codes = [regex]::Matches([string]$_.ErrorDetails.Message, 'AADSTS\d+') | ForEach-Object Value | Select-Object -Unique
+            Write-Output "[token] FAILED: $($codes -join ', ') $(Hide ([string]$_.Exception.Message))"
+            return
+          }
+          $headers = @{ Authorization = "Bearer $token"; Accept = 'application/json' }
+          foreach ($type in 10, 27) {
+            try {
+              $response = Invoke-WebRequest -Uri "https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=$type" -Headers $headers -SkipHttpErrorCheck -TimeoutSec 120
+              $contentType = [string]($response.Headers['Content-Type'] -join ';')
+              Write-Output "[GetSharedAssets fileType=$type] HTTP $([int]$response.StatusCode) content-type=$contentType"
+              if ($contentType -match 'json') {
+                $assets = @($response.Content | ConvertFrom-Json)
+                Write-Output "[GetSharedAssets fileType=$type] assets=$($assets.Count); sample: $((($assets | Select-Object -First 3).Name) -join ' | ')"
+              }
+              else { Write-Output "[GetSharedAssets fileType=$type] body: $(Hide $response.Content)" }
+            }
+            catch { Write-Output "[GetSharedAssets fileType=$type] FAILED: $(Hide ([string]$_.Exception.Message))" }
+          }
