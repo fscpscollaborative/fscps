@@ -91,7 +91,7 @@ jobs:
           function Hide([string] $text) {
             foreach ($value in $env:LCS_USERNAME, $env:LCS_USER_PASSWORD, $env:LCS_CLIENT_ID) { if ($value) { $text = $text.Replace($value, '<secret>') } }
             $text = $text -replace '[\w.+-]+@[\w.-]+', '<email>' -replace '\s+', ' '
-            $text.Substring(0, [Math]::Min(200, $text.Length))
+            $text.Substring(0, [Math]::Min(900, $text.Length))
           }
           $body = @{
             grant_type = 'password'; client_id = $env:LCS_CLIENT_ID; username = $env:LCS_USERNAME
@@ -117,6 +117,10 @@ jobs:
                 Write-Output "[GetSharedAssets fileType=$type] assets=$($assets.Count); sample: $((($assets | Select-Object -First 3).Name) -join ' | ')"
                 $first = $assets | Select-Object -First 1
                 Write-Output "[GetSharedAssets fileType=$type] fields: $(($first.PSObject.Properties.Name) -join ', ')"
+                if ($first.PSObject.Properties['AssetProperties']) {
+                  $json = ($first.AssetProperties | ConvertTo-Json -Depth 4 -Compress)
+                  Write-Output "[GetSharedAssets fileType=$type] AssetProperties of first asset: $(Hide $json)"
+                }
                 if ($first.PSObject.Properties['FileAssetProperties']) {
                   $props = @($first.FileAssetProperties | ForEach-Object { "$($_.FileTypePropertyName)=$($_.PropertyValueDisplay)" })
                   Write-Output "[GetSharedAssets fileType=$type] FileAssetProperties of first asset: $($props -join ' ; ')"
