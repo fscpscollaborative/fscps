@@ -135,6 +135,38 @@ storage or write files. The GitHub job summary shows the selected releases/build
 or publication results, without tokens or download URLs. The existing access
 probe can independently verify SAS issuance and blob HEAD access.
 
+### Deployable packages (SDP) from LCS
+
+The Developer Tools API has no endpoint for Software Deployable Packages, so the
+workflow's second step, [Sync-LcsDeployablePackages.ps1](Helpers/Sync-LcsDeployablePackages.ps1),
+still uses LCS. It calls the LCS API with an OAuth token obtained from the existing
+`LCS_CLIENT_ID`, `LCS_USERNAME`, `LCS_USER_PASSWORD` and `LCS_PROJECT_ID` secrets. It
+does **not** use the browser sign-in of the `fscps.lcs` module, which since
+October 30, 2026 stops at Microsoft's "Let's keep your account secure" MFA
+registration page (diagnosed in a runner with masked output). The token request still
+works for this account, but it depends on the tenant continuing to allow it; failures
+report only AADSTS codes.
+
+The LCS API returns no platform-build metadata, so the script derives type and version
+from the asset name (`Service Update`, `Preview Version`, `Proactive Quality Update`,
+`Final Quality Update`, versions above 10.0.39) and treats the asset with the newest
+`CreatedDate` in each role as current. It publishes each selected asset once to the
+`deployablepackages` container under its LCS name (as the legacy pipeline did), with
+blob metadata `lcsassetid`. Existing blobs without that metadata are kept only if
+uploaded after the LCS asset was created. Downloads are size-checked against
+`Content-Length` and the LCS asset size, and the JSON is updated only after all selected
+packages are in storage. `FSCServiseUpdatePackageId`, `FSCPreviewVersionPackageId`,
+`FSCLatestQualityUpdatePackageId` and `FSCFinalQualityUpdatePackageId` are updated; a
+release that has no record yet is created with `PlatformUpdate = minor + 24`.
+
+The step runs independently of NuGet synchronization: a failure in one does not stop the
+other's results from being committed, but the run is then marked failed. Set the
+repository variable `FINOPS_SDP_SYNC_ENABLED=false` to disable it, and
+`FINOPS_SDP_STORAGE_CONTAINER` to change the container. The storage SAS token must also
+permit this container. The first run may upload many gigabytes. The retired nightly
+schedule of the legacy "Update NuGets" workflow was removed so only one pipeline
+writes the versions file.
+
 ### Administrator handoff: where to obtain Client ID and configure OIDC
 
 #### Current deployment and temporary client-secret authentication

@@ -66,6 +66,8 @@ jobs:
           allow-no-subscriptions: true
 
       - name: Discover and synchronize NuGets
+        id: nuget
+        continue-on-error: true
         env:
           DATAVERSE_URL: ${{ vars.FINOPS_DATAVERSE_URL }}
           STORAGE_ACCOUNT: ${{ vars.FINOPS_NUGET_STORAGE_ACCOUNT || 'ciellosarchive' }}
@@ -98,8 +100,34 @@ jobs:
           $results | Format-Table -AutoSize | Out-String | Add-Content $env:GITHUB_STEP_SUMMARY
           '```' | Add-Content $env:GITHUB_STEP_SUMMARY
 
+      - name: Synchronize deployable packages (LCS)
+        id: sdp
+        if: ${{ !cancelled() && vars.FINOPS_SDP_SYNC_ENABLED != 'false' }}
+        continue-on-error: true
+        env:
+          LCS_CLIENT_ID: ${{ secrets.LCS_CLIENT_ID }}
+          LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
+          LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
+          LCS_PROJECT_ID: ${{ secrets.LCS_PROJECT_ID }}
+          STORAGE_ACCOUNT: ${{ vars.FINOPS_NUGET_STORAGE_ACCOUNT || 'ciellosarchive' }}
+          SDP_CONTAINER: ${{ vars.FINOPS_SDP_STORAGE_CONTAINER || 'deployablepackages' }}
+          LIST_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.list_only }}
+          AZURE_STORAGE_SAS_TOKEN: ${{ secrets.NUGET_STORAGE_SAS_TOKEN }}
+        run: |
+          $parameters = @{
+            StorageAccount = $env:STORAGE_ACCOUNT
+            Container = $env:SDP_CONTAINER
+            ListOnly = $env:LIST_ONLY -eq 'true'
+          }
+          $results = @(& .\Actions\Helpers\Sync-LcsDeployablePackages.ps1 @parameters)
+          $results | Format-Table -AutoSize
+          "## Deployable package synchronization`n" | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```text' | Add-Content $env:GITHUB_STEP_SUMMARY
+          $results | Format-Table -AutoSize | Out-String | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```' | Add-Content $env:GITHUB_STEP_SUMMARY
+
       - name: Commit version metadata
-        if: github.event_name != 'workflow_dispatch' || !inputs.list_only
+        if: ${{ !cancelled() && (github.event_name != 'workflow_dispatch' || !inputs.list_only) }}
         run: |
           $path = 'Actions/Helpers/versions.default.json'
           git config user.name 'github-actions[bot]'
@@ -116,3 +144,9 @@ jobs:
           } elseif ($diffExit -ne 0) {
             throw 'Could not inspect staged version metadata.'
           }
+
+      - name: Fail the run if any synchronization step failed
+        if: ${{ !cancelled() && (steps.nuget.outcome == 'failure' || steps.sdp.outcome == 'failure') }}
+        run: |
+          Write-Host "NuGet synchronization: ${{ steps.nuget.outcome }}; deployable packages: ${{ steps.sdp.outcome }}."
+          throw 'A synchronization step failed. Successful steps were still committed; see the failed step log.'
