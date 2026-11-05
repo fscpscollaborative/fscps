@@ -206,6 +206,87 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
     }
 
+    It 'adds a release that the catalog does not advertise, warning about it' {
+        Mock Invoke-WebRequest {
+            $content = switch -Wildcard ($Uri) {
+                '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]'; break }
+                '*/finopsbuilds?version=10-0-2919' { '["10.0.2919.27","10.0.2919.28"]'; break }
+                '*/finopsbuilds?*' { '["10.0.2790.111"]'; break }
+                default { throw 'Unexpected HTTP call.' }
+            }
+            @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
+        }
+        $extra = @([pscustomobject]@{ appVersion = '10.0.50'; appBuild = '10.0.2919'; platVersion = 'PU74' })
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -AdditionalReleases $extra -WarningVariable warnings)
+        $result.Count | Should -Be 2
+        $result[1].Release | Should -Be '10.0.50'
+        $result[1].AppBuild | Should -Be '10.0.2919.28'
+        $result[1].PlatformUpdate | Should -Be 'PU74'
+        $warnings | Should -Match 'not advertised'
+    }
+
+    It 'does not duplicate an additional release once the catalog lists it' {
+        $extra = @([pscustomobject]@{ appVersion = '10.0.49'; appBuild = '10.0.2790'; platVersion = 'PU73' })
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -AdditionalReleases $extra)
+        $result.Count | Should -Be 1
+    }
+
+    It 'rejects malformed additional releases' {
+        $extra = @([pscustomobject]@{ appVersion = '10.0.50'; appBuild = 'oops'; platVersion = 'PU74' })
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -AdditionalReleases $extra } |
+            Should -Throw '*AdditionalReleases*'
+    }
+
+    It 'discovers the next unlisted release by probing build prefixes' {
+        Mock Invoke-WebRequest {
+            $content = switch -Wildcard ($Uri) {
+                '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]'; break }
+                '*/finopsbuilds?version=10-0-2790' { '["10.0.2790.111"]'; break }
+                '*/finopsbuilds?version=10-0-2793' { '["10.0.2793.4","10.0.2793.5"]'; break }
+                '*/finopsbuilds?*' { '[]'; break }
+                default { throw 'Unexpected HTTP call.' }
+            }
+            @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
+        }
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -DiscoverNextRelease -DiscoveryPrefixSpan 6 -DiscoveryThrottleLimit 1 -WarningVariable warnings)
+        $result.Count | Should -Be 2
+        $result[1].Release | Should -Be '10.0.50'
+        $result[1].AppBuild | Should -Be '10.0.2793.5'
+        $result[1].PlatformUpdate | Should -Be 'PU74'
+        $warnings | Should -Match 'Discovered unlisted release 10.0.50'
+    }
+
+    It 'adds nothing when no later build prefix exists' {
+        Mock Invoke-WebRequest {
+            $content = switch -Wildcard ($Uri) {
+                '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]'; break }
+                '*/finopsbuilds?version=10-0-2790' { '["10.0.2790.111"]'; break }
+                '*/finopsbuilds?*' { '[]'; break }
+                default { throw 'Unexpected HTTP call.' }
+            }
+            @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
+        }
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -DiscoverNextRelease -DiscoveryPrefixSpan 6 -DiscoveryThrottleLimit 1)
+        $result.Count | Should -Be 1
+    }
+
+    It 'does not trust a hit when an earlier probe failed' {
+        Mock Invoke-WebRequest {
+            if ($Uri -like '*/finopsbuilds?version=10-0-2791') { return @{ StatusCode = 500; Content = ''; Headers = @{} } }
+            $content = switch -Wildcard ($Uri) {
+                '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]'; break }
+                '*/finopsbuilds?version=10-0-2790' { '["10.0.2790.111"]'; break }
+                '*/finopsbuilds?version=10-0-2793' { '["10.0.2793.5"]'; break }
+                '*/finopsbuilds?*' { '[]'; break }
+                default { throw 'Unexpected HTTP call.' }
+            }
+            @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
+        }
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -DiscoverNextRelease -DiscoveryPrefixSpan 6 -DiscoveryThrottleLimit 1 -WarningVariable warnings)
+        $result.Count | Should -Be 1
+        $warnings | Should -Match 'probes failed'
+    }
+
     It 'applies explicit prefix overrides and never silently falls back' {
         $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -BuildPrefixOverrides @{ '10.0.49' = '10.0.2790' } -WarningVariable warnings
         $warnings | Should -Match 'Using configured build prefix'

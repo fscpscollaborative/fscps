@@ -466,14 +466,14 @@
   {
     "data": {
       "FSCServiseUpdatePackageId": "",
-      "PlatformVersionLatest": "",
+      "PlatformVersionLatest": "7.0.8358.11",
       "FSCPreviewVersionPackageId": "631d3416-5485-4300-885e-b5254e18fb7e",
       "PlatformVersionGA": "",
       "EcommerceMicrosoftRepoBranch": "",
       "PlatformUpdate": 74,
       "FSCFinalQualityUpdatePackageId": "",
       "AppVersionGA": "",
-      "AppVersionLatest": "",
+      "AppVersionLatest": "10.0.2919.28",
       "FSCLatestQualityUpdatePackageId": "631d3416-5485-4300-885e-b5254e18fb7e"
     },
     "version": "10.0.50"

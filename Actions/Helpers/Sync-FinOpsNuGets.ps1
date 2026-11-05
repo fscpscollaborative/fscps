@@ -10,6 +10,10 @@ param(
     [string] $VersionsPath = (Join-Path $PSScriptRoot 'versions.default.json'),
     [Security.SecureString] $AccessToken,
     [hashtable] $BuildPrefixOverrides = @{},
+    [object[]] $AdditionalReleases = @(),
+    [switch] $DiscoverNextRelease,
+    [ValidateRange(1, 1000)] [int] $DiscoveryPrefixSpan = 400,
+    [ValidateRange(1, 32)] [int] $DiscoveryThrottleLimit = 16,
     [switch] $AllBuilds,
     [switch] $ListOnly
 )
@@ -24,6 +28,28 @@ $versions = @(Get-Content -LiteralPath $VersionsPath -Raw | ConvertFrom-Json -As
 if ($versions.Count -eq 0) { throw 'The versions file is empty.' }
 $session = Get-FinOpsSession $DataverseUrl $AccessToken
 $releases = @(Get-FinOpsRelease $session)
+# Preview releases can have downloadable builds before the service lists them in its catalog.
+foreach ($extra in $AdditionalReleases) {
+    $appVersion = [string]$extra.appVersion
+    $appBuild = [string]$extra.appBuild
+    $platVersion = [string]$extra.platVersion
+    if ($appVersion -notmatch '^\d+\.\d+\.\d+$' -or $appBuild -notmatch '^\d+\.\d+\.\d+$' -or $platVersion -notmatch '^PU\d+$') {
+        throw 'AdditionalReleases entries require appVersion (10.0.50), appBuild (10.0.2919) and platVersion (PU74).'
+    }
+    if ($appVersion -in $releases.appVersion) { continue }
+    Write-Warning "Using configured release $appVersion ($appBuild) that is not advertised by the service catalog."
+    $releases += [pscustomobject]@{ appVersion = $appVersion; appBuild = $appBuild; platVersion = $platVersion }
+}
+$releases = @($releases | Sort-Object { [version]$_.appVersion })
+if ($DiscoverNextRelease) {
+    $last = $releases[-1]
+    $next = Find-FinOpsNextRelease -Session $session -LastAppBuild $last.appBuild -LastAppVersion $last.appVersion `
+        -LastPlatVersion $last.platVersion -PrefixSpan $DiscoveryPrefixSpan -ThrottleLimit $DiscoveryThrottleLimit
+    if ($next) {
+        Write-Warning "Discovered unlisted release $($next.appVersion) ($($next.appBuild), $($next.platVersion)) by probing build prefixes."
+        $releases += $next
+    }
+}
 $plan = @(
     foreach ($release in $releases) {
         $prefix = $release.appBuild

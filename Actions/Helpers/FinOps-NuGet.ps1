@@ -119,6 +119,64 @@ function Get-FinOpsPlatformBuild {
     $build
 }
 
+function Test-FinOpsBuildPrefix {
+    [CmdletBinding()]
+    param([hashtable] $Session, [string] $Stem, [int] $Prefix)
+
+    $result = @{ Prefix = $Prefix; Found = $false; Failed = $false }
+    try {
+        $builds = Invoke-FinOpsMetadata $Session "finopsbuilds?version=$($Stem.Replace('.', '-'))-$Prefix"
+        $result.Found = ($builds -is [array] -and $builds.Count -gt 0)
+    }
+    catch { $result.Failed = $true }
+    $result
+}
+
+function Find-FinOpsNextRelease {
+    [CmdletBinding()]
+    param(
+        [hashtable] $Session,
+        [string] $LastAppBuild,
+        [string] $LastAppVersion,
+        [string] $LastPlatVersion,
+        [ValidateRange(1, 1000)] [int] $PrefixSpan = 400,
+        [ValidateRange(1, 32)] [int] $ThrottleLimit = 16
+    )
+
+    if ($LastAppBuild -notmatch '^(\d+\.\d+)\.(\d+)$') { throw 'Invalid last application build for next-release discovery.' }
+    $stem = $Matches[1]; $firstPrefix = [int]$Matches[2] + 1
+    if ($LastAppVersion -notmatch '^(\d+\.\d+)\.(\d+)$') { throw 'Invalid last application version for next-release discovery.' }
+    $nextVersion = "$($Matches[1]).$([int]$Matches[2] + 1)"
+    if ($LastPlatVersion -notmatch '^PU(\d+)$') { throw 'Invalid last platform update for next-release discovery.' }
+    $nextPlatform = "PU$([int]$Matches[1] + 1)"
+
+    $prefixes = $firstPrefix..($firstPrefix + $PrefixSpan - 1)
+    if ($ThrottleLimit -eq 1) {
+        $results = @($prefixes | ForEach-Object { Test-FinOpsBuildPrefix $Session $stem $_ })
+    }
+    else {
+        # Runspaces do not share functions, so each one loads this file itself.
+        $helperPath = $MyInvocation.MyCommand.ScriptBlock.File
+        $results = @($prefixes | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
+            . $using:helperPath
+            Test-FinOpsBuildPrefix $using:Session $using:stem $_
+        })
+    }
+    $found = @($results | Where-Object { $_.Found } | Sort-Object { $_.Prefix })
+    $failed = @($results | Where-Object { $_.Failed }).Count
+    if ($failed) {
+        Write-Warning "Next-release discovery: $failed of $($results.Count) probes failed."
+    }
+    if ($found.Count -eq 0) { return $null }
+    # A failed probe below the hit could hide an earlier build prefix, so the result is not conclusive.
+    if (@($results | Where-Object { $_.Failed -and $_.Prefix -lt $found[0].Prefix }).Count) { return $null }
+    [pscustomobject]@{
+        appVersion = $nextVersion
+        appBuild = "$stem.$($found[0].Prefix)"
+        platVersion = $nextPlatform
+    }
+}
+
 function Get-FinOpsPackageName {
     @(
         'Microsoft.Dynamics.AX.Platform.CompilerPackage'
