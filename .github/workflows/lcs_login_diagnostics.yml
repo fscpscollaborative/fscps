@@ -118,6 +118,21 @@ jobs:
                 $first = $assets | Select-Object -First 1
                 Write-Output "[GetSharedAssets fileType=$type] fields: $(($first.PSObject.Properties.Name) -join ', ')"
                 if ($type -eq 10) {
+                  foreach ($a in @($assets | Select-Object -First 2)) {
+                    try {
+                      $detail = Invoke-RestMethod -Uri "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($env:LCS_PROJECT_ID)?assetId=$($a.Id)" -Headers $headers -TimeoutSec 120
+                      $location = [uri]$detail.FileLocation
+                      Write-Output "[GetFileAsset] name=$($a.Name) fields=$(($detail.PSObject.Properties.Name) -join ',') locationHost=$($location.Host) https=$($location.Scheme -eq 'https')"
+                      foreach ($field in 'FileAssetProperties', 'AssetProperties') {
+                        if ($detail.PSObject.Properties[$field] -and $detail.$field) {
+                          Write-Output "[GetFileAsset] $field = $(Hide ($detail.$field | ConvertTo-Json -Depth 4 -Compress))"
+                        }
+                      }
+                    }
+                    catch { Write-Output "[GetFileAsset] FAILED: $(Hide ([string]$_.Exception.Message))" }
+                  }
+                }
+                if ($type -eq 10) {
                   $assets | Group-Object Name | Sort-Object Name | ForEach-Object { Write-Output "[name] $($_.Name) x$($_.Count)" }
                 }
                 $withProps = @($assets | Where-Object { $_.AssetProperties -and @($_.AssetProperties).Count -gt 0 })
