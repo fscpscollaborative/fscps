@@ -370,7 +370,7 @@
       "FSCFinalQualityUpdatePackageId": "",
       "EcommerceMicrosoftRepoBranch": "RS/10.0.43",
       "AppVersionLatest": "10.0.2177.185",
-      "FSCLatestQualityUpdatePackageId": "ba23aa85-ce58-4de1-bf38-624d173a7d90"
+      "FSCLatestQualityUpdatePackageId": "3f68ae0f-7b74-4f0e-a3c8-b490c0c2a020"
     }
   },
   {
@@ -430,7 +430,7 @@
       "EcommerceMicrosoftRepoBranch": "",
       "FSCFinalQualityUpdatePackageId": "",
       "FSCServiseUpdatePackageId": "2f6d5af1-69ec-4e36-b0f1-71ea1d8e4544",
-      "FSCLatestQualityUpdatePackageId": "b5e5e1e7-f36d-48b3-8cf9-c0421f35be36"
+      "FSCLatestQualityUpdatePackageId": "fff63363-c201-4908-8d4e-f35d3db11daa"
     }
   },
   {
@@ -444,7 +444,7 @@
       "AppVersionLatest": "10.0.2645.178",
       "PlatformVersionGA": "7.0.7996.33",
       "PlatformUpdate": 72,
-      "FSCLatestQualityUpdatePackageId": "57982ca0-7a87-4503-8854-1d9857fc8ea7"
+      "FSCLatestQualityUpdatePackageId": "9a2ae0a3-571c-47b1-9ea1-55bc2785b2f1"
     },
     "version": "10.0.48"
   },
@@ -459,7 +459,7 @@
       "AppVersionGA": "10.0.2790.46",
       "FSCServiseUpdatePackageId": "a27fb400-d48d-4ee2-9e6d-ab8a29b218a4",
       "AppVersionLatest": "10.0.2790.113",
-      "FSCLatestQualityUpdatePackageId": "ed861fb4-3e11-44a8-9389-312d956f2a83"
+      "FSCLatestQualityUpdatePackageId": "6d697a12-3738-4cc0-a3dc-6dc839d0bcb6"
     },
     "version": "10.0.49"
   },
@@ -467,14 +467,14 @@
     "data": {
       "FSCServiseUpdatePackageId": "",
       "PlatformVersionLatest": "7.0.8358.11",
-      "FSCPreviewVersionPackageId": "631d3416-5485-4300-885e-b5254e18fb7e",
+      "FSCPreviewVersionPackageId": "2a44eae6-4991-4268-a156-c8e3607d8dd5",
       "PlatformVersionGA": "",
       "EcommerceMicrosoftRepoBranch": "",
       "PlatformUpdate": 74,
       "FSCFinalQualityUpdatePackageId": "",
       "AppVersionGA": "",
       "AppVersionLatest": "10.0.2919.28",
-      "FSCLatestQualityUpdatePackageId": "631d3416-5485-4300-885e-b5254e18fb7e"
+      "FSCLatestQualityUpdatePackageId": "2a44eae6-4991-4268-a156-c8e3607d8dd5"
     },
     "version": "10.0.50"
   }
