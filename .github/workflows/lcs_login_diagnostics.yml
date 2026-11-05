@@ -1,0 +1,75 @@
+name: LCS login diagnostics
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  diagnose:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Diagnose LCS sign-in (credentials and page text are masked)
+        env:
+          LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
+          LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
+        run: |
+          . .\Actions\FSC-PS-Helper.ps1
+          installModules fscps.lcs
+          Import-Module fscps.lcs
+          $ErrorActionPreference = 'Continue'
+          Set-StrictMode -Off
+
+          & (Get-Module fscps.lcs) {
+            param($user, $secret)
+
+            function Hide([string] $text) {
+              if ($null -eq $text) { return '' }
+              foreach ($value in $user, $secret) { if ($value) { $text = $text.Replace($value, '<secret>') } }
+              $text = $text -replace '[\w.+-]+@[\w.-]+', '<email>' -replace '\d{4,}', '<n>' -replace '\s+', ' '
+              $text.Substring(0, [Math]::Min(220, $text.Length))
+            }
+            function Show([string] $step) {
+              Start-Sleep -Seconds 3
+              try {
+                $url = $page.Url -replace '\?.*$', ''
+                $title = $page.TitleAsync().GetAwaiter().GetResult()
+                $body = $page.InnerTextAsync('body').GetAwaiter().GetResult()
+                Write-Output ("[{0}] url={1} | title={2} | text={3}" -f $step, (Hide $url), (Hide $title), (Hide $body))
+              }
+              catch { Write-Output "[$step] could not read page: $(Hide $_.Exception.Message)" }
+            }
+            function Step([string] $name, [scriptblock] $action) {
+              try { & $action; Show $name }
+              catch { Write-Output "[$name] FAILED: $(Hide $_.Exception.Message)" }
+            }
+
+            $page = Get-NewPage
+            Step 'open ADLogon' { $page.GotoAsync('https://lcs.dynamics.com/Logon/ADLogon').GetAwaiter().GetResult() | Out-Null }
+            if ($page.Url -ne 'https://lcs.dynamics.com/V2') {
+              Step 'enter email' { $page.FillAsync("input[type='email']", $user).GetAwaiter().GetResult() }
+              Step 'submit email' { $page.ClickAsync("input[type='submit']").GetAwaiter().GetResult() }
+              Step 'wait for password field' { $page.WaitForSelectorAsync("input[type='password']", @{ Timeout = 20000 }).GetAwaiter().GetResult() | Out-Null }
+              Step 'enter password' { $page.FillAsync("input[type='password']", $secret).GetAwaiter().GetResult() }
+              Step 'submit password' { $page.ClickAsync("input[type='submit']").GetAwaiter().GetResult() }
+              Step 'second submit (stay signed in)' { $page.ClickAsync("input[type='submit']", @{ Timeout = 20000 }).GetAwaiter().GetResult() }
+            }
+            Step 'open LCS home' { $page.GotoAsync('https://lcs.dynamics.com/V2').GetAwaiter().GetResult() | Out-Null }
+            try {
+              $response = $page.APIRequest.GetAsync('https://lcs.dynamics.com/FileAsset/GetSharedAssets/?assetKind=10').GetAwaiter().GetResult()
+              $type = $response.Headers['content-type']
+              Write-Output "[shared assets API] status=$($response.Status) content-type=$type"
+              if ($type -notmatch 'json') {
+                Write-Output "[shared assets API] body start: $(Hide ($response.TextAsync().GetAwaiter().GetResult()))"
+              }
+            }
+            catch { Write-Output "[shared assets API] FAILED: $(Hide $_.Exception.Message)" }
+          } $env:LCS_USERNAME $env:LCS_USER_PASSWORD
