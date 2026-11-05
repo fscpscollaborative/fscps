@@ -2,9 +2,8 @@ name: Update NuGets
 
 on:
   workflow_dispatch:
-  schedule:
-   - cron: '0 23 * * *'
-   
+  # The nightly schedule was removed: it signed in to LCS through a browser, which now stops at an MFA
+  # registration prompt. "Update NuGets (Dataverse)" replaces it for both NuGets and deployable packages.
 defaults:
   run:
     shell: pwsh
