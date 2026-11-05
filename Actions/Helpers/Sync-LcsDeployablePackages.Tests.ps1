@@ -72,6 +72,7 @@ Describe 'Deployable package synchronization' {
         $env:LCS_CLIENT_ID = 'client-id'; $env:LCS_USERNAME = 'svc@example.test'; $env:LCS_USER_PASSWORD = 'test-secret-pass'
         $global:FscpsSdpState = @{ Blobs = @{}; Uploads = 0; VersionsPath = $versionsPath; JsonAtLastUpload = $null }
         Mock Start-Sleep {}
+        Mock Get-Command { $null } -ParameterFilter { $Name -eq 'azcopy' }
         Mock Invoke-RestMethod {
             if ($Uri -like '*login.microsoftonline.com*') { return @{ access_token = 'test-token' } }
             [pscustomobject]@{ FileLocation = 'https://teststorage.blob.core.windows.net/files/asset?sig=test-sas' }
@@ -144,6 +145,36 @@ Describe 'Deployable package synchronization' {
         $global:FscpsSdpState.Blobs['Service Update - 10.0.49'] = @{ metadata = @{ lcsassetid = 'other' }; properties = @{ contentLength = 16; lastModified = '2026-11-10T00:00:00+00:00' } }
         $result = @(& $syncPath -ProjectId 1630335 -VersionsPath $versionsPath)
         ($result | Where-Object Package -eq 'Service Update - 10.0.49').Action | Should -Be 'Published'
+    }
+
+    It 'uses AzCopy when available and never prints the SAS URL on failure' {
+        function global:Invoke-FakeAzCopy {
+            param([Parameter(ValueFromRemainingArguments)] $Arguments)
+            if ($global:FscpsAzCopyFail) {
+                $global:LASTEXITCODE = 1
+                return "failed https://teststorage.blob.core.windows.net/files/asset?sig=test-sas RESPONSE Status: 403 sig=test-sas"
+            }
+            [IO.File]::WriteAllBytes($Arguments[2], [byte[]](1..16))
+            $global:LASTEXITCODE = 0
+        }
+        Mock Get-Command { [pscustomobject]@{ Source = 'Invoke-FakeAzCopy' } } -ParameterFilter { $Name -eq 'azcopy' }
+        try {
+            $global:FscpsAzCopyFail = $false
+            $result = @(& $syncPath -ProjectId 1630335 -VersionsPath $versionsPath)
+            ($result | Where-Object Action -eq 'Published').Count | Should -Be 3
+            Should -Invoke Invoke-WebRequest -Times 0 -Exactly -ParameterFilter { $OutFile }
+
+            $global:FscpsAzCopyFail = $true
+            $global:FscpsSdpState.Blobs.Clear()
+            $message = $null
+            try { & $syncPath -ProjectId 1630335 -VersionsPath $versionsPath } catch { $message = $_.Exception.Message }
+            $message | Should -BeLike "*AzCopy download failed*403*"
+            $message | Should -Not -Match 'sig=test-sas|blob.core.windows.net'
+        }
+        finally {
+            Remove-Item Function:\global:Invoke-FakeAzCopy -ErrorAction SilentlyContinue
+            Remove-Variable -Name FscpsAzCopyFail -Scope Global -ErrorAction SilentlyContinue
+        }
     }
 
     It 'leaves JSON and storage untouched when a download fails' {

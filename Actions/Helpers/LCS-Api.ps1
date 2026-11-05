@@ -94,6 +94,41 @@ function Get-LcsAssetDownloadUri {
     $blobUri
 }
 
+function Save-LcsAsset {
+    [CmdletBinding()]
+    param([uri] $Uri, [string] $Path, [string] $Name)
+
+    $hide = {
+        param([string] $text)
+        $text = $text.Replace($Uri.AbsoluteUri, '<url>') -replace 'https?://\S+', '<url>' -replace '(?i)sig=[^&\s"]+', 'sig=<redacted>'
+        $text.Substring(0, [Math]::Min(300, $text.Length))
+    }
+    $azcopy = Get-Command azcopy -ErrorAction SilentlyContinue
+    if ($azcopy) {
+        # AzCopy copes with multi-gigabyte files; the SAS URL and tool output are never logged unredacted.
+        $output = & $azcopy.Source copy $Uri.AbsoluteUri $Path --output-level essential 2>&1
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $Path)) {
+            $tail = (@($output | ForEach-Object { [string]$_ } | Where-Object { $_ -match '\S' } | Select-Object -Last 4) -join ' | ')
+            throw "AzCopy download failed for '$Name' (exit code $LASTEXITCODE): $(& $hide $tail)"
+        }
+        return (Get-Item -LiteralPath $Path).Length
+    }
+    try {
+        # Never forward the LCS token to blob storage.
+        $response = Invoke-WebRequest -Uri $Uri -OutFile $Path -PassThru -TimeoutSec 7200 -MaximumRedirection 0 -SkipHttpErrorCheck
+    }
+    catch {
+        throw "Download failed for '$Name': $(& $hide "$($_.Exception.GetType().Name): $($_.Exception.Message)")"
+    }
+    if ([int]$response.StatusCode -ne 200) { throw "Download returned HTTP $([int]$response.StatusCode) for '$Name'." }
+    $length = (Get-Item -LiteralPath $Path).Length
+    $expected = 0L
+    if (-not [long]::TryParse([string]($response.Headers['Content-Length'] -join ''), [ref]$expected) -or $expected -le 0 -or $length -ne $expected) {
+        throw "Downloaded size does not match Content-Length for '$Name'."
+    }
+    $length
+}
+
 function Get-LcsSdpClassification {
     [CmdletBinding()]
     param([string] $Name)

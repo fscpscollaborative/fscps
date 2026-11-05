@@ -77,17 +77,7 @@ try {
                 throw "Not enough free disk space to download '$($entry.Name)'."
             }
             $link = Get-LcsAssetDownloadUri -Token $token -ProjectId $ProjectId -AssetId $entry.Id
-            try {
-                # Never forward the LCS token to blob storage or log the SAS URL.
-                $response = Invoke-WebRequest -Uri $link -OutFile $path -PassThru -TimeoutSec 7200 -MaximumRedirection 0 -SkipHttpErrorCheck
-            }
-            catch { throw "Download failed for '$($entry.Name)' (transport or redirect). The SAS URL was not logged." }
-            if ([int]$response.StatusCode -ne 200) { throw "Download returned HTTP $([int]$response.StatusCode) for '$($entry.Name)'." }
-            $length = (Get-Item -LiteralPath $path).Length
-            $expected = 0L
-            if (-not [long]::TryParse([string]($response.Headers['Content-Length'] -join ''), [ref]$expected) -or $expected -le 0 -or $length -ne $expected) {
-                throw "Downloaded size does not match Content-Length for '$($entry.Name)'."
-            }
+            $length = Save-LcsAsset -Uri $link -Path $path -Name $entry.Name
             if ($entry.Size -gt 0 -and $length -ne $entry.Size) {
                 throw "Downloaded size does not match the LCS asset size for '$($entry.Name)'."
             }
