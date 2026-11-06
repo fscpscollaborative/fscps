@@ -63,6 +63,22 @@ metadata, verifies the published size and metadata, and skips matching packages
 on subsequent runs. Legacy blobs without validation metadata are downloaded and
 republished once. The container must already exist.
 
+The build tooling (`Get-FSCPSNuget -Type ApplicationDevALM`, and the `packages.config`
+template) still requests `Microsoft.Dynamics.AX.Application.DevALM.BuildXpp`, a single
+package that the Developer Tools API no longer lists: it only offers `Application1` and
+`Application2`. After publishing the five listed packages, the script therefore also
+publishes the combined package for each build, assembled from those two parts by
+`Merge-FinOpsApplicationPackage`. On November 6, 2026 this was validated against
+Microsoft's own combined package for 10.0.49 (build 10.0.2790.113): the merged archive had
+the same 15,018 files with identical sizes, and identical `nuspec` and `.rels` text. The
+only difference is that the NuGet signature (`.signature.p7s`) is dropped, because a
+signature covers the original archive and would be invalid after merging. The result is
+therefore unsigned; NuGet accepts unsigned packages under its default
+`signatureValidationMode=accept`, so do not set it to `require` for these sources. An
+existing combined blob (for example one published by Microsoft's pipeline) is never
+replaced, and the versions file is advanced only after the combined package exists, so a
+build that follows `AppVersionLatest` always finds all four packages it needs.
+
 Only after all selected packages are published does the script atomically update
 [versions.default.json](Helpers/versions.default.json). It adds new release records,
 advances `AppVersionLatest` and `PlatformVersionLatest` without downgrading, and
