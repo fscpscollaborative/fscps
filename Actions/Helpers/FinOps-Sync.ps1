@@ -75,6 +75,8 @@ function Merge-FinOpsApplicationPackage {
         $output = [IO.Compression.ZipFile]::Open($OutputPath, [IO.Compression.ZipArchiveMode]::Create)
         $written = @{}
         foreach ($entry in $one.Entries) {
+            # A NuGet signature covers the original archive, so it cannot survive merging; the result is unsigned.
+            if ($entry.FullName -eq '.signature.p7s') { continue }
             if (& $isMetadata $entry.FullName) {
                 # Package metadata names the first part; rewrite it so the result identifies as the combined package.
                 $stream = $entry.Open(); $memory = [IO.MemoryStream]::new()
@@ -94,7 +96,7 @@ function Merge-FinOpsApplicationPackage {
             }
         }
         foreach ($entry in $two.Entries) {
-            if (& $isMetadata $entry.FullName) { continue }
+            if ($entry.FullName -eq '.signature.p7s' -or (& $isMetadata $entry.FullName)) { continue }
             if ($written.ContainsKey($entry.FullName)) {
                 if ($written[$entry.FullName] -ne $entry.Length) { throw "The package parts disagree about '$($entry.FullName)'." }
                 continue

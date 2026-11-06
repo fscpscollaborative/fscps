@@ -48,8 +48,8 @@ Describe 'Combined Application package' {
 
     It 'merges both parts into a package that identifies as the combined one' {
         $a = Join-Path $TestDrive 'a.nupkg'; $b = Join-Path $TestDrive 'b.nupkg'; $out = Join-Path $TestDrive 'out.nupkg'
-        New-TestPackageWithFiles $a $one '10.0.2790.113' @{ 'ref/net40/A.dll' = 'aaa'; 'ref/net40/Shared.dll' = 'same' }
-        New-TestPackageWithFiles $b $two '10.0.2790.113' @{ 'ref/net40/B.dll' = 'bbbb'; 'ref/net40/Shared.dll' = 'same' }
+        New-TestPackageWithFiles $a $one '10.0.2790.113' @{ 'ref/net40/A.dll' = 'aaa'; 'ref/net40/Shared.dll' = 'same'; '.signature.p7s' = 'signature-of-part-one' }
+        New-TestPackageWithFiles $b $two '10.0.2790.113' @{ 'ref/net40/B.dll' = 'bbbb'; 'ref/net40/Shared.dll' = 'same'; '.signature.p7s' = 'a-different-signature' }
         Merge-FinOpsApplicationPackage -PartOnePath $a -PartTwoPath $b -OutputPath $out
         $identity = Read-FinOpsNuGetIdentity $out
         $identity.Id | Should -BeExactly $combined
@@ -57,6 +57,7 @@ Describe 'Combined Application package' {
         $zip = [IO.Compression.ZipFile]::OpenRead($out)
         try {
             $names = @($zip.Entries.FullName)
+            $names | Should -Not -Contain '.signature.p7s'
             $names | Should -Contain 'ref/net40/A.dll'
             $names | Should -Contain 'ref/net40/B.dll'
             @($names | Where-Object { $_ -eq 'ref/net40/Shared.dll' }).Count | Should -Be 1
