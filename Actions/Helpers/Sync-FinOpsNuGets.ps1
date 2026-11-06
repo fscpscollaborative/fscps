@@ -127,6 +127,10 @@ try {
                 if (Test-Path -LiteralPath $packagePath) { Remove-Item -LiteralPath $packagePath -Force }
             }
         }
+        $combinedAction = Publish-FinOpsCombinedApplication -Session $session -AppBuild $item.AppBuild `
+            -WorkDirectory $workDirectory -StorageArguments $storage
+        Write-Information "Combined Application.DevALM.BuildXpp $($item.AppBuild): $combinedAction" -InformationAction Continue
+        $packageVersions['Microsoft.Dynamics.AX.Application.DevALM.BuildXpp'] = $item.AppBuild
         Update-FinOpsVersionRecord -Versions ([ref]$versions) -Release $item.Release `
             -AppBuild $item.AppBuild -PlatformBuild $platformBuild -PlatformUpdate $item.PlatformUpdate
         [pscustomobject]@{

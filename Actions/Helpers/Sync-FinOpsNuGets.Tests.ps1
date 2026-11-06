@@ -18,6 +18,65 @@ BeforeAll {
         }
         finally { $zip.Dispose() }
     }
+
+    function New-TestPackageWithFiles {
+        param([string] $Path, [string] $Id, [string] $Version, [hashtable] $Files)
+        $zip = [IO.Compression.ZipFile]::Open($Path, [IO.Compression.ZipArchiveMode]::Create)
+        try {
+            $write = {
+                param($name, $text)
+                $entry = $zip.CreateEntry($name)
+                $writer = [IO.StreamWriter]::new($entry.Open(), [Text.UTF8Encoding]::new($false))
+                try { $writer.Write($text) } finally { $writer.Dispose() }
+            }
+            & $write "$Id.nuspec" "<package xmlns='http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd'><metadata><id>$Id</id><version>$Version</version></metadata></package>"
+            & $write '_rels/.rels' "<Relationships><Relationship Target=`"/$Id.nuspec`" Id=`"R1`" /></Relationships>"
+            & $write '[Content_Types].xml' '<Types />'
+            & $write 'package/services/metadata/core-properties/abc.psmdcp' "<cp><identifier>$Id</identifier></cp>"
+            foreach ($name in $Files.Keys) { & $write $name $Files[$name] }
+        }
+        finally { $zip.Dispose() }
+    }
+}
+
+Describe 'Combined Application package' {
+    BeforeAll {
+        $script:one = 'Microsoft.Dynamics.AX.Application1.DevALM.BuildXpp'
+        $script:two = 'Microsoft.Dynamics.AX.Application2.DevALM.BuildXpp'
+        $script:combined = 'Microsoft.Dynamics.AX.Application.DevALM.BuildXpp'
+    }
+
+    It 'merges both parts into a package that identifies as the combined one' {
+        $a = Join-Path $TestDrive 'a.nupkg'; $b = Join-Path $TestDrive 'b.nupkg'; $out = Join-Path $TestDrive 'out.nupkg'
+        New-TestPackageWithFiles $a $one '10.0.2790.113' @{ 'ref/net40/A.dll' = 'aaa'; 'ref/net40/Shared.dll' = 'same'; '.signature.p7s' = 'signature-of-part-one' }
+        New-TestPackageWithFiles $b $two '10.0.2790.113' @{ 'ref/net40/B.dll' = 'bbbb'; 'ref/net40/Shared.dll' = 'same'; '.signature.p7s' = 'a-different-signature' }
+        Merge-FinOpsApplicationPackage -PartOnePath $a -PartTwoPath $b -OutputPath $out
+        $identity = Read-FinOpsNuGetIdentity $out
+        $identity.Id | Should -BeExactly $combined
+        $identity.Version | Should -Be '10.0.2790.113'
+        $zip = [IO.Compression.ZipFile]::OpenRead($out)
+        try {
+            $names = @($zip.Entries.FullName)
+            $names | Should -Not -Contain '.signature.p7s'
+            $names | Should -Contain 'ref/net40/A.dll'
+            $names | Should -Contain 'ref/net40/B.dll'
+            @($names | Where-Object { $_ -eq 'ref/net40/Shared.dll' }).Count | Should -Be 1
+            $names | Should -Contain "$combined.nuspec"
+            $names | Should -Not -Contain "$one.nuspec"
+            $names | Should -Not -Contain "$two.nuspec"
+            $rels = [IO.StreamReader]::new(($zip.Entries | Where-Object FullName -eq '_rels/.rels').Open()); $relText = $rels.ReadToEnd(); $rels.Dispose()
+            $relText | Should -Match "/$([regex]::Escape($combined))\.nuspec"
+            $relText | Should -Not -Match 'Application1'
+        }
+        finally { $zip.Dispose() }
+    }
+
+    It 'refuses parts that disagree about a shared file' {
+        $a = Join-Path $TestDrive 'a2.nupkg'; $b = Join-Path $TestDrive 'b2.nupkg'; $out = Join-Path $TestDrive 'out2.nupkg'
+        New-TestPackageWithFiles $a $one '10.0.2790.113' @{ 'ref/Shared.dll' = 'one' }
+        New-TestPackageWithFiles $b $two '10.0.2790.113' @{ 'ref/Shared.dll' = 'different' }
+        { Merge-FinOpsApplicationPackage -PartOnePath $a -PartTwoPath $b -OutputPath $out } | Should -Throw '*disagree*'
+    }
 }
 
 Describe 'NuGet identity validation' {
@@ -89,7 +148,7 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
                 'show' { return ($global:FscpsSyncTestState.Blobs[$name] | ConvertTo-Json -Depth 10 -Compress) }
                 'upload' {
                     $global:FscpsSyncTestState.Uploads++
-                    if ($global:FscpsSyncTestState.Uploads -eq 5) {
+                    if ($global:FscpsSyncTestState.Uploads -eq 6) {
                         $global:FscpsSyncTestState.JsonDuringLastUpload = Get-Content -LiteralPath $global:FscpsSyncTestState.VersionsPath -Raw
                     }
                     $file = $Arguments[[array]::IndexOf($Arguments, '--file') + 1]
@@ -106,7 +165,7 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         }
         Mock Invoke-WebRequest {
             if ($OutFile) {
-                $package = [IO.Path]::GetFileNameWithoutExtension($OutFile) -replace '\.\d+\.\d+\.\d+\.\d+$', ''
+                $package = [IO.Path]::GetFileNameWithoutExtension(([uri]$Uri).AbsolutePath)
                 $version = if ($package -like '*.Platform.*') { '7.0.8199.70' } else { '10.0.2790.111' }
                 New-TestPackage $OutFile $package $version
                 return @{ StatusCode = 200; Headers = @{ 'Content-Length' = [string](Get-Item $OutFile).Length } }
@@ -115,7 +174,7 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
                 '*/finopsversions' { '[{"appVersion":"10.0.49","appBuild":"10.0.2790","platVersion":"PU73"}]' }
                 '*/finopsbuilds?*' { '["10.0.2790.110","10.0.2790.111"]' }
                 '*/finopsplatbuild?*' { '"7.0.8199.70"' }
-                '*/nugetpackage?*' { '"https://teststorage.blob.core.windows.net/packages/package.nupkg?sig=test"' }
+                '*/nugetpackage?*' { '"https://teststorage.blob.core.windows.net/packages/' + [regex]::Match($Uri, 'packageName=([^&]+)').Groups[1].Value + '.nupkg?sig=test"' }
                 default { throw 'Unexpected HTTP call.' }
             }
             @{ StatusCode = 200; Content = $content; Headers = @{ 'Content-Type' = 'application/json' } }
@@ -135,10 +194,10 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         $result.Count | Should -Be 2
     }
 
-    It 'uploads five validated canonical packages, merges JSON and skips them on rerun' {
+    It 'uploads six validated canonical packages, merges JSON and skips them on rerun' {
         $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath)
-        $result[0].PackagesPublished | Should -Be 5
-        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        $result[0].PackagesPublished | Should -Be 6
+        $global:FscpsSyncTestState.Uploads | Should -Be 6
         $global:FscpsSyncTestState.JsonDuringLastUpload.Trim() | Should -Be $initialJson
         $global:FscpsSyncTestState.Blobs.ContainsKey('Microsoft.Dynamics.AX.Platform.CompilerPackage.7.0.8199.70.nupkg') | Should -BeTrue
         $versions = @(Get-Content $versionsPath -Raw | ConvertFrom-Json)
@@ -147,9 +206,9 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         $versions[1].data.AppVersionLatest | Should -Be '10.0.2790.111'
         $firstJson = Get-Content $versionsPath -Raw
         $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath
-        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        $global:FscpsSyncTestState.Uploads | Should -Be 6
         (Get-Content $versionsPath -Raw) | Should -BeExactly $firstJson
-        Should -Invoke Invoke-WebRequest -Times 5 -Exactly -ParameterFilter { $OutFile }
+        Should -Invoke Invoke-WebRequest -Times 7 -Exactly -ParameterFilter { $OutFile }
     }
 
     It 'does not modify JSON on an upload failure and reports an error' {
@@ -181,7 +240,7 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
         $global:FscpsSyncTestState.FailUpload = $false
         $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath
-        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        $global:FscpsSyncTestState.Uploads | Should -Be 6
         @(Get-Content $versionsPath -Raw | ConvertFrom-Json).Count | Should -Be 2
     }
 
@@ -285,6 +344,34 @@ Describe 'End-to-end synchronization with HTTP and Azure CLI mocks' {
         $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath -ListOnly -DiscoverNextRelease -DiscoveryPrefixSpan 6 -DiscoveryThrottleLimit 1 -WarningVariable warnings)
         $result.Count | Should -Be 1
         $warnings | Should -Match 'probes failed'
+    }
+
+    It 'keeps an existing combined package instead of replacing it' {
+        $global:FscpsSyncTestState.Blobs['Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.10.0.2790.111.nupkg'] = @{ metadata = @{}; properties = @{ contentLength = 5 } }
+        $result = @(& $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath)
+        $result[0].PackagesPublished | Should -Be 6
+        $global:FscpsSyncTestState.Uploads | Should -Be 5
+        Should -Invoke Invoke-WebRequest -Times 5 -Exactly -ParameterFilter { $OutFile }
+    }
+
+    It 'publishes the combined package under the canonical name with merge metadata' {
+        $null = & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath
+        $blob = $global:FscpsSyncTestState.Blobs['Microsoft.Dynamics.AX.Application.DevALM.BuildXpp.10.0.2790.111.nupkg']
+        $blob | Should -Not -BeNullOrEmpty
+        $blob.metadata.fscpsversion | Should -Be '10.0.2790.111'
+        $blob.metadata.fscpssha256 | Should -Match '^[a-f0-9]{64}$'
+    }
+
+    It 'does not update JSON when the combined package cannot be built' {
+        Mock Invoke-WebRequest {
+            $package = [IO.Path]::GetFileNameWithoutExtension(([uri]$Uri).AbsolutePath)
+            $id = if ($package -eq 'Microsoft.Dynamics.AX.Application2.DevALM.BuildXpp') { 'Microsoft.Dynamics.AX.Application1.DevALM.BuildXpp' } else { $package }
+            New-TestPackage $OutFile $id $(if ($package -like '*.Platform.*') { '7.0.8199.70' } else { '10.0.2790.111' })
+            @{ StatusCode = 200; Headers = @{ 'Content-Length' = [string](Get-Item $OutFile).Length } }
+        } -ParameterFilter { $OutFile }
+        { & $syncPath -DataverseUrl 'https://contoso.crm.dynamics.com' -AccessToken $token -VersionsPath $versionsPath } |
+            Should -Throw '*identity mismatch*'
+        (Get-Content $versionsPath -Raw).Trim() | Should -Be $initialJson
     }
 
     It 'applies explicit prefix overrides and never silently falls back' {
