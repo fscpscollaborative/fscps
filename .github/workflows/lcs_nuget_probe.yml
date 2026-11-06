@@ -25,7 +25,7 @@ jobs:
             password = $env:LCS_USER_PASSWORD; resource = 'https://lcsapi.lcs.dynamics.com'; scope = 'openid' }
           $token = (Invoke-RestMethod -Method Post -Uri 'https://login.microsoftonline.com/common/oauth2/token' -Body $body).access_token
           $headers = @{ Authorization = "Bearer $token"; Accept = 'application/json' }
-          $assets = @(Invoke-RestMethod -Uri 'https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=27' -Headers $headers -TimeoutSec 360)
+          $assets = @((Invoke-WebRequest -Uri 'https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=27' -Headers $headers -TimeoutSec 360).Content | ConvertFrom-Json)
           Write-Output "assets: $($assets.Count)"
           $recent = $assets | Where-Object { $_.Name -match 'Build Reference|Compiler' } |
             Sort-Object { [datetime]::ParseExact($_.ModifiedDate, 'MM/dd/yyyy HH:mm:ss', [Globalization.CultureInfo]::InvariantCulture) } -Descending |
