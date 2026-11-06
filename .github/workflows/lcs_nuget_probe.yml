@@ -13,24 +13,61 @@ defaults:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 45
     steps:
-      - name: List recent LCS build-reference NuGet assets (names and sizes only)
+      - name: Compare the combined Application package with Application1 + Application2
         env:
           LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
           LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
           LCS_CLIENT_ID: ${{ secrets.LCS_CLIENT_ID }}
+          LCS_PROJECT_ID: ${{ secrets.LCS_PROJECT_ID }}
         run: |
+          $ProgressPreference = 'SilentlyContinue'
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
           $body = @{ grant_type = 'password'; client_id = $env:LCS_CLIENT_ID; username = $env:LCS_USERNAME
             password = $env:LCS_USER_PASSWORD; resource = 'https://lcsapi.lcs.dynamics.com'; scope = 'openid' }
           $token = (Invoke-RestMethod -Method Post -Uri 'https://login.microsoftonline.com/common/oauth2/token' -Body $body).access_token
           $headers = @{ Authorization = "Bearer $token"; Accept = 'application/json' }
           $assets = @((Invoke-WebRequest -Uri 'https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=27' -Headers $headers -TimeoutSec 360).Content | ConvertFrom-Json)
-          Write-Output "assets: $($assets.Count)"
-          $recent = $assets | Where-Object { $_.Name -match 'Build Reference|Compiler' } |
-            Sort-Object { [datetime]::ParseExact($_.ModifiedDate, 'MM/dd/yyyy HH:mm:ss', [Globalization.CultureInfo]::InvariantCulture) } -Descending |
-            Select-Object -First 40
-          foreach ($a in $recent) {
-            $versions = [regex]::Matches([string]$a.FileDescription, '\d+\.\d+\.\d+\.\d+') | ForEach-Object Value | Select-Object -Last 2
-            Write-Output ("[asset] {0} | file={1} | sizeMB={2} | modified={3} | lastVersions={4}" -f $a.Name, $a.FileName, [math]::Round($a.SizeByte / 1MB, 1), $a.ModifiedDate, ($versions -join ','))
+
+          function Get-Package([string] $name) {
+            $asset = @($assets | Where-Object { $_.Name -eq $name }) | Select-Object -First 1
+            if (-not $asset) { throw "asset not found: $name" }
+            $detail = Invoke-RestMethod -Uri "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($env:LCS_PROJECT_ID)?assetId=$($asset.Id)" -Headers $headers -TimeoutSec 120
+            $path = Join-Path ([IO.Path]::GetTempPath()) ([guid]::NewGuid().ToString('N') + '.nupkg')
+            Invoke-WebRequest -Uri $detail.FileLocation -OutFile $path -TimeoutSec 3600
+            $zip = [IO.Compression.ZipFile]::OpenRead($path)
+            $entries = @($zip.Entries | ForEach-Object { [pscustomobject]@{ Name = $_.FullName; Length = $_.Length } })
+            $nuspecEntry = $zip.Entries | Where-Object { $_.FullName -like '*.nuspec' } | Select-Object -First 1
+            $reader = [IO.StreamReader]::new($nuspecEntry.Open()); $nuspec = $reader.ReadToEnd(); $reader.Dispose()
+            $zip.Dispose()
+            $size = (Get-Item $path).Length
+            Remove-Item $path -Force
+            [pscustomobject]@{ Name = $name; Size = $size; Entries = $entries; Nuspec = $nuspec }
+          }
+
+          $prefix = 'App AX10.0.49 - HOTFIX - '
+          $combined = Get-Package "$($prefix)Application Build Reference"
+          $one = Get-Package "$($prefix)Application 1 Build Reference"
+          $two = Get-Package "$($prefix)Application 2 Build Reference"
+          foreach ($p in $combined, $one, $two) { Write-Output "[pkg] $($p.Name) | bytes=$($p.Size) | entries=$($p.Entries.Count)" }
+
+          $isMeta = { param($n) $n -match '^(\[Content_Types\]\.xml|_rels/|package/|.*\.nuspec$)' }
+          $union = @{}
+          foreach ($e in @($one.Entries) + @($two.Entries)) { if (-not (& $isMeta $e.Name)) { $union[$e.Name] = $e.Length } }
+          $comb = @{}
+          foreach ($e in $combined.Entries) { if (-not (& $isMeta $e.Name)) { $comb[$e.Name] = $e.Length } }
+          $onlyCombined = @($comb.Keys | Where-Object { -not $union.ContainsKey($_) })
+          $onlyUnion = @($union.Keys | Where-Object { -not $comb.ContainsKey($_) })
+          $sizeDiff = @($comb.Keys | Where-Object { $union.ContainsKey($_) -and $union[$_] -ne $comb[$_] })
+          $overlap = @($one.Entries.Name | Where-Object { $_ -in $two.Entries.Name -and -not (& $isMeta $_) })
+          Write-Output "[compare] combined=$($comb.Count) union=$($union.Count) onlyCombined=$($onlyCombined.Count) onlyUnion=$($onlyUnion.Count) sizeDiffs=$($sizeDiff.Count) overlapBetween1And2=$($overlap.Count)"
+          $onlyCombined | Select-Object -First 8 | ForEach-Object { Write-Output "[onlyCombined] $_" }
+          $onlyUnion | Select-Object -First 8 | ForEach-Object { Write-Output "[onlyUnion] $_" }
+          $sizeDiff | Select-Object -First 8 | ForEach-Object { Write-Output "[sizeDiff] $_ combined=$($comb[$_]) union=$($union[$_])" }
+          foreach ($p in $combined, $one, $two) {
+            $x = [xml]($p.Nuspec -replace '^\uFEFF', '')
+            $meta = $x.package.metadata
+            $deps = @($meta.dependencies.dependency | ForEach-Object { "$($_.id)@$($_.version)" }) -join ','
+            Write-Output "[nuspec] id=$($meta.id) version=$($meta.version) deps=[$deps]"
           }
