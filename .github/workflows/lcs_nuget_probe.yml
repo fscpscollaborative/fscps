@@ -13,9 +13,11 @@ defaults:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
-      - name: Compare the combined Application package with Application1 + Application2
+      - uses: actions/checkout@v4
+
+      - name: Validate the merged Application package against Microsoft's combined package
         env:
           LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
           LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
@@ -24,50 +26,53 @@ jobs:
         run: |
           $ProgressPreference = 'SilentlyContinue'
           Add-Type -AssemblyName System.IO.Compression.FileSystem
+          . ./Actions/Helpers/FinOps-Sync.ps1
           $body = @{ grant_type = 'password'; client_id = $env:LCS_CLIENT_ID; username = $env:LCS_USERNAME
             password = $env:LCS_USER_PASSWORD; resource = 'https://lcsapi.lcs.dynamics.com'; scope = 'openid' }
           $token = (Invoke-RestMethod -Method Post -Uri 'https://login.microsoftonline.com/common/oauth2/token' -Body $body).access_token
           $headers = @{ Authorization = "Bearer $token"; Accept = 'application/json' }
           $assets = @((Invoke-WebRequest -Uri 'https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=27' -Headers $headers -TimeoutSec 360).Content | ConvertFrom-Json)
 
-          function Get-Package([string] $name) {
+          function Save-Package([string] $name) {
             $asset = @($assets | Where-Object { $_.Name -eq $name }) | Select-Object -First 1
             if (-not $asset) { throw "asset not found: $name" }
             $detail = Invoke-RestMethod -Uri "https://lcsapi.lcs.dynamics.com/box/fileasset/GetFileAsset/$($env:LCS_PROJECT_ID)?assetId=$($asset.Id)" -Headers $headers -TimeoutSec 120
             $path = Join-Path ([IO.Path]::GetTempPath()) ([guid]::NewGuid().ToString('N') + '.nupkg')
             Invoke-WebRequest -Uri $detail.FileLocation -OutFile $path -TimeoutSec 3600
-            $zip = [IO.Compression.ZipFile]::OpenRead($path)
-            $entries = @($zip.Entries | ForEach-Object { [pscustomobject]@{ Name = $_.FullName; Length = $_.Length } })
-            $nuspecEntry = $zip.Entries | Where-Object { $_.FullName -like '*.nuspec' } | Select-Object -First 1
-            $reader = [IO.StreamReader]::new($nuspecEntry.Open()); $nuspec = $reader.ReadToEnd(); $reader.Dispose()
-            $zip.Dispose()
-            $size = (Get-Item $path).Length
-            Remove-Item $path -Force
-            [pscustomobject]@{ Name = $name; Size = $size; Entries = $entries; Nuspec = $nuspec }
+            $path
+          }
+          function Read-Text($zip, [string] $name) {
+            $entry = $zip.Entries | Where-Object { $_.FullName -eq $name } | Select-Object -First 1
+            if (-not $entry) { return $null }
+            $reader = [IO.StreamReader]::new($entry.Open()); $text = $reader.ReadToEnd(); $reader.Dispose(); $text
           }
 
           $prefix = 'App AX10.0.49 - HOTFIX - '
-          $combined = Get-Package "$($prefix)Application Build Reference"
-          $one = Get-Package "$($prefix)Application 1 Build Reference"
-          $two = Get-Package "$($prefix)Application 2 Build Reference"
-          foreach ($p in $combined, $one, $two) { Write-Output "[pkg] $($p.Name) | bytes=$($p.Size) | entries=$($p.Entries.Count)" }
+          $real = Save-Package "$($prefix)Application Build Reference"
+          $one = Save-Package "$($prefix)Application 1 Build Reference"
+          $two = Save-Package "$($prefix)Application 2 Build Reference"
+          $merged = Join-Path ([IO.Path]::GetTempPath()) 'merged.nupkg'
+          Merge-FinOpsApplicationPackage -PartOnePath $one -PartTwoPath $two -OutputPath $merged
+          Write-Output "[sizes] real=$((Get-Item $real).Length) merged=$((Get-Item $merged).Length)"
 
-          $isMeta = { param($n) $n -match '^(\[Content_Types\]\.xml|_rels/|package/|.*\.nuspec$)' }
-          $union = @{}
-          foreach ($e in @($one.Entries) + @($two.Entries)) { if (-not (& $isMeta $e.Name)) { $union[$e.Name] = $e.Length } }
-          $comb = @{}
-          foreach ($e in $combined.Entries) { if (-not (& $isMeta $e.Name)) { $comb[$e.Name] = $e.Length } }
-          $onlyCombined = @($comb.Keys | Where-Object { -not $union.ContainsKey($_) })
-          $onlyUnion = @($union.Keys | Where-Object { -not $comb.ContainsKey($_) })
-          $sizeDiff = @($comb.Keys | Where-Object { $union.ContainsKey($_) -and $union[$_] -ne $comb[$_] })
-          $overlap = @($one.Entries.Name | Where-Object { $_ -in $two.Entries.Name -and -not (& $isMeta $_) })
-          Write-Output "[compare] combined=$($comb.Count) union=$($union.Count) onlyCombined=$($onlyCombined.Count) onlyUnion=$($onlyUnion.Count) sizeDiffs=$($sizeDiff.Count) overlapBetween1And2=$($overlap.Count)"
-          $onlyCombined | Select-Object -First 8 | ForEach-Object { Write-Output "[onlyCombined] $_" }
-          $onlyUnion | Select-Object -First 8 | ForEach-Object { Write-Output "[onlyUnion] $_" }
-          $sizeDiff | Select-Object -First 8 | ForEach-Object { Write-Output "[sizeDiff] $_ combined=$($comb[$_]) union=$($union[$_])" }
-          foreach ($p in $combined, $one, $two) {
-            $x = [xml]($p.Nuspec -replace '^\uFEFF', '')
-            $meta = $x.package.metadata
-            $deps = @($meta.dependencies.dependency | ForEach-Object { "$($_.id)@$($_.version)" }) -join ','
-            Write-Output "[nuspec] id=$($meta.id) version=$($meta.version) deps=[$deps]"
-          }
+          $a = [IO.Compression.ZipFile]::OpenRead($real)
+          $b = [IO.Compression.ZipFile]::OpenRead($merged)
+          $realEntries = @{}; foreach ($e in $a.Entries) { $realEntries[$e.FullName] = $e.Length }
+          $mergedEntries = @{}; foreach ($e in $b.Entries) { $mergedEntries[$e.FullName] = $e.Length }
+          $onlyReal = @($realEntries.Keys | Where-Object { -not $mergedEntries.ContainsKey($_) })
+          $onlyMerged = @($mergedEntries.Keys | Where-Object { -not $realEntries.ContainsKey($_) })
+          $sizeDiff = @($realEntries.Keys | Where-Object { $mergedEntries.ContainsKey($_) -and $mergedEntries[$_] -ne $realEntries[$_] })
+          Write-Output "[validate] real=$($realEntries.Count) merged=$($mergedEntries.Count) onlyReal=$($onlyReal.Count) onlyMerged=$($onlyMerged.Count) sizeDiffs=$($sizeDiff.Count)"
+          $onlyReal | Select-Object -First 10 | ForEach-Object { Write-Output "[onlyReal] $_" }
+          $onlyMerged | Select-Object -First 10 | ForEach-Object { Write-Output "[onlyMerged] $_" }
+          $sizeDiff | Select-Object -First 10 | ForEach-Object { Write-Output "[sizeDiff] $_ real=$($realEntries[$_]) merged=$($mergedEntries[$_])" }
+          $nuspecReal = ($a.Entries | Where-Object { $_.FullName -like '*.nuspec' } | Select-Object -First 1).FullName
+          $nuspecMerged = ($b.Entries | Where-Object { $_.FullName -like '*.nuspec' } | Select-Object -First 1).FullName
+          $tr = (Read-Text $a $nuspecReal) -replace '\s+', ' '; $tm = (Read-Text $b $nuspecMerged) -replace '\s+', ' '
+          Write-Output "[nuspec] realName=$nuspecReal mergedName=$nuspecMerged identicalText=$($tr -ceq $tm)"
+          if ($tr -cne $tm) { Write-Output "[nuspec real  ] $($tr.Substring(0, [Math]::Min(500, $tr.Length)))"; Write-Output "[nuspec merged] $($tm.Substring(0, [Math]::Min(500, $tm.Length)))" }
+          $rr = (Read-Text $a '_rels/.rels') -replace '\s+', ' '; $rm = (Read-Text $b '_rels/.rels') -replace '\s+', ' '
+          $rr = [regex]::Replace($rr, 'Id="[^"]+"', 'Id="x"'); $rm = [regex]::Replace($rm, 'Id="[^"]+"', 'Id="x"')
+          Write-Output "[rels] identicalIgnoringIds=$($rr -ceq $rm)"
+          if ($rr -cne $rm) { Write-Output "[rels real  ] $rr"; Write-Output "[rels merged] $rm" }
+          $a.Dispose(); $b.Dispose()
