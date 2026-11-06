@@ -1,0 +1,36 @@
+name: LCS NuGet asset probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: List recent LCS build-reference NuGet assets (names and sizes only)
+        env:
+          LCS_USERNAME: ${{ secrets.LCS_USERNAME }}
+          LCS_USER_PASSWORD: ${{ secrets.LCS_USER_PASSWORD }}
+          LCS_CLIENT_ID: ${{ secrets.LCS_CLIENT_ID }}
+        run: |
+          $body = @{ grant_type = 'password'; client_id = $env:LCS_CLIENT_ID; username = $env:LCS_USERNAME
+            password = $env:LCS_USER_PASSWORD; resource = 'https://lcsapi.lcs.dynamics.com'; scope = 'openid' }
+          $token = (Invoke-RestMethod -Method Post -Uri 'https://login.microsoftonline.com/common/oauth2/token' -Body $body).access_token
+          $headers = @{ Authorization = "Bearer $token"; Accept = 'application/json' }
+          $assets = @(Invoke-RestMethod -Uri 'https://lcsapi.lcs.dynamics.com/box/fileasset/GetSharedAssets?fileType=27' -Headers $headers -TimeoutSec 360)
+          Write-Output "assets: $($assets.Count)"
+          $recent = $assets | Where-Object { $_.Name -match 'Build Reference|Compiler' } |
+            Sort-Object { [datetime]::ParseExact($_.ModifiedDate, 'MM/dd/yyyy HH:mm:ss', [Globalization.CultureInfo]::InvariantCulture) } -Descending |
+            Select-Object -First 40
+          foreach ($a in $recent) {
+            $versions = [regex]::Matches([string]$a.FileDescription, '\d+\.\d+\.\d+\.\d+') | ForEach-Object Value | Select-Object -Last 2
+            Write-Output ("[asset] {0} | file={1} | sizeMB={2} | modified={3} | lastVersions={4}" -f $a.Name, $a.FileName, [math]::Round($a.SizeByte / 1MB, 1), $a.ModifiedDate, ($versions -join ','))
+          }
