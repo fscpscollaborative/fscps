@@ -458,14 +458,14 @@
       "FSCFinalQualityUpdatePackageId": "",
       "AppVersionGA": "10.0.2790.46",
       "FSCServiseUpdatePackageId": "a27fb400-d48d-4ee2-9e6d-ab8a29b218a4",
-      "AppVersionLatest": "10.0.2790.124",
+      "AppVersionLatest": "10.0.2790.125",
       "FSCLatestQualityUpdatePackageId": "5fbd11bf-9cfe-4248-99e1-362834ec57c4"
     },
     "version": "10.0.49"
   },
   {
     "data": {
-      "FSCServiseUpdatePackageId": "",
+      "FSCServiseUpdatePackageId": "ea5c551d-01da-41ce-aeb5-644f8436ac81",
       "PlatformVersionLatest": "7.0.8358.21",
       "FSCPreviewVersionPackageId": "2a44eae6-4991-4268-a156-c8e3607d8dd5",
       "PlatformVersionGA": "",
@@ -473,8 +473,8 @@
       "PlatformUpdate": 74,
       "FSCFinalQualityUpdatePackageId": "",
       "AppVersionGA": "",
-      "AppVersionLatest": "10.0.2919.41",
-      "FSCLatestQualityUpdatePackageId": "2a44eae6-4991-4268-a156-c8e3607d8dd5"
+      "AppVersionLatest": "10.0.2919.42",
+      "FSCLatestQualityUpdatePackageId": "ea5c551d-01da-41ce-aeb5-644f8436ac81"
     },
     "version": "10.0.50"
   }
